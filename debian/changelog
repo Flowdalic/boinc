@@ -1,4 +1,4 @@
-boinc (7.0.65+dfsg-3) UNRELEASED; urgency=low
+boinc (7.0.65+dfsg-3) unstable; urgency=low
 
   [ Gianfranco Costamagna ]
   * Added lightdm to init script (lp: #1177433)
