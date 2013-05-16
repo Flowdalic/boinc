@@ -94,7 +94,8 @@ void APP_CONFIGS::config_app_versions(PROJECT* p) {
         APP* app = gstate.lookup_app(p, ac.name);
         if (!app) {
             msg_printf(p, MSG_USER_ALERT,
-                "app %s not found in app_config.xml", ac.name
+                "Your app_config.xml file includes settings for application %s, which does not exist",
+                ac.name
             );
             continue;
         }
@@ -117,13 +118,12 @@ void max_concurrent_init() {
 }
 
 void check_app_config() {
-    char dir[256], path[MAXPATHLEN];
+    char path[MAXPATHLEN];
     FILE* f;
 
     for (unsigned int i=0; i<gstate.projects.size(); i++) {
         PROJECT* p = gstate.projects[i];
-        get_project_dir(p, dir, sizeof(dir));
-        sprintf(path, "%s/%s", dir, APP_CONFIG_FILE_NAME);
+        sprintf(path, "%s/%s", p->project_dir(), APP_CONFIG_FILE_NAME);
         f = boinc_fopen(path, "r");
         if (!f) continue;
         msg_printf(p, MSG_INFO,

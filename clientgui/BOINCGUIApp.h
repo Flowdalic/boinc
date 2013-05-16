@@ -54,7 +54,10 @@ class CBOINCGUIApp : public wxApp {
 
 protected:
     int                 OnExit();
-
+#if (defined(__WXMSW__) && !wxCHECK_VERSION(2, 9, 4))
+    void                OnEndSession(wxCloseEvent& event);
+#endif
+    
     void                OnInitCmdLine(wxCmdLineParser &parser);
     bool                OnCmdLineParsed(wxCmdLineParser &parser);
 
@@ -119,6 +122,7 @@ protected:
 public:
 
     bool                OnInit();
+    void                SaveState();
 
     wxLocale*           GetLocale()                 { return m_pLocale; }
     CSkinManager*       GetSkinManager()            { return m_pSkinManager; }

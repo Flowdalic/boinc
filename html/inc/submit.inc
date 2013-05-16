@@ -94,13 +94,17 @@ function do_http_op($req, $xml, $op) {
             }
         }
     }
-    //curl_setopt($ch, CURLOPT_POSTFIELDS, "request=$xml");
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
     $reply = curl_exec($ch);
     if (!$reply) return array(null, "HTTP error");
     $r = simplexml_load_string($reply);
     if (!$r) return array(null, "Can't parse reply XML: <pre>".htmlentities($reply)."</pre>");
-    return array($r, null);
+    $e = (string)$r->error_msg;
+    if ($e) {
+        return array(null, $e);
+    } else {
+        return array($r, null);
+    }
 }
 
 function do_batch_op($req, $op) {
@@ -111,7 +115,7 @@ function do_batch_op($req, $op) {
 }
 
 function batch_xml_to_object($batch) {
-    $b = null;
+    $b = new StdClass;
     $b->id = (int)($batch->id);
     $b->create_time = (double)($batch->create_time);
     $b->est_completion_time = (double)($batch->est_completion_time);
@@ -149,7 +153,7 @@ function boinc_submit_batch($req) {
     if ($name == 'batch_id') {
         return array((int)$reply, null);
     }  else if ($name == 'error') {
-        return array(null, (string)$reply->message);
+        return array(null, (string)$reply->err_message);
     } else {
         return array(null, "Bad reply message");
     }
@@ -180,7 +184,7 @@ function boinc_query_batch($req) {
     if ($errmsg) return array(null, $errmsg);
     $jobs = array();
     foreach ($reply->job as $job) {
-        $j = null;
+        $j = new StdClass;
         $j->id = (int)($job->id);
         $j->canonical_instance_id = (int)($job->canonical_instance_id);
         $jobs[] = $j;
@@ -200,19 +204,19 @@ function boinc_query_job($req) {
     if ($errmsg) return array(null, $errmsg);
     $instances = array();
     foreach ($reply->instance as $instance) {
-        $i = null;
+        $i = new StdClass;
         $i->name = (string)($instance->name);
         $i->id = (int)($instance->id);
         $i->state = (string)($instance->state);
         $i->outfiles = array();
         foreach ($instance->outfile as $outfile) {
-            $f = null;
+            $f = new StdClass;
             $f->size = (double)$outfile->size;
             $i->outfiles[] = $f;
         }
         $instances[] = $i;
     }
-    $r = null;
+    $r = new StdClass;
     $r->instances = $instances;
     return array($r, null);
 }
@@ -266,13 +270,21 @@ $req->project = "http://isaac.ssl.berkeley.edu/test/";
 $req->authenticator = "x";
 if (0) {
     $req->app_name = "uppercase";
-    $req->batch_name = "batch_name";
+    $req->batch_name = "batch_name3";
     $req->jobs = array();
 
-    $f->source = "http://isaac.ssl.berkeley.edu/index.php";
-    $job->input_files = array($f);
+    $job->input_files = array();
+    $f->source = "http://isaac.ssl.berkeley.edu/validate_logic.txt";
+    $f->mode = "remote";
+    $f->md5 = "eec5a142cea5202c9ab2e4575a8aaaa7";
+    $f->size = 4250;
+    $job->input_files[] = $f;
+    $f = new StdClass;
+    $f->mode = "local";
+    $f->source = "foobar";
+    //$job->input_files[] = $f;
 
-    for ($i=10; $i<20; $i++) {
+    for ($i=10; $i<11; $i++) {
         $job->rsc_fpops_est = $i*1e9;
         $job->command_line = "--t $i";
         $req->jobs[] = $job;

@@ -362,33 +362,27 @@ string timediff_format(double diff) {
     int sex = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        sprintf(buf, "%d sec", sex);
+        sprintf(buf, "00:00:%02d", sex);
         return buf;
     }
 
     int min = tdiff % 60;
     tdiff /= 60;
     if (!tdiff) {
-        sprintf(buf, "%d min %d sec", min, sex);
+        sprintf(buf, "00:%02d:%02d", min, sex);
         return buf;
     }
 
     int hours = tdiff % 24;
     tdiff /= 24;
     if (!tdiff) {
-        sprintf(buf, "%d hr %d min %d sec", hours, min, sex);
+        sprintf(buf, "%02d:%02d:%02d", hours, min, sex);
         return buf;
     }
 
-    int days = tdiff % 7;
-    tdiff /= 7;
-    if (!tdiff) {
-        sprintf(buf, "%d days %d hr %d min %d sec", days, hours, min, sex);
-        return buf;
-    }
-
-    sprintf(buf, "%d weeks %d days %d hrs %d min %d sec", (int)tdiff, days, hours, min, sex);
+    sprintf(buf, "%d days %02d:%02d:%02d", tdiff, hours, min, sex);
     return buf;
+
 }
 
 void mysql_timestamp(double dt, char* p) {
@@ -542,13 +536,13 @@ const char* boincerror(int which_error) {
 }
 
 const char* network_status_string(int n) {
-	switch (n) {
-	case NETWORK_STATUS_ONLINE: return "online";
-	case NETWORK_STATUS_WANT_CONNECTION: return "need connection";
-	case NETWORK_STATUS_WANT_DISCONNECT: return "don't need connection";
-	case NETWORK_STATUS_LOOKUP_PENDING: return "reference site lookup pending";
-	default: return "unknown";
-	}
+    switch (n) {
+    case NETWORK_STATUS_ONLINE: return "online";
+    case NETWORK_STATUS_WANT_CONNECTION: return "need connection";
+    case NETWORK_STATUS_WANT_DISCONNECT: return "don't need connection";
+    case NETWORK_STATUS_LOOKUP_PENDING: return "reference site lookup pending";
+    default: return "unknown";
+    }
 }
 
 const char* rpc_reason_string(int reason) {
@@ -579,8 +573,8 @@ const char* suspend_reason_string(int reason) {
     case SUSPEND_REASON_NETWORK_QUOTA_EXCEEDED: return "network bandwidth limit exceeded";
     case SUSPEND_REASON_OS: return "requested by operating system";
     case SUSPEND_REASON_WIFI_STATE: return "not connected to WiFi network";
-    case SUSPEND_REASON_BATTERY_CHARGING: return "battery is recharging";
-    case SUSPEND_REASON_BATTERY_OVERHEATED: return "battery is overheated";
+    case SUSPEND_REASON_BATTERY_CHARGING: return "battery low";
+    case SUSPEND_REASON_BATTERY_OVERHEATED: return "battery thermal protection";
     }
     return "unknown reason";
 }

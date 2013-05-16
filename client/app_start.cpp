@@ -193,8 +193,6 @@ int ACTIVE_TASK::get_shmem_seg_name() {
 }
 
 void ACTIVE_TASK::init_app_init_data(APP_INIT_DATA& aid) {
-    char project_dir[256], project_path[MAXPATHLEN];
-
     aid.major_version = BOINC_MAJOR_VERSION;
     aid.minor_version = BOINC_MINOR_VERSION;
     aid.release = BOINC_RELEASE;
@@ -212,9 +210,7 @@ void ACTIVE_TASK::init_app_init_data(APP_INIT_DATA& aid) {
     aid.hostid = wup->project->hostid;
     safe_strcpy(aid.user_name, wup->project->user_name);
     safe_strcpy(aid.team_name, wup->project->team_name);
-    get_project_dir(wup->project, project_dir, sizeof(project_dir));
-    relative_to_absolute(project_dir, project_path);
-    strcpy(aid.project_dir, project_path);
+    strcpy(aid.project_dir, wup->project->project_dir_absolute());
     relative_to_absolute("", aid.boinc_dir);
     strcpy(aid.authenticator, wup->project->authenticator);
     aid.slot = slot;
@@ -264,11 +260,12 @@ void ACTIVE_TASK::init_app_init_data(APP_INIT_DATA& aid) {
         }
         aid.gpu_device_num = cp.device_nums[k];
         aid.gpu_opencl_dev_index = cp.opencl_device_indexes[k];
+        aid.gpu_usage = app_version->gpu_usage.usage;
     } else {
         strcpy(aid.gpu_type, "");
         aid.gpu_device_num = -1;
         aid.gpu_opencl_dev_index = -1;
-
+        aid.gpu_usage = 0;
     }
     aid.ncpus = app_version->avg_ncpus;
     aid.vbox_window = config.vbox_window;
@@ -350,9 +347,9 @@ static void prepend_prefix(APP_VERSION* avp, char* in, char* out) {
 // - the APP_VERSION has a non-empty file_prefix
 //
 bool ACTIVE_TASK::must_copy_file(FILE_REF& fref, bool is_io_file) {
-	if (fref.copy_file) return true;
-	if (is_io_file && strlen(app_version->file_prefix)) return true;
-	return false;
+    if (fref.copy_file) return true;
+    if (is_io_file && strlen(app_version->file_prefix)) return true;
+    return false;
 }
 
 // set up a file reference, given a slot dir and project dir.
@@ -368,11 +365,11 @@ int ACTIVE_TASK::setup_file(
     PROJECT* project = result->project;
 
     if (strlen(fref.open_name)) {
-		if (is_io_file) {
-			prepend_prefix(app_version, fref.open_name, open_name);
-		} else {
-			strcpy(open_name, fref.open_name);
-		}
+        if (is_io_file) {
+            prepend_prefix(app_version, fref.open_name, open_name);
+        } else {
+            strcpy(open_name, fref.open_name);
+        }
         retval = create_dirs_for_logical_name(open_name, slot_dir);
         if (retval) return retval;
         sprintf(link_path, "%s/%s", slot_dir, open_name);
@@ -940,8 +937,7 @@ int ACTIVE_TASK::start() {
         //
         char libpath[8192];
         char newlibs[256];
-        get_project_dir(wup->project, buf, sizeof(buf));
-        sprintf(newlibs, "../../%s:.:../..", buf);
+        sprintf(newlibs, "../../%s:.:../..", wup->project->project_dir());
 #ifdef __APPLE__
         strcat(newlibs, ":/usr/local/cuda/lib/");
 #endif

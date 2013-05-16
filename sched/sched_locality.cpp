@@ -35,15 +35,16 @@
 #include "str_util.h"
 #include "filesys.h"
 
-#include "sched_main.h"
-#include "sched_types.h"
+#include "sched_check.h"
+#include "sched_config.h"
 #include "sched_locality.h"
+#include "sched_main.h"
 #include "sched_msgs.h"
-#include "sched_shmem.h"
 #include "sched_send.h"
+#include "sched_shmem.h"
+#include "sched_types.h"
 #include "sched_util.h"
 #include "sched_version.h"
-#include "sched_config.h"
 
 #define VERBOSE_DEBUG
 
@@ -1097,6 +1098,14 @@ void send_work_locality() {
     // seed the random number generator
     unsigned int seed=time(0)+getpid();
     srand(seed);
+
+    // file names are used in SQL queries throughout; escape them now
+    // (this breaks things if file names legitimately contain ', but they don't)
+    //
+    for (unsigned int k=0; k<g_request->file_infos.size(); k++) {
+        FILE_INFO& fi = g_request->file_infos[k];
+        escape_string(fi.name, sizeof(fi.name));
+    }
 
 #ifdef EINSTEIN_AT_HOME
     std::vector<FILE_INFO> eah_copy = g_request->file_infos;

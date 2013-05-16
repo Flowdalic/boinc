@@ -357,6 +357,7 @@ bool CLIENT_STATE::simulate_rpc(PROJECT* p) {
         html_msg += buf;
         msg_printf(p, MSG_INFO, "RPC skipped: project down");
         gstate.scheduler_op->project_rpc_backoff(p, "project down");
+        p->master_url_fetch_pending = false;
         return false;
     }
 
@@ -451,31 +452,11 @@ bool CLIENT_STATE::simulate_rpc(PROJECT* p) {
     sprintf(buf, "got %d tasks<br>", new_results.size());
     html_msg += buf;
 
-    if (new_results.size() == 0) {
-        for (int i=0; i<coprocs.n_rsc; i++) {
-            if (rsc_work_fetch[i].req_secs) {
-                p->rsc_pwf[i].resource_backoff(p, rsc_name(i));
-            }
-        }
-    } else {
-        bool got_rsc[MAX_RSC];
-        for (int i=0; i<coprocs.n_rsc; i++) {
-            got_rsc[i] = false;
-        }
-        for (unsigned int i=0; i<new_results.size(); i++) {
-            RESULT* rp = new_results[i];
-            got_rsc[rp->avp->gpu_usage.rsc_type] = true;
-        }
-        for (int i=0; i<coprocs.n_rsc; i++) {
-            if (got_rsc[i]) p->rsc_pwf[i].clear_backoff();
-        }
-    }
-
     SCHEDULER_REPLY sr;
     rsc_work_fetch[0].req_secs = save_cpu_req_secs;
     work_fetch.handle_reply(p, &sr, new_results);
     p->nrpc_failures = 0;
-    p->sched_rpc_pending = false;
+    p->sched_rpc_pending = 0;
     p->min_rpc_time = now + 900;
     if (sent_something) {
         request_schedule_cpus("simulate_rpc");
@@ -525,7 +506,8 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
     
         p = find_project_with_overdue_results(false);
         if (p) {
-            //printf("doing RPC to %s to report results\n", p->project_name);
+            msg_printf(p, MSG_INFO, "doing RPC to report results");
+            p->sched_rpc_pending = RPC_REASON_RESULTS_DUE;
             work_fetch.piggyback_work_request(p);
             action = simulate_rpc(p);
             break;
@@ -543,9 +525,10 @@ bool CLIENT_STATE::scheduler_rpc_poll() {
         must_check_work_fetch = false;
         last_work_fetch_time = now;
 
-        p = work_fetch.choose_project(true, NULL);
+        p = work_fetch.choose_project();
 
         if (p) {
+            msg_printf(p, MSG_INFO, "doing RPC to get work");
             action = simulate_rpc(p);
             break;
         }
@@ -870,7 +853,7 @@ void show_resource(int rsc_type) {
             found = true;
             fprintf(html_out,
                 "<table>\n"
-                "<tr><th>#devs</th><th>Job name</th><th>GFLOPs left</th>%s</tr>\n",
+                "<tr><th>#devs</th><th>Job name (* = high priority)</th><th>GFLOPs left</th>%s</tr>\n",
                 rsc_type?"<th>GPU</th>":""
             );
         }
@@ -882,7 +865,7 @@ void show_resource(int rsc_type) {
         fprintf(html_out, "<tr><td>%.2f</td><td bgcolor=%s><font color=#ffffff>%s%s</font></td><td>%.0f</td>%s</tr>\n",
             ninst,
             colors[p->index%NCOLORS],
-            rp->rr_sim_misses_deadline?"*":"",
+            rp->edf_scheduled?"*":"",
             rp->name,
             rp->sim_flops_left/1e9,
             buf
@@ -1006,8 +989,17 @@ void set_initial_rec() {
     }
 }
 
+static bool compare_names(PROJECT* p1, PROJECT* p2) {
+    return (strcmp(p1->project_name, p2->project_name) < 0);
+}
+
 void write_recs() {
     fprintf(rec_file, "%f ", gstate.now);
+    std::sort(
+        gstate.projects.begin(),
+        gstate.projects.end(),
+        compare_names
+    );
     for (unsigned int i=0; i<gstate.projects.size(); i++) {
         PROJECT* p = gstate.projects[i];
         fprintf(rec_file, "%f ", p->pwf.rec);
@@ -1086,15 +1078,24 @@ void simulate() {
         "   Scheduling period %f\n"
         "Scheduling policies\n"
         "   Round-robin only: %s\n"
-        "   Scheduler EDF simulation: %s\n",
+        "   Scheduler EDF simulation: %s\n"
+        "   REC half-life: %f\n",
         gstate.work_buf_min(), gstate.work_buf_total(),
         gstate.global_prefs.cpu_scheduling_period(),
         cpu_sched_rr_only?"yes":"no",
-        server_uses_workload?"yes":"no"
+        server_uses_workload?"yes":"no",
+        config.rec_half_life
     );
-    fprintf(summary_file,
-        "   REC half-life: %f\n", config.rec_half_life
-    );
+    fprintf(summary_file, "Jobs\n");
+    for (int i=0; i<gstate.results.size(); i++) {
+        RESULT* rp = gstate.results[i];
+        fprintf(summary_file,
+            "   %s time left %s deadline %s\n",
+            rp->name,
+            timediff_format(rp->sim_flops_left/rp->avp->flops).c_str(),
+            timediff_format(rp->report_deadline - START_TIME).c_str()
+        );
+    }
     fprintf(summary_file,
         "Simulation parameters\n"
         "   time step %f, duration %f\n"
@@ -1158,12 +1159,17 @@ void show_app(APP* app) {
     fprintf(summary_file,
         "   app %s\n"
         "      job params: fpops_est %.0fG fpops mean %.0fG std_dev %.0fG\n"
-        "         latency %.2f weight %.2f\n",
+        "         latency %.2f weight %.2f",
         app->name, app->fpops_est/1e9,
         app->fpops.mean/1e9, app->fpops.std_dev/1e9,
         app->latency_bound,
         app->weight
     );
+    if (app->max_concurrent) {
+        fprintf(summary_file, " max_concurrent %d\n", app->max_concurrent);
+    } else {
+        fprintf(summary_file, "\n");
+    }
     for (unsigned int i=0; i<gstate.app_versions.size(); i++) {
         APP_VERSION* avp = gstate.app_versions[i];
         if (avp->app != app) continue;
@@ -1258,7 +1264,7 @@ void get_app_params() {
                 app->fpops_est = 3600e9;
             }
             if (!app->latency_bound) {
-                app->latency_bound = 86400;
+                app->latency_bound = 864000;
             }
 
             if (!app->fpops_est || !app->latency_bound) {

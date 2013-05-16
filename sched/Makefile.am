@@ -115,6 +115,7 @@ sched_PROGRAMS = \
     sample_trivial_validator \
     sample_work_generator \
     single_job_assimilator \
+	size_regulator \
     transitioner \
     trickle_credit \
     trickle_echo \
@@ -151,6 +152,7 @@ cgi_sources = \
     plan_class_spec.cpp \
     sched_array.cpp \
     sched_assign.cpp \
+    sched_check.cpp \
     sched_customize.cpp \
     sched_files.cpp \
     sched_hr.cpp \
@@ -255,6 +257,9 @@ make_work_LDADD = $(SERVERLIBS)
 
 transitioner_SOURCES = transitioner.cpp
 transitioner_LDADD = $(SERVERLIBS)
+
+size_regulator_SOURCES = size_regulator.cpp
+size_regulator_LDADD = $(SERVERLIBS)
 
 message_handler_SOURCES = message_handler.cpp
 message_handler_LDADD = $(SERVERLIBS)

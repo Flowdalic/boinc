@@ -25,6 +25,7 @@ require_once("../inc/forum_db.inc");
 require_once("../inc/notify.inc");
 
 function parse_project($f) {
+    $p = new StdClass;
     $p->total_credit = 0.0;
     $p->expavg_credit = 0.0;
     while (!feof($f)) {
@@ -110,22 +111,23 @@ function cmp($a, $b) {
 }
 
 function show_other_projects($user, $personal) {
-    if (count($user->projects) > 1) {
-        usort($user->projects, "cmp");
-        if ($personal) {
-            echo "<h2>".tra("Projects in which you are participating")."</h2>";
-        } else {
-            echo "<h2>".tra("Projects in which %1 is participating", $user->name)."</h2>";
-        }
-        start_table();
-        row_heading_array(array(
-            tra("Project")."<br/><span class=\"note\">".tra("Click for user page")."</span>", tra("Total credit"), tra("Average credit"), tra("Since")
-        ));
-        foreach($user->projects as $project) {
-            show_project($project);
-        }
-        end_table();
+    if (!isset($user->projects)) return;
+    if (count($user->projects) < 2) return;
+
+    usort($user->projects, "cmp");
+    if ($personal) {
+        echo "<h2>".tra("Projects in which you are participating")."</h2>";
+    } else {
+        echo "<h2>".tra("Projects in which %1 is participating", $user->name)."</h2>";
     }
+    start_table();
+    row_heading_array(array(
+        tra("Project")."<br/><span class=\"note\">".tra("Click for user page")."</span>", tra("Total credit"), tra("Average credit"), tra("Since")
+    ));
+    foreach($user->projects as $project) {
+        show_project($project);
+    }
+    end_table();
 }
 
 function total_posts($user) {
@@ -317,8 +319,10 @@ function show_user_summary_public($user) {
     row2(tra("Country"), $user->country);
     // don't show URL if user has no recent credit (spam suppression)
     //
-    if (strlen($user->url) && $user->expavg_credit > 1) {
-        row2(tra("URL"), "<a href=\"http://$user->url\">http://$user->url</a>");
+    if (strlen($user->url)) {
+        if (no_computing() || $user->expavg_credit > 1) {
+            row2(tra("URL"), "<a href=\"http://$user->url\">http://$user->url</a>");
+        }
     }
     if (!no_computing()) {
         show_credit($user);
@@ -342,18 +346,16 @@ function show_user_summary_public($user) {
 // @param user The user to produce a community links object for
 
 function get_community_links_object($user){
+    $cache_object = new StdClass;
     $cache_object->post_count = total_posts($user);
     $cache_object->user = $user;
     $cache_object->team = lookup_team($user->teamid);
+    $cache_object->friends = array();
 
     $friends = BoincFriend::enum("user_src=$user->id and reciprocated=1");
-    $n = count($friends);
-    if ($n) {
-        $x = null;
-        foreach($friends as $friend) {
-            $fuser = BoincUser::lookup_id($friend->user_dest);
-            $cache_object->friends[] = $fuser;
-        }
+    foreach($friends as $friend) {
+        $fuser = BoincUser::lookup_id($friend->user_dest);
+        $cache_object->friends[] = $fuser;
     }
     return $cache_object;
 }
@@ -389,7 +391,7 @@ function community_links($clo, $logged_in_user){
     }
     
     if ($friends) {
-        $x = null;
+        $x = "";
         foreach($friends as $friend) {
             $x .= friend_links($friend);
         }

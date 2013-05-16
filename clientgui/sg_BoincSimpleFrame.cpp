@@ -446,6 +446,9 @@ void CSimpleFrame::OnSelectSkin( wxCommandEvent& event ){
 
     selectedItem->Check(true);
     pSkinManager->ReloadSkin(newSkinName);
+    
+    wxGetApp().SaveState();
+    wxConfigBase::Get(FALSE)->Flush();
 }
 
 
@@ -536,7 +539,12 @@ void CSimpleFrame::OnHelp(wxHelpEvent& event) {
 void CSimpleFrame::OnReloadSkin(CFrameEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CSimpleFrame::OnReloadSkin - Function Start"));
     
+    CSkinAdvanced*      pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
+    wxASSERT(pSkinAdvanced);
+
     m_pBackgroundPanel->ReskinInterface();
+    SetTitle(pSkinAdvanced->GetApplicationName());
+    SetIcon(*pSkinAdvanced->GetApplicationIcon());
 
     wxLogTrace(wxT("Function Start/End"), wxT("CSimpleFrame::OnReloadSkin - Function End"));
 }
@@ -1034,10 +1042,11 @@ void CSimpleGUIPanel::OnPaint(wxPaintEvent& WXUNUSED(event)) {
     if (m_bNewNoticeAlert) {
         wxRect r = m_NoticesButton->GetRect();
         if (m_bNoticesButtonIsRed) {
+			CSkinSimple* pSkinSimple = wxGetApp().GetSkinManager()->GetSimple();
             wxPen oldPen = myDC.GetPen();
             wxBrush oldBrush = myDC.GetBrush();
             int oldMode = myDC.GetBackgroundMode();
-            wxPen bgPen(*wxRED, 3);
+			wxPen bgPen(pSkinSimple->GetNoticeAlertColor(), 3);
             myDC.SetBackgroundMode(wxSOLID);
             myDC.SetPen(bgPen);
             myDC.SetBrush(*wxTRANSPARENT_BRUSH);

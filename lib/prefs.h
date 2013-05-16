@@ -57,8 +57,8 @@ struct GLOBAL_PREFS_MASK {
     bool net_end_hour;
     bool net_start_hour;
     bool network_wifi_only;
-	bool ram_max_used_busy_frac;
-	bool ram_max_used_idle_frac;
+    bool ram_max_used_busy_frac;
+    bool ram_max_used_idle_frac;
     bool run_if_user_active;
     bool run_gpu_if_user_active;
     bool run_on_batteries;
@@ -142,6 +142,7 @@ struct GLOBAL_PREFS {
         // scheduling happens more often.
     TIME_PREFS cpu_times;
     double cpu_usage_limit;
+        // for CPU throttling.  This is a percentage 0..100
     double daily_xfer_limit_mb;
     int daily_xfer_period_days;
     double disk_interval;
@@ -162,8 +163,8 @@ struct GLOBAL_PREFS {
         // not on public cell networks.
         // CAUTION: this only applies to file transfers.
         // scheduler RPCs are made regardless of this preference.
-	double ram_max_used_busy_frac;
-	double ram_max_used_idle_frac;
+    double ram_max_used_busy_frac;
+    double ram_max_used_idle_frac;
     bool run_gpu_if_user_active;
     bool run_if_user_active;
     bool run_on_batteries;

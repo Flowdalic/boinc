@@ -30,6 +30,7 @@
 
 #include "miofile.h"
 #include "coproc.h"
+#include "common_defs.h"
 
 // if you add fields, update clear_host_info()
 
@@ -67,12 +68,12 @@ public:
 
     COPROCS coprocs;
 
-#ifdef ANDROID
-    int battery_charge_pct;
-    int battery_state;
-    double battery_temperature_celsius;
-    void get_battery_status();
-#endif
+    bool have_cpu_opencl;
+    OPENCL_DEVICE_PROP cpu_opencl_prop;
+
+    // the following used only on Android
+    DEVICE_STATUS device_status;
+    double device_status_time;
 
     HOST_INFO();
     int parse(XML_PARSER&, bool benchmarks_only = false);
@@ -86,9 +87,6 @@ public:
     bool users_idle(bool check_all_logins, double idle_time_to_run, double *actual_idle_time=NULL);
 #else
     bool users_idle(bool check_all_logins, double idle_time_to_run);
-#endif
-#ifdef ANDROID
-    bool host_wifi_online();
 #endif
     int get_host_info();
     int get_host_battery_charge();

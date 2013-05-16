@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-// Detection of GPUs using OpenCL 
+// Detection of GPUs using OpenCL
 
 #ifdef _WIN32
 #include "boinc_win.h"
@@ -36,10 +36,11 @@ using std::vector;
 using std::string;
 
 #include "coproc.h"
-#include "util.h"
 #include "str_replace.h"
+#include "util.h"
 
 #include "client_msgs.h"
+#include "client_state.h"
 #include "gpu_detect.h"
 
 #ifdef _WIN32
@@ -89,6 +90,24 @@ cl_int (*__clGetDeviceInfo)(
 
 #endif
 
+static bool is_AMD(char *vendor) {
+    if (strstr(vendor, "ATI")) return true;
+    if (strstr(vendor, "AMD")) return true;
+    if (strstr(vendor, "Advanced Micro Devices, Inc.")) return true;
+
+    return false;
+}
+
+static bool is_NVIDIA(char* vendor) {
+    if (strstr(vendor, "NVIDIA")) return true;
+    return false;
+}
+
+static bool is_intel(char* vendor) {
+    if (strcasestr(vendor, "intel")) return true;
+    return false;
+}
+
 // If "loose", tolerate small diff
 //
 int opencl_compare(OPENCL_DEVICE_PROP& c1, OPENCL_DEVICE_PROP& c2, bool loose) {
@@ -107,7 +126,7 @@ int opencl_compare(OPENCL_DEVICE_PROP& c1, OPENCL_DEVICE_PROP& c2, bool loose) {
 }
 
 // OpenCL interfaces are documented here:
-// http://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/ and 
+// http://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/ and
 // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/
 
 void COPROCS::get_opencl(
@@ -120,10 +139,14 @@ void COPROCS::get_opencl(
     cl_uint num_platforms, platform_index, num_devices, device_index;
     cl_device_id devices[MAX_COPROC_INSTANCES];
     char platform_version[256];
+    char platform_vendor[256];
     OPENCL_DEVICE_PROP prop;
     COPROC_NVIDIA nvidia_temp;
     COPROC_ATI ati_temp;
     int current_CUDA_index;
+    int current_CAL_index;
+    int min_CAL_target;
+    int num_CAL_devices = (int)ati_gpus.size();
 
 #ifdef _WIN32
     opencl_lib = LoadLibrary("OpenCL.dll");
@@ -175,7 +198,7 @@ void COPROCS::get_opencl(
         warnings.push_back("clGetPlatformIDs() failed to return any OpenCL platforms");
         return;
     }
-    
+
     for (platform_index=0; platform_index<num_platforms; ++platform_index) {
         ciErrNum = (*__clGetPlatformInfo)(
             platforms[platform_index], CL_PLATFORM_VERSION,
@@ -188,12 +211,23 @@ void COPROCS::get_opencl(
             continue;
         }
 
+        ciErrNum = (*__clGetPlatformInfo)(
+            platforms[platform_index], CL_PLATFORM_VENDOR,
+            sizeof(platform_vendor), &platform_vendor, NULL
+        );
+        if (ciErrNum != CL_SUCCESS) {
+            msg_printf(0, MSG_INFO,
+                "Couldn't get PLATFORM_VENDOR for platform #%d; error %d", platform_index, ciErrNum
+            );
+        }
+
         ciErrNum = (*__clGetDeviceIDs)(
             platforms[platform_index], CL_DEVICE_TYPE_GPU,
             MAX_COPROC_INSTANCES, devices, &num_devices
         );
-        
+
         if (ciErrNum == CL_DEVICE_NOT_FOUND) continue;  // No devices
+        if (num_devices == 0) continue;                 // No devices
 
         if (ciErrNum != CL_SUCCESS) {
             msg_printf(0, MSG_INFO,
@@ -203,8 +237,50 @@ void COPROCS::get_opencl(
         }
 
         // Mac OpenCL does not recognize all NVIDIA GPUs returned by CUDA
+        // Fortunately, CUDA and OpenCL return the same GPU model name on
+        // the Mac, so we can use this to match OpenCL devices with CUDA.
         //
         current_CUDA_index = 0;
+
+        // ATI/AMD OpenCL does not always recognize all GPUs returned by CAL.
+        // This is complicated for several reasons:
+        // * CAL returns only an enum (CALtargetEnum) for the GPU's family,
+        //   not specific model information.
+        // * OpenCL return only the GPU family name
+        // * Which GPUs support OpenCL varies with different versions of the
+        //   AMD Catalyst drivers.
+        //
+        // To deal with this, we make some (probably imperfect) assumptions:
+        // * AMD drivers eliminate OpenCL support for older GPU families first.
+        // * Lower values of CALtargetEnum represent older GPU families.
+        // * All ATI/AMD GPUs reported by CUDA are also reported by CAL (on
+        //   systems where CAL is available) though the converse may not be true.
+        //
+        current_CAL_index = 0;
+        min_CAL_target = 0;
+        if (is_AMD(platform_vendor) && (num_CAL_devices > 0)) {
+            while (1) {
+                int numToMatch = 0;
+                for (int i=0; i<num_CAL_devices; ++i) {
+                    if ((int)ati_gpus[i].attribs.target >= min_CAL_target) {
+                        ++numToMatch;
+                    }
+                }
+                if (numToMatch == (int)num_devices) break;
+                if (numToMatch < (int)num_devices) {
+                    msg_printf(0, MSG_INTERNAL_ERROR,
+                        "Could not match ATI OpenCL and CAL GPUs: ignoring CAL."
+                    );
+                    // If we can't match ATI OpenCL and CAL GPUs, ignore CAL
+                    // and keep OpenCL because AMD has deprecated CAL.
+                    ati_gpus.clear();
+                    ati.have_cal = false;
+                    num_CAL_devices = 0;
+                    break;
+                }
+                ++min_CAL_target;
+            }
+        }
 
         for (device_index=0; device_index<num_devices; ++device_index) {
             memset(&prop, 0, sizeof(prop));
@@ -213,17 +289,17 @@ void COPROCS::get_opencl(
                 prop.opencl_platform_version, platform_version,
                 sizeof(prop.opencl_platform_version)-1
             );
-            
+
 //TODO: Should we store the platform(s) for each GPU found?
 //TODO: Must we check if multiple platforms found the same GPU and merge the records?
             ciErrNum = get_opencl_info(prop, device_index, warnings);
             if (ciErrNum != CL_SUCCESS) continue;
-            
+
             prop.is_used = COPROC_UNUSED;
             prop.get_device_version_int();
 
             //////////// NVIDIA //////////////
-            if (strstr(prop.vendor, GPU_TYPE_NVIDIA)) {
+            if (is_NVIDIA(prop.vendor)) {
                 if (nvidia.have_cuda) {
                     // Mac OpenCL does not recognize all NVIDIA GPUs returned by
                     // CUDA but we assume that OpenCL and CUDA return devices in
@@ -233,8 +309,8 @@ void COPROCS::get_opencl(
                         if (current_CUDA_index >= (int)(nvidia_gpus.size())) {
                             if (log_flags.coproc_debug) {
                                 msg_printf(0, MSG_INFO,
-                                "[coproc] OpenCL NVIDIA index #%d does not match any CUDA device", 
-                                device_index
+                                    "[coproc] OpenCL NVIDIA index #%d does not match any CUDA device",
+                                    device_index
                                 );
                             }
                             return; // Should never happen
@@ -272,60 +348,71 @@ void COPROCS::get_opencl(
                 nvidia_opencls.push_back(prop);
                 ++current_CUDA_index;
             }
-            
-            //////////// AMD / ATI //////////////
-            if ((strstr(prop.vendor, GPU_TYPE_ATI)) || 
-                (strstr(prop.vendor, "AMD")) ||  
-                (strstr(prop.vendor, "Advanced Micro Devices, Inc."))
-            ) {
-                prop.device_num = (int)(ati_opencls.size());
-                prop.opencl_device_index = device_index;
-                
-                if (ati.have_cal) {
-                    if (prop.device_num < (int)(ati_gpus.size())) {
-                        // Always use GPU model name from CAL if available
-                        // for ATI / AMD  GPUs because
-                        // (we believe) it is more user-friendly.
-                        // Assumes OpenCL and CAL return the devices
-                        // in the same order
-                        //
-                        strcpy(prop.name, ati_gpus[prop.device_num].name);
 
-                        // Work around a bug in OpenCL which returns only 
-                        // 1/2 of total global RAM size: use the value from CAL.
-                        // This bug applies only to ATI GPUs, not to NVIDIA
-                        // See also further workaround code for Macs.
-                        //
-                        prop.global_mem_size = ati_gpus[prop.device_num].attribs.localRAM * MEGA;
-                        prop.peak_flops = ati_gpus[prop.device_num].peak_flops;
-                    } else {
-                        if (log_flags.coproc_debug) {
-                            msg_printf(0, MSG_INFO,
-                            "[coproc] OpenCL ATI device #%d does not match any CAL device", 
-                            device_index
-                            );
+            //////////// AMD / ATI //////////////
+            if (is_AMD(prop.vendor)) {
+                prop.opencl_device_index = device_index;
+
+                if (ati.have_cal) {
+                    // AMD OpenCL does not recognize all AMD GPUs returned by
+                    // CAL but we assume that OpenCL and CAL return devices in
+                    // the same order.  See additional comments earlier in
+                    // this source file for more details.
+                    //
+                    while (1) {
+                        if (current_CAL_index >= num_CAL_devices) {
+                            if (log_flags.coproc_debug) {
+                                msg_printf(0, MSG_INFO,
+                                    "[coproc] OpenCL ATI device #%d does not match any CAL device",
+                                    device_index
+                                );
+                            }
+                            return; // Should never happen
                         }
+                        if ((int)ati_gpus[current_CAL_index].attribs.target >= min_CAL_target) {
+                            break;  // We have a match
+                        }
+                        // This CAL GPU is not recognized by OpenCL,
+                        // so try the next
+                        //
+                        ++current_CAL_index;
                     }
+                    prop.device_num = current_CAL_index;
+
+                    // Always use GPU model name from CAL if
+                    // available for ATI / AMD  GPUs because
+                    // (we believe) it is more user-friendly.
+                    //
+                    strcpy(prop.name, ati_gpus[prop.device_num].name);
+
+                    // Work around a bug in OpenCL which returns only
+                    // 1/2 of total global RAM size: use the value from CAL.
+                    // This bug applies only to ATI GPUs, not to NVIDIA
+                    // See also further workaround code for Macs.
+                    //
+                    prop.global_mem_size = ati_gpus[prop.device_num].attribs.localRAM * MEGA;
+                    prop.peak_flops = ati_gpus[prop.device_num].peak_flops;
                 } else {            // ! ati.have_cal
+                    prop.device_num = (int)(ati_opencls.size());
                     COPROC_ATI c;
                     c.opencl_prop = prop;
                     c.set_peak_flops();
                     prop.peak_flops = c.peak_flops;
                 }
-                
+
                 if (ati_gpus.size()) {
-                    // Assumes OpenCL and CAL return the same device with the same index
                     prop.opencl_available_ram = ati_gpus[prop.device_num].available_ram;
                 } else {
                     prop.opencl_available_ram = prop.global_mem_size;
                 }
                 ati_opencls.push_back(prop);
             }
-            
+
             //////////// INTEL GPU //////////////
-            if (strcasestr(prop.vendor, "intel")) {
+            //
+            if (is_intel(prop.vendor)) {
                 cl_device_type device_type;
-                
+
                 ciErrNum = (*__clGetDeviceInfo)(
                     prop.device_id, CL_DEVICE_TYPE,
                     sizeof(device_type), &device_type, NULL
@@ -334,11 +421,15 @@ void COPROCS::get_opencl(
                     warnings.push_back("clGetDeviceInfo failed to get device type for Intel device");
                     continue;
                 }
-                if (device_type == CL_DEVICE_TYPE_CPU) continue;
+                if (device_type == CL_DEVICE_TYPE_CPU) {
+                    gstate.host_info.have_cpu_opencl = true;
+                    gstate.host_info.cpu_opencl_prop = prop;
+                    continue;
+                }
 
                 prop.device_num = (int)(intel_gpu_opencls.size());
                 prop.opencl_device_index = device_index;
-                
+
                 COPROC_INTEL c;
                 c.opencl_prop = prop;
                 c.is_used = COPROC_UNUSED;
@@ -352,9 +443,11 @@ void COPROCS::get_opencl(
 
                 intel_gpu_opencls.push_back(prop);
 
-                // At present Intel GPUs only support OpenCL and do not have a native
-                // GPGPU framework, so treat each detected Intel OpenCL GPU device as 
+                // At present Intel GPUs only support OpenCL
+                // and do not have a native GPGPU framework,
+                // so treat each detected Intel OpenCL GPU device as
                 // a native device.
+                //
                 intel_gpus.push_back(c);
             }
         }
@@ -362,10 +455,10 @@ void COPROCS::get_opencl(
 
 
 #ifdef __APPLE__
-    // Work around a bug in OpenCL which returns only 
-    // 1/2 of total global RAM size. 
+    // Work around a bug in OpenCL which returns only
+    // 1/2 of total global RAM size.
     // This bug applies only to ATI GPUs, not to NVIDIA
-    // This has already been fixed on latest Catalyst 
+    // This has already been fixed on latest Catalyst
     // drivers, but Mac does not use Catalyst drivers.
     if (ati_opencls.size() > 0) {
         opencl_get_ati_mem_size_from_opengl();
@@ -381,7 +474,7 @@ void COPROCS::get_opencl(
         );
         return;
     }
-        
+
     if (nvidia.have_cuda) { // If CUDA already found the "best" NVIDIA GPU
         nvidia.merge_opencl(
             nvidia_opencls, ignore_gpu_instance[PROC_TYPE_NVIDIA_GPU]
@@ -414,8 +507,8 @@ void COPROCS::get_opencl(
 }
 
 cl_int COPROCS::get_opencl_info(
-    OPENCL_DEVICE_PROP& prop, 
-    cl_uint device_index, 
+    OPENCL_DEVICE_PROP& prop,
+    cl_uint device_index,
     vector<string>&warnings
 ) {
     cl_int ciErrNum;
@@ -574,17 +667,17 @@ cl_int COPROCS::get_opencl_info(
     return CL_SUCCESS;
 }
 
-// This is called for ATI GPUs with CAL or NVIDIA GPUs with CUDA, to merge 
+// This is called for ATI GPUs with CAL or NVIDIA GPUs with CUDA, to merge
 // the OpenCL info into the CAL or CUDA data for the "best" CAL or CUDA GPU.
-// This assumes that, for each GPU, we have previously correlated its CAL 
+// This assumes that, for each GPU, we have previously correlated its CAL
 // or CUDA device_num with its opencl_device_index.
 //
 void COPROC::merge_opencl(
-    vector<OPENCL_DEVICE_PROP> &opencls, 
+    vector<OPENCL_DEVICE_PROP> &opencls,
     vector<int>& ignore_dev
 ) {
     unsigned int i, j;
-    
+
     for (i=0; i<opencls.size(); i++) {
         if (in_vector(opencls[i].device_num, ignore_dev)) {
             opencls[i].is_used = COPROC_IGNORED;
@@ -597,7 +690,7 @@ void COPROC::merge_opencl(
             break;
         }
     }
-    
+
     opencl_device_count = 0;
 
     // Fill in info for other GPUs which CAL or CUDA found equivalent to best
@@ -617,11 +710,11 @@ void COPROC::merge_opencl(
 //
 void COPROC::find_best_opencls(
     bool use_all,
-    vector<OPENCL_DEVICE_PROP> &opencls, 
+    vector<OPENCL_DEVICE_PROP> &opencls,
     vector<int>& ignore_dev
 ) {
     unsigned int i;
-    
+
     // identify the most capable ATI or NVIDIA OpenCL GPU
     //
     bool first = true;
@@ -646,7 +739,7 @@ void COPROC::find_best_opencls(
         }
     }
 
-    // see which other instances are equivalent, and set the count, 
+    // see which other instances are equivalent, and set the count,
     // device_nums, opencl_device_count and opencl_device_ids fields
     //
     count = 0;
@@ -667,7 +760,7 @@ void COPROC::find_best_opencls(
 
 
 #ifdef __APPLE__
-// OpenCL returns incorrect total RAM size for some 
+// OpenCL returns incorrect total RAM size for some
 // ATI GPUs so we get that info from OpenGL on Macs
 
 #include <OpenGL/OpenGL.h>
@@ -692,16 +785,16 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
         for (i=0; i<32; ++i) {
             rendererIDs[i] = 0;
             modelName[i] = NULL;
-            
+
             CGOpenGLDisplayMask myMask = 1 << i;
             CGDirectDisplayID displayID = CGOpenGLDisplayMaskToDisplayID(myMask);
-            theErr2 = CGLQueryRendererInfo(myMask, &info, &numRenderers); 
+            theErr2 = CGLQueryRendererInfo(myMask, &info, &numRenderers);
             if ((displayID != kCGNullDirectDisplay) && (theErr2 == kCGLNoError)) {
                 // Get the I/O Kit service port for the display
                 io_registry_entry_t dspPort = CGDisplayIOServicePort(displayID);
                 for (j = 0; j < numRenderers; j++) {
                     // find accelerated renderer (assume only one)
-                    CGLDescribeRenderer (info, j, kCGLRPAcceleratedCompute, &rv); 
+                    CGLDescribeRenderer (info, j, kCGLRPAcceleratedCompute, &rv);
                     if (true == rv) { // if openCL-capable
                         // what is the renderer ID
                         CGLDescribeRenderer (info, j, kCGLRPRendererID, &rendererIDs[i]);
@@ -724,8 +817,8 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
             if (ati_gpu_index >= (int)ati_opencls.size()) {
                 break;
             }
-            
-            CGLDescribeRenderer (info, i, kCGLRPAcceleratedCompute, &rv); 
+
+            CGLDescribeRenderer (info, i, kCGLRPAcceleratedCompute, &rv);
             if (true == rv) { // if openCL-capable
                 // what is the renderer ID
                 CGLDescribeRenderer (info, i, kCGLRPRendererID, &rendererID);
@@ -735,7 +828,7 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
                 // build context and context specific info
                 CGLPixelFormatAttribute attribs[] = {
                     kCGLPFARendererID,
-                    (CGLPixelFormatAttribute)rendererID, 
+                    (CGLPixelFormatAttribute)rendererID,
                     kCGLPFAAllowOfflineRenderers,
                     (CGLPixelFormatAttribute)0
                 };
@@ -751,11 +844,7 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
                     if (cglContext) {
                         // get vendor string from renderer
                         const GLubyte * strVend = glGetString (GL_VENDOR);
-                        if (strVend &&
-                            ((strstr((char *)strVend, GPU_TYPE_ATI)) || 
-                            (strstr((char *)strVend, "AMD")) ||  
-                            (strstr((char *)strVend, "Advanced Micro Devices, Inc.")))
-                        ) {
+                        if (is_AMD((char *)strVend)) {
                             ati_opencls[ati_gpu_index].global_mem_size = deviceVRAM;
                             ati_opencls[ati_gpu_index].opencl_available_ram = deviceVRAM;
 
@@ -767,7 +856,7 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
                                     *++p='M';
                                     *++p='D';
                                 }
-                                
+
                                 for (j=0; j<32; j++) {
                                     if ((rendererID == rendererIDs[j]) && (modelName[j] != NULL)) {
                                         break;
@@ -795,8 +884,8 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
                                             *++p='D';
                                         }
                                     }
-                                    
-                                    if ((strRend == NULL) || 
+
+                                    if ((strRend == NULL) ||
                                         (!strstr(iokit_name, opencl_name))) {
                                         msg_printf(0, MSG_INFO,
                                             "[coproc] opencl_get_ati_mem_size_from_opengl model name to renderer mismatch: %s vs %s\n",
@@ -808,7 +897,7 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
 
                             ati_gpu_index++;
                         } // End if ATI / AMD GPU
-                        
+
                         CGLDestroyContext (cglContext);
                     } else {
                         if (log_flags.coproc_debug) {
@@ -828,14 +917,14 @@ void COPROCS::opencl_get_ati_mem_size_from_opengl() {
         }   // End loop: for (i = 0; i < numRenderers; i++)
         CGLDestroyRendererInfo (info);
     }
-    
+
     if (log_flags.coproc_debug) {
         for (j=0; j<32; j++) {
             if (modelName[j] != NULL) {
                 CFRelease(modelName[j]);
             }
         }
-    }    
+    }
     CGLSetCurrentContext (curr_ctx); // restore current CGL context
 }
 #endif

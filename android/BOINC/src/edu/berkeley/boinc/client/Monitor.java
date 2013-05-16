@@ -32,6 +32,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -43,6 +44,7 @@ import edu.berkeley.boinc.AppPreferences;
 import edu.berkeley.boinc.R;
 import edu.berkeley.boinc.rpc.AccountIn;
 import edu.berkeley.boinc.rpc.AccountOut;
+import edu.berkeley.boinc.rpc.CcState;
 import edu.berkeley.boinc.rpc.CcStatus;
 import edu.berkeley.boinc.rpc.GlobalPreferences;
 import edu.berkeley.boinc.rpc.Message;
@@ -50,7 +52,6 @@ import edu.berkeley.boinc.rpc.Project;
 import edu.berkeley.boinc.rpc.ProjectAttachReply;
 import edu.berkeley.boinc.rpc.ProjectInfo;
 import edu.berkeley.boinc.rpc.ProjectConfig;
-import edu.berkeley.boinc.rpc.Result;
 import edu.berkeley.boinc.rpc.RpcClient;
 import edu.berkeley.boinc.rpc.Transfer;
 
@@ -79,9 +80,6 @@ public class Monitor extends Service {
 	private RpcClient rpc = new RpcClient();
 
 	private final Integer maxDuration = 3000; //maximum polling duration
-	
-	private Integer retryRate;
-	private Integer retryAttempts;
 
 
 	// installs client and required files, executes client and reads initial preferences
@@ -92,16 +90,16 @@ public class Monitor extends Service {
 		String clientProcessName = clientPath + clientName;
 
 		String md5AssetClient = ComputeMD5Asset(clientName);
-		Log.d(TAG, "Hash of client (Asset): '" + md5AssetClient + "'");
+		//Log.d(TAG, "Hash of client (Asset): '" + md5AssetClient + "'");
 
 		String md5InstalledClient = ComputeMD5File(clientProcessName);
-		Log.d(TAG, "Hash of client (File): '" + md5InstalledClient + "'");
+		//Log.d(TAG, "Hash of client (File): '" + md5InstalledClient + "'");
 
 		// If client hashes do not match, we need to install the one that is a part
 		// of the package. Shutdown the currently running client if needed.
 		//
 		if (md5InstalledClient.compareToIgnoreCase(md5AssetClient) != 0) {
-
+			Log.d(TAG,"Hashes of installed client does not match binary in assets - re-install.");
 			// Determine if BOINC is already running.
 			//
 			quitProcessOsLevel(clientProcessName);
@@ -125,9 +123,10 @@ public class Monitor extends Service {
 			}
 		}
 
-		
 		// Try to connect to executed Client in loop
 		//
+		Integer retryRate = getResources().getInteger(R.integer.monitor_setup_connection_retry_rate_ms);
+		Integer retryAttempts = getResources().getInteger(R.integer.monitor_setup_connection_retry_attempts);
 		Boolean connected = false;
 		Integer counter = 0;
 		while(!connected && (counter < retryAttempts)) {
@@ -140,8 +139,10 @@ public class Monitor extends Service {
 			} catch (Exception e) {}
 		}
 		
-		if(connected) {
-			// if connection is set up, initial read of preferences
+		if(connected) { // connection established
+			// make client read override settings from file
+			rpc.readGlobalPrefsOverride();
+			// read preferences for GUI to be able to display data
 			GlobalPreferences clientPrefs = rpc.getGlobalPrefsWorkingStruct();
 			Monitor.getClientStatus().setPrefs(clientPrefs);
 		}
@@ -404,25 +405,29 @@ public class Monitor extends Service {
 		//
     	android.os.Process.sendSignal(clientPid, android.os.Process.SIGNAL_QUIT);
     	
-    	// Wait for up to 30 seconds for the client to shutdown gracefully
-    	Integer loopCounter = 0;
-    	while((loopCounter < 6) && (getPidForProcessName(processName) != null)) {
-    		loopCounter++;
+    	// Wait for the client to shutdown gracefully
+    	Integer attempts = getApplicationContext().getResources().getInteger(R.integer.shutdown_graceful_os_check_attempts);
+    	Integer sleepPeriod = getApplicationContext().getResources().getInteger(R.integer.shutdown_graceful_os_check_rate_ms);
+    	for(int x = 0; x < attempts; x++) {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(sleepPeriod);
 			} catch (Exception e) {}
+    		if(getPidForProcessName(processName) == null) { //client is now closed
+        		Log.d(TAG,"quitClient: gracefull SIGQUIT shutdown successful after " + x + " seconds");
+    			x = attempts;
+    		}
     	}
     	
-    	// Process is still alive, sind SIGKILL
     	clientPid = getPidForProcessName(processName);
     	if(clientPid != null) {
-    		Log.d(TAG, "SIGQUIT failed. SIGKILL pid: " + clientPid);
+    		// Process is still alive, send SIGKILL
+    		Log.w(TAG, "SIGQUIT failed. SIGKILL pid: " + clientPid);
     		android.os.Process.killProcess(clientPid);
     	}
     	
     	clientPid = getPidForProcessName(processName);
     	if(clientPid != null) {
-    		Log.d(TAG, "SIGKILL failed. still living pid: " + clientPid);
+    		Log.w(TAG, "SIGKILL failed. still living pid: " + clientPid);
     	}
     }
 	
@@ -475,9 +480,6 @@ public class Monitor extends Service {
 		authFileName = getString(R.string.auth_file_name); 
 		allProjectsList = getString(R.string.all_projects_list); 
 		globalOverridePreferences = getString(R.string.global_prefs_override);
-
-		retryRate = getResources().getInteger(R.integer.monitor_setup_connection_retry_rate_ms);
-		retryAttempts = getResources().getInteger(R.integer.monitor_setup_connection_retry_attempts);
 		
 		// initialize singleton helper classes and provide application context
 		clientStatus = new ClientStatus(this);
@@ -567,6 +569,8 @@ public class Monitor extends Service {
     // exits both, UI and BOINC client. 
     // BLOCKING! call from AsyncTask!
     public void quitClient() {
+    	String processName = clientPath + clientName;
+    	
     	monitorRunning = false; // stops ClientMonitorAsync loop
     	monitorThread.interrupt(); // wakening ClientMonitorAsync from sleep
     	// ClientMonitorAsync is not using RPC anymore
@@ -580,9 +584,27 @@ public class Monitor extends Service {
     	// there might be still other AsyncTasks executing RPCs
     	// close sockets in a synchronized way
     	rpc.close();
+    	// there are now no more RPCs...
     	
-    	// there are now more RPCs going on
-    	quitProcessOsLevel(clientPath + clientName);
+    	// graceful RPC shutdown waiting period...
+    	Boolean success = false;
+    	Integer attempts = getApplicationContext().getResources().getInteger(R.integer.shutdown_graceful_rpc_check_attempts);
+    	Integer sleepPeriod = getApplicationContext().getResources().getInteger(R.integer.shutdown_graceful_rpc_check_rate_ms);
+    	for(int x = 0; x < attempts; x++) {
+    		try {
+    			Thread.sleep(sleepPeriod);
+    		} catch (Exception e) {}
+    		if(getPidForProcessName(processName) == null) { //client is now closed
+        		Log.d(TAG,"quitClient: gracefull RPC shutdown successful after " + x + " seconds");
+    			success = true;
+    			x = attempts;
+    		}
+    	}
+    	
+    	if(!success) {
+    		// graceful RPC shutdown was not successful, try OS signals
+        	quitProcessOsLevel(processName);
+    	}
     	
     	// set client status to SETUP_STATUS_CLOSED to adapt layout accordingly
 		getClientStatus().setSetupStatus(ClientStatus.SETUP_STATUS_CLOSED,true);
@@ -611,7 +633,6 @@ public class Monitor extends Service {
 		return false;
 	}
 	
-
 	public String readAuthToken() {
 		File authFile = new File(clientPath+authFileName);
     	StringBuffer fileData = new StringBuffer(100);
@@ -809,6 +830,12 @@ public class Monitor extends Service {
 		param[1] = name;
 		(new TransferRetryAsync()).execute(param);
 	}
+
+	// executes specified operation on result
+	// e.g. RpcClient.RESULT_SUSPEND, RpcClient.RESULT_RESUME, RpcClient.RESULT_ABORT
+	public Boolean resultOperation(String url, String name, int operation) {
+		return rpc.resultOp(operation, url, name);
+	}
 	
 	public AccountOut createAccount(String url, String email, String userName, String pwd, String teamName) {
 		AccountIn information = new AccountIn();
@@ -851,6 +878,40 @@ public class Monitor extends Service {
     	return auth;
 	}
 	
+	// returns client messages to be shown in EventLog tab.
+	// start is counting from beginning, e.g. start=0 number=50
+	// needs lastIndexOfList as reference for consistency
+	// returns 50 most recent messages
+	public List<Message> getEventLogMessages(int startIndex, int number, int lastIndexOfList) {
+		//Log.d(TAG,"getEventLogMessage from start: " + startIndex + " amount: " + number + "lastIndexOfList: " + lastIndexOfList);
+		Integer requestedLastIndex = startIndex + number;
+		if(lastIndexOfList == 0) { // list is empty, initial start
+			lastIndexOfList = rpc.getMessageCount() - 1; // possible lastIndexOfList if all messages were read
+			//Log.d(TAG,"list ist empty, initial start, read message count: " + (lastIndexOfList+1));
+		}
+		if(requestedLastIndex > lastIndexOfList + 1) { // requesting more messages than actually present
+			number = lastIndexOfList - startIndex + 1; 
+			//Log.d(TAG,"getEventLogMessage requesting more messages than left, number changed to " + number);
+		}
+		Integer param = lastIndexOfList + 1 - startIndex - number;
+		//Log.d(TAG,"getEventLogMessage calling RPC with: " + param);
+		try {
+			ArrayList<Message> tmpL = rpc.getMessages(param);
+			List<Message> msgs = tmpL.subList(0, tmpL.size() - startIndex); // tmp.size - start is amount of actually new values. Usually equals number, except for end of list
+			//Log.d(TAG,"getEventLogMessages returning " + msgs.size() + " messages with oldest element seq no: " + msgs.get(0).seqno + " and recent seq no: " + msgs.get(msgs.size()-1).seqno);
+			return msgs;
+		} catch (Exception e) {
+			//Log.w(TAG,"error in retrieving sublist", e);
+			return null;
+		} 
+	}
+	
+	// returns client messages that are more recent than given seqNo
+	public ArrayList<Message> getEventLogMessages(int seqNo) {
+		//Log.d(TAG, "getEventLogMessage more recent than seqNo: " + seqNo);
+		return rpc.getMessages(seqNo);
+	}
+	
 	private final class ClientMonitorAsync extends AsyncTask<Integer, String, Boolean> {
 
 		private final String TAG = "BOINC ClientMonitorAsync";
@@ -874,38 +935,33 @@ public class Monitor extends Service {
 				} else {
 					if(showRpcCommands) Log.d(TAG, "getCcStatus");
 					CcStatus status = rpc.getCcStatus();
-					/*
+					
 					if(showRpcCommands) Log.d(TAG, "getState"); 
 					CcState state = rpc.getState();
-					*/
-					if(showRpcCommands) Log.d(TAG, "getResults");
-					ArrayList<Result>  results = rpc.getResults();
-					if(showRpcCommands) Log.d(TAG, "getProjects");
-					ArrayList<Project>  projects = rpc.getProjectStatus();
+					
 					if(showRpcCommands) Log.d(TAG, "getTransers");
 					ArrayList<Transfer>  transfers = rpc.getFileTransfers();
-					ArrayList<Message> msgs = new ArrayList<Message>();
-					// retrieve messages only, if tabs are actually enabled. very resource intense with logging on emulator!
-					if(getResources().getBoolean(R.bool.tab_eventlog)) { 
-						Integer count = rpc.getMessageCount();
-						msgs = rpc.getMessages(count - 250); //get the most recent 250 messages
-						if(showRpcCommands) Log.d(TAG, "getMessages, count: " + count);
-					}
 					
-					if( (status != null) && (results != null) && (projects != null) && (transfers != null)) {
-						Monitor.getClientStatus().setClientStatus(status, results, projects, transfers, msgs);
+					if( (status != null) && (state != null) && (state.results != null) && (state.projects != null) && (transfers != null)) {
+						Monitor.getClientStatus().setClientStatus(status, state.results, state.projects, transfers);
+						// Update status bar notification
+						ClientNotification.getInstance().update(getApplicationContext(), getClientStatus());
 					} else {
 						Log.d(TAG, "client status connection problem");
 					}
 					
-			        Intent clientStatus = new Intent();
-			        clientStatus.setAction("edu.berkeley.boinc.clientstatus");
-			        getApplicationContext().sendBroadcast(clientStatus);
-			        
-			        sleep = true;
+					// check whether monitor is still intended to update, if not, skip broadcast and exit...
+					if(monitorRunning) {
+				        Intent clientStatus = new Intent();
+				        clientStatus.setAction("edu.berkeley.boinc.clientstatus");
+				        getApplicationContext().sendBroadcast(clientStatus);
+				        
+				        sleep = true;
+					}
 				}
 				
 				if(sleep) {
+					sleep = false;
 		    		try {
 		    			Thread.sleep(refreshFrequency);
 		    		} catch(InterruptedException e) {Log.d(TAG,"sleep interrupted");}
