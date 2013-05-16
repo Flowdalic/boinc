@@ -33,6 +33,8 @@
 #include <locale.h>
 #endif
 
+#include <deque>
+
 #include "cc_config.h"
 #include "common_defs.h"
 #include "filesys.h"
@@ -125,6 +127,7 @@ struct PROJECT {
     std::string team_name;
     int hostid;
     std::vector<GUI_URL> gui_urls;
+    std::string project_dir;
     double user_total_credit;
     double user_expavg_credit;
     double host_total_credit;      // as reported by server
@@ -456,7 +459,7 @@ struct FILE_TRANSFERS {
 };
 
 struct MESSAGES {
-    std::vector<MESSAGE*> messages;
+    std::deque<MESSAGE*> messages;
 
     MESSAGES();
     ~MESSAGES();
@@ -689,6 +692,7 @@ struct RPC_CLIENT {
     int get_statistics(PROJECTS&);
     int network_available();
     int get_project_init_status(PROJECT_INIT_STATUS& pis);
+    int report_device_status(DEVICE_STATUS&);
 
     // the following are asynch operations.
     // Make the first call to start the op,

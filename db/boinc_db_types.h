@@ -52,6 +52,8 @@ struct PLATFORM {
 #define LOCALITY_SCHED_NONE     0
 #define LOCALITY_SCHED_LITE     1
 
+#define MAX_SIZE_CLASSES    10
+
 // An application.
 //
 struct APP {
@@ -77,12 +79,15 @@ struct APP {
     bool non_cpu_intensive;
     int locality_scheduling;
         // type of locality scheduling used by this app (see above)
+    int n_size_classes;
+        // for multi-size apps, number of size classes
 
     int write(FILE*);
     void clear();
 
     // not in DB:
     bool have_job;
+    double size_class_quantiles[MAX_SIZE_CLASSES];
 };
 
 // A version of an application.
@@ -350,6 +355,7 @@ struct HOST {
 };
 
 // values for file_delete state
+// see html/inc/common_defs.inc
 #define FILE_DELETE_INIT        0
 #define FILE_DELETE_READY       1
     // set to this value only when we believe all files are uploaded
@@ -367,7 +373,8 @@ struct HOST {
 // There's just a bunch of independent substates
 // (file delete, assimilate, and states of results, error flags)
 
-// bit fields of error_mask
+// bit fields of workunit.error_mask
+// see html/inc/common_defs.inc
 //
 #define WU_ERROR_COULDNT_SEND_RESULT            1
 #define WU_ERROR_TOO_MANY_ERROR_RESULTS         2
@@ -447,10 +454,14 @@ struct WORKUNIT {
         // which version this job is committed to (0 if none)
     int transitioner_flags;
         // bitmask; see values above
+    int size_class;
+        // -1 means none; encode this here so that transitioner
+        // doesn't have to look up app
 
     // the following not used in the DB
     char app_name[256];
     void clear();
+    WORKUNIT(){clear();}
 };
 
 struct CREDITED_JOB {
@@ -468,7 +479,7 @@ struct CREDITED_JOB {
 // values of result.server_state
 // see html/inc/common_defs.inc
 //
-//#define RESULT_SERVER_STATE_INACTIVE       1
+#define RESULT_SERVER_STATE_INACTIVE       1
 #define RESULT_SERVER_STATE_UNSENT         2
 #define RESULT_SERVER_STATE_IN_PROGRESS    4
 #define RESULT_SERVER_STATE_OVER           5
@@ -574,8 +585,11 @@ struct RESULT {
     bool runtime_outlier;
         // the validator tagged this as having an unusual elapsed time;
         // don't include it in PFC or elapsed time statistics.
+    int size_class;
+        // -1 means none
 
     void clear();
+    RESULT() {clear();}
 };
 
 struct BATCH {

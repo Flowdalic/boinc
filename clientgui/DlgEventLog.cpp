@@ -36,7 +36,7 @@
 #include "DlgEventLogListCtrl.h"
 #include "DlgEventLog.h"
 #include "AdvancedFrame.h"
-
+#include <wx/display.h>
 
 
 ////@begin includes
@@ -133,14 +133,24 @@ CDlgEventLog::~CDlgEventLog() {
 bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
 ////@begin CDlgEventLog member initialisation
+    CMainDocument* pDoc     = wxGetApp().GetDocument();
+    wxASSERT(pDoc);
+    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+    
     m_iPreviousRowCount = 0;
     m_iTotalDocCount = 0;
-    m_iPreviousTotalDocCount = 0;
+    m_iPreviousFirstMsgSeqNum = pDoc->GetFirstMsgSeqNum();
+    m_iPreviousLastMsgSeqNum = m_iPreviousFirstMsgSeqNum - 1;
+
+    m_iNumDeletedFilteredRows = 0;
+    m_iTotalDeletedFilterRows = 0;
+    
     if (!s_bIsFiltered) {
         s_strFilteredProjectName.clear();
     }
     m_iFilteredIndexes.Clear();
 	m_bProcessingRefreshEvent = false;
+    m_bWasConnected = false;
     m_bEventLogIsOpen = true;
 ////@end CDlgEventLog member initialisation
 
@@ -156,10 +166,32 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
         GetWindowDimensions( oTempPoint, oTempSize );
 
 #ifdef __WXMSW__
-        // Windows does some crazy things if the initial position is a negative
-        // value.
-        oTempPoint.x = wxDefaultCoord;
-        oTempPoint.y = wxDefaultCoord;
+        // Get the current display space for the current window
+		int iDisplay = wxDisplay::GetFromWindow(parent);
+		if ( iDisplay == wxNOT_FOUND ) iDisplay = 0;
+        wxDisplay *display = new wxDisplay(iDisplay);
+        wxRect rDisplay = display->GetClientArea();
+
+		// Check that the saved height and width is not larger than the displayable space.
+		// If it is, then reduce the size.
+        if ( oTempSize.GetWidth() > rDisplay.width ) oTempSize.SetWidth(rDisplay.width);
+        if ( oTempSize.GetHeight() > rDisplay.height ) oTempSize.SetHeight(rDisplay.height);
+
+        // Check if part of the display was going to be off the screen, if so, center the 
+        // display on that axis
+		if ( oTempPoint.x < 0 ) {
+			oTempPoint.x = 0;
+		} else if ( oTempPoint.x + oTempSize.GetWidth() > rDisplay.width ) {
+			oTempPoint.x = rDisplay.width - oTempSize.GetWidth();
+		}
+
+		if ( oTempPoint.y < 0 ) {
+			oTempPoint.y = 0;
+		} else if ( oTempPoint.y + oTempSize.GetHeight() > rDisplay.height ) {
+			oTempPoint.y = rDisplay.height - oTempSize.GetHeight();
+		}
+
+        delete display;
 #endif
 
 #ifdef __WXMAC__
@@ -222,6 +254,7 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 
     SetTextColor();
     RestoreState();
+    OnRefresh();
 
     return true;
 }
@@ -400,6 +433,7 @@ void CDlgEventLog::OnMessagesFilter( wxCommandEvent& WXUNUSED(event) ) {
 
     m_iFilteredIndexes.Clear();
     s_strFilteredProjectName.clear();
+    m_iTotalDeletedFilterRows = 0;
 
     if (s_bIsFiltered) {
         s_bIsFiltered = false;
@@ -441,31 +475,80 @@ wxInt32 CDlgEventLog::GetFilteredMessageIndex( wxInt32 iRow) const {
 }
 
 
-// Get the (possibly filtered) item count (i.e., the Row count)
+// NOTE: this function is designed to be called only
+// from CDlgEventLog::OnRefresh().  If you need to call it
+// from other routines, it will need modification.
+//
+// Get the (possibly filtered) item count (i.e., the Row count) and
+// make any needed adjustments if oldest items have been deleted.
 wxInt32 CDlgEventLog::GetDocCount() {
-    int i;
+    int i, j, numDeletedRows;
+    CMainDocument* pDoc     = wxGetApp().GetDocument();
+    wxASSERT(pDoc);
+    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
     
-    m_iTotalDocCount = wxGetApp().GetDocument()->GetMessageCount();
-    if (m_iTotalDocCount < m_iPreviousTotalDocCount) {
-        // Usually due to a disconnect from client
-        ResetMessageFiltering();
+    m_iTotalDocCount = pDoc->GetMessageCount();
+
+    numDeletedRows = pDoc->GetFirstMsgSeqNum() - m_iPreviousFirstMsgSeqNum;
+    if ((numDeletedRows < 0) || (m_iPreviousFirstMsgSeqNum < 0)) {
+        numDeletedRows = 0;
     }
-    
+    m_iNumDeletedFilteredRows = 0;
+
     if (s_bIsFiltered) {
-        for (i = m_iPreviousTotalDocCount; i < m_iTotalDocCount; i++) {
-            MESSAGE*   message = wxGetApp().GetDocument()->message(i);
+        if (numDeletedRows > 0) {
+            // Remove any deleted messages from our filtered list
+            while (m_iFilteredIndexes.GetCount() > 0) {
+                if (m_iFilteredIndexes[0] >= numDeletedRows) break;
+                m_iFilteredIndexes.RemoveAt(0);
+                m_iNumDeletedFilteredRows++;
+                m_iTotalDeletedFilterRows++;
+            }
+            
+            // Adjust the remaining indexes
+            for (i = m_iFilteredIndexes.GetCount()-1; i >= 0; i--) {
+                m_iFilteredIndexes[i] -= numDeletedRows;
+            }
+        }
+        
+        // Add indexes of new messages to filtered list as appropriate
+        i = m_iTotalDocCount - (pDoc->GetLastMsgSeqNum() - m_iPreviousLastMsgSeqNum);
+        if (i < 0) i = 0;
+        for (; i < m_iTotalDocCount; i++) {
+            MESSAGE* message = pDoc->message(i);
             if (message->project.empty() || (message->project == s_strFilteredProjectName)) {
                 m_iFilteredIndexes.Add(i);
             }
         }
-        m_iPreviousTotalDocCount = m_iTotalDocCount;
         m_iFilteredDocCount = (int)(m_iFilteredIndexes.GetCount());
-        return m_iFilteredDocCount;
+    } else {
+        m_iFilteredDocCount = m_iTotalDocCount;
+        m_iNumDeletedFilteredRows = numDeletedRows;
     }
 
-    m_iPreviousTotalDocCount = m_iTotalDocCount;
-    m_iFilteredDocCount = m_iTotalDocCount;
-    return m_iTotalDocCount;
+    if (numDeletedRows > 0) {
+        // Adjust the selected row numbers
+        wxArrayInt arrSelRows;
+        
+        i = -1;
+        for (;;) {
+            i = m_pList->GetNextItem(i, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+            if (i < 0) break;
+            arrSelRows.Add(i);
+        }
+        int count = arrSelRows.Count();
+        for (i=0; i<count; i++) {
+            m_pList->SetItemState(arrSelRows[i], 0, wxLIST_STATE_SELECTED);
+        }
+
+        for (i=0; i<count; i++) {
+            if ((j = arrSelRows[i] - m_iNumDeletedFilteredRows) >= 0) {
+                m_pList->SetItemState(j, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+            }
+        }
+    }
+    
+    return s_bIsFiltered ? m_iFilteredDocCount : m_iTotalDocCount;
 }
 
 
@@ -474,7 +557,6 @@ wxInt32 CDlgEventLog::GetDocCount() {
  */
 void CDlgEventLog::OnRefresh() {
     bool isConnected;
-    static bool was_connected = false;
     static wxString strLastMachineName = wxEmptyString;
     wxString strNewMachineName = wxEmptyString;
     CMainDocument* pDoc     = wxGetApp().GetDocument();
@@ -485,13 +567,16 @@ void CDlgEventLog::OnRefresh() {
 
     if (!m_bProcessingRefreshEvent) {
         m_bProcessingRefreshEvent = true;
-
         wxASSERT(m_pList);
 
         wxInt32 iRowCount = GetDocCount();
+        long topItem = m_pList->GetTopItem();
+        
         if (0 >= iRowCount) {
             m_pList->DeleteAllItems();
             ResetMessageFiltering();
+            m_iPreviousFirstMsgSeqNum = 0;
+            m_iPreviousLastMsgSeqNum = 0;
         } else {
             // If connected computer changed, reset message filtering
             isConnected = wxGetApp().GetDocument()->IsConnected();
@@ -499,14 +584,17 @@ void CDlgEventLog::OnRefresh() {
                 pDoc->GetConnectedComputerName(strNewMachineName);
                 if (strLastMachineName != strNewMachineName) {
                     strLastMachineName = strNewMachineName;
-                    was_connected = false;
+                    m_bWasConnected = false;
                     ResetMessageFiltering();
+                    m_iPreviousFirstMsgSeqNum = pDoc->GetFirstMsgSeqNum();
+                    m_iPreviousLastMsgSeqNum = m_iPreviousFirstMsgSeqNum - 1;
+                    iRowCount = m_iTotalDocCount;   // In case we had filtering set
                 }
             }
 
             // If connection status changed, adjust color of messages display
-            if (was_connected != isConnected) {
-                was_connected = isConnected;
+            if (m_bWasConnected != isConnected) {
+                m_bWasConnected = isConnected;
                 SetTextColor();
 
                 // Force a complete update
@@ -516,20 +604,34 @@ void CDlgEventLog::OnRefresh() {
 
             } else {
                 // Connection status didn't change
-                if (m_iPreviousRowCount != iRowCount) {
-                    m_pList->SetItemCount(iRowCount);
+                if (m_iPreviousLastMsgSeqNum != pDoc->GetLastMsgSeqNum()) {
+                    if (m_iPreviousRowCount == iRowCount) {
+                        m_pList->Refresh();
+                    } else {
+                        m_pList->SetItemCount(iRowCount);
+                    }
                 }
             }
         }
 
-        if ((iRowCount > 1) && (EnsureLastItemVisible()) && (m_iPreviousRowCount != iRowCount)) {
-            m_pList->EnsureVisible(iRowCount - 1);
+        if ((iRowCount > 1) && (m_iPreviousLastMsgSeqNum != pDoc->GetLastMsgSeqNum())) {
+            if (EnsureLastItemVisible()) {
+                m_pList->EnsureVisible(iRowCount - 1);
+            } else if (topItem > 0) {
+                int n = topItem - m_iNumDeletedFilteredRows;
+                if (n < 0) n = 0;
+                Freeze();   // Avoid flicker if selected rows are visible
+                m_pList->EnsureVisible(n);
+                Thaw();
+            }
         }
 
-        if (m_iPreviousRowCount != iRowCount) {
-            m_iPreviousRowCount = iRowCount;
+        m_iPreviousRowCount = iRowCount;
+        if (m_iTotalDocCount > 0) {
+            m_iPreviousFirstMsgSeqNum = pDoc->GetFirstMsgSeqNum();
+            m_iPreviousLastMsgSeqNum = pDoc->GetLastMsgSeqNum();
         }
-
+        
         UpdateButtons();
 
         m_bProcessingRefreshEvent = false;
@@ -787,6 +889,7 @@ void CDlgEventLog::ResetMessageFiltering() {
     s_strFilteredProjectName.clear();
     m_iFilteredIndexes.Clear();
     SetFilterButtonText();
+    m_iTotalDeletedFilterRows = 0;
 }
 
 
@@ -842,6 +945,7 @@ wxListItemAttr* CDlgEventLog::OnListGetItemAttr(long item) const {
     if (wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW) != wxColor(wxT("WHITE"))) return NULL;
 
     if (message) {
+        item += s_bIsFiltered ? m_iTotalDeletedFilterRows : m_iPreviousFirstMsgSeqNum;
         switch(message->priority) {
         case MSG_USER_ALERT:
             pAttribute = item % 2 ? m_pMessageErrorGrayAttr : m_pMessageErrorAttr;

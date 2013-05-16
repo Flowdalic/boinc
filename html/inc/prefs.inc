@@ -45,6 +45,7 @@
 //    [ <no_cpu>1</no_cpu> ]
 //    [ <no_cuda>1</no_cuda> ]
 //    [ <no_ati>1</no_ati> ]
+//    [ <no_intel_gpu>1</no_intel_gpu> ]
 //    <project-specific>
 //            ... (arbitrary project-specific XML)
 //    </project-specific>
@@ -337,6 +338,18 @@ if ($app_types->count > 1) {
             true
         );
     }
+    if ($app_types->intel_gpu) {
+        $project_pref_descs[] = new PREF_BOOL (
+            tra(
+                "Use Intel GPU %1 Enforced by version 7.0+ %2",
+                "<br><span class=note>",
+                "</span>"
+            ),
+            "no_intel_gpu",
+            false,
+            true
+        );
+    }
 }
 
 if (isset($project_has_beta) && $project_has_beta) {
@@ -404,6 +417,7 @@ global $venue_name;
 function get_disk_space_config() {
     global  $config;
     $config = get_config();
+    $dp = new StdClass;
     $dp->disk_max_used_gb = parse_config($config, "<default_disk_max_used_gb>");
     $dp->disk_max_used_pct = parse_config($config, "<default_disk_max_used_pct>");
     $dp->disk_min_free_gb = parse_config($config, "<default_disk_min_free_gb>");
@@ -567,7 +581,7 @@ function default_prefs_global() {
     global $disk_prefs;
     global $net_prefs;
 
-    $p = null;
+    $p = new StdClass;
     foreach ($cpu_prefs as $pref) {
         $pref->set_default($p);
     }
@@ -583,7 +597,7 @@ function default_prefs_global() {
 function default_prefs_project() {
     global $project_pref_descs;
 
-    $p = null;
+    $p = new StdClass;
     foreach ($project_pref_descs as $pref) {
         $pref->set_default($p);
     }

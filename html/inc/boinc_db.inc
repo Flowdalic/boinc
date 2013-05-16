@@ -69,21 +69,30 @@ class BoincDb extends DbConn {
     // 2) check whether the "stop_web" trigger file is present
     //
     static function get($readonly = false) {
+        global $generating_xml;
         if (!isset(self::$instance)) {
             if (web_stopped()) {
-                show_page("Project down for maintenance",
-                    "Please check back in a few hours."
-                );
-                exit;
+                if ($generating_xml) {
+                    xml_error(-183, "project down for maintenance");
+                } else {
+                    show_page("Project down for maintenance",
+                        "Please check back in a few hours."
+                    );
+                    exit;
+                }
             }
             self::get_aux($readonly);
             if (!self::$instance) {
-                show_page(
-                    "Project is down",
-                    "The project's database server is down.
-                    Please check back in a few hours."
-                );
-                exit;
+                if ($generating_xml) {
+                    xml_error(-138, "the project's database server is down");
+                } else {
+                    show_page(
+                        "Project is down",
+                        "The project's database server is down.
+                        Please check back in a few hours."
+                    );
+                    exit;
+                }
             }
         }
         return self::$instance;
@@ -91,7 +100,7 @@ class BoincDb extends DbConn {
 
     static function escape_string($string) {
         $db = self::get();
-        return parent::base_escape_string(trim($string));
+        return $db->base_escape_string(trim($string));
     }
     static function error() {
         $db = self::get();
@@ -360,9 +369,9 @@ class BoincProfile {
         $db = BoincDb::get();
         return $db->enum('profile', 'BoincProfile', $clause, $clause2);
     }
-    static function enum_fields($fields, $clause=null, $clause2=null) {
+    static function enum_fields($fields, $where_clause=null, $order_clause=null) {
         $db = BoincDb::get();
-        return $db->enum_fields('profile', 'BoincProfile', $fields, $clause, $clause2);
+        return $db->enum_fields('profile', 'BoincProfile', $fields, $where_clause, $order_clause);
     }
     function delete_aux($clause) {
         $db = BoincDb::get();

@@ -30,11 +30,17 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
 
-function get_app($r) {
-    $name = (string)($r->batch->app_name);
+function get_wu($name) {
+    $name = BoincDb::escape_string($name);
+    $wu = BoincWorkunit::lookup("name='$name'");
+    if (!$wu) xml_error(-1, "BOINC server: no job named $name was found");
+    return $wu;
+}
+
+function get_app($name) {
     $name = BoincDb::escape_string($name);
     $app = BoincApp::lookup("name='$name'");
-    if (!$app) xml_error(-1, "no app");
+    if (!$app) xml_error(-1, "BOINC server: no app named $name was found");
     return $app;
 }
 
@@ -62,7 +68,7 @@ function est_elapsed_time($r) {
 }
 
 function estimate_batch($r) {
-    $app = get_app($r);
+    $app = get_app((string)($r->batch->app_name));
     list($user, $user_submit) = authenticate_user($r, $app);
 
     $e = est_elapsed_time($r);
@@ -80,7 +86,7 @@ function validate_batch($jobs, $template) {
     foreach($jobs as $job) {
         $m = count($job->input_files);
         if ($n != $m) {
-            xml_error(-1, "wrong # of input files for job $i: need $n, got $m");
+            xml_error(-1, "BOINC server: wrong # of input files for job $i: need $n, got $m");
         }
         $i++;
     }
@@ -94,26 +100,23 @@ function stage_file($file) {
     global $fanout;
 
     switch ($file->mode) {
+    case "semilocal":
     case "local":
         $md5 = md5_file($file->source);
         if (!$md5) {
-            xml_error(-1, "Can't get MD5 of file $file->source");
+            xml_error(-1, "BOINC server: Can't get MD5 of file $file->source");
         }
         $name = "jf_$md5";
         $path = dir_hier_path($name, "../../download", $fanout);
         if (file_exists($path)) return $name;
         if (!copy($file->source, $path)) {
-            xml_error(-1, "can't copy file from $file->source to $path");
+            xml_error(-1, "BOINC server: can't copy file from $file->source to $path");
         }
         return $name;
     case "local_staged":
         return $file->source;
-    case "remote":
-        xml_error(-1, "remote file mode not implemented");
-    case "semilocal":
-        xml_error(-1, "semilocal file mode not implemented");
     }
-    xml_error(-1, "unknown file mode $file->mode");
+    xml_error(-1, "BOINC server: unsupported file mode: $file->mode");
 }
 
 // stage all the files
@@ -137,19 +140,19 @@ function submit_job($job, $template, $app, $batch_id, $i, $priority) {
     }
     $ret = system($cmd);
     if ($ret === FALSE) {
-        xml_error(-1, "can't create job");
+        xml_error(-1, "BOINC server: can't create job");
     }
 }
 
 function xml_get_jobs($r) {
     $jobs = array();
     foreach($r->batch->job as $j) {
-        $job = null;
+        $job = new StdClass;
         $job->input_files = array();
         $job->command_line = (string)$j->command_line;
         $job->rsc_fpops_est = (double)$j->rsc_fpops_est;
         foreach ($j->input_file as $f) {
-            $file = null;
+            $file = new StdClass;
             $file->mode = (string)$f->mode;
             $file->source = (string)$f->source;
             $job->input_files[] = $file;
@@ -160,7 +163,7 @@ function xml_get_jobs($r) {
 }
 
 function submit_batch($r) {
-    $app = get_app($r);
+    $app = get_app((string)($r->batch->app_name));
     list($user, $user_submit) = authenticate_user($r, $app);
     $template = read_input_template($app);
     $jobs = xml_get_jobs($r);
@@ -172,13 +175,13 @@ function submit_batch($r) {
     if ($batch_id) {
         $batch = BoincBatch::lookup_id($batch_id);
         if (!$batch) {
-            xml_error(-1, "no batch $batch_id");
+            xml_error(-1, "BOINC server: no batch $batch_id");
         }
         if ($batch->user_id != $user->id) {
-            xml_error(-1, "not owner");
+            xml_error(-1, "BOINC server: not owner of batch");
         }
         if ($batch->state != BATCH_STATE_INIT) {
-            xml_error(-1, "batch not in init state");
+            xml_error(-1, "BOINC server: batch not in init state");
         }
     }
 
@@ -195,28 +198,28 @@ function submit_batch($r) {
             if ($x) {
                 $total_flops += $x;
             } else {
-                xml_error(-1, "no rsc_fpops_est given");
+                xml_error(-1, "BOINC server: no rsc_fpops_est given");
             }
         }
     }
     $cmd = "cd ../../bin; ./adjust_user_priority --user $user->id --flops $total_flops --app $app->name";
     $x = exec($cmd);
     if (!is_numeric($x) || (double)$x == 0) {
-        xml_error(-1, "$cmd returned $x");
+        xml_error(-1, "BOINC server: $cmd returned $x");
     }
     $let = (double)$x;
 
     if ($batch_id) {
         $njobs = count($jobs);
         $ret = $batch->update("njobs=$njobs, logical_end_time=$let, state= ".BATCH_STATE_IN_PROGRESS);
-        if (!$ret) xml_error(-1, "batch->update() failed");
+        if (!$ret) xml_error(-1, "BOINC server: batch->update() failed");
     } else {
         $batch_name = (string)($r->batch->batch_name);
         $batch_id = BoincBatch::insert(
             "(user_id, create_time, njobs, name, app_id, logical_end_time, state) values ($user->id, $now, $njobs, '$batch_name', $app->id, $let, ".BATCH_STATE_IN_PROGRESS.")"
         );
         if (!$batch_id) {
-            xml_error(-1, "Can't create batch: ".mysql_error());
+            xml_error(-1, "BOINC server: Can't create batch: ".mysql_error());
         }
     }
     $i = 0;
@@ -227,7 +230,7 @@ function submit_batch($r) {
 }
 
 function create_batch($r) {
-    $app = get_app($r);
+    $app = get_app((string)($r->batch->app_name));
     list($user, $user_submit) = authenticate_user($r, $app);
     $now = time();
     $batch_name = (string)($r->batch->batch_name);
@@ -235,7 +238,7 @@ function create_batch($r) {
         "(user_id, create_time, name, app_id, state) values ($user->id, $now, '$batch_name', $app->id, ".BATCH_STATE_INIT.")"
     );
     if (!$batch_id) {
-        xml_error(-1, "Can't create batch: ".mysql_error());
+        xml_error(-1, "BOINC server: Can't create batch: ".mysql_error());
     }
     echo "<batch_id>$batch_id</batch_id>\n";
 }
@@ -290,18 +293,20 @@ function get_batch($r) {
     } else if (!empty($r->batch_name)) {
         $batch_name = (string)($r->batch_name);
         $batch_name = BoincDb::escape_string($batch_name);
-        $batch = BoincBatch::lookup("name='$batch_name'");
+        $batch = BoincBatch::lookup_name($batch_name);
     } else {
-        xml_error(-1, "batch not specified");
+        xml_error(-1, "BOINC server: batch not specified");
     }
-    if (!$batch) xml_error(-1, "no such batch");
+    if (!$batch) xml_error(-1, "BOINC server: no such batch");
     return $batch;
 }
 
 function query_batch($r) {
     list($user, $user_submit) = authenticate_user($r, null);
     $batch = get_batch($r);
-    if ($batch->user_id != $user->id) xml_error(-1, "not owner");
+    if ($batch->user_id != $user->id) {
+        xml_error(-1, "BOINC server: not owner of batch");
+    }
 
     $wus = BoincWorkunit::enum("batch = $batch_id");
     $batch = get_batch_params($batch, $wus);
@@ -324,26 +329,41 @@ function query_batch($r) {
 //
 function query_batch2($r) {
     list($user, $user_submit) = authenticate_user($r, null);
-    $batch = get_batch($r);
-    if ($batch->user_id != $user->id) xml_error(-1, "not owner");
-    $wus = BoincWorkunit::enum("batch = $batch->id");
-    echo "<batch>\n";
-    foreach ($wus as $wu) {
-        if ($wu->canonical_resultid) {
-            $status = "done";
-        } else if ($wu->error_mask) {
-            $status = "error";
-        } else {
-            $status = "in progress";
+    $batch_names = $r->batch_name;
+    $batches = array();
+    foreach ($batch_names as $b) {
+        $batch_name = (string)$b;
+        $batch_name = BoincDb::escape_string($batch_name);
+        $batch = BoincBatch::lookup_name($batch_name);
+        if (!$batch) {
+            xml_error(-1, "no batch named $batch_name");
         }
-        echo
+        if ($batch->user_id != $user->id) {
+            xml_error(-1, "not owner of $batch_name");
+        }
+        $batches[] = $batch;
+    }
+
+    echo "<jobs>\n";
+    foreach ($batches as $batch) {
+        $wus = BoincWorkunit::enum("batch = $batch->id");
+        foreach ($wus as $wu) {
+            if ($wu->canonical_resultid) {
+                $status = "DONE";
+            } else if ($wu->error_mask) {
+                $status = "ERROR";
+            } else {
+                $status = "IN_PROGRESS";
+            }
+            echo
 "    <job>
         <job_name>$wu->name</job_name>
         <status>$status</status>
     </job>
 ";
+        }
     }
-    echo "</batch>\n";
+    echo "</jobs>\n";
 }
 
 function query_job($r) {
@@ -378,6 +398,53 @@ function query_job($r) {
         echo "</instance>\n";
     }
     echo "</job>\n";
+}
+
+// the following for Condor.
+// If the job has a canonical instance, return info about it.
+// Otherwise find an instance that completed
+// (possibly crashed) and return its info.
+//
+function query_completed_job($r) {
+    list($user, $user_submit) = authenticate_user($r, null);
+    $job_name = (string)($r->job_name);
+    $job_name = BoincDb::escape_string($job_name);
+    $wu = BoincWorkunit::lookup("name='$job_name'");
+    if (!$wu) xml_error(-1, "no such job");
+    $batch = BoincBatch::lookup_id($wu->batch);
+    if ($batch->user_id != $user->id) {
+        xml_error(-1, "not owner");
+    }
+
+    echo "<completed_job>\n";
+    echo "   <error_mask>$wu->error_mask</error_mask>\n";
+    if ($wu->canonical_resultid) {
+        $result = BoincResult::lookup_id($wu->canonical_resultid);
+        echo "   <canonical_resultid>$wu->canonical_resultid</canonical_resultid>\n";
+    } else {
+        $results = BoincResult::enum("workunitid=$job_id");
+        foreach ($results as $r) {
+            switch($r->outcome) {
+            case 1:
+            case 3:
+            case 6:
+                $result = $r;
+                break;
+            }
+        }
+        if ($result) {
+            echo "   <error_resultid>$result->id</error_resultid>\n";
+        }
+    }
+    if ($result) {
+        echo "   <exit_status>$result->exit_status</exit_status>\n";
+        echo "   <elapsed_time>$result->elapsed_time</elapsed_time>\n";
+        echo "   <cpu_time>$result->cpu_time</cpu_time>\n";
+        echo "   <stderr_out><![CDATA[\n";
+        echo htmlspecialchars($result->stderr_out);
+        echo "   ]]></stderr_out>\n";
+    }
+    echo "</completed_job>\n";
 }
 
 function handle_abort_batch($r) {
@@ -420,6 +487,30 @@ function handle_retire_batch($r) {
     echo "<success>1</success>";
 }
 
+function get_templates($r) {
+    $app_name = (string)($r->app_name);
+    if ($app_name) {
+        $app = get_app($app_name);
+    } else {
+        $job_name = (string)($r->job_name);
+        $wu = get_wu($job_name);
+        $app = BoincApp::lookup_id($wu->appid);
+    }
+
+    list($user, $user_submit) = authenticate_user($r, $app);
+    $in = file_get_contents("../../templates/".$app->name."_in");
+    $out = file_get_contents("../../templates/".$app->name."_out");
+    if ($in === false || $out === false) {
+        xml_error(-1, "template file missing");
+    }
+    echo "<templates>\n$in\n$out\n</templates>\n";
+}
+
+function ping($r) {
+    BoincDb::get();     // errors out if DB down or web disabled
+    echo "<success>1</success>";
+}
+
 if (0) {
 $r = simplexml_load_string("
 <query_batch>
@@ -448,11 +539,12 @@ $r = simplexml_load_string("
     <authenticator>x</authenticator>
     <batch>
     <app_name>remote_test</app_name>
-    <batch_name>Aug 6 batch 2</batch_name>
+    <batch_name>Aug 6 batch 4</batch_name>
     <job>
         <rsc_fpops_est>19000000000</rsc_fpops_est>
         <command_line>--t 19</command_line>
         <input_file>
+            <mode>remote</mode>
             <source>http://google.com/</source>
         </input_file>
     </job>
@@ -473,14 +565,17 @@ if (!$r) {
 switch ($r->getName()) {
     case 'abort_batch': handle_abort_batch($r); break;
     case 'abort_jobs': handle_abort_jobs($r); break;
+    case 'create_batch': create_batch($r); break;
     case 'estimate_batch': estimate_batch($r); break;
+    case 'get_templates': get_templates($r); break;
+    case 'ping': ping($r); break;
     case 'query_batch': query_batch($r); break;
     case 'query_batch2': query_batch2($r); break;
     case 'query_batches': query_batches($r); break;
     case 'query_job': query_job($r); break;
+    case 'query_completed_job': query_completed_job($r); break;
     case 'retire_batch': handle_retire_batch($r); break;
     case 'submit_batch': submit_batch($r); break;
-    case 'create_batch': create_batch($r); break;
     default: xml_error(-1, "bad command: ".$r->getName());
 }
 

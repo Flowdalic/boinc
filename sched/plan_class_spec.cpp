@@ -93,6 +93,20 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
         return false;
     }
 
+    // host summary
+    //
+    if (have_host_summary_regex
+        && regexec(&(host_summary_regex), g_reply->host.serialnum, 0, NULL, 0)
+    ) {
+        if (config.debug_version_select) {
+            log_messages.printf(MSG_NORMAL,
+                "[version] plan_class_spec: host summary '%s' didn't match regexp\n",
+                g_reply->host.serialnum
+            );
+        }
+        return false;
+    }
+
     // OS version
     //
     if (have_os_regex && regexec(&(os_regex), sreq.host.os_version, 0, NULL, 0)) {
@@ -208,11 +222,11 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
                 project_prefs_tag, p?"true":"false"
             );
         }
-        if (regexec(&(project_prefs_regex), value, 0, NULL, 0)) {
+        if (!p || regexec(&(project_prefs_regex), value, 0, NULL, 0)) {
             if (config.debug_version_select) {
                 log_messages.printf(MSG_NORMAL,
-                    "[version] plan_class_spec: project prefs setting '%s' prevents using plan class.\n",
-                    project_prefs_tag
+                    "[version] plan_class_spec: project prefs setting '%s' value='%s' prevents using plan class.\n",
+                    project_prefs_tag, p ? value : "(tag missing)"
                 );
             }
             return false;
@@ -266,7 +280,7 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
 
         if (need_ati_libs) {
             if (!cp.atirt_detected) {
-	        if (config.debug_version_select) {
+                if (config.debug_version_select) {
                     log_messages.printf(MSG_NORMAL,
                         "[version] plan_class_spec: ATI libraries not found\n"
                     );
@@ -275,7 +289,7 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
             }
         } else {
             if (!cp.amdrt_detected) {
-	        if (config.debug_version_select) {
+                if (config.debug_version_select) {
                     log_messages.printf(MSG_NORMAL,
                         "[version] plan_class_spec: AMD libraries not found\n"
                     );
@@ -283,6 +297,18 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
                 return false;
             }
         }
+
+        if (without_opencl) {
+            if (cp.have_opencl) {
+                if (config.debug_version_select) {
+                    log_messages.printf(MSG_NORMAL,
+                        "[version] plan_class_spec: OpenCL detected. Plan restricted to CAL only GPUs\n"
+                    );
+                }
+                return false;
+            }
+        }
+
 
         if (min_cal_target && cp.attribs.target < min_cal_target) {
             if (config.debug_version_select) {
@@ -426,11 +452,45 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
 
         // OpenCL device version
         //
-        if (min_opencl_version && min_opencl_version > cpp->opencl_prop.opencl_device_version_int) {
+        if (min_opencl_version && cpp->opencl_prop.opencl_device_version_int 
+            && min_opencl_version > cpp->opencl_prop.opencl_device_version_int) {
             if (config.debug_version_select) {
                 log_messages.printf(MSG_NORMAL,
                     "[version] OpenCL device version required min: %d, supplied: %d\n",
                     min_opencl_version, cpp->opencl_prop.opencl_device_version_int
+                );
+            }
+            return false;
+        }
+
+        if (max_opencl_version && cpp->opencl_prop.opencl_device_version_int 
+            && max_opencl_version < cpp->opencl_prop.opencl_device_version_int) {
+            if (config.debug_version_select) {
+                log_messages.printf(MSG_NORMAL,
+                    "[version] OpenCL device version required max: %d, supplied: %d\n",
+                    max_opencl_version, cpp->opencl_prop.opencl_device_version_int
+                );
+            }
+            return false;
+        }
+
+        if (min_opencl_driver_revision && cpp->opencl_prop.opencl_device_version_int 
+            && min_opencl_driver_revision > cpp->opencl_prop.opencl_driver_revision) {
+            if (config.debug_version_select) {
+                log_messages.printf(MSG_NORMAL,
+                    "[version] OpenCL driver revision required min: %d, supplied: %d\n",
+                    min_opencl_driver_revision, cpp->opencl_prop.opencl_driver_revision
+                );
+            }
+            return false;
+        }
+
+        if (max_opencl_driver_revision && cpp->opencl_prop.opencl_device_version_int 
+            && max_opencl_driver_revision < cpp->opencl_prop.opencl_driver_revision) {
+            if (config.debug_version_select) {
+                log_messages.printf(MSG_NORMAL,
+                    "[version] OpenCL driver revision required max: %d, supplied: %d\n",
+                    max_opencl_driver_revision, cpp->opencl_prop.opencl_driver_revision
                 );
             }
             return false;
@@ -598,6 +658,14 @@ int PLAN_CLASS_SPEC::parse(XML_PARSER& xp) {
             have_os_regex = true;
             continue;
         }
+        if (xp.parse_str("host_summary_regex", buf, sizeof(buf))) {
+            if (regcomp(&(host_summary_regex), buf, REG_EXTENDED|REG_NOSUB) ) {
+                log_messages.printf(MSG_CRITICAL, "BAD REGEXP: %s\n", buf);
+                return ERR_XML_PARSE;
+            }
+            have_host_summary_regex = true;
+            continue;
+        }
         if (xp.parse_str("project_prefs_tag", project_prefs_tag, sizeof(project_prefs_tag))) continue;
         if (xp.parse_str("project_prefs_regex", buf, sizeof(buf))) {
             if (regcomp(&(project_prefs_regex), buf, REG_EXTENDED|REG_NOSUB) ) {
@@ -619,6 +687,7 @@ int PLAN_CLASS_SPEC::parse(XML_PARSER& xp) {
         if (xp.parse_str("gpu_utilization_tag", gpu_utilization_tag, sizeof(gpu_utilization_tag))) continue;
 
         if (xp.parse_bool("need_ati_libs", need_ati_libs)) continue;
+        if (xp.parse_bool("without_opencl", without_opencl)) continue;
         if (xp.parse_int("min_cal_target", min_cal_target)) continue;
         if (xp.parse_int("max_cal_target", max_cal_target)) continue;
 
@@ -630,6 +699,9 @@ int PLAN_CLASS_SPEC::parse(XML_PARSER& xp) {
 
         if (xp.parse_int("min_opencl_version", min_opencl_version)) continue;
         if (xp.parse_int("max_opencl_version", max_opencl_version)) continue;
+
+        if (xp.parse_int("min_opencl_driver_revision", min_opencl_driver_revision)) continue;
+        if (xp.parse_int("max_opencl_driver_revision", max_opencl_driver_revision)) continue;
 
         if (xp.parse_int("min_vbox_version", min_vbox_version)) continue;
         if (xp.parse_int("max_vbox_version", max_vbox_version)) continue;
@@ -673,7 +745,9 @@ PLAN_CLASS_SPEC::PLAN_CLASS_SPEC() {
     max_threads = 1;
     projected_flops_scale = 1;
     have_os_regex = false;
+    have_host_summary_regex = false;
     strcpy(project_prefs_tag, "");
+    have_project_prefs_regex = false;
     avg_ncpus = 0;
     min_core_client_version=0;
     max_core_client_version=0;
@@ -688,6 +762,7 @@ PLAN_CLASS_SPEC::PLAN_CLASS_SPEC() {
     strcpy(gpu_utilization_tag, "");
 
     need_ati_libs = false;
+    without_opencl = false;
 
     min_nvidia_compcap = 0;
     max_nvidia_compcap = 0;
@@ -696,6 +771,9 @@ PLAN_CLASS_SPEC::PLAN_CLASS_SPEC() {
 
     min_opencl_version = 0;
     max_opencl_version = 0;
+
+    min_opencl_driver_revision = 0;
+    max_opencl_driver_revision = 0;
 
     min_vbox_version = 0;
     max_vbox_version = 0;

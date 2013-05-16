@@ -198,6 +198,7 @@ struct RSC_WORK_FETCH {
     int rsc_type;
     int ninstances;
     double relative_speed;   // total FLOPS relative to CPU total FLOPS
+    bool has_exclusions;
 
     // the following used/set by rr_simulation():
     //
@@ -239,10 +240,12 @@ struct RSC_WORK_FETCH {
         this->secs_this_rec_interval = 0;
     }
 
+    // temp in choose_project()
+    PROJECT* found_project;     // a project able to ask for this work
+
     void rr_init();
     void update_stats(double sim_now, double dt, double buf_end);
     void update_busy_time(double dur, double nused);
-    PROJECT* choose_project_hyst(bool strict_hyst, PROJECT*);
     void supplement(PROJECT*);
     RSC_PROJECT_WORK_FETCH& project_state(PROJECT*);
     void print_state(const char*);
@@ -250,6 +253,9 @@ struct RSC_WORK_FETCH {
     void set_request(PROJECT*);
     void set_request_excluded(PROJECT*);
     bool may_have_work(PROJECT*);
+    bool can_fetch(PROJECT*);
+    bool backed_off(PROJECT*);
+    bool uses_starved_excluded_instances(PROJECT*);
     RSC_WORK_FETCH() {
         rsc_type = 0;
         ninstances = 0;
@@ -260,6 +266,7 @@ struct RSC_WORK_FETCH {
         total_fetchable_share = 0;
         saturated_time = 0;
         deadline_missed_instances = 0;
+        has_exclusions = false;
     }
 };
 
@@ -287,11 +294,9 @@ struct PROJECT_WORK_FETCH {
 // global work fetch state
 //
 struct WORK_FETCH {
-    PROJECT* choose_project(bool strict_hyst, PROJECT*);
+    void setup();
+    PROJECT* choose_project();
         // Find a project to ask for work.
-        // If strict is false consider requesting work
-        // even if buffer is above min level
-        // or project is backed off for a resource type
     PROJECT* non_cpu_intensive_project_needing_work();
     void piggyback_work_request(PROJECT*);
         // we're going to contact this project anyway;
@@ -312,6 +317,7 @@ struct WORK_FETCH {
     void compute_shares();
     void clear_backoffs(APP_VERSION&);
     void request_string(char*);
+    bool requested_work();
 };
 
 extern RSC_WORK_FETCH rsc_work_fetch[MAX_RSC];

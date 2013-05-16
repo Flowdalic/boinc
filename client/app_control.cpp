@@ -121,7 +121,7 @@ bool ACTIVE_TASK_SET::poll() {
     }
 
     // Check for finish files every 10 sec.
-    // If we already found a finish file, kill the app;
+    // If we already found a finish file, abort the app;
     // it must be hung somewhere in boinc_finish();
     //
     static double last_finish_check_time = 0;
@@ -131,7 +131,9 @@ bool ACTIVE_TASK_SET::poll() {
             ACTIVE_TASK* atp = active_tasks[i];
             if (atp->task_state() == PROCESS_UNINITIALIZED) continue;
             if (atp->finish_file_time) {
-                atp->kill_task(false);
+                // process is still there 10 sec after it wrote finish file.
+                // abort the job
+                atp->abort_task(EXIT_ABORTED_BY_CLIENT, "finish file present too long");
             } else if (atp->finish_file_present()) {
                 atp->finish_file_time = gstate.now;
             }
@@ -212,14 +214,28 @@ static void kill_app_process(int pid, bool will_restart) {
     if (h == NULL) return;
     TerminateProcess(h, will_restart?0:EXIT_ABORTED_BY_CLIENT);
     CloseHandle(h);
+}
 #else
 static void kill_app_process(int pid, bool) {
+    int retval = 0;
 #ifdef SANDBOX
-    kill_via_switcher(pid);
+    retval = kill_via_switcher(pid);
+    if (retval && log_flags.task_debug) {
+        msg_printf(0, MSG_INFO,
+            "[task] kill_via_switcher() failed: %s",
+            boincerror(retval)
+        );
+    }
 #endif
-    kill(pid, SIGKILL);
-#endif
+    retval = kill(pid, SIGKILL);
+    if (retval && log_flags.task_debug) {
+        msg_printf(0, MSG_INFO,
+            "[task] kill() failed: %s",
+            boincerror(retval)
+        );
+    }
 }
+#endif
 
 static inline void kill_processes(vector<int> pids, bool will_restart) {
     for (unsigned int i=0; i<pids.size(); i++) {
@@ -1051,6 +1067,12 @@ void ACTIVE_TASK_SET::suspend_all(int reason) {
             // Avoid going into a preemption loop.
             //
             if (atp->result->non_cpu_intensive()) break;
+            atp->preempt(REMOVE_NEVER);
+            break;
+        case SUSPEND_REASON_BATTERY_OVERHEATED:
+        case SUSPEND_REASON_BATTERY_CHARGING:
+            // these conditions can oscillate, so leave apps in mem
+            //
             atp->preempt(REMOVE_NEVER);
             break;
         default:

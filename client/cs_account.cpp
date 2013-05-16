@@ -79,7 +79,7 @@ int PROJECT::write_account_file() {
     fprintf(f, "<project_preferences>\n%s</project_preferences>\n",
         project_prefs.c_str()
     );
-    fprintf(f, gui_urls.c_str());
+    fprintf(f, "%s", gui_urls.c_str());
     fprintf(f, "</account>\n");
     fclose(f);
     retval = boinc_rename(TEMP_ACCT_FILE_NAME, path);
@@ -479,7 +479,7 @@ int CLIENT_STATE::add_project(
     const char* master_url, const char* _auth, const char* project_name,
     bool attached_via_acct_mgr
 ) {
-    char path[MAXPATHLEN], canonical_master_url[256], auth[256], dir[256];
+    char path[MAXPATHLEN], canonical_master_url[256], auth[256];
     PROJECT* project;
     FILE* f;
     int retval;
@@ -532,8 +532,7 @@ int CLIENT_STATE::add_project(
     // (unless PROJECT/app_info.xml is found, so that
     // people using anonymous platform don't have to get apps again)
     //
-    get_project_dir(project, dir, sizeof(dir));
-    sprintf(path, "%s/%s", dir, APP_INFO_FILE_NAME);
+    sprintf(path, "%s/%s", project->project_dir(), APP_INFO_FILE_NAME);
     if (boinc_file_exists(path)) {
         project->anonymous_platform = true;
         f = fopen(path, "r");

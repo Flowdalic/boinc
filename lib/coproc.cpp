@@ -27,6 +27,7 @@
 #endif
 #include <cstring>
 #include <cstdlib>
+#include <cmath>
 #endif
 
 #ifdef _WIN32
@@ -119,9 +120,9 @@ void COPROC::write_request(MIOFILE& f) {
     );
 }
 
-void OPENCL_DEVICE_PROP::write_xml(MIOFILE& f) {
+void OPENCL_DEVICE_PROP::write_xml(MIOFILE& f, const char* tag) {
     f.printf(
-        "   <coproc_opencl>\n"
+        "   <%s>\n"
         "      <name>%s</name>\n"
         "      <vendor>%s</vendor>\n"
         "      <vendor_id>%lu</vendor_id>\n"
@@ -139,7 +140,8 @@ void OPENCL_DEVICE_PROP::write_xml(MIOFILE& f) {
         "      <opencl_platform_version>%s</opencl_platform_version>\n"
         "      <opencl_device_version>%s</opencl_device_version>\n"
         "      <opencl_driver_version>%s</opencl_driver_version>\n"
-        "   </coproc_opencl>\n",
+        "   </%s>\n",
+        tag,
         name,
         vendor,
         vendor_id,
@@ -156,7 +158,8 @@ void OPENCL_DEVICE_PROP::write_xml(MIOFILE& f) {
         max_compute_units,
         opencl_platform_version,
         opencl_device_version,
-        opencl_driver_version
+        opencl_driver_version,
+        tag
     );
 }
 
@@ -191,13 +194,14 @@ int COPROC::parse(XML_PARSER& xp) {
 
 #endif
 
-int OPENCL_DEVICE_PROP::parse(XML_PARSER& xp) {
+int OPENCL_DEVICE_PROP::parse(XML_PARSER& xp, const char* end_tag) {
     int n;
     unsigned long long ull;
 
     while (!xp.get_tag()) {
-        if (xp.match_tag("/coproc_opencl")) {
+        if (xp.match_tag(end_tag)) {
             get_device_version_int();
+            get_opencl_driver_revision();
             return 0;
         }
         if (xp.parse_str("name", name, sizeof(name))) continue;
@@ -279,6 +283,29 @@ int OPENCL_DEVICE_PROP::get_device_version_int() {
         return ERR_NOT_FOUND;
     }
     opencl_device_version_int = 100*maj + min;
+    return 0;
+}
+
+int OPENCL_DEVICE_PROP::get_opencl_driver_revision() {
+    // gets the OpenCL runtime revision
+    // Thus far this is only necessary for ATI/AMD because there are bad 
+    // driver sets only distinguisable by the runtime library version.  
+    // Fortunately this info is in the opencl_device_version string.
+    float rev=0;
+    char *p=opencl_device_version+sizeof(opencl_device_version)-1;
+    // find the last opening bracket
+    while ((p > opencl_device_version) && (*p!='(')) p--;
+    if (p!=opencl_device_version) {
+      int n=sscanf(
+          p, "(%f", &rev
+      );
+      // I don't care about errors because for non-ATI GPUs this should 
+      // be zero.
+      if (n!=1) {
+        rev=0;
+      }
+    }
+    opencl_driver_revision=floor(rev*100+0.5);
     return 0;
 }
 
@@ -482,7 +509,7 @@ void COPROC_NVIDIA::write_xml(MIOFILE& f, bool scheduler_rpc) {
     );
 
     if (have_opencl) {
-        opencl_prop.write_xml(f);
+        opencl_prop.write_xml(f, "coproc_opencl");
     }
 
     if (!scheduler_rpc) {
@@ -601,7 +628,7 @@ int COPROC_NVIDIA::parse(XML_PARSER& xp) {
             }
         }
         if (xp.match_tag("coproc_opencl")) {
-            retval = opencl_prop.parse(xp);
+            retval = opencl_prop.parse(xp, "/coproc_opencl");
             if (retval) return retval;
             continue;
         }
@@ -751,7 +778,7 @@ void COPROC_ATI::write_xml(MIOFILE& f, bool scheduler_rpc) {
     }
 
     if (have_opencl) {
-        opencl_prop.write_xml(f);
+        opencl_prop.write_xml(f, "coproc_opencl");
     }
         
     f.printf("</coproc_ati>\n");
@@ -864,7 +891,7 @@ int COPROC_ATI::parse(XML_PARSER& xp) {
             continue;
         }
         if (xp.match_tag("coproc_opencl")) {
-            retval = opencl_prop.parse(xp);
+            retval = opencl_prop.parse(xp, "/coproc_opencl");
             if (retval) return retval;
             continue;
         }
@@ -941,7 +968,7 @@ void COPROC_INTEL::write_xml(MIOFILE& f, bool scheduler_rpc) {
     );
 
     if (have_opencl) {
-        opencl_prop.write_xml(f);
+        opencl_prop.write_xml(f, "coproc_opencl");
     }
         
     f.printf("</coproc_intel_gpu>\n");
@@ -982,7 +1009,7 @@ int COPROC_INTEL::parse(XML_PARSER& xp) {
         if (xp.parse_str("version", version, sizeof(version))) continue;
 
         if (xp.match_tag("coproc_opencl")) {
-            retval = opencl_prop.parse(xp);
+            retval = opencl_prop.parse(xp, "/coproc_opencl");
             if (retval) return retval;
             continue;
         }

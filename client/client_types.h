@@ -107,7 +107,7 @@ struct FILE_INFO {
     bool signature_required;    // true iff associated with app version
     bool is_user_file;
     bool is_project_file;
-	bool is_auto_update_file;
+    bool is_auto_update_file;
     bool anonymous_platform_file;
     bool gzip_when_done;
         // for output files: gzip file when done, and append .gz to its name
@@ -172,9 +172,9 @@ struct FILE_REF {
     FILE_INFO* file_info;
     bool copy_file;
         // if true, core client will copy the file instead of linking
-	bool optional;
-		// for output files: app may not generate file;
-		// don't treat as error if file is missing.
+    bool optional;
+        // for output files: app may not generate file;
+        // don't treat as error if file is missing.
     int parse(XML_PARSER&);
     int write(MIOFILE&);
 };
@@ -247,6 +247,7 @@ struct APP {
     int max_concurrent;
         // Limit on # of concurrent jobs of this app; 0 if none
         // Specified in app_config.xml
+        // Can also specify in client_state.xml (for client emulator)
     int n_concurrent;
         // temp during job scheduling, to enforce max_concurrent
     int non_excluded_instances[MAX_RSC];
@@ -365,7 +366,7 @@ struct RUN_MODE {
     int get_perm();
     int get_prev();
     int get_current();
-	double delay();
+    double delay();
 };
 
 // a platform supported by the client.

@@ -54,14 +54,14 @@ function do_updates() {
         }
 
         $field = "weight_".$id;
-        $new_v = $_POST[$field] + 0;
+        $new_v = post_num($field);
         $old_v = $app->weight;
         if ($new_v != $old_v ) {
             $app->update("weight=$new_v");
         }
 
         $field = "homogeneous_redundancy_".$id;
-        $new_v = $_POST[$field];
+        $new_v = post_int($field);
         $old_v = $app->homogeneous_redundancy;
         if ($new_v != $old_v ) {
             $app->update("homogeneous_redundancy=$new_v");
@@ -92,8 +92,8 @@ function do_updates() {
     // Adding a new application
 
     if (post_str('add_app', true)) {
-        $name = mysql_real_escape_string($_POST['add_name']);
-        $user_friendly_name = mysql_real_escape_string($_POST['add_user_friendly_name']);
+        $name = mysql_real_escape_string(post_str('add_name'));
+        $user_friendly_name = mysql_real_escape_string(post_str('add_user_friendly_name'));
         if (empty($name) || empty($user_friendly_name) ) {
             $warnings .= "<p><font color='red'>
                 To add a new application please supply both a brief name and a
@@ -135,6 +135,7 @@ function show_form($updated) {
         "Name and description<br><span class=note>Click for details</span>",
         "Created",
         "weight<br><a href=http://boinc.berkeley.edu/trac/wiki/BackendPrograms#feeder><span class=note>details</span></a>",
+        "shmem items",
         "homogeneous redundancy type<br><a href=http://boinc.berkeley.edu/trac/wiki/HomogeneousRedundancy><span class=note>details</span></a>",
         "homogeneous app version?<br><a href=http://boinc.berkeley.edu/trac/wiki/HomogeneousAppVersion><span class=note>details</span></a>",
         "deprecated?",
@@ -145,6 +146,8 @@ function show_form($updated) {
     $total_weight = mysql_query('SELECT SUM(weight) AS total_weight FROM app WHERE deprecated=0');
     $total_weight = mysql_fetch_assoc($total_weight);
     $total_weight = $total_weight['total_weight'];
+    $swi = parse_config(get_config(), "<shmem_work_items>");
+    if (!$swi) { $swi = 100; }
 
     $q="SELECT * FROM app ORDER BY id";
     $result = mysql_query($q);
@@ -173,6 +176,12 @@ function show_form($updated) {
         $v = $item->weight;
         echo "  <TD align='center'>
         <input type='text' size='4' name='$field' value='$v'></TD>\n";
+        
+        if (($item->deprecated) && ($total_weight > 0)) {
+            echo '<td></td>';
+        } else {
+            echo '<td align="right">'.round($item->weight/$total_weight*$swi).'</td>';
+        }
 
         $field = "homogeneous_redundancy_".$id;
         $v = $item->homogeneous_redundancy;

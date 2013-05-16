@@ -22,6 +22,9 @@
 #include "client_types.h"
 
 struct PROJECT : PROJ_AM {
+    char _project_dir[MAXPATHLEN];
+    char _project_dir_absolute[MAXPATHLEN];
+
     // the following items come from the account file
     // They are a function only of the user and the project
     //
@@ -126,8 +129,8 @@ struct PROJECT : PROJ_AM {
     int sched_rpc_pending;
         // we need to do a scheduler RPC, for various possible reasons:
         // user request, propagate host CPID, time-based, etc.
-		// Reasons are enumerated in lib/common_defs.h
-	bool possibly_backed_off;
+        // Reasons are enumerated in lib/common_defs.h
+    bool possibly_backed_off;
         // we need to call request_work_fetch() when a project
         // transitions from being backed off to not.
         // This (slightly misnamed) keeps track of whether this
@@ -300,13 +303,16 @@ struct PROJECT : PROJ_AM {
     int parse_account_file();
     int parse_state(XML_PARSER&);
     int write_state(MIOFILE&, bool gui_rpc=false);
+    const char* project_dir();
+    const char* project_dir_absolute();
 
     // statistic of the last x days
     std::vector<DAILY_STATS> statistics;
     int parse_statistics(MIOFILE&);
     int parse_statistics(FILE*);
-    int write_statistics(MIOFILE&, bool gui_rpc=false);
+    int write_statistics(MIOFILE&);
     int write_statistics_file();
+    void trim_statistics();
 
     void suspend();
     void resume();
