@@ -1,3 +1,14 @@
+boinc (7.0.65+dfsg-3) unstable; urgency=low
+
+  [ Gianfranco Costamagna ]
+  * Added lightdm to init script (lp: #1177433)
+  * Removed the 5 sec sleep in init script.
+
+  [ Guo Yixuan ]
+  * Removed unused lintian override for boinc-manager.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 15 May 2013 17:33:13 +0200
+
 boinc (7.0.65+dfsg-2~bpo70+1) wheezy-backports; urgency=low
 
   * Rebuilt by pbuilder with stable (wheezy) base,

@@ -3,7 +3,7 @@
 # Provides:          boinc boinc-client
 # Required-Start:    $all
 # Required-Stop:     $local_fs $remote_fs
-# Should-Start:      x11-common network-manager gdm kdm dbus
+# Should-Start:      x11-common network-manager gdm kdm dbus lightdm
 # Should-Stop:       x11-common
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
@@ -104,9 +104,6 @@ start()
   if is_running; then
     log_progress_msg "already running"
   else
-    # workaround for ubuntu bug #933354
-    log_progress_msg "sleeping a little bit in order to let graphics start"
-    sleep 5
     if [ -n "$DISPLAY" -a -x /usr/bin/xhost ]; then
        # grant the boinc client to perform GPU computing
        xhost local:boinc || echo -n "xhost error ignored, GPU computing may not be possible"
