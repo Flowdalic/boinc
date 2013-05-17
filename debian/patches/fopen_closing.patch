@@ -1,7 +1,5 @@
-Index: boinc_debian/lib/crypt_prog.cpp
-===================================================================
---- boinc_debian.orig/lib/crypt_prog.cpp
-+++ boinc_debian/lib/crypt_prog.cpp
+--- a/lib/crypt_prog.cpp
++++ b/lib/crypt_prog.cpp
 @@ -152,6 +152,8 @@
          if (!fpub) die("fopen");
          print_key_hex(fpriv, (KEY*)&private_key, sizeof(private_key));
@@ -61,10 +59,8 @@ Index: boinc_debian/lib/crypt_prog.cpp
              }
          }
      } else {
-Index: boinc_debian/lib/mfile.cpp
-===================================================================
---- boinc_debian.orig/lib/mfile.cpp
-+++ boinc_debian/lib/mfile.cpp
+--- a/lib/mfile.cpp
++++ b/lib/mfile.cpp
 @@ -38,13 +38,14 @@
  MFILE::MFILE() {
      buf = (char*)malloc(64*1024);
@@ -127,10 +123,8 @@ Index: boinc_debian/lib/mfile.cpp
      int n = (int)strlen(p);
      buf = (char*)realloc_aux(buf, len+n+1);
      if (!buf) {
-Index: boinc_debian/lib/parse_test.cpp
-===================================================================
---- boinc_debian.orig/lib/parse_test.cpp
-+++ boinc_debian/lib/parse_test.cpp
+--- a/lib/parse_test.cpp
++++ b/lib/parse_test.cpp
 @@ -52,6 +52,7 @@
          exit(1);
      }
@@ -139,10 +133,8 @@ Index: boinc_debian/lib/parse_test.cpp
  }
  
  /* try it with something like:
-Index: boinc_debian/lib/mfile.h
-===================================================================
---- boinc_debian.orig/lib/mfile.h
-+++ boinc_debian/lib/mfile.h
+--- a/lib/mfile.h
++++ b/lib/mfile.h
 @@ -37,12 +37,12 @@
  public:
      MFILE();

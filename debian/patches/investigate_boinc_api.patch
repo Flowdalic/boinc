@@ -1,7 +1,5 @@
-Index: boinc_debian/api/boinc_api.cpp
-===================================================================
---- boinc_debian.orig/api/boinc_api.cpp
-+++ boinc_debian/api/boinc_api.cpp
+--- a/api/boinc_api.cpp
++++ b/api/boinc_api.cpp
 @@ -331,7 +331,7 @@
  
      if (standalone) return true;

@@ -1,7 +1,5 @@
-Index: boinc_debian/lib/unix_util.cpp
-===================================================================
---- boinc_debian.orig/lib/unix_util.cpp
-+++ boinc_debian/lib/unix_util.cpp
+--- a/lib/unix_util.cpp
++++ b/lib/unix_util.cpp
 @@ -61,7 +61,13 @@
              }
              if (i!=envstrings.end()) {
