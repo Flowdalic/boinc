@@ -16,7 +16,7 @@
  libboinc_crypt_la_LIBADD =  -lm -lstdc++
  
  
-@@ -218,7 +218,7 @@
+@@ -221,7 +221,7 @@
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp 
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS)

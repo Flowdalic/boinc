@@ -51,7 +51,7 @@ Forwarded: yes (PM to David)
      db_dump \
      db_purge \
      feeder \
-@@ -120,12 +121,18 @@
+@@ -121,12 +122,18 @@
      trickle_echo \
      update_stats
  
@@ -72,7 +72,7 @@ Forwarded: yes (PM to David)
  
  noinst_HEADERS = \
      assimilate_handler.h \
-@@ -276,8 +283,7 @@
+@@ -281,8 +288,7 @@
  
  if ENABLE_FCGI
  

@@ -276,12 +276,10 @@ BINARIES += samples/worker/worker samples/wrapper/wrapper samples/sleeper/sleepe
 
 override_dh_auto_clean: 
 	dh_auto_clean
-	[ -r samples/sleeper/Makefile ] && $(MAKE) -C samples/sleeper distclean
-	# fail on unpatched source
-	# $(MAKE) -C samples/worker distclean
-	rm -rf samples/worker/worker samples/worker/worker.o
-	[ -r samples/example_app/Makefile ] && $(MAKE) -C samples/example_app distclean || $(MAKE) -C samples/example_app clean
-	[ -r samples/wrapper/Makefile ] && $(MAKE) -C samples/wrapper distclean || $(MAKE) -C samples/wrapper clean
+	[ -r samples/sleeper/Makefile     ] && $(MAKE) -C samples/sleeper     clean
+	[ -r samples/worker/Makefile      ] && $(MAKE) -C samples/worker      clean
+	[ -r samples/example_app/Makefile ] && $(MAKE) -C samples/example_app clean
+	[ -r samples/wrapper/Makefile     ] && $(MAKE) -C samples/wrapper     clean
 	find . -name Makefile.in -o -name "*.a" -o -name "*.o" | xargs -r rm
 	find . -name "Makefile" | grep -v samples | xargs -r rm
 	rm -f configure clientscr/boincscr

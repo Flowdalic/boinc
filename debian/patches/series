@@ -45,13 +45,11 @@ opendir_error_messages.patch
 sched_driver_char_buffers.patch
 csh2tcsh.patch
 #socklenBuildFixByDavid.patch
-add_hardening_flags.patch
 cmath_missing.patch
 investigate_boinc_api.patch
 slot_dir_source_trace.patch
 opendir_errno.patch
 ticket_1168_verifycerts.patch
-better_makefiles.patch
 client_app_maxpathlen.patch
 #debian specific patches
 #boinclib_shared.patch #needed in order to make boinc build correctly otherwise it will FTBFS
@@ -63,5 +61,4 @@ zip_only_built_with_server.patch
 #fix-for-debian-bug-646583.patch
 hurd-ftbfs.patch
 disable_new_version_check.patch
-add_hardening_flags_FTBFS.patch
 server_installs_itself.patch

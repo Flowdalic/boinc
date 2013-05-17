@@ -1,3 +1,13 @@
+boinc (7.1.1+dfsg-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Tweaked debian/watch.
+  * Removed some patches accepted upstream.
+  * Simplified debian/rules.
+  * Patch refresh.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 16 May 2013 22:09:08 +0200
+
 boinc (7.0.65+dfsg-3) unstable; urgency=low
 
   [ Gianfranco Costamagna ]

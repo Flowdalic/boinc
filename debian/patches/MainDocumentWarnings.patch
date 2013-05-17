@@ -2,7 +2,7 @@ Author: Steffen Moeller <moeller@debian.org>
 Description: Nothing in this patch should be functionally relevant, only compile time warnings as by the ambiguity of the result parameter are resolved.
 --- a/clientgui/MainDocument.cpp
 +++ b/clientgui/MainDocument.cpp
-@@ -1640,20 +1640,20 @@
+@@ -1643,20 +1643,20 @@
  }
  #else
  void CMainDocument::KillGraphicsApp(int pid) {
@@ -31,7 +31,7 @@ Description: Nothing in this patch should be functionally relevant, only compile
      
          iRetVal = run_program(
              getcwd(currentDir, sizeof(currentDir)),
-@@ -1663,6 +1663,10 @@
+@@ -1666,6 +1666,10 @@
              0,
              id
          );

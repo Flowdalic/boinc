@@ -1,17 +1,17 @@
 --- a/client/app.cpp
 +++ b/client/app.cpp
-@@ -424,8 +424,8 @@
+@@ -423,8 +423,8 @@
+     char new_path[MAXPATHLEN], old_path[MAXPATHLEN];
      int retval;
  
-     get_project_dir(result->project, project_dir, sizeof(project_dir));
 -    sprintf(old_path, "%s/trickle_up.xml", slot_dir);
 -    sprintf(new_path,
 +    snprintf(old_path, sizeof(old_path), "%s/trickle_up.xml", slot_dir);
 +    snprintf(new_path, sizeof(new_path),
          "%s/trickle_up_%s_%d.xml",
-         project_dir, result->name, (int)time(0)
+         result->project->project_dir(), result->name, (int)time(0)
      );
-@@ -460,7 +460,7 @@
+@@ -459,7 +459,7 @@
      return 0;
  }
  
@@ -20,7 +20,7 @@
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
          if (active_tasks[i]->slot == slot) {
-@@ -470,7 +470,7 @@
+@@ -469,7 +469,7 @@
      return false;
  }
  
@@ -29,7 +29,7 @@
      char path[MAXPATHLEN];
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
-@@ -511,7 +511,7 @@
+@@ -510,7 +510,7 @@
  #endif
  }
  
@@ -38,7 +38,7 @@
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
          if (active_tasks[i]->slot == slot) return true;
-@@ -623,7 +623,7 @@
+@@ -622,7 +622,7 @@
  #endif
  
  int ACTIVE_TASK::parse(XML_PARSER& xp) {
@@ -47,7 +47,7 @@
      int n, dummy;
      unsigned int i;
      PROJECT* project=0;
-@@ -898,7 +898,7 @@
+@@ -897,7 +897,7 @@
  
      DirScanner dirscan(slot_dir);
      while (dirscan.scan(filename)) {

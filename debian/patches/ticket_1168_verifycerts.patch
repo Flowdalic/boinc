@@ -9,5 +9,5 @@
 +       //FIXME: a distinction is missing for the case that the .gz suffix goes beyond the MAXPATHLEN and is hence not found because
 +       //       one should then not reperform the download as intended below
          if (boinc_file_exists(gzpath) ) {
- 			if (allow_async && nbytes > ASYNC_FILE_THRESHOLD) {
- 				ASYNC_VERIFY* avp = new ASYNC_VERIFY;
+             if (allow_async && nbytes > ASYNC_FILE_THRESHOLD) {
+                 ASYNC_VERIFY* avp = new ASYNC_VERIFY;

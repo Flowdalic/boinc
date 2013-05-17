@@ -8,7 +8,7 @@ Returns true if a file with this name exists and if this process has execute per
 
 --- a/clientgui/DlgAdvPreferences.cpp
 +++ b/clientgui/DlgAdvPreferences.cpp
-@@ -819,7 +819,7 @@
+@@ -822,7 +822,7 @@
  #endif
              wxString directory = picker.GetDirectory();
              wxFileName fn(directory, appNames[i]);

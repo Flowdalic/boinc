@@ -29,16 +29,3 @@ Description: Improved memory handling.
      while (1) {
          // Store the buffer size since it appears that somebody is monkeying around
          //   with the return values on some systems.
-@@ -55,9 +58,9 @@
-         } else if (!NT_SUCCESS(Status)) {
-             HeapFree(hHeap, NULL, *ppBuffer);
-             return ERR_GETRUSAGE;
--		} else {
--			return 0;
--		}
-+        } else {
-+            return 0;
-+        }
-     }
-     return 0;	// never reached
- }
