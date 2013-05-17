@@ -1,5 +1,7 @@
---- a/api/boinc_api.cpp
-+++ b/api/boinc_api.cpp
+Index: boinc_debian/api/boinc_api.cpp
+===================================================================
+--- boinc_debian.orig/api/boinc_api.cpp
++++ boinc_debian/api/boinc_api.cpp
 @@ -331,7 +331,7 @@
  
      if (standalone) return true;
@@ -43,17 +45,17 @@
      if (other_pid) {
          sprintf(buf, "<other_pid>%d</other_pid>\n", other_pid);
 -        strcat(msg_buf, buf);
-+        strncat(msg_buf, buf, sizeof(msg_buf));
++        strlcat(msg_buf, buf, sizeof(msg_buf));
      }
      if (_bytes_sent) {
          sprintf(buf, "<bytes_sent>%f</bytes_sent>\n", _bytes_sent);
 -        strcat(msg_buf, buf);
-+        strncat(msg_buf, buf, sizeof(msg_buf));
++        strlcat(msg_buf, buf, sizeof(msg_buf));
      }
      if (_bytes_received) {
          sprintf(buf, "<bytes_received>%f</bytes_received>\n", _bytes_received);
 -        strcat(msg_buf, buf);
-+        strncat(msg_buf, buf, sizeof(msg_buf));
++        strlcat(msg_buf, buf, sizeof(msg_buf));
      }
      if (app_client_shm->shm->app_status.send_msg(msg_buf)) {
          return 0;
@@ -70,10 +72,10 @@
      DirScanner dirscan(path);
      while (dirscan.scan(filename)) {
 -        strcpy(buf, filename.c_str());
-+        strncpy(buf, filename.c_str(), sizeof(buf));
++        strlcpy(buf, filename.c_str(), sizeof(buf));
          if (strstr(buf, UPLOAD_FILE_STATUS_PREFIX) != buf) continue;
 -        strcpy(log_name, buf+strlen(UPLOAD_FILE_STATUS_PREFIX));
-+        strncpy(log_name, buf+strlen(UPLOAD_FILE_STATUS_PREFIX), sizeof(log_name));
++        strlcpy(log_name, buf+strlen(UPLOAD_FILE_STATUS_PREFIX), sizeof(log_name));
          FILE* f = boinc_fopen(filename.c_str(), "r");
          if (!f) {
              fprintf(stderr,
@@ -91,7 +93,7 @@
          GetFullPathName(path, MAXPATHLEN, abspath, NULL);
  #else
 -        strcpy(abspath, path);
-+        strncpy(abspath, path, sizeof(abspath));
++        strlcpy(abspath, path, sizeof(abspath));
  #endif
          argv[0] = const_cast<char*>(GRAPHICS_APP_FILENAME);
          if (fullscreen) {
@@ -113,3 +115,12 @@
              "<remote_desktop_addr>%s</remote_desktop_addr>",
              remote_desktop_addr
          );
+@@ -1462,7 +1466,7 @@
+         DirScanner dirscan(path);
+         while (dirscan.scan(filename)) {
+             if (strstr(filename.c_str(), "trickle_down")) {
+-                strncpy(buf, filename.c_str(), len);
++                strlcpy(buf, filename.c_str(), len);
+                 return true;
+             }
+         }

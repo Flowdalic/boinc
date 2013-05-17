@@ -1,0 +1,18 @@
+Index: boinc_debian/lib/unix_util.cpp
+===================================================================
+--- boinc_debian.orig/lib/unix_util.cpp
++++ boinc_debian/lib/unix_util.cpp
+@@ -61,7 +61,13 @@
+             }
+             if (i!=envstrings.end()) {
+                 // we allocated this string.  Reallocate it.
++		char *b=buf;
+                 buf=(char *)realloc(buf,strlen(name)+strlen(value)+2);
++		if (!buf) {
++		    free(b);
++		    errno=ENOMEM;
++		    return -1;
++		}
+                 *i=buf;
+             } else {
+                 // someone else allocated the string.  Allocate new memory.

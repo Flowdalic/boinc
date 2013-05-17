@@ -1,5 +1,8 @@
-boinc (7.1.1+dfsg-1) UNRELEASED; urgency=low
+boinc (7.1.1+dfsg-1) experimental; urgency=low
 
+  [ Steffen Moeller ]
+  * Introduced series of fclose() to fight potential file pointer leak
+  [ Gianfranco Costamagna ]
   * New upstream release.
   * Tweaked debian/watch.
   * Removed some patches accepted upstream.
