@@ -17,7 +17,7 @@ Build-Depends: debhelper (>= 8), po-debconf, pkg-config,
  freeglut3-dev, libwxgtk2.8-dev, libgtk2.0-dev,
  libsqlite3-dev, libmysqlclient-dev, python, libfcgi-dev, libjpeg-dev,
  libxcb-util0-dev, libxcb-dpms0-dev,
- libx11-dev, libxss-dev, libxext-dev
+ libxss-dev, libxext-dev
 Homepage: http://boinc.berkeley.edu/
 Vcs-Git: git://git.debian.org/git/pkg-boinc/boinc.git
 Vcs-Browser: http://git.debian.org/?p=pkg-boinc/boinc.git
