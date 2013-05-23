@@ -1,7 +1,5 @@
-Index: boinc_debian/client/rrsim_test.cpp
-===================================================================
---- boinc_debian.orig/client/rrsim_test.cpp
-+++ boinc_debian/client/rrsim_test.cpp
+--- a/client/rrsim_test.cpp
++++ b/client/rrsim_test.cpp
 @@ -184,7 +184,6 @@
      vector<RESULT*> active;
      unsigned int i;
