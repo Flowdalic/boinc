@@ -1,4 +1,4 @@
-boinc (7.1.1+dfsg-1) experimental; urgency=low
+boinc (7.1.1+dfsg-1) UNRELEASED; urgency=low
 
   [ Steffen Moeller ]
   * Introduced series of fclose() to fight potential file pointer leak
@@ -21,13 +21,6 @@ boinc (7.0.65+dfsg-3) unstable; urgency=low
   * Removed unused lintian override for boinc-manager.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 15 May 2013 17:33:13 +0200
-
-boinc (7.0.65+dfsg-2~bpo70+1) wheezy-backports; urgency=low
-
-  * Rebuilt by pbuilder with stable (wheezy) base,
-    no further changes.
-
- -- Steffen Moeller <moeller@debian.org>  Wed, 15 May 2013 13:54:23 +0200
 
 boinc (7.0.65+dfsg-2) unstable; urgency=low
 
