@@ -64,3 +64,4 @@ disable_new_version_check.patch
 server_installs_itself.patch
 lib_cppcheck.patch
 fopen_closing.patch
+rrsim_iterator_cppcheck.patch
