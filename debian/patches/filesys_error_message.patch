@@ -1,0 +1,55 @@
+Index: boinc_debian/lib/filesys.cpp
+===================================================================
+--- boinc_debian.orig/lib/filesys.cpp
++++ boinc_debian/lib/filesys.cpp
+@@ -145,7 +145,9 @@
+ #else
+     dirp = opendir(p);
+     if (!dirp) {
+-        fprintf(stderr,"dir_open: Could not open directory '%s'.\n",p);
++        char b[MAXPATHLEN+1];
++	boinc_getcwd(b);
++        fprintf(stderr,"dir_open: Could not open directory '%s' from '%s'.\n",p,b);
+         return NULL;
+     }
+ #endif
+@@ -592,7 +594,7 @@
+ #endif
+ }
+ 
+-static int boinc_rename_aux(const char* old, const char* newf) {
++static int boinc_rename_aux(const char* const old, const char* const newf) {
+ #ifdef _WIN32
+     if (MoveFileExA(old, newf, MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH)) return 0;
+     return GetLastError();
+@@ -602,7 +604,7 @@
+     //
+     int retval = rename(old, newf);
+     if (retval) {
+-        char buf[MAXPATHLEN+MAXPATHLEN];
++        char buf[MAXPATHLEN+MAXPATHLEN+1+7];
+         sprintf(buf, "mv \"%s\" \"%s\"", old, newf);
+         retval = system(buf);
+     }
+@@ -611,7 +613,7 @@
+ #endif
+ }
+ 
+-int boinc_rename(const char* old, const char* newf) {
++int boinc_rename(const char* const old, const char* const newf) {
+     int retval=0;
+ 
+     retval = boinc_rename_aux(old, newf);
+Index: boinc_debian/lib/filesys.h
+===================================================================
+--- boinc_debian.orig/lib/filesys.h
++++ boinc_debian/lib/filesys.h
+@@ -47,7 +47,7 @@
+   extern int boinc_touch_file(const char* const path);
+   extern FILE* boinc_fopen(const char* const path, const char* mode);
+   extern int boinc_copy(const char* orig, const char* newf);
+-  extern int boinc_rename(const char* old, const char* newf);
++  extern int boinc_rename(const char* const old, const char* const newf);
+   extern int boinc_mkdir(const char* const);
+ #ifdef _WIN32
+   extern int boinc_allocate_file(const char* const, double size);

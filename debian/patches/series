@@ -65,5 +65,5 @@ server_installs_itself.patch
 lib_cppcheck.patch
 fopen_closing.patch
 rrsim_iterator_cppcheck.patch
-#filesys_error_message.patch
+filesys_error_message.patch
 de.po.patch
