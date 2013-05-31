@@ -26,7 +26,6 @@ parse_issues.patch
 #convinceDavid# client_path_char_array_length.patch
 # --- Z --- Currently not applicable
 #Z#no_std_string.patch
-clang_incompatibilities.patch
 #either these 3
 #convinceDavid# nvidia_detect_buffers.patch
 #convinceDavid# nvidia_detect_bugs.patch
@@ -67,3 +66,4 @@ fopen_closing.patch
 rrsim_iterator_cppcheck.patch
 filesys_error_message.patch
 de.po.patch
+more_clang_warnings.patch

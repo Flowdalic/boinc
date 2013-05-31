@@ -1,19 +1,21 @@
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
+Index: boinc_debian/lib/Makefile.am
+===================================================================
+--- boinc_debian.orig/lib/Makefile.am
++++ boinc_debian/lib/Makefile.am
 @@ -146,13 +146,13 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 -libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
 +libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
- libboinc_la_LIBADD = -lm -lstdc++
+ libboinc_la_LIBADD =
  
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
 -libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
 +libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
- libboinc_crypt_la_LIBADD =  -lm -lstdc++
+ libboinc_crypt_la_LIBADD = 
  
  
 @@ -221,7 +221,7 @@
@@ -26,8 +28,10 @@
 +parse_test_SOURCES = parse_test.cpp
  parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  parse_test_LDADD = $(LIBBOINC)
---- a/client/Makefile.am
-+++ b/client/Makefile.am
+Index: boinc_debian/client/Makefile.am
+===================================================================
+--- boinc_debian.orig/client/Makefile.am
++++ boinc_debian/client/Makefile.am
 @@ -91,7 +91,7 @@
  if OS_DARWIN
  boinc_client_LDFLAGS += -Wl,-flat_namespace,-undefined,dynamic_lookup
