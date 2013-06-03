@@ -1,0 +1,264 @@
+Index: boinc_debian/client/app_control.cpp
+===================================================================
+--- boinc_debian.orig/client/app_control.cpp
++++ boinc_debian/client/app_control.cpp
+@@ -589,8 +589,8 @@
+     } else {
+         x = y;
+     }
+-    fgets(buf, 256, f);     // read the \n
+-    fgets(buf, 256, f);
++    (void) fgets(buf, 256, f);     // read the \n
++    (void) fgets(buf, 256, f);
+     strip_whitespace(buf);
+     fclose(f);
+     return true;
+@@ -1421,13 +1421,13 @@
+     FILE* f = fopen(path, "r");
+     if (!f) return;
+     buf[0] = 0;
+-    fread(buf, 1, 4096, f);
++    size_t fr = fread(buf, 1, 4096, f);
+     fclose(f);
+     buf[4095] = 0;
+     double x;
+     // sanity checks - project and result name must match
+     //
+-    if (!parse_str(buf, "<project_master_url>", s, sizeof(s))) {
++    if (0 == fr || !parse_str(buf, "<project_master_url>", s, sizeof(s))) {
+         msg_printf(wup->project, MSG_INTERNAL_ERROR,
+             "no project URL in task state file"
+         );
+Index: boinc_debian/client/cs_platforms.cpp
+===================================================================
+--- boinc_debian.orig/client/cs_platforms.cpp
++++ boinc_debian/client/cs_platforms.cpp
+@@ -143,7 +143,7 @@
+         strlcat(cmdline," -m",256);
+         if ((f=popen(cmdline,"r"))) {
+             while (!std::feof(f)) {
+-                fgets(cmdline,256,f);
++                if (!fgets(cmdline,256,f)) break;
+                 if (strstr(cmdline,"x86_64")) support64=1;
+             }
+             pclose(f);
+@@ -200,7 +200,7 @@
+                         f = popen(cmdline, "r");
+                         if (f) {
+                             while (!std::feof(f)) {
+-                                fgets(cmdline,256,f);
++                                if (!fgets(cmdline,256,f)) break;
+                                 // If the library is 32-bit ELF, then we're
+                                 // golden.
+                                 if (strstr(cmdline, "ELF") && strstr(cmdline, "32-bit")) support32=1;
+Index: boinc_debian/lib/crypt.cpp
+===================================================================
+--- boinc_debian.orig/lib/crypt.cpp
++++ boinc_debian/lib/crypt.cpp
+@@ -208,14 +208,17 @@
+     }
+     if (j != len) return ERR_NULL;
+ #else
+-    fscanf(f, "%d", &num_bits);
++    int fs = fscanf(f, "%d", &num_bits);
++    if (EOF == fs) return ERR_NULL;
+     key->bits = num_bits;
+     len = size - sizeof(key->bits);
+     for (i=0; i<len; i++) {
+-        fscanf(f, "%2x", &n);
++        fs = fscanf(f, "%2x", &n);
+         key->data[i] = n;
++	if (EOF == fs) return ERR_NULL;
+     }
+-    fscanf(f, ".");
++    fs = fscanf(f, ".");
++    if (EOF == fs) return ERR_NULL;
+ #endif
+     return 0;
+ }
+Index: boinc_debian/lib/diagnostics.cpp
+===================================================================
+--- boinc_debian.orig/lib/diagnostics.cpp
++++ boinc_debian/lib/diagnostics.cpp
+@@ -607,7 +607,7 @@
+     size = backtrace (array, 64);
+ //  Anything that calls malloc here (i.e *printf()) will probably fail
+ //  so we'll do it the hard way.
+-    write(fileno(stderr),"Stack trace (",strlen("Stack trace ("));
++    (void) write(fileno(stderr),"Stack trace (",strlen("Stack trace ("));
+     char mbuf[10];
+     char *p=mbuf+9;
+     int i=size;
+@@ -616,10 +616,10 @@
+       *(p--)=i%10+'0';
+       i/=10;
+     }
+-    write(fileno(stderr),p+1,strlen(p+1));
+-    write(fileno(stderr)," frames):",strlen(" frames):"));
++    (void) write(fileno(stderr),p+1,strlen(p+1));
++    (void) write(fileno(stderr)," frames):",strlen(" frames):"));
+     mbuf[0]=10;
+-    write(fileno(stderr),mbuf,1);
++    (void) write(fileno(stderr),mbuf,1);
+     backtrace_symbols_fd(array, size, fileno(stderr));
+ #endif
+ 
+Index: boinc_debian/client/hostinfo_unix.cpp
+===================================================================
+--- boinc_debian.orig/client/hostinfo_unix.cpp
++++ boinc_debian/client/hostinfo_unix.cpp
+@@ -1345,11 +1345,12 @@
+ #endif
+         fd = popen(cmd, "r");
+         if (fd) {
+-            fgets(virtualbox_version, sizeof(virtualbox_version), fd);
+-            newlinePtr = strchr(virtualbox_version, '\n');
+-            if (newlinePtr) *newlinePtr = '\0';
+-            newlinePtr = strchr(virtualbox_version, '\r');
+-            if (newlinePtr) *newlinePtr = '\0';
++            if (fgets(virtualbox_version, sizeof(virtualbox_version), fd)) {
++                newlinePtr = strchr(virtualbox_version, '\n');
++                if (newlinePtr) *newlinePtr = '\0';
++                newlinePtr = strchr(virtualbox_version, '\r');
++                if (newlinePtr) *newlinePtr = '\0';
++	    }
+             pclose(fd);
+         }
+     }
+Index: boinc_debian/client/app_start.cpp
+===================================================================
+--- boinc_debian.orig/client/app_start.cpp
++++ boinc_debian/client/app_start.cpp
+@@ -846,7 +846,10 @@
+     char* argv[100];
+     char current_dir[1024];
+ 
+-    getcwd(current_dir, sizeof(current_dir));
++    if (NULL == getcwd(current_dir, sizeof(current_dir))) {
++        sprintf(buf, "Can't get cwd");
++        goto error;
++    }
+ 
+     sprintf(cmdline, "%s %s",
+         wup->command_line.c_str(), app_version->cmdline
+@@ -989,7 +992,11 @@
+ 
+         // hook up stderr to a specially-named file
+         //
+-        freopen(STDERR_FILE, "a", stderr);
++        if (NULL == freopen(STDERR_FILE, "a", stderr)) {
++            perror("freopen stderr");
++            fflush(NULL);
++            _exit(errno);
++	}
+ 
+         if (!config.no_priority_change) {
+ #if HAVE_SETPRIORITY
+Index: boinc_debian/api/graphics2_unix.cpp
+===================================================================
+--- boinc_debian.orig/api/graphics2_unix.cpp
++++ boinc_debian/api/graphics2_unix.cpp
+@@ -190,7 +190,9 @@
+     FILE *f = boinc_fopen("gfx_info", "r");
+     if (f) {
+         // ToDo: change this to XML parsing
+-        fscanf(f, "%d %d %d %d\n", &xpos, &ypos, &width, &height);
++        if (! fscanf(f, "%d %d %d %d\n", &xpos, &ypos, &width, &height)) {
++	    fprintf(stderr,"Coud not parse parameters for xpos, ypos, width, height from glx_info file.\n");
++	}
+         fclose(f);
+     }
+ 
+Index: boinc_debian/lib/procinfo_unix.cpp
+===================================================================
+--- boinc_debian.orig/lib/procinfo_unix.cpp
++++ boinc_debian/lib/procinfo_unix.cpp
+@@ -219,9 +219,11 @@
+         sprintf(pidpath, "/proc/%s/stat", piddir->d_name);
+         fd = fopen(pidpath, "r");
+         if (fd) {
+-            fgets(buf, sizeof(buf), fd);
+-            retval = ps.parse(buf);
++            if (!fgets(buf, sizeof(buf), fd)) {
++	        buf[0]=0;
++	    }
+             fclose(fd);
++            retval = ps.parse(buf);
+ 
+             if (retval) {
+                 final_retval = retval;
+Index: boinc_debian/client/log_flags.cpp
+===================================================================
+--- boinc_debian.orig/client/log_flags.cpp
++++ boinc_debian/client/log_flags.cpp
+@@ -526,7 +526,10 @@
+ #ifdef _WIN32
+             _chdir(config.data_dir);
+ #else
+-            chdir(config.data_dir);
++            if (chdir(config.data_dir)) {
++                msg_printf(NULL, MSG_INFO, "Could not change to config.data_dir");
++	        return ERR_OPENDIR;
++            }
+ #endif
+         }
+     } else {
+Index: boinc_debian/client/switcher.cpp
+===================================================================
+--- boinc_debian.orig/client/switcher.cpp
++++ boinc_debian/client/switcher.cpp
+@@ -46,6 +46,8 @@
+     char            newlibs[256];
+     char            *projectDirName;
+ 
++    errno=0;
++
+     strcpy(user_name, "boinc_project");
+     strcpy(group_name, "boinc_project");
+ 
+@@ -73,12 +75,16 @@
+     // We are running setuid root, so setgid() sets real group ID,
+     // effective group ID and saved set_group-ID for this process
+     grp = getgrnam(group_name);
+-    if (grp) setgid(grp->gr_gid);
++    if (grp) {
++    	if (setgid(grp->gr_gid)) goto error;
++    }
+ 
+     // We are running setuid root, so setuid() sets real user ID,
+     // effective user ID and saved set_user-ID for this process
+     pw = getpwnam(user_name);
+-    if (pw) setuid(pw->pw_uid);
++    if (pw) {
++        if (setuid(pw->pw_uid)) goto error;
++    }
+ 
+     // For unknown reasons, the LD_LIBRARY_PATH and DYLD_LIBRARY_PATH
+     // environment variables are not passed in to switcher, though all
+@@ -125,7 +131,8 @@
+ 
+     execv(argv[1], argv+2);
+ 
++error:
+     // If we got here execv failed
+-    fprintf(stderr, "Process creation (%s) failed: errno=%d\n", argv[1], errno);
+-
++    if (errno) fprintf(stderr, "Process creation (%s) failed: errno=%d\n", argv[1], errno);
++    return(errno);
+ }
+Index: boinc_debian/lib/shmem.cpp
+===================================================================
+--- boinc_debian.orig/lib/shmem.cpp
++++ boinc_debian/lib/shmem.cpp
+@@ -337,7 +337,10 @@
+         // area to all zeros because they write beyond the old EOF. 
+         // See the lseek man page for details.
+         lseek(fd, size-1, SEEK_SET);
+-        write(fd, "\0", 1);
++        if (! write(fd, "\0", 1)) {
++	    close(fd);
++	    return ERR_SHMGET;
++	}
+     }
+ 
+     *pp = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, fd, 0);
