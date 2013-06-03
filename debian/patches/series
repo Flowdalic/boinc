@@ -36,7 +36,6 @@ some_extra_clang_warnings.patch
 #tmpA# nvidia_direct_invocation.patch
 #tmpA# nvidia_direct_invocation_2.patch
 nvidia_mem_display_simplification.patch
-api_NULL_not_defined.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
 more_maxpathlen.patch

@@ -1,7 +1,5 @@
-Index: boinc_debian/html/languages/translations/de.po
-===================================================================
---- boinc_debian.orig/html/languages/translations/de.po
-+++ boinc_debian/html/languages/translations/de.po
+--- a/html/languages/translations/de.po
++++ b/html/languages/translations/de.po
 @@ -1066,8 +1066,8 @@
  
  #: ../inc/prefs.inc:157
@@ -48,10 +46,8 @@ Index: boinc_debian/html/languages/translations/de.po
  
  #: ../user/moderation.php:30
  msgid ""
-Index: boinc_debian/html/languages/translations/ru.po
-===================================================================
---- boinc_debian.orig/html/languages/translations/ru.po
-+++ boinc_debian/html/languages/translations/ru.po
+--- a/html/languages/translations/ru.po
++++ b/html/languages/translations/ru.po
 @@ -386,6 +386,7 @@
  "<li> Не должно быть оскорбительных комментариев, затрагивающих расу, "
  "религию,\n"

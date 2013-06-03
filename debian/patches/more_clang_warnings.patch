@@ -1,7 +1,5 @@
-Index: boinc_debian/client/app_control.cpp
-===================================================================
---- boinc_debian.orig/client/app_control.cpp
-+++ boinc_debian/client/app_control.cpp
+--- a/client/app_control.cpp
++++ b/client/app_control.cpp
 @@ -589,8 +589,8 @@
      } else {
          x = y;
@@ -29,10 +27,8 @@ Index: boinc_debian/client/app_control.cpp
          msg_printf(wup->project, MSG_INTERNAL_ERROR,
              "no project URL in task state file"
          );
-Index: boinc_debian/client/cs_platforms.cpp
-===================================================================
---- boinc_debian.orig/client/cs_platforms.cpp
-+++ boinc_debian/client/cs_platforms.cpp
+--- a/client/cs_platforms.cpp
++++ b/client/cs_platforms.cpp
 @@ -143,7 +143,7 @@
          strlcat(cmdline," -m",256);
          if ((f=popen(cmdline,"r"))) {
@@ -51,10 +47,8 @@ Index: boinc_debian/client/cs_platforms.cpp
                                  // If the library is 32-bit ELF, then we're
                                  // golden.
                                  if (strstr(cmdline, "ELF") && strstr(cmdline, "32-bit")) support32=1;
-Index: boinc_debian/lib/crypt.cpp
-===================================================================
---- boinc_debian.orig/lib/crypt.cpp
-+++ boinc_debian/lib/crypt.cpp
+--- a/lib/crypt.cpp
++++ b/lib/crypt.cpp
 @@ -208,14 +208,17 @@
      }
      if (j != len) return ERR_NULL;
@@ -76,10 +70,8 @@ Index: boinc_debian/lib/crypt.cpp
  #endif
      return 0;
  }
-Index: boinc_debian/lib/diagnostics.cpp
-===================================================================
---- boinc_debian.orig/lib/diagnostics.cpp
-+++ boinc_debian/lib/diagnostics.cpp
+--- a/lib/diagnostics.cpp
++++ b/lib/diagnostics.cpp
 @@ -607,7 +607,7 @@
      size = backtrace (array, 64);
  //  Anything that calls malloc here (i.e *printf()) will probably fail
@@ -103,10 +95,8 @@ Index: boinc_debian/lib/diagnostics.cpp
      backtrace_symbols_fd(array, size, fileno(stderr));
  #endif
  
-Index: boinc_debian/client/hostinfo_unix.cpp
-===================================================================
---- boinc_debian.orig/client/hostinfo_unix.cpp
-+++ boinc_debian/client/hostinfo_unix.cpp
+--- a/client/hostinfo_unix.cpp
++++ b/client/hostinfo_unix.cpp
 @@ -1345,11 +1345,12 @@
  #endif
          fd = popen(cmd, "r");
@@ -125,10 +115,8 @@ Index: boinc_debian/client/hostinfo_unix.cpp
              pclose(fd);
          }
      }
-Index: boinc_debian/client/app_start.cpp
-===================================================================
---- boinc_debian.orig/client/app_start.cpp
-+++ boinc_debian/client/app_start.cpp
+--- a/client/app_start.cpp
++++ b/client/app_start.cpp
 @@ -846,7 +846,10 @@
      char* argv[100];
      char current_dir[1024];
@@ -154,10 +142,8 @@ Index: boinc_debian/client/app_start.cpp
  
          if (!config.no_priority_change) {
  #if HAVE_SETPRIORITY
-Index: boinc_debian/api/graphics2_unix.cpp
-===================================================================
---- boinc_debian.orig/api/graphics2_unix.cpp
-+++ boinc_debian/api/graphics2_unix.cpp
+--- a/api/graphics2_unix.cpp
++++ b/api/graphics2_unix.cpp
 @@ -190,7 +190,9 @@
      FILE *f = boinc_fopen("gfx_info", "r");
      if (f) {
@@ -169,10 +155,8 @@ Index: boinc_debian/api/graphics2_unix.cpp
          fclose(f);
      }
  
-Index: boinc_debian/lib/procinfo_unix.cpp
-===================================================================
---- boinc_debian.orig/lib/procinfo_unix.cpp
-+++ boinc_debian/lib/procinfo_unix.cpp
+--- a/lib/procinfo_unix.cpp
++++ b/lib/procinfo_unix.cpp
 @@ -219,9 +219,11 @@
          sprintf(pidpath, "/proc/%s/stat", piddir->d_name);
          fd = fopen(pidpath, "r");
@@ -187,10 +171,8 @@ Index: boinc_debian/lib/procinfo_unix.cpp
  
              if (retval) {
                  final_retval = retval;
-Index: boinc_debian/client/log_flags.cpp
-===================================================================
---- boinc_debian.orig/client/log_flags.cpp
-+++ boinc_debian/client/log_flags.cpp
+--- a/client/log_flags.cpp
++++ b/client/log_flags.cpp
 @@ -526,7 +526,10 @@
  #ifdef _WIN32
              _chdir(config.data_dir);
@@ -203,10 +185,8 @@ Index: boinc_debian/client/log_flags.cpp
  #endif
          }
      } else {
-Index: boinc_debian/client/switcher.cpp
-===================================================================
---- boinc_debian.orig/client/switcher.cpp
-+++ boinc_debian/client/switcher.cpp
+--- a/client/switcher.cpp
++++ b/client/switcher.cpp
 @@ -46,6 +46,8 @@
      char            newlibs[256];
      char            *projectDirName;
@@ -246,10 +226,8 @@ Index: boinc_debian/client/switcher.cpp
 +    if (errno) fprintf(stderr, "Process creation (%s) failed: errno=%d\n", argv[1], errno);
 +    return(errno);
  }
-Index: boinc_debian/lib/shmem.cpp
-===================================================================
---- boinc_debian.orig/lib/shmem.cpp
-+++ boinc_debian/lib/shmem.cpp
+--- a/lib/shmem.cpp
++++ b/lib/shmem.cpp
 @@ -337,7 +337,10 @@
          // area to all zeros because they write beyond the old EOF. 
          // See the lseek man page for details.
