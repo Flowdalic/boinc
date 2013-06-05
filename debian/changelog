@@ -1,8 +1,8 @@
 boinc (7.1.7+dfsg-1) UNRELEASED; urgency=low
 
-  [ Gianfranco Costamagna ]
   * New upstream release.
     Many patches have been accepted upstream.
+  * Bumped debian/compat to 9.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 05 Jun 2013 11:47:49 +0200
 
