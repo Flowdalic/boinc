@@ -3,7 +3,7 @@ Description: int may not be enough (theoretically) for large files.
 
 --- a/sched/file_upload_handler.cpp
 +++ b/sched/file_upload_handler.cpp
-@@ -123,13 +123,13 @@
+@@ -137,13 +137,13 @@
      bytes_left = nbytes - offset;
  
      while (bytes_left > 0) {
@@ -19,7 +19,7 @@ Description: int may not be enough (theoretically) for large files.
  
          // delay opening the file until we've done the first socket read
          // to avoid filesystem lockups (WCG, possible paranoia)
-@@ -195,7 +195,7 @@
+@@ -209,7 +209,7 @@
  
          // try to write n bytes to file
          //

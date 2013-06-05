@@ -97,7 +97,7 @@
  
 --- a/client/hostinfo_unix.cpp
 +++ b/client/hostinfo_unix.cpp
-@@ -1345,11 +1345,12 @@
+@@ -1236,11 +1236,12 @@
  #endif
          fd = popen(cmd, "r");
          if (fd) {
@@ -117,7 +117,7 @@
      }
 --- a/client/app_start.cpp
 +++ b/client/app_start.cpp
-@@ -846,7 +846,10 @@
+@@ -850,7 +850,10 @@
      char* argv[100];
      char current_dir[1024];
  
@@ -129,7 +129,7 @@
  
      sprintf(cmdline, "%s %s",
          wup->command_line.c_str(), app_version->cmdline
-@@ -989,7 +992,11 @@
+@@ -993,7 +996,11 @@
  
          // hook up stderr to a specially-named file
          //
@@ -144,7 +144,7 @@
  #if HAVE_SETPRIORITY
 --- a/api/graphics2_unix.cpp
 +++ b/api/graphics2_unix.cpp
-@@ -190,7 +190,9 @@
+@@ -191,7 +191,9 @@
      FILE *f = boinc_fopen("gfx_info", "r");
      if (f) {
          // ToDo: change this to XML parsing
@@ -173,7 +173,7 @@
                  final_retval = retval;
 --- a/client/log_flags.cpp
 +++ b/client/log_flags.cpp
-@@ -526,7 +526,10 @@
+@@ -509,7 +509,10 @@
  #ifdef _WIN32
              _chdir(config.data_dir);
  #else

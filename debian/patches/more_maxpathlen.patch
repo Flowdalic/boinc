@@ -48,7 +48,7 @@
 +        snprintf(newpath, sizeof(newpath), "%s/%s", oldpath, q);
          retval = boinc_mkdir(newpath);
          if (retval) return retval;
-         strcpy(oldpath, newpath);
+         safe_strcpy(oldpath, newpath);
 --- a/lib/network.cpp
 +++ b/lib/network.cpp
 @@ -71,7 +71,7 @@
@@ -74,12 +74,3 @@
      return buf;
  #endif
  }
-@@ -107,7 +107,7 @@
-         case AF_INET6: {
-             sockaddr_in6* sin = (sockaddr_in6*)&s;
-             char buf[256];
--            inet_ntop(AF_INET6, (void*)(&sin->sin6_addr), buf, 256);
-+            inet_ntop(AF_INET6, (void*)(&sin->sin6_addr), buf, sizeof(buf));
-             return (strcmp(buf, "::1") == 0);
-             break;
-         }

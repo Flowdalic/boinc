@@ -47,15 +47,6 @@
      int n, dummy;
      unsigned int i;
      PROJECT* project=0;
-@@ -897,7 +897,7 @@
- 
-     DirScanner dirscan(slot_dir);
-     while (dirscan.scan(filename)) {
--        strcpy(buf, filename.c_str());
-+        strncpy(buf, filename.c_str(), sizeof(buf));
-         if (strstr(buf, UPLOAD_FILE_REQ_PREFIX) == buf) {
-             char* p = buf+strlen(UPLOAD_FILE_REQ_PREFIX);
-             FILE_INFO* fip = result->lookup_file_logical(p);
 --- a/client/app.h
 +++ b/client/app.h
 @@ -47,6 +47,7 @@

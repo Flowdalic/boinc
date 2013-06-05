@@ -2,7 +2,7 @@ Author: Steffen Moeller
 Description: Allowing descriptions of hosts, vendor or model that are larger than a SMS.
 --- a/sched/sched_driver.cpp
 +++ b/sched/sched_driver.cpp
-@@ -53,9 +53,9 @@
+@@ -52,9 +52,9 @@
  using std::vector;
  
  struct HOST_DESC{

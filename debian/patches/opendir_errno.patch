@@ -7,24 +7,24 @@
 -    char * basepath, int depth, 
 +    const char * const basepath, int depth,
      int use_sandbox, int isManager, 
--    char * path_to_error
-+    const char * const path_to_error
+-    char * path_to_error,
++    const char * const path_to_error,
+     int len
  );
  
- #if (! defined(__WXMAC__) && ! defined(_MAC_INSTALLER))
-@@ -503,9 +503,9 @@
- }
+@@ -505,9 +505,9 @@
  
  
--static int CheckNestedDirectories(char * basepath, int depth,
-+static int CheckNestedDirectories(const char * const basepath, int depth,
-                                     int use_sandbox, int isManager, 
--                                    char * path_to_error
-+                                    const char * const path_to_error
-                                 ) {
+ static int CheckNestedDirectories(
+-    char * basepath, int depth,
++    const char * const basepath, int depth,
+     int use_sandbox, int isManager, 
+-    char * path_to_error, int len
++    const char * const path_to_error, int len
+ ) {
      int             isDirectory;
      char            full_path[MAXPATHLEN];
-@@ -515,6 +515,7 @@
+@@ -517,6 +517,7 @@
      dirent          *dp;
      static int      errShown = 0;
  
@@ -32,7 +32,7 @@
      dirp = opendir(basepath);
      if (dirp == NULL) {
          // Ideally, all project-created subdirectories under project or slot 
-@@ -524,6 +525,7 @@
+@@ -526,6 +527,7 @@
          // the subdirectory to check them.
          strlcpy(full_path, basepath, sizeof(full_path));
          if ((depth > 1) && (errno == EACCES)) {
@@ -56,7 +56,7 @@
                      struct dirent *entry;
 +                    errno=0;
                      DIR *a = opendir(libdir[i]);
--                    // if dir doesn't exist, do to the next one
+-                    // if dir doesn't exist, do the next one
 -                    if (a == 0) continue;
 +                    if (a == 0) {
 +                      if (ENOENT==errno) {

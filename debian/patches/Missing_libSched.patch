@@ -1,7 +1,7 @@
 --- a/tools/Makefile.am
 +++ b/tools/Makefile.am
-@@ -24,7 +24,7 @@
- 		run_in_ops
+@@ -35,7 +35,7 @@
+     project.xml
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
 -AM_LDFLAGS += -static
@@ -11,8 +11,8 @@
  cancel_jobs_LDADD = $(SERVERLIBS)
 --- a/vda/Makefile.am
 +++ b/vda/Makefile.am
-@@ -3,7 +3,7 @@
- bin_PROGRAMS = vda vdad ssim
+@@ -4,7 +4,7 @@
+ vda_PROGRAMS = vda vdad ssim
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
 -AM_LDFLAGS += -static

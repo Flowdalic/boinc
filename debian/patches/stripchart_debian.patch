@@ -3,16 +3,16 @@ Description: Adjusting paths.
 Disclaimer: This is mostly dead code in upstream.
 --- a/stripchart/stripchart.cnf
 +++ b/stripchart/stripchart.cnf
-@@ -8,7 +8,7 @@
+@@ -4,7 +4,7 @@
+ $majorversion = 2; $minorversion = 1;
+ 
  # Directory where gnuplot is
- # $gnuplot = "/usr/local/gnuplot-3.7";
- #$gnuplot = "/disks/asimov/a/users/hiramc/local/src/gnuplot-3.7";
 -$gnuplot = "/usr/local/bin"
 +$gnuplot = "/usr/bin"
   
  # Temporary files
  $suffix = rand(10000);
-@@ -42,7 +42,7 @@
+@@ -38,7 +38,7 @@
  $tzdiff = timegm($sec,$min,$hour,$mday,$mon,$year) - timelocal($sec,$min,$hour,$mday,$mon,$year);
  
  # Where is the stripchart executable located?
@@ -21,7 +21,7 @@ Disclaimer: This is mostly dead code in upstream.
   
  # What is the default number of stripcharts?
  $defaultnumcharts = 1;
-@@ -52,11 +52,11 @@
+@@ -48,11 +48,11 @@
  
  # Where is the list of datafiles for stripchart.cgi?
  # Note: there is a sample copy in the samples directory: 
