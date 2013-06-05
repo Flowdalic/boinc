@@ -134,7 +134,7 @@ function submit_job($job, $template, $app, $batch_id, $i, $priority) {
     if ($job->command_line) {
         $cmd .= " --command_line \"$job->command_line\"";
     }
-    $cmd .= " --wu_name batch_".$batch_id."_".$i;
+    $cmd .= " --wu_name $job->name";
     foreach ($job->input_files as $file) {
         $cmd .= " $file->name";
     }
@@ -150,6 +150,7 @@ function xml_get_jobs($r) {
         $job = new StdClass;
         $job->input_files = array();
         $job->command_line = (string)$j->command_line;
+        $job->name = (string)$j->name;
         $job->rsc_fpops_est = (double)$j->rsc_fpops_est;
         foreach ($j->input_file as $f) {
             $file = new StdClass;
@@ -347,6 +348,7 @@ function query_batch2($r) {
     echo "<jobs>\n";
     foreach ($batches as $batch) {
         $wus = BoincWorkunit::enum("batch = $batch->id");
+        echo "   <batch_size>".count($wus)."</batch_size>\n";
         foreach ($wus as $wu) {
             if ($wu->canonical_resultid) {
                 $status = "DONE";
@@ -457,21 +459,27 @@ function handle_abort_batch($r) {
     echo "<success>1</success>";
 }
 
+// handle the abort of jobs possibly belonging to different batches
+//
 function handle_abort_jobs($r) {
     list($user, $user_submit) = authenticate_user($r, null);
-    $batch = get_batch($r);
-    if ($batch->user_id != $user->id) {
-        xml_error(-1, "not owner");
-    }
-    foreach ($r->job_names as $job_name) {
+    $batch = null;
+    foreach ($r->job_name as $job_name) {
         $job_name = BoincDb::escape_string($job_name);
         $wu = BoincWorkunit::lookup("name='$job_name'");
         if (!$wu) {
             xml_error(-1, "No job $job_name");
         }
-        if ($wu->batch != $batch_id) {
-            xml_error(-1, "Not owner of job $job_name");
+        if (!$wu->batch) {
+            xml_error(-1, "Job $job_name is not part of a batch");
         }
+        if (!$batch || $wu->batch != $batch->id) {
+            $batch = BoincBatch::lookup_id($wu->batch);
+        }
+        if (!$batch || $batch->user_id != $user->id) {
+            xml_error(-1, "not owner");
+        }
+        echo "<aborted $job_name>\n";
         abort_workunit($wu);
     }
     echo "<success>1</success>";

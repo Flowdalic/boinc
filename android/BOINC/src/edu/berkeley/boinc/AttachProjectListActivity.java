@@ -20,108 +20,58 @@
 package edu.berkeley.boinc;
 
 import java.util.ArrayList;
-
-import edu.berkeley.boinc.adapter.AttachListItemWrapper;
 import edu.berkeley.boinc.adapter.AttachProjectListAdapter;
 import edu.berkeley.boinc.client.Monitor;
 import edu.berkeley.boinc.rpc.ProjectInfo;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AttachProjectListActivity extends Activity implements android.view.View.OnClickListener{
 	
 	private final String TAG = "BOINC AttachProjectListActivity"; 
-	
-	private Monitor monitor;
-	private Boolean mIsBound;
 
 	private ListView lv;
 	private AttachProjectListAdapter listAdapter;
 	private Dialog manualUrlInputDialog;
 	
-	private ServiceConnection mConnection = new ServiceConnection() {
-	    public void onServiceConnected(ComponentName className, IBinder service) {
-	        // This is called when the connection with the service has been established, getService returns the Monitor object that is needed to call functions.
-	        monitor = ((Monitor.LocalBinder)service).getService();
-		    mIsBound = true;
-		    
-		    populateView();
-	    }
-
-	    public void onServiceDisconnected(ComponentName className) { // This should not happen
-	        monitor = null;
-		    mIsBound = false;
-	    }
-	};
-	
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
-        setContentView(R.layout.generic_layout_loading);
-        TextView loadingHeader = (TextView)findViewById(R.id.loading_header);
-        loadingHeader.setText(R.string.attachproject_list_loading);
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
          
         Log.d(TAG, "onCreate"); 
         
-        //bind monitor service
-        doBindService();
-    }
-    
-	@Override
-	protected void onDestroy() {
-    	Log.d(TAG, "onDestroy");
-	    doUnbindService();
-	    super.onDestroy();
-	}
-
-	private void doBindService() {
-	    // Establish a connection with the service, onServiceConnected gets called when
-		bindService(new Intent(this, Monitor.class), mConnection, Service.BIND_AUTO_CREATE);
-	}
-
-	private void doUnbindService() {
-	    if (mIsBound) {
-	        // Detach existing connection.
-	        unbindService(mConnection);
-	        mIsBound = false;
-	    }
-	}
-	
-	private void populateView(){
-		//retrieve projects from monitor
-		ArrayList<AttachListItemWrapper> data = new ArrayList<AttachListItemWrapper>();
-		ArrayList<ProjectInfo> android = monitor.getAndroidProjectsList();
-		Log.d(TAG,"monitor.getAndroidProjectsList returned with " + android.size() + " elements");
-		
-		// add projects, categories and manual field to data source
-		data.add(new AttachListItemWrapper(getString(R.string.attachproject_list_category_defined)));
-		for (ProjectInfo project: android) {
-			data.add(new AttachListItemWrapper(project));
-		}
-		data.add(new AttachListItemWrapper(getString(R.string.attachproject_list_category_manual)));
-		data.add(new AttachListItemWrapper()); // manual input item
+		//get supported projects
+		ArrayList<ProjectInfo> data = Monitor.getClientStatus().supportedProjects;
+		Log.d(TAG,"monitor.getAndroidProjectsList returned with " + data.size() + " elements");
 		
 		// setup layout
         setContentView(R.layout.attach_project_list_layout);  
 		lv = (ListView) findViewById(R.id.listview);
         listAdapter = new AttachProjectListAdapter(AttachProjectListActivity.this,R.id.listview,data);
         lv.setAdapter(listAdapter);
+        
+        // set title bar
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
+    }
+    
+	@Override
+	protected void onDestroy() {
+    	Log.d(TAG, "onDestroy");
+	    super.onDestroy();
 	}
 	
 	// check whether device is online before starting connection attempt
@@ -145,10 +95,11 @@ public class AttachProjectListActivity extends Activity implements android.view.
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		manualUrlInputDialog = new Dialog(this); //instance new dialog
+		manualUrlInputDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		manualUrlInputDialog.setContentView(R.layout.attach_project_list_layout_manual_dialog);
 		Button button = (Button) manualUrlInputDialog.findViewById(R.id.buttonUrlSubmit);
 		button.setOnClickListener(this);
-		manualUrlInputDialog.setTitle(R.string.attachproject_list_manual__dialog_title);
+		((TextView)manualUrlInputDialog.findViewById(R.id.title)).setText(R.string.attachproject_list_manual_dialog_title);
 		return manualUrlInputDialog;
 	}
 

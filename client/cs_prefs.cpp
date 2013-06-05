@@ -266,16 +266,16 @@ int CLIENT_STATE::check_suspend_processing() {
     }
 
 #ifdef ANDROID
-    if (now > host_info.device_status_time + ANDROID_KEEPALIVE_TIMEOUT) {
+    if (now > device_status_time + ANDROID_KEEPALIVE_TIMEOUT) {
         return SUSPEND_REASON_NO_GUI_KEEPALIVE;
     }
 
     // check for hot battery
     //
-    if (host_info.device_status.battery_state == BATTERY_STATE_OVERHEATED) {
+    if (device_status.battery_state == BATTERY_STATE_OVERHEATED) {
         return SUSPEND_REASON_BATTERY_OVERHEATED;
     }
-    if (host_info.device_status.battery_temperature_celsius > 45) {
+    if (device_status.battery_temperature_celsius > 45) {
         return SUSPEND_REASON_BATTERY_OVERHEATED;
     }
 
@@ -283,9 +283,9 @@ int CLIENT_STATE::check_suspend_processing() {
     // while it's recharging.
     // So compute only if 95% charged or more.
     //
-    int cp = host_info.device_status.battery_charge_pct;
+    int cp = device_status.battery_charge_pct;
     if (cp >= 0) {
-        if (cp < 95) {
+        if (cp < global_prefs.battery_charge_min_pct) {
             return SUSPEND_REASON_BATTERY_CHARGING;
         }
     }
@@ -406,14 +406,14 @@ void CLIENT_STATE::check_suspend_network() {
     }
 
 #ifdef ANDROID
-    if (now > host_info.device_status_time + ANDROID_KEEPALIVE_TIMEOUT) {
+    if (now > device_status_time + ANDROID_KEEPALIVE_TIMEOUT) {
         file_xfers_suspended = true;
         if (!recent_rpc) network_suspended = true;
         network_suspend_reason = SUSPEND_REASON_NO_GUI_KEEPALIVE;
     }
     // use only WiFi
     //
-    if (global_prefs.network_wifi_only && !host_info.device_status.wifi_online) {
+    if (global_prefs.network_wifi_only && !device_status.wifi_online) {
         file_xfers_suspended = true;
         if (!recent_rpc) network_suspended = true;
         network_suspend_reason = SUSPEND_REASON_WIFI_STATE;
@@ -527,13 +527,13 @@ int PROJECT::parse_preferences_for_user_files() {
             fip = new FILE_INFO;
             fip->project = this;
             fip->download_urls.add(url);
-            strcpy(fip->name, filename.c_str());
+            safe_strcpy(fip->name, filename.c_str());
             fip->is_user_file = true;
             gstate.file_infos.push_back(fip);
         }
 
         fr.file_info = fip;
-        strcpy(fr.open_name, open_name.c_str());
+        safe_strcpy(fr.open_name, open_name.c_str());
         user_files.push_back(fr);
     }
     return 0;
@@ -591,7 +591,7 @@ void CLIENT_STATE::read_global_prefs(
             //
             PROJECT* p = global_prefs_source_project();
             if (p && strcmp(main_host_venue, p->host_venue)) {
-                strcpy(main_host_venue, p->host_venue);
+                safe_strcpy(main_host_venue, p->host_venue);
                 global_prefs.parse_file(fname, main_host_venue, found_venue);
             }
         }

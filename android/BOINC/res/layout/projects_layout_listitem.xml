@@ -22,72 +22,53 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp" >
+    android:clickable="true"
+    android:padding="2dp">
     
     <ImageView 
-        android:id="@+id/projectIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:minWidth="45dp"
-        android:minHeight="45dp"
+        android:id="@+id/project_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="fitCenter"
 	    android:contentDescription="@string/projects_icon"
-        android:layout_margin="5dp"
-        android:layout_gravity="center_vertical" />
+	    android:background="@drawable/shape_blue_border"
+	    android:padding="1dp" />
         
     <LinearLayout 
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="left|center_vertical"
-        android:layout_weight="1">
-	    
+        android:layout_marginLeft="3dp">
+        
 	    <TextView
 	        android:id="@+id/project_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:textStyle="bold"
 	        android:singleLine="true"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-	
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+	    <TextView
+	        android:id="@+id/project_user"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/dark_grey"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:layout_marginBottom="5dp" />
+        
 	    <TextView
 	        android:id="@+id/project_status"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:textColor="@color/dark_grey"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
-    
+	    
+	    <TextView 
+	   		android:layout_width="wrap_content"
+		    android:id="@+id/project_credits"
+	   		android:layout_height="wrap_content"
+	   		android:text="@string/projects_credits_header"
+	   		android:textAppearance="?android:attr/textAppearanceSmall"
+	   		android:textColor="@color/dark_grey"/>
     </LinearLayout>
-    
-    <LinearLayout 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="right|center_vertical"
-        android:layout_weight="0">
-        
-        <ImageButton
-		    android:id="@+id/project_update"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:clickable="false"
-		    android:contentDescription="@string/projects_update"
-		    android:background="@android:color/black"
-		    android:focusable="false"
-		    android:padding="5dp"
-		    android:layout_marginRight="10dp"
-		    android:src="@drawable/reloadw" />
-	
-		<ImageButton
-		    android:id="@+id/project_more"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:clickable="false"
-		    android:background="@android:color/black"
-		    android:contentDescription="@string/projects_more"
-		    android:focusable="false"
-		    android:padding="5dp"
-		    android:layout_marginRight="10dp"
-		    android:src="@drawable/nextw" />
-        
-    </LinearLayout>
-
 </LinearLayout>

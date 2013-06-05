@@ -27,8 +27,10 @@ public class PrefsListItemWrapperDouble extends PrefsListItemWrapper {
 	private final String TAG = "PrefsListItemWrapperDouble";
 
 	public String header = "";
+	public String description = "";
+	public String unit = "";
 	public Double status;
-	public Boolean isPct; // shows whether value is percentage, therefore using a SeekBar
+	public Boolean isPct = false; // shows whether value is percentage, therefore using a SeekBar
 	
 	public PrefsListItemWrapperDouble(Context ctx, Integer ID, Integer categoryID, Double status) {
 		super(ctx, ID, categoryID);
@@ -38,36 +40,49 @@ public class PrefsListItemWrapperDouble extends PrefsListItemWrapper {
 	
 	private void mapStrings(Integer id) {
 		switch (id) {
+		case R.string.battery_charge_min_pct_header:
+			header = ctx.getString(R.string.battery_charge_min_pct_header);
+			description = ctx.getString(R.string.battery_charge_min_pct_description);
+			unit = ctx.getString(R.string.prefs_unit_pct);
+			break;
 		case R.string.prefs_disk_max_pct_header:
 			header = ctx.getString(R.string.prefs_disk_max_pct_header);
-			isPct = true;
+			description = ctx.getString(R.string.prefs_disk_max_pct_description);
+			unit = ctx.getString(R.string.prefs_unit_pct);
 			break;
 		case R.string.prefs_disk_min_free_gb_header:
 			header = ctx.getString(R.string.prefs_disk_min_free_gb_header);
-			isPct = false;
+			description = ctx.getString(R.string.prefs_disk_min_free_gb_description);
+			unit = ctx.getString(R.string.prefs_unit_gb);
 			break;
 		case R.string.prefs_network_daily_xfer_limit_mb_header:
 			header = ctx.getString(R.string.prefs_network_daily_xfer_limit_mb_header);
-			isPct = false;
+			description = ctx.getString(R.string.prefs_network_daily_xfer_limit_mb_description);
+			unit = ctx.getString(R.string.prefs_unit_mb);
 			break;
 		case R.string.prefs_cpu_number_cpus_header:
 			header = ctx.getString(R.string.prefs_cpu_number_cpus_header);
-			isPct = true;
+			description = ctx.getString(R.string.prefs_cpu_number_cpus_description);
+			unit = ctx.getString(R.string.prefs_unit_pct);
 			break;
 		case R.string.prefs_cpu_other_load_suspension_header:
 			header = ctx.getString(R.string.prefs_cpu_other_load_suspension_header);
-			isPct = true;
+			description = ctx.getString(R.string.prefs_cpu_other_load_suspension_description);
+			unit = ctx.getString(R.string.prefs_unit_pct);
 			break;
 		case R.string.prefs_cpu_time_max_header:
 			header = ctx.getString(R.string.prefs_cpu_time_max_header);
-			isPct = true;
+			description = ctx.getString(R.string.prefs_cpu_time_max_description);
+			unit = ctx.getString(R.string.prefs_unit_pct);
 			break;
 		case R.string.prefs_memory_max_idle_header:
 			header = ctx.getString(R.string.prefs_memory_max_idle_header);
-			isPct = true;
+			description = ctx.getString(R.string.prefs_memory_max_idle_description);
+			unit = ctx.getString(R.string.prefs_unit_pct);
 			break;
 		default:
 			Log.d(TAG, "map failed!");
 		}
+		if(unit.equals(ctx.getString(R.string.prefs_unit_pct))) isPct = true;
 	}
 }

@@ -53,7 +53,7 @@ static void show_flag(char* buf, bool flag, const char* flag_name) {
     if (!flag) return;
     int n = (int)strlen(buf);
     if (!n) {
-        strcpy(buf, flag_name);
+        strlcpy(buf, flag_name, 256);
         return;
     }
     strcat(buf, ", ");
@@ -116,22 +116,25 @@ static void show_gpu_ignore(vector<int>& devs, int rt) {
     }
 }
 
+// Show GPU exclusions in event log.
+// Don't show errors - they were already shown when we parsed the config file
+//
 static void show_exclude_gpu(EXCLUDE_GPU& e) {
     char t[256], app_name[256], dev[256];
     PROJECT *p = gstate.lookup_project(e.url.c_str());
     if (!p) return;
     if (e.type.empty()) {
-        strcpy(t, "all");
+        safe_strcpy(t, "all");
     } else {
-        strcpy(t, e.type.c_str());
+        safe_strcpy(t, e.type.c_str());
     }
     if (e.appname.empty()) {
-        strcpy(app_name, "all");
+        safe_strcpy(app_name, "all");
     } else {
-        strcpy(app_name, e.appname.c_str());
+        safe_strcpy(app_name, e.appname.c_str());
     }
     if (e.device_num < 0) {
-        strcpy(dev, "all");
+        safe_strcpy(dev, "all");
     } else {
         sprintf(dev, "%d", e.device_num);
     }
@@ -139,27 +142,6 @@ static void show_exclude_gpu(EXCLUDE_GPU& e) {
         "Config: excluded GPU.  Type: %s.  App: %s.  Device: %s",
         t, app_name, dev
     );
-    if (!e.appname.empty()) {
-        APP* app = gstate.lookup_app(p, e.appname.c_str());
-        if (!app) {
-            string app_list;
-            for (unsigned int i=0; i<gstate.apps.size(); i++) {
-                app = gstate.apps[i];
-                if (app->project != p) continue;
-                if (!app_list.empty()) {
-                    app_list += ", ";
-                }
-                app_list += "'";
-                app_list += app->name;
-                app_list += "'";
-            }
-            msg_printf(p, MSG_USER_ALERT,
-                "A GPU exclusion in your cc_config.xml file specifies a non-existent application '%s'.  Existing applications: %s",
-                e.appname.c_str(),
-                app_list.c_str()
-            );
-        }
-    }
 }
 
 // Print config info.
@@ -376,6 +358,7 @@ int CONFIG::parse_options_client(XML_PARSER& xp) {
             ignore_gpu_instance[PROC_TYPE_INTEL_GPU].push_back(n);
             continue;
         }
+        if (xp.parse_int("max_event_log_lines", max_event_log_lines)) continue;
         if (xp.parse_int("max_file_xfers", max_file_xfers)) continue;
         if (xp.parse_int("max_file_xfers_per_project", max_file_xfers_per_project)) continue;
         if (xp.parse_int("max_stderr_file_size", max_stderr_file_size)) continue;
@@ -567,8 +550,9 @@ void process_gpu_exclusions() {
             APP* app = gstate.lookup_app(p, eg.appname.c_str());
             if (!app) {
                 msg_printf(p, MSG_USER_ALERT,
-                    "Nonexistent app '%s' in GPU exclusion",
-                    eg.appname.c_str()
+                    "A GPU exclusion in your cc_config.xml file refers to an unknown application '%s'.  Known applications: %s",
+                    eg.appname.c_str(),
+                    app_list_string(p).c_str()
                 );
                 continue;
             }

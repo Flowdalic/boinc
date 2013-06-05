@@ -27,7 +27,7 @@
 #ifndef _WIN32
 #include "config.h"
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -584,6 +584,16 @@ const char* run_mode_string(int mode) {
     case RUN_MODE_ALWAYS: return "always";
     case RUN_MODE_AUTO: return "according to prefs";
     case RUN_MODE_NEVER: return "never";
+    }
+    return "unknown";
+}
+
+const char* battery_state_string(int state) {
+    switch (state) {
+    case BATTERY_STATE_DISCHARGING: return "discharging";
+    case BATTERY_STATE_CHARGING: return "charging";
+    case BATTERY_STATE_FULL: return "full";
+    case BATTERY_STATE_OVERHEATED: return "overheated";
     }
     return "unknown";
 }

@@ -287,7 +287,7 @@ const char* SCHEDULER_REQUEST::parse(XML_PARSER& xp) {
         if (xp.parse_double("estimated_delay", cpu_estimated_delay)) continue;
         if (xp.parse_double("duration_correction_factor", host.duration_correction_factor)) continue;
         if (xp.match_tag("global_preferences")) {
-            strcpy(global_prefs_xml, "<global_preferences>\n");
+            safe_strcpy(global_prefs_xml, "<global_preferences>\n");
             char buf[BLOB_SIZE];
             retval = xp.element_contents(
                 "</global_preferences>", buf, sizeof(buf)
@@ -614,6 +614,17 @@ SCHEDULER_REPLY::SCHEDULER_REPLY() {
     strcpy(email_hash, "");
 }
 
+static bool have_apps_for_client() {
+    for (int i=0; i<NPROC_TYPES; i++) {
+        if (ssp->have_apps_for_proc_type[i]) {
+            if (!i) return true;
+            COPROC* cp = g_request->coprocs.type_to_coproc(i);
+            if (cp->count) return true;
+        }
+    }
+    return false;
+}
+
 int SCHEDULER_REPLY::write(FILE* fout, SCHEDULER_REQUEST& sreq) {
     unsigned int i;
     char buf[BLOB_SIZE];
@@ -690,7 +701,7 @@ int SCHEDULER_REPLY::write(FILE* fout, SCHEDULER_REQUEST& sreq) {
         char prio[256];
         for (i=0; i<messages.size(); i++) {
             USER_MESSAGE& um = messages[i];
-            strcpy(prio, um.priority.c_str());
+            safe_strcpy(prio, um.priority.c_str());
             if (!strcmp(prio, "notice")) {
                 strcpy(prio, "high");
             }
@@ -899,27 +910,41 @@ int SCHEDULER_REPLY::write(FILE* fout, SCHEDULER_REQUEST& sreq) {
         fprintf(fout, "%s", file_transfer_requests[i].c_str());
     }
 
-    // write deprecated form for old clients
+    // before writing no_X_apps elements,
+    // make sure that we're not going tell it we have no apps
+    // for any of its resources.
+    // Otherwise (for 7.0.x clients) it will never contact us again
     //
-    if (g_request->core_client_version < 70040) {
-        fprintf(fout,
-            "<no_cpu_apps>%d</no_cpu_apps>\n"
-            "<no_cuda_apps>%d</no_cuda_apps>\n"
-            "<no_ati_apps>%d</no_ati_apps>\n",
-            ssp->have_apps_for_proc_type[PROC_TYPE_CPU]?0:1,
-            ssp->have_apps_for_proc_type[PROC_TYPE_NVIDIA_GPU]?0:1,
-            ssp->have_apps_for_proc_type[PROC_TYPE_AMD_GPU]?0:1
-        );
-    }
-    for (i=0; i<NPROC_TYPES; i++) {
-        if (!ssp->have_apps_for_proc_type[i]) {
+    if (have_apps_for_client()) {
+        // write deprecated form for old clients
+        //
+        if (g_request->core_client_version < 70040) {
             fprintf(fout,
-                "<no_rsc_apps>%s</no_rsc_apps>\n",
-                proc_type_name_xml(i)
+                "<no_cpu_apps>%d</no_cpu_apps>\n"
+                "<no_cuda_apps>%d</no_cuda_apps>\n"
+                "<no_ati_apps>%d</no_ati_apps>\n",
+                ssp->have_apps_for_proc_type[PROC_TYPE_CPU]?0:1,
+                ssp->have_apps_for_proc_type[PROC_TYPE_NVIDIA_GPU]?0:1,
+                ssp->have_apps_for_proc_type[PROC_TYPE_AMD_GPU]?0:1
+            );
+        }
+        for (i=0; i<NPROC_TYPES; i++) {
+            if (!ssp->have_apps_for_proc_type[i]) {
+                fprintf(fout,
+                    "<no_rsc_apps>%s</no_rsc_apps>\n",
+                    proc_type_name_xml(i)
+                );
+            }
+        }
+    } else {
+        if (config.debug_send) {
+            log_messages.printf(MSG_NORMAL,
+                "[send] no app versions for client resources; suppressing no_rsc_apps\n"
             );
         }
     }
-    gui_urls.get_gui_urls(user, host, team, buf);
+
+    gui_urls.get_gui_urls(user, host, team, buf, sizeof(buf));
     fputs(buf, fout);
     if (project_files.text) {
         fputs(project_files.text, fout);
@@ -985,7 +1010,7 @@ void SCHEDULER_REPLY::insert_message(USER_MESSAGE& um) {
 USER_MESSAGE::USER_MESSAGE(const char* m, const char* p) {
     if (g_request->core_client_version < 61200) {
         char buf[1024];
-        strcpy(buf, m);
+        safe_strcpy(buf, m);
         strip_translation(buf);
         message = buf;
     } else {
@@ -1010,7 +1035,7 @@ int APP::write(FILE* fout) {
 int APP_VERSION::write(FILE* fout) {
     char buf[APP_VERSION_XML_BLOB_SIZE];
 
-    strcpy(buf, xml_doc);
+    safe_strcpy(buf, xml_doc);
     char* p = strstr(buf, "</app_version>");
     if (!p) {
         fprintf(stderr, "ERROR: app version %d XML has no end tag!\n", id);
@@ -1073,7 +1098,7 @@ int APP_VERSION::write(FILE* fout) {
 int SCHED_DB_RESULT::write_to_client(FILE* fout) {
     char buf[BLOB_SIZE];
 
-    strcpy(buf, xml_doc_in);
+    safe_strcpy(buf, xml_doc_in);
     char* p = strstr(buf, "</result>");
     if (!p) {
         fprintf(stderr, "ERROR: result %d XML has no end tag!\n", id);
@@ -1181,6 +1206,7 @@ int HOST::parse(XML_PARSER& xp) {
         if (xp.parse_double("p_membw", p_membw)) continue;
         if (xp.parse_str("os_name", os_name, sizeof(os_name))) continue;
         if (xp.parse_str("os_version", os_version, sizeof(os_version))) continue;
+        if (xp.parse_str("product_name", product_name, sizeof(product_name))) continue;
         if (xp.parse_double("m_nbytes", m_nbytes)) continue;
         if (xp.parse_double("m_cache", m_cache)) continue;
         if (xp.parse_double("m_swap", m_swap)) continue;
@@ -1291,7 +1317,7 @@ void GLOBAL_PREFS::parse(const char* buf, const char* venue) {
         // mod_time is outside of venue
         if (mod_time > dtime()) mod_time = dtime();
     }
-    extract_venue(buf, venue, buf2);
+    extract_venue(buf, venue, buf2, sizeof(buf2));
     parse_double(buf2, "<disk_max_used_gb>", disk_max_used_gb);
     parse_double(buf2, "<disk_max_used_pct>", disk_max_used_pct);
     parse_double(buf2, "<disk_min_free_gb>", disk_min_free_gb);
@@ -1314,12 +1340,12 @@ void GUI_URLS::init() {
     read_file_malloc(config.project_path("gui_urls.xml"), text);
 }
 
-void GUI_URLS::get_gui_urls(USER& user, HOST& host, TEAM& team, char* buf) {
+void GUI_URLS::get_gui_urls(USER& user, HOST& host, TEAM& team, char* buf, int len) {
     bool found;
     char userid[256], teamid[256], hostid[256], weak_auth[256], rss_auth[256];
     strcpy(buf, "");
     if (!text) return;
-    strcpy(buf, text);
+    strlcpy(buf, text, len);
 
     sprintf(userid, "%d", user.id);
     sprintf(hostid, "%d", host.id);

@@ -36,6 +36,8 @@
 
 #include "cc_config.h"
 
+#define DEFAULT_MAX_DISPLAYED_EVENT_LOG_LINES 2000
+
 using std::string;
 
 LOG_FLAGS::LOG_FLAGS() {
@@ -63,6 +65,7 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
         if (xp.parse_bool("sched_ops", sched_ops)) continue;
         if (xp.parse_bool("task", task)) continue;
 
+        if (xp.parse_bool("android_debug", android_debug)) continue;
         if (xp.parse_bool("app_msg_receive", app_msg_receive)) continue;
         if (xp.parse_bool("app_msg_send", app_msg_send)) continue;
         if (xp.parse_bool("async_file_debug", async_file_debug)) continue;
@@ -109,6 +112,7 @@ int LOG_FLAGS::write(MIOFILE& out) {
         "        <file_xfer>%d</file_xfer>\n"
         "        <sched_ops>%d</sched_ops>\n"
         "        <task>%d</task>\n"
+        "        <android_debug>%d</android_debug>\n"
         "        <app_msg_receive>%d</app_msg_receive>\n"
         "        <app_msg_send>%d</app_msg_send>\n"
         "        <async_file_debug>%d</async_file_debug>\n"
@@ -148,6 +152,7 @@ int LOG_FLAGS::write(MIOFILE& out) {
         file_xfer ? 1 : 0,
         sched_ops ? 1 : 0,
         task ? 1 : 0,
+        android_debug ? 1 : 0,
         app_msg_receive ? 1 : 0,
         app_msg_send ? 1 : 0,
         async_file_debug ? 1 : 0,
@@ -198,8 +203,9 @@ void CONFIG::defaults() {
     allow_multiple_clients = false;
     allow_remote_gui_rpc = false;
     alt_platforms.clear();
-    client_version_check_url = "http://boinc.berkeley.edu/download.php?xml=1";
     client_download_url = "http://boinc.berkeley.edu/download.php";
+    client_new_version_text = "";
+    client_version_check_url = "http://boinc.berkeley.edu/download.php?xml=1";
     config_coprocs.clear();
     data_dir[0] = 0;
     disallow_attach = false;
@@ -220,6 +226,7 @@ void CONFIG::defaults() {
     for (int i=1; i<NPROC_TYPES; i++) {
         ignore_gpu_instance[i].clear();
     }
+    max_event_log_lines = DEFAULT_MAX_DISPLAYED_EVENT_LOG_LINES;
     max_file_xfers = 8;
     max_file_xfers_per_project = 2;
     max_stderr_file_size = 0;
@@ -310,6 +317,9 @@ int CONFIG::parse_options(XML_PARSER& xp) {
             downcase_string(client_download_url);
             continue;
         }
+        if (xp.parse_string("client_new_version_text", client_new_version_text)) {
+            continue;
+        }
         if (xp.parse_string("client_version_check_url", client_version_check_url)) {
             downcase_string(client_version_check_url);
             continue;
@@ -377,6 +387,7 @@ int CONFIG::parse_options(XML_PARSER& xp) {
             ignore_gpu_instance[PROC_TYPE_INTEL_GPU].push_back(n);
             continue;
         }
+        if (xp.parse_int("max_event_log_lines", max_event_log_lines)) continue;
         if (xp.parse_int("max_file_xfers", max_file_xfers)) continue;
         if (xp.parse_int("max_file_xfers_per_project", max_file_xfers_per_project)) continue;
         if (xp.parse_int("max_stderr_file_size", max_stderr_file_size)) continue;
@@ -470,8 +481,10 @@ int CONFIG::write(MIOFILE& out, LOG_FLAGS& log_flags) {
     
     out.printf(
         "        <client_version_check_url>%s</client_version_check_url>\n"
+        "        <client_new_version_text>%s</client_new_version_text>\n"
         "        <client_download_url>%s</client_download_url>\n",
         client_version_check_url.c_str(),
+        client_new_version_text.c_str(),
         client_download_url.c_str()
     );
     
@@ -570,6 +583,7 @@ int CONFIG::write(MIOFILE& out, LOG_FLAGS& log_flags) {
     }
         
     out.printf(
+        "        <max_event_log_lines>%d</max_event_log_lines>\n"
         "        <max_file_xfers>%d</max_file_xfers>\n"
         "        <max_file_xfers_per_project>%d</max_file_xfers_per_project>\n"
         "        <max_stderr_file_size>%d</max_stderr_file_size>\n"
@@ -582,6 +596,7 @@ int CONFIG::write(MIOFILE& out, LOG_FLAGS& log_flags) {
         "        <no_info_fetch>%d</no_info_fetch>\n"
         "        <no_priority_change>%d</no_priority_change>\n"
         "        <os_random_only>%d</os_random_only>\n",
+        max_event_log_lines,
         max_file_xfers,
         max_file_xfers_per_project,
         max_stderr_file_size,

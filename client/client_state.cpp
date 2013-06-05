@@ -26,7 +26,7 @@
 #include <ctime>
 #include <cstdarg>
 #include <cstring>
-#include <math.h>
+#include <cmath>
 #if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -133,6 +133,7 @@ CLIENT_STATE::CLIENT_STATE()
     disable_graphics = false;
     cant_write_state_file = false;
     benchmarks_running = false;
+    device_status_time = 0;
 
     rec_interval_start = 0;
     retry_shmem_time = 0;
@@ -223,20 +224,6 @@ int rsc_index(const char* name) {
 
 const char* rsc_name(int i) {
     return coprocs.coprocs[i].type;
-}
-
-// set no_X_apps for anonymous platform project
-//
-static void check_no_apps(PROJECT* p) {
-    for (int i=0; i<coprocs.n_rsc; i++) {
-        p->no_rsc_apps[i] = true;
-    }
-
-    for (unsigned int i=0; i<gstate.app_versions.size(); i++) {
-        APP_VERSION* avp = gstate.app_versions[i];
-        if (avp->project != p) continue;
-        p->no_rsc_apps[avp->gpu_usage.rsc_type] = false;
-    }
 }
 
 // alert user if any jobs need more RAM than available
@@ -470,12 +457,15 @@ int CLIENT_STATE::init() {
     //
     parse_account_files_venue();
 
-    // fill in p->no_X_apps for anon platform projects
+    // fill in p->no_X_apps for anon platform projects,
+    // and check no_rsc_apps for others
     //
     for (i=0; i<projects.size(); i++) {
         p = projects[i];
         if (p->anonymous_platform) {
-            check_no_apps(p);
+            p->check_no_apps();
+        } else {
+            p->check_no_rsc_apps();
         }
     }
 

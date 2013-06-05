@@ -20,11 +20,19 @@
 <resources>
     <!-- BOINC platform -->
     	<string name="boinc_platform_name">arm-android-linux-gnu</string>
+    <!-- Default preferences of Android app, for BOINC client see assets/global_prefs_override.xml -->
+    	<bool name="prefs_default_autostart">true</bool>
+        <bool name="prefs_default_notifications">true</bool>
+        <bool name="prefs_default_advanced">false</bool>
     <!-- Monitor behavior -->
     	<integer name="monitor_refresh_rate_ms">1000</integer>
     	<integer name="monitor_setup_connection_retry_rate_ms">1000</integer>
     	<integer name="monitor_setup_connection_retry_attempts">10</integer>
-    	<integer name="autostart_notification_id">460</integer>
+    	<integer name="autostart_notification_id">1</integer>
+    <!-- Device status -->
+    	<integer name="minimum_device_status_refresh_rate_in_monitor_loops">10</integer>
+    <!-- configuration project attach -->
+    	<integer name="attach_step_interval_ms">1000</integer>
     <!-- configuration on tab layout -->
     	<bool name="tab_status">true</bool>
         <bool name="tab_projects">true</bool>
@@ -32,6 +40,13 @@
     	<bool name="tab_transfers">true</bool>
     	<bool name="tab_preferences">true</bool>
     	<bool name="tab_eventlog">true</bool>
+    <!-- configuration on status layout -->
+    	<integer name="status_min_screen_height_for_slideshow_px">400</integer>
+    	<integer name="status_min_screen_height_for_image_px">700</integer>
+    	<integer name="status_max_slideshow_images_per_project">15</integer>
+    <!-- configuration on projects layout -->
+    	<integer name="projects_min_screen_width_for_2_parallel_buttons_dp">450</integer>
+    	<integer name="projects_min_screen_width_for_3_parallel_buttons_dp">600</integer>
     <!-- configuration on tasks layout -->
     	<integer name="tasks_transistion_timeout_number_monitor_loops">10</integer>
     <!-- shutdown -->

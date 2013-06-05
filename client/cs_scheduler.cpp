@@ -557,7 +557,7 @@ int CLIENT_STATE::handle_scheduler_reply(
     // check that master URL is correct
     //
     if (strlen(sr.master_url)) {
-        canonicalize_master_url(sr.master_url);
+        canonicalize_master_url(sr.master_url, sizeof(sr.master_url));
         string url1 = sr.master_url;
         string url2 = project->master_url;
         downcase_string(url1);
@@ -658,7 +658,7 @@ int CLIENT_STATE::handle_scheduler_reply(
         msg_printf(project, MSG_INFO, "New computer location: %s", sr.host_venue);
         update_project_prefs = true;
         if (project == global_prefs_source_project()) {
-            strcpy(main_host_venue, sr.host_venue);
+            safe_strcpy(main_host_venue, sr.host_venue);
             update_global_prefs = true;
         }
     }
@@ -734,7 +734,7 @@ int CLIENT_STATE::handle_scheduler_reply(
     for (i=0; i<sr.apps.size(); i++) {
         APP* app = lookup_app(project, sr.apps[i].name);
         if (app) {
-            strcpy(app->user_friendly_name, sr.apps[i].user_friendly_name);
+            safe_strcpy(app->user_friendly_name, sr.apps[i].user_friendly_name);
         } else {
             app = new APP;
             *app = sr.apps[i];
@@ -789,7 +789,7 @@ int CLIENT_STATE::handle_scheduler_reply(
         }
         APP_VERSION& avpp = sr.app_versions[i];
         if (strlen(avpp.platform) == 0) {
-            strcpy(avpp.platform, get_primary_platform());
+            safe_strcpy(avpp.platform, get_primary_platform());
         } else {
             if (!is_supported_platform(avpp.platform)) {
                 msg_printf(project, MSG_INTERNAL_ERROR,
@@ -822,7 +822,7 @@ int CLIENT_STATE::handle_scheduler_reply(
             avp->avg_ncpus = avpp.avg_ncpus;
             avp->max_ncpus = avpp.max_ncpus;
             avp->flops = avpp.flops;
-            strcpy(avp->cmdline, avpp.cmdline);
+            safe_strcpy(avp->cmdline, avpp.cmdline);
             avp->gpu_usage = avpp.gpu_usage;
             strlcpy(avp->api_version, avpp.api_version, sizeof(avp->api_version));
             avp->dont_throttle = avpp.dont_throttle;
@@ -832,9 +832,6 @@ int CLIENT_STATE::handle_scheduler_reply(
             //
             avp->clear_errors();
 
-            // apply app config if present
-            //
-            project->app_configs.config_app_versions(project);
             continue;
         }
         avp = new APP_VERSION;
@@ -884,7 +881,7 @@ int CLIENT_STATE::handle_scheduler_reply(
             continue;
         }
         if (strlen(rp->platform) == 0) {
-            strcpy(rp->platform, get_primary_platform());
+            safe_strcpy(rp->platform, get_primary_platform());
             rp->version_num = latest_version(rp->wup->app, rp->platform);
         }
         rp->avp = lookup_app_version(
@@ -1072,7 +1069,13 @@ int CLIENT_STATE::handle_scheduler_reply(
     // if the user provided app_config.xml for this project,
     // apply it to any app versions we just got
     //
-    project->app_configs.config_app_versions(project);
+    project->app_configs.config_app_versions(project, false);
+
+    // make sure we don't set no_rsc_apps[] for all processor types
+    //
+    if (!project->anonymous_platform) {
+        project->check_no_rsc_apps();
+    }
 
     return 0;
 }

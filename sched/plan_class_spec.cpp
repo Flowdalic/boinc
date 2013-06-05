@@ -213,7 +213,7 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
     if (have_project_prefs_regex && strlen(project_prefs_tag)) {
         char tag[256], value[256];
         char buf[65536];
-        extract_venue(g_reply->user.project_prefs, g_reply->host.venue, buf);
+        extract_venue(g_reply->user.project_prefs, g_reply->host.venue, buf, sizeof(buf));
         sprintf(tag,"<%s>",project_prefs_tag);
         bool p = parse_str(buf, tag, value, sizeof(value));
         if (config.debug_version_select) {
@@ -243,7 +243,7 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
         char tag[256];
         char buf[65536];
         double v = 0;
-        extract_venue(g_reply->user.project_prefs, g_reply->host.venue, buf);
+        extract_venue(g_reply->user.project_prefs, g_reply->host.venue, buf, sizeof(buf));
         sprintf(tag,"<%s>",gpu_utilization_tag);
         bool p = parse_double(buf, tag, v);
         if (config.debug_version_select) {
@@ -369,6 +369,9 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
             }
             return false;
         }
+        
+        // in analogy to ATI/AMD 
+        driver_version=cp.display_driver_version;
 
         if (min_gpu_ram_mb) {
             gpu_requirements[PROC_TYPE_NVIDIA_GPU].update(0, min_gpu_ram_mb * MEGA);
@@ -603,6 +606,7 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
     }
     hu.max_ncpus = hu.avg_ncpus;
 
+#if 0
     if (config.debug_version_select) {
         log_messages.printf(MSG_NORMAL,
             "[version] plan_class_spec: host_flops: %e, \tscale: %.2f, \tprojected_flops: %e, \tpeak_flops: %e\n",
@@ -610,6 +614,7 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
             hu.peak_flops
         );
     }
+#endif
 
     return true;
 

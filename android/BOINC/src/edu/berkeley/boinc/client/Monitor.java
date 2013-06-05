@@ -46,6 +46,7 @@ import edu.berkeley.boinc.rpc.AccountIn;
 import edu.berkeley.boinc.rpc.AccountOut;
 import edu.berkeley.boinc.rpc.CcState;
 import edu.berkeley.boinc.rpc.CcStatus;
+import edu.berkeley.boinc.rpc.DeviceStatus;
 import edu.berkeley.boinc.rpc.GlobalPreferences;
 import edu.berkeley.boinc.rpc.Message;
 import edu.berkeley.boinc.rpc.Project;
@@ -67,6 +68,7 @@ public class Monitor extends Service {
 	private String clientName; 
 	private String clientCLI; 
 	private String clientCABundle; 
+	private String clientConfig; 
 	private String authFileName; 
 	private String allProjectsList; 
 	private String globalOverridePreferences;
@@ -98,11 +100,30 @@ public class Monitor extends Service {
 		// If client hashes do not match, we need to install the one that is a part
 		// of the package. Shutdown the currently running client if needed.
 		//
-		if (md5InstalledClient.compareToIgnoreCase(md5AssetClient) != 0) {
+		if (!md5InstalledClient.equals(md5AssetClient)) {
+		//if (md5InstalledClient.compareToIgnoreCase(md5AssetClient) != 0) {
 			Log.d(TAG,"Hashes of installed client does not match binary in assets - re-install.");
-			// Determine if BOINC is already running.
-			//
-			quitProcessOsLevel(clientProcessName);
+			
+			// try graceful shutdown using RPC (faster)
+	    	Boolean success = false;
+			if(connectClient()) {
+				rpc.quit();
+		    	Integer attempts = getApplicationContext().getResources().getInteger(R.integer.shutdown_graceful_rpc_check_attempts);
+		    	Integer sleepPeriod = getApplicationContext().getResources().getInteger(R.integer.shutdown_graceful_rpc_check_rate_ms);
+		    	for(int x = 0; x < attempts; x++) {
+		    		try {
+		    			Thread.sleep(sleepPeriod);
+		    		} catch (Exception e) {}
+		    		if(getPidForProcessName(clientProcessName) == null) { //client is now closed
+		        		Log.d(TAG,"quitClient: gracefull RPC shutdown successful after " + x + " seconds");
+		    			success = true;
+		    			x = attempts;
+		    		}
+		    	}
+			}
+			
+			// quit with OS signals
+			if(!success) quitProcessOsLevel(clientProcessName);
 
 			// Install BOINC client software
 			//
@@ -145,6 +166,8 @@ public class Monitor extends Service {
 			// read preferences for GUI to be able to display data
 			GlobalPreferences clientPrefs = rpc.getGlobalPrefsWorkingStruct();
 			Monitor.getClientStatus().setPrefs(clientPrefs);
+			// read supported projects
+			readAndroidProjectsList();
 		}
 		
 		if(connected) {
@@ -202,6 +225,7 @@ public class Monitor extends Service {
 		installFile(clientName, true, true);
 		installFile(clientCLI, true, true);
 		installFile(clientCABundle, true, false);
+		installFile(clientConfig, true, false);
 		installFile(allProjectsList, true, false);
 		installFile(globalOverridePreferences, false, false);
     	
@@ -431,6 +455,26 @@ public class Monitor extends Service {
     	}
     }
 	
+    // reads all_project_list.xml from Client and filters
+ 	// projects not supporting Android. List does not change
+    // during run-time. Called once during setup.
+    // Stored in ClientStatus.
+	private void readAndroidProjectsList() {
+		ArrayList<ProjectInfo> allProjects = rpc.getAllProjectsList();
+		ArrayList<ProjectInfo> androidProjects = new ArrayList<ProjectInfo>();
+		
+		//filter projects that do not support Android
+		for (ProjectInfo project: allProjects) {
+			if(project.platforms.contains(getString(R.string.boinc_platform_name))) {
+				Log.d(TAG, project.name + " supports " + getString(R.string.boinc_platform_name));
+				androidProjects.add(project);
+			} 
+		}
+		
+		// set list in ClientStatus
+		getClientStatus().supportedProjects = androidProjects;
+	}
+	
 	public static ClientStatus getClientStatus() { //singleton pattern
 		if (clientStatus == null) {
 			Log.d(TAG,"WARNING: clientStatus not yet initialized");
@@ -445,7 +489,6 @@ public class Monitor extends Service {
 		return appPrefs;
 	}
 
-	
 	/*
 	 * returns this class, allows clients to access this service's functions and attributes.
 	 */
@@ -477,6 +520,7 @@ public class Monitor extends Service {
 		clientName = getString(R.string.client_name); 
 		clientCLI = getString(R.string.client_cli); 
 		clientCABundle = getString(R.string.client_cabundle); 
+		clientConfig = getString(R.string.client_config); 
 		authFileName = getString(R.string.auth_file_name); 
 		allProjectsList = getString(R.string.all_projects_list); 
 		globalOverridePreferences = getString(R.string.global_prefs_override);
@@ -502,7 +546,6 @@ public class Monitor extends Service {
     	Log.d(TAG,"onDestroy()");
     	
         // Cancel the persistent notification.
-    	//
     	((NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE)).cancel(getResources().getInteger(R.integer.autostart_notification_id));
         
     	// Abort the ClientMonitorAsync thread
@@ -510,13 +553,9 @@ public class Monitor extends Service {
     	monitorRunning = false;
 		monitorThread.interrupt();
 		
-		clientStatus.setWakeLock(false); // release wakeLock, if held.
-    	
-    	// Quit client here is not appropriate?!
-		// Keep Client running until explecitely killed, independently from UI
-		//quitClient();
-        
-        //android.widget.Toast.makeText(this, "BOINC Monitor Service Stopped", android.widget.Toast.LENGTH_SHORT).show();
+		 // release locks, if held.
+		clientStatus.setWakeLock(false);
+		clientStatus.setWifiLock(false);
     }
 
     @Override
@@ -524,28 +563,13 @@ public class Monitor extends Service {
     	//this gets called after startService(intent) (either by BootReceiver or AndroidBOINCActivity, depending on the user's autostart configuration)
     	Log.d(TAG, "onStartCommand()");
 		/*
-		 * START_NOT_STICKY is now used and replaced START_STICKY in previous implementations.
-		 * Lifecycle events - e.g. killing apps by calling their "onDestroy" methods, or killing an app in the task manager - does not effect the non-Dalvik code like the native BOINC Client.
-		 * Therefore, it is not necessary for the service to get reactivated. When the user navigates back to the app (BOINC Manager), the service gets re-started from scratch.
-		 * Con: After user navigates back, it takes some time until current Client status is present.
-		 * Pro: Saves RAM/CPU.
-		 * 
+		 * START_STICKY causes service to stay in memory until stopSelf() is called, even if all
+		 * Activities get destroyed by the system. Important for GUI keep-alive
 		 * For detailed service documentation see
 		 * http://android-developers.blogspot.com.au/2010/02/service-api-changes-starting-with.html
 		 */
-		return START_NOT_STICKY;
+		return START_STICKY;
     }
-
-    //sends broadcast about login (or register) result for login activity
-    /*
-	private void sendLoginResultBroadcast(Integer type, Integer result, String message) {
-        Intent loginResults = new Intent();
-        loginResults.setAction("edu.berkeley.boinc.loginresults");
-        loginResults.putExtra("type", type);
-        loginResults.putExtra("result", result);
-        loginResults.putExtra("message", message);
-        getApplicationContext().sendBroadcast(loginResults,null);
-	}*/
 	
     public void restartMonitor() {
     	if(Monitor.monitorActive) { //monitor is already active, launch cancelled
@@ -608,11 +632,13 @@ public class Monitor extends Service {
     	
     	// set client status to SETUP_STATUS_CLOSED to adapt layout accordingly
 		getClientStatus().setSetupStatus(ClientStatus.SETUP_STATUS_CLOSED,true);
+		
+		//stop service, triggers onDestroy
+		stopSelf();
     }
        
-	public void setRunMode(Integer mode) {
-		//execute in different thread, in order to avoid network communication in main thread and therefore ANR errors
-		(new WriteClientRunModeAsync()).execute(mode);
+	public Boolean setRunMode(Integer mode) {
+		return rpc.setRunMode(mode, 0);
 	}
 	
 	// writes the given GlobalPreferences via RPC to the client
@@ -659,20 +685,6 @@ public class Monitor extends Service {
 		return authKey;
 	}
 	
-	public ArrayList<ProjectInfo> getAndroidProjectsList() {
-		ArrayList<ProjectInfo> allProjects = rpc.getAllProjectsList();
-		ArrayList<ProjectInfo> androidProjects = new ArrayList<ProjectInfo>();
-		
-		//filter projects that do not support Android
-		for (ProjectInfo project: allProjects) {
-			if(project.platforms.contains(getString(R.string.boinc_platform_name))) {
-				Log.d(TAG, project.name + " supports " + getString(R.string.boinc_platform_name));
-				androidProjects.add(project);
-			} 
-		}
-		return androidProjects;
-	}
-	
 	public ProjectConfig getProjectConfig(String url) {
 		ProjectConfig config = null;
 		
@@ -708,9 +720,9 @@ public class Monitor extends Service {
 		return config;
 	}
 	
-	public Boolean attachProject(String url, String name, String authenticator) {
+	public Boolean attachProject(String url, String projectName, String authenticator) {
     	Boolean success = false;
-    	success = rpc.projectAttach(url, authenticator, name); //asynchronous call to attach project
+    	success = rpc.projectAttach(url, authenticator, projectName); //asynchronous call to attach project
     	if(success) { //only continue if attach command did not fail
     		// verify success of projectAttach with poll function
     		success = false;
@@ -734,22 +746,25 @@ public class Monitor extends Service {
 	
 	public Boolean checkProjectAttached(String url) {
 		Boolean match = false;
-		ArrayList<Project> attachedProjects = rpc.getProjectStatus();
-		for (Project project: attachedProjects) {
-			Log.d(TAG, project.master_url + " vs " + url);
-			if(project.master_url.equals(url)) {
-				match = true;
-				continue;
+		try{
+			ArrayList<Project> attachedProjects = rpc.getProjectStatus();
+			for (Project project: attachedProjects) {
+				Log.d(TAG, project.master_url + " vs " + url);
+				if(project.master_url.equals(url)) {
+					match = true;
+					continue;
+				}
 			}
-		}
+		} catch(Exception e){}
 		return match;
 	}
 	
-	public AccountOut lookupCredentials(String url, String id, String pwd) {
+	public AccountOut lookupCredentials(String url, String id, String pwd, Boolean usesName) {
     	Integer retval = -1;
     	AccountOut auth = null;
     	AccountIn credentials = new AccountIn();
-    	credentials.email_addr = id;
+    	if(usesName) credentials.user_name = id;
+    	else credentials.email_addr = id;
     	credentials.passwd = pwd;
     	credentials.url = url;
     	Boolean success = rpc.lookupAccount(credentials); //asynch
@@ -784,17 +799,6 @@ public class Monitor extends Service {
     	Log.d(TAG, "lookupCredentials returns " + retval);
     	return auth;
     }
-	
-	public Boolean detachProject(String url){
-		return rpc.projectOp(RpcClient.PROJECT_DETACH, url);
-	}
-	
-	public void detachProjectAsync(String url){
-		Log.d(TAG, "detachProjectAsync");
-		String[] param = new String[1];
-		param[0] = url;
-		(new ProjectDetachAsync()).execute(param);
-	}
     
 	public Boolean abortTransfer(String url, String name){
 		return rpc.transferOp(RpcClient.TRANSFER_ABORT, url, name);
@@ -808,15 +812,8 @@ public class Monitor extends Service {
 		(new TransferAbortAsync()).execute(param);
 	}
     
-	public Boolean updateProject(String url){
-		return rpc.projectOp(RpcClient.PROJECT_UPDATE, url);
-	}
-	
-	public void updateProjectAsync(String url){
-		Log.d(TAG, "updateProjectAsync");
-		String[] param = new String[1];
-		param[0] = url;
-		(new ProjectUpdateAsync()).execute(param);
+	public Boolean projectOperation(int operation, String url){
+		return rpc.projectOp(operation, url);
 	}
     
 	public Boolean retryTransfer(String url, String name){
@@ -912,13 +909,18 @@ public class Monitor extends Service {
 		return rpc.getMessages(seqNo);
 	}
 	
-	private final class ClientMonitorAsync extends AsyncTask<Integer, String, Boolean> {
+	private final class ClientMonitorAsync extends AsyncTask<Integer, Void, Boolean> {
 
 		private final String TAG = "BOINC ClientMonitorAsync";
 		private final Boolean showRpcCommands = false;
 		
 		// Frequency of which the monitor updates client status via RPC, to often can cause reduced performance!
 		private Integer refreshFrequency = getResources().getInteger(R.integer.monitor_refresh_rate_ms);
+		private Integer minimumDeviceStatusFrequency = getResources().getInteger(R.integer.minimum_device_status_refresh_rate_in_monitor_loops);
+		private Integer deviceStatusOmitCounter = 0;
+		
+		// DeviceStatus wrapper class
+		private DeviceStatus deviceStatus = new DeviceStatus(getApplicationContext());
 		
 		@Override
 		protected Boolean doInBackground(Integer... params) {
@@ -926,13 +928,26 @@ public class Monitor extends Service {
 			monitorThread = Thread.currentThread();
 			Boolean sleep = true;
 			while(monitorRunning) {
-				publishProgress("doInBackground() monitor loop...");
+				//Log.d(TAG,"doInBackground() monitor loop...");
 				
 				if(!rpc.connectionAlive()) { //check whether connection is still alive
 					// If connection is not working, either client has not been set up yet or client crashed.
 					clientSetup();
 					sleep = false;
 				} else {
+					// connection alive
+					
+					// set devices status
+					try {
+						if(deviceStatus.update() || deviceStatusOmitCounter >= minimumDeviceStatusFrequency) {
+							if(showRpcCommands) Log.d(TAG, "reportDeviceStatus");
+							Boolean  reportStatusSuccess = rpc.reportDeviceStatus(deviceStatus);
+							Log.d(TAG,"reportDeviceStatus returned: " + reportStatusSuccess);
+							if(reportStatusSuccess) deviceStatusOmitCounter = 0;
+						} else deviceStatusOmitCounter++;
+					} catch (Exception e) { Log.w(TAG, "device status update failed: " + e.getLocalizedMessage()); }
+					
+					// retrieve client status
 					if(showRpcCommands) Log.d(TAG, "getCcStatus");
 					CcStatus status = rpc.getCcStatus();
 					
@@ -945,7 +960,7 @@ public class Monitor extends Service {
 					if( (status != null) && (state != null) && (state.results != null) && (state.projects != null) && (transfers != null)) {
 						Monitor.getClientStatus().setClientStatus(status, state.results, state.projects, transfers);
 						// Update status bar notification
-						ClientNotification.getInstance().update(getApplicationContext(), getClientStatus());
+						ClientNotification.getInstance(getApplicationContext()).update();
 					} else {
 						Log.d(TAG, "client status connection problem");
 					}
@@ -970,64 +985,11 @@ public class Monitor extends Service {
 
 			return true;
 		}
-
-		@Override
-		protected void onProgressUpdate(String... arg0) {
-			Log.d(TAG, "onProgressUpdate() " + arg0[0]);
-		}
 		
 		@Override
 		protected void onPostExecute(Boolean success) {
 			Log.d(TAG, "onPostExecute() monitor exit"); 
 			Monitor.monitorActive = false;
-		}
-	}
-	
-	private final class ProjectDetachAsync extends AsyncTask<String,String,Boolean> {
-
-		private final String TAG = "ProjectDetachAsync";
-		
-		private String url;
-		
-		@Override
-		protected Boolean doInBackground(String... params) {
-			this.url = params[0];
-			Log.d(TAG+"-doInBackground","ProjectDetachAsync url: " + url);
-			
-			Boolean detach = rpc.projectOp(RpcClient.PROJECT_DETACH, url);
-			if(detach) {
-				Log.d(TAG, "successful.");
-			}
-			return detach;
-		}
-		
-		@Override
-		protected void onPostExecute(Boolean success) {
-			forceRefresh();
-		}
-	}
-
-	private final class ProjectUpdateAsync extends AsyncTask<String,String,Boolean> {
-
-		private final String TAG = "ProjectUpdateAsync";
-		
-		private String url;
-		
-		@Override
-		protected Boolean doInBackground(String... params) {
-			this.url = params[0];
-			Log.d(TAG, "doInBackground() - ProjectUpdateAsync url: " + url);
-			
-			Boolean update = rpc.projectOp(RpcClient.PROJECT_UPDATE, url);
-			if(update) {
-				Log.d(TAG, "successful.");
-			}
-			return update;
-		}
-		
-		@Override
-		protected void onPostExecute(Boolean success) {
-			forceRefresh();
 		}
 	}
 
@@ -1080,28 +1042,6 @@ public class Monitor extends Service {
 				publishProgress("successful.");
 			}
 			return retry;
-		}
-		
-		@Override
-		protected void onPostExecute(Boolean success) {
-			forceRefresh();
-		}
-
-		@Override
-		protected void onProgressUpdate(String... arg0) {
-			Log.d(TAG, "onProgressUpdate - " + arg0[0]);
-		}
-	}
-
-	private final class WriteClientRunModeAsync extends AsyncTask<Integer, String, Boolean> {
-
-		private final String TAG = "WriteClientRunModeAsync";
-		
-		@Override
-		protected Boolean doInBackground(Integer... params) {
-			Boolean success = rpc.setRunMode(params[0], 0);
-        	publishProgress("run mode set to " + params[0] + " returned " + success);
-			return success;
 		}
 		
 		@Override

@@ -26,46 +26,29 @@ import android.graphics.Bitmap;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import edu.berkeley.boinc.ProjectsActivity;
+import edu.berkeley.boinc.ProjectsActivity.ProjectData;
 import edu.berkeley.boinc.R;
 import edu.berkeley.boinc.client.Monitor;
 import edu.berkeley.boinc.rpc.Project;
 import edu.berkeley.boinc.utils.BOINCUtils;
 
-public class ProjectsListAdapter extends ArrayAdapter<Project> implements OnItemClickListener {
+public class ProjectsListAdapter extends ArrayAdapter<ProjectData> {
     //private final String TAG = "ProjectsListAdapter";
 	
-	private ArrayList<Project> entries;
+	private ArrayList<ProjectData> entries;
     private Activity activity;
-    private ListView listView;
-
-    public static class ViewProject {
-    	int entryIndex;
-        TextView tvName;
-        TextView tvStatus;
-        ImageButton ibUpdate;
-        ImageButton ibMore;
-        ImageView ivIcon;
-    }
     
-    public ProjectsListAdapter(Activity activity, ListView listView, int textViewResourceId, ArrayList<Project> entries) {
+    public ProjectsListAdapter(Activity activity, ListView listView, int textViewResourceId, ArrayList<ProjectData> entries) {
         super(activity, textViewResourceId, entries);
         this.entries = entries;
         this.activity = activity;
-        this.listView = listView;
         
         listView.setAdapter(this);
-        listView.setOnItemClickListener(this);
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
  
 	@Override
@@ -74,7 +57,7 @@ public class ProjectsListAdapter extends ArrayAdapter<Project> implements OnItem
 	}
 
 	@Override
-	public Project getItem(int position) {
+	public ProjectData getItem(int position) {
 		return entries.get(position);
 	}
 
@@ -84,19 +67,27 @@ public class ProjectsListAdapter extends ArrayAdapter<Project> implements OnItem
 	}
 
 	public String getName(int position) {
-		return entries.get(position).project_name;
+		return entries.get(position).project.project_name;
+	}
+
+	public String getUser(int position) {
+		String user = entries.get(position).project.user_name;
+		String team = entries.get(position).project.team_name;
+		String userString = user;
+		if(!team.isEmpty()) user = user + " (" + team + ")";
+		return userString;
 	}
 
 	public String getURL(int position) {
-		return entries.get(position).master_url;
+		return entries.get(position).id;
 	}
 	
 	public Bitmap getIcon(int position) {
-		return Monitor.getClientStatus().getProjectIcon(entries.get(position).master_url);
+		return Monitor.getClientStatus().getProjectIcon(entries.get(position).id);
 	}
 
 	public String getStatus(int position) {
-		Project project = getItem(position);
+		Project project = getItem(position).project;
 		StringBuffer sb = new StringBuffer();
 		
         if (project.suspended_via_gui) {
@@ -113,9 +104,7 @@ public class ProjectsListAdapter extends ArrayAdapter<Project> implements OnItem
         }
         if (project.sched_rpc_pending > 0) {
         	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_schedrpcpending));
-            appendToStatus(sb,
-            	BOINCUtils.translateRPCReason(activity, project.sched_rpc_pending)
-            );
+            appendToStatus(sb, BOINCUtils.translateRPCReason(activity, project.sched_rpc_pending));
         }
         if (project.scheduler_rpc_in_progress) {
         	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_schedrpcinprogress));
@@ -146,89 +135,46 @@ public class ProjectsListAdapter extends ArrayAdapter<Project> implements OnItem
 	        existing.append(additional);
 	    }
 	}
-
 	
 	@Override
     public View getView(int position, View convertView, ViewGroup parent) {
 	    View vi = convertView;
-	    ViewProject viewProject;
+	    ProjectData data = entries.get(position);
+    	vi = ((LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.projects_layout_listitem, null);
     	
-		// Only inflate a new view if the ListView does not already have a view assigned.
-	    if (convertView == null) {
-	    	
-	    	vi = ((LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.projects_layout_listitem, null);
-
-	    	viewProject = new ViewProject();
-	    	viewProject.tvName = (TextView)vi.findViewById(R.id.project_name);
-	    	viewProject.tvStatus = (TextView)vi.findViewById(R.id.project_status);
-	    	viewProject.ibUpdate = (ImageButton)vi.findViewById(R.id.project_update);
-	    	viewProject.ibMore = (ImageButton)vi.findViewById(R.id.project_more);
-	    	viewProject.ivIcon = (ImageView)vi.findViewById(R.id.projectIcon);
+    	//set onclicklistener for expansion
+		vi.setOnClickListener(entries.get(position).projectsListClickListener);
 	    
-	        vi.setTag(viewProject);
-	        
-	    } else {
-	    	
-	    	viewProject = (ViewProject)vi.getTag();
-	    	
-	    }
-
-		// Populate UI Elements
-	    viewProject.entryIndex = position;
-	    viewProject.tvName.setText(getName(position));
+	    // set data of standard elements
+        TextView tvName = (TextView)vi.findViewById(R.id.project_name);
+        tvName.setText(getName(position));
+        
+        TextView tvUser = (TextView)vi.findViewById(R.id.project_user);
+        String userText = getUser(position);
+        if(userText.isEmpty()) tvUser.setVisibility(View.GONE);
+        else tvUser.setText(userText);
+        
 	    String statusText = getStatus(position);
-	    if(statusText.isEmpty()) {
-	    	viewProject.tvStatus.setVisibility(View.GONE);
-	    } else {
-	    	viewProject.tvStatus.setVisibility(View.VISIBLE);
-		    viewProject.tvStatus.setText(statusText);
-	    }
+        TextView tvStatus = (TextView)vi.findViewById(R.id.project_status);
+	    if(statusText.isEmpty()) tvStatus.setVisibility(View.GONE);
+	    else tvStatus.setText(statusText);
+	    
+	    ImageView ivIcon = (ImageView)vi.findViewById(R.id.project_icon);
 	    Bitmap icon = getIcon(position);
 	    // if available set icon, if not boinc logo
-	    if (icon == null) viewProject.ivIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.boinc));
-	    else viewProject.ivIcon.setImageBitmap(icon);
+	    if (icon == null) ivIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.boinc));
+	    else ivIcon.setImageBitmap(icon);
 	    
-	    if (listView.isItemChecked(position)) {
-	    	viewProject.ibUpdate.setVisibility(View.VISIBLE);
-	    	viewProject.ibUpdate.setTag(viewProject);
-	    	viewProject.ibUpdate.setClickable(true);
-	    	viewProject.ibUpdate.setOnClickListener(new OnClickListener() {
-	            public void onClick(View v) {
-	            	ViewProject viewProject = (ViewProject)v.getTag();
-	            	ProjectsActivity a = (ProjectsActivity)activity;
-	            	
-	            	a.onProjectUpdate(getURL(viewProject.entryIndex), getName(viewProject.entryIndex));
-	            }
-	        });
-	    		    		    	
-	    	viewProject.ibMore.setVisibility(View.VISIBLE);
-	    	viewProject.ibMore.setTag(viewProject);
-	    	viewProject.ibMore.setClickable(true);
-	    	viewProject.ibMore.setOnClickListener(new OnClickListener() {
-	            public void onClick(View v) {
-	            	ViewProject viewProject = (ViewProject)v.getTag();
-	            	ProjectsActivity a = (ProjectsActivity)activity;
-	            	
-	            	a.onProjectMore(getURL(viewProject.entryIndex), getName(viewProject.entryIndex));
-	            }
-	        });
-	    } else { // item is not checked
-	    	viewProject.ibUpdate.setVisibility(View.INVISIBLE);	    	
-	    	viewProject.ibUpdate.setClickable(false);
-	    	viewProject.ibUpdate.setOnClickListener(null);
-	    	
-	    	viewProject.ibMore.setVisibility(View.INVISIBLE);
-	    	viewProject.ibMore.setClickable(false);
-	    	viewProject.ibMore.setOnClickListener(null);
-	    }
-
+    	// credits
+    	Integer totalCredit = Double.valueOf(data.project.user_total_credit).intValue();
+    	Integer hostCredit = Double.valueOf(data.project.host_total_credit).intValue();
+    	String creditsText = vi.getContext().getString(R.string.projects_credits_header) + " " + hostCredit;
+		TextView tvCredits = (TextView)vi.findViewById(R.id.project_credits);
+    	if(!hostCredit.equals(totalCredit)) // show host credit only if not like user credit
+    		creditsText += " " + vi.getContext().getString(R.string.projects_credits_host_header) + " "
+    					+ totalCredit + " " + vi.getContext().getString(R.string.projects_credits_user_header);
+    	tvCredits.setText(creditsText);
+    	
         return vi;
     }
-    
-    public void onItemClick(AdapterView<?> adapter, View view, int position, long id ) {
-	    ViewProject viewProject = (ViewProject)view.getTag();
-    	((ProjectsActivity)activity).onProjectClicked(getURL(viewProject.entryIndex), getName(viewProject.entryIndex));
-		notifyDataSetChanged();
-    }
-
 }

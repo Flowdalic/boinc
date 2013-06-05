@@ -43,8 +43,11 @@ using std::vector;
 
 char project_url[256];
 char authenticator[256];
+char response_prefix[256];
 
-bool debug_mode = true;
+bool debug_mode = false;
+    // if set, handle commands synchronously rather than
+    // handling them in separate threads
 
 // represents a command.
 //
@@ -76,12 +79,30 @@ struct COMMAND {
     int parse_query_batches(char*);
     int parse_fetch_output(char*);
     int parse_abort_jobs(char*);
+    int parse_retire_batch(char*);
 };
 
 vector<COMMAND*> commands;
 
 int compute_md5(string path, LOCAL_FILE& f) {
     return md5_file(path.c_str(), f.md5, f.nbytes);
+}
+
+const char *escape_str(const string &str) {
+	static string out;
+	out = "";
+	for (const char *ptr = str.c_str(); *ptr; ptr++) {
+		switch ( *ptr ) {
+		case ' ':
+		case '\\':
+		case '\r':
+		case '\n':
+			out += '\\';
+		default:
+			out += *ptr;
+		}
+	}
+	return out.c_str();
 }
 
 // Get a list of the input files used by the batch.
@@ -203,8 +224,8 @@ void handle_submit(COMMAND& c) {
         project_url, authenticator, req.app_name, NULL, td, error_msg
     );
     if (retval) {
-        sprintf(buf, "error getting templates: %d\n", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "error\\ getting\\ templates:\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
         c.out = strdup(s.c_str());
         return;
     }
@@ -212,22 +233,22 @@ void handle_submit(COMMAND& c) {
         project_url, authenticator, req.batch_name, req.app_name, req.batch_id, error_msg
     );
     if (retval) {
-        sprintf(buf, "error creating batch: %d ", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "error\\ creating\\ batch:\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
         c.out = strdup(s.c_str());
         return;
     }
     retval = process_input_files(req, error_msg);
     if (retval) {
-        sprintf(buf, "error processing input files: %d ", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "error\\ processing\\ input\\ files:\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
         c.out = strdup(s.c_str());
         return;
     }
     retval = submit_jobs(project_url, authenticator, req, error_msg);
     if (retval) {
-        sprintf(buf, "error submitting jobs: %d ", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "error\\ submitting\\ jobs:\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
     } else {
         s = "NULL";
     }
@@ -251,14 +272,20 @@ void handle_query_batches(COMMAND&c) {
         project_url, authenticator, c.batch_names, reply, error_msg
     );
     if (retval) {
-        sprintf(buf, "error querying batch: %d ", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "error\\ querying\\ batch:\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
     } else {
-        s = string("NULL ");
-        for (unsigned int i=0; i<reply.jobs.size(); i++) {
-            QUERY_BATCH_JOB &j = reply.jobs[i];
-            sprintf(buf, "%s %s ", j.job_name.c_str(), j.status.c_str());
+        s = string("NULL");
+        int i = 0;
+        for (unsigned int j=0; j<reply.batch_sizes.size(); j++) {
+            int n = reply.batch_sizes[j];
+            sprintf(buf, " %d", n);
             s += string(buf);
+            for (int k=0; k<n; k++) {
+                QUERY_BATCH_JOB &j = reply.jobs[i++];
+                sprintf(buf, " %s %s", j.job_name.c_str(), j.status.c_str());
+                s += string(buf);
+            }
         }
     }
     c.out = strdup(s.c_str());
@@ -336,8 +363,8 @@ void handle_fetch_output(COMMAND& c) {
         project_url, authenticator, NULL, req.job_name, td, error_msg
     );
     if (retval) {
-        sprintf(buf, "error getting templates: %d\n", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "error\\ getting\\ templates:\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
         c.out = strdup(s.c_str());
         return;
     }
@@ -348,8 +375,8 @@ void handle_fetch_output(COMMAND& c) {
         project_url, authenticator, req.job_name, cjd, error_msg
     );
     if (retval) {
-        sprintf(buf, "query_completed_job() returned %d ", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "query_completed_job()\\ returned\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
         goto done;
     }
     sprintf(buf, " %d %f %f", cjd.exit_status, cjd.elapsed_time, cjd.cpu_time);
@@ -361,7 +388,7 @@ void handle_fetch_output(COMMAND& c) {
         sprintf(path, "%s/%s", req.dir, req.stderr_filename.c_str());
         FILE* f = fopen(path, "w");
         if (!f) {
-            sprintf(buf, "can't open stderr output file %s ", path);
+            sprintf(buf, "can't\\ open\\ stderr\\ output\\ file\\ %s ", path);
             s = string(buf);
             goto done;
         }
@@ -377,13 +404,13 @@ void handle_fetch_output(COMMAND& c) {
             project_url, authenticator, req.job_name, 0, path, error_msg
         );
         if (retval) {
-            sprintf(buf, "get_output_file() returned %d ", retval);
-            s = string(buf) + error_msg;
+            sprintf(buf, "get_output_file()\\ returned\\ %d\\ ", retval);
+            s = string(buf) + escape_str(error_msg);
         } else {
             sprintf(buf, "cd %s; unzip temp.zip");
             retval = system(buf);
             if (retval) {
-                s = string("unzip failed");
+                s = string("unzip\\ failed");
             }
         }
     } else if (req.fetch_all) {
@@ -393,8 +420,8 @@ void handle_fetch_output(COMMAND& c) {
                 project_url, authenticator, req.job_name, i, path, error_msg
             );
             if (retval) {
-                sprintf(buf, "get_output_file() returned %d ", retval);
-                s = string(buf) + error_msg;
+                sprintf(buf, "get_output_file()\\ returned\\ %d\\ ", retval);
+                s = string(buf) + escape_str(error_msg);
                 break;
             }
         }
@@ -403,7 +430,7 @@ void handle_fetch_output(COMMAND& c) {
             char* lname = req.file_descs[i].src;
             int j = output_file_index(td, lname);
             if (j < 0) {
-                sprintf(buf, "requested file %s not in template", lname);
+                sprintf(buf, "requested\\ file\\ %s\\ not\\ in\\ template", lname);
                 s = string(buf);
                 goto done;
             }
@@ -412,8 +439,8 @@ void handle_fetch_output(COMMAND& c) {
                 project_url, authenticator, req.job_name, i, path, error_msg
             );
             if (retval) {
-                sprintf(buf, "get_output_file() returned %d ", retval);
-                s = string(buf) + error_msg;
+                sprintf(buf, "get_output_file()\\ returned\\ %d\\ ", retval);
+                s = string(buf) + escape_str(error_msg);
                 break;
             }
         }
@@ -435,7 +462,7 @@ void handle_fetch_output(COMMAND& c) {
         sprintf(buf, "mv %s/%s %s", req.dir, of.src, dst_path);
         retval = system(buf);
         if (retval) {
-            s = string("mv failed");
+            s = string("mv\\ failed");
         }
     }
 done:
@@ -443,7 +470,6 @@ done:
 }
 
 int COMMAND::parse_abort_jobs(char* p) {
-    strcpy(batch_name, strtok_r(NULL, " ", &p));
     while (1) {
         char* job_name = strtok_r(NULL, " ", &p);
         if (!job_name) break;
@@ -455,14 +481,34 @@ int COMMAND::parse_abort_jobs(char* p) {
 void handle_abort_jobs(COMMAND& c) {
     string error_msg;
     int retval = abort_jobs(
-        project_url, authenticator, string(c.batch_name),
-        c.abort_job_names, error_msg
+        project_url, authenticator, c.abort_job_names, error_msg
     );
     string s;
     char buf[256];
     if (retval) {
-        sprintf(buf, "abort_jobs() returned %d \n", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "abort_jobs()\\ returned\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
+    } else {
+        s = "NULL";
+    }
+    c.out = strdup(s.c_str());
+}
+
+int COMMAND::parse_retire_batch(char* p) {
+    strcpy(batch_name, strtok_r(NULL, " ", &p));
+    return 0;
+}
+
+void handle_retire_batch(COMMAND& c) {
+    string error_msg;
+    int retval = retire_batch(
+        project_url, authenticator, c.batch_name, error_msg
+    );
+    string s;
+    char buf[256];
+    if (retval) {
+        sprintf(buf, "retire_batch()\\ returned\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
     } else {
         s = "NULL";
     }
@@ -474,8 +520,8 @@ void handle_ping(COMMAND& c) {
     char buf[256];
     int retval = ping_server(project_url, error_msg);
     if (retval) {
-        sprintf(buf, "ping_server returned %d \n", retval);
-        s = string(buf) + error_msg;
+        sprintf(buf, "ping_server\\ returned\\ %d\\ ", retval);
+        s = string(buf) + escape_str(error_msg);
     } else {
         s = "NULL";
     }
@@ -484,15 +530,17 @@ void handle_ping(COMMAND& c) {
 
 void* handle_command_aux(void* q) {
     COMMAND &c = *((COMMAND*)q);
-    if (!strcmp(c.cmd, "BOINC_SUBMIT")) {
+    if (!strcasecmp(c.cmd, "BOINC_SUBMIT")) {
         handle_submit(c);
-    } else if (!strcmp(c.cmd, "BOINC_QUERY_BATCHES")) {
+    } else if (!strcasecmp(c.cmd, "BOINC_QUERY_BATCHES")) {
         handle_query_batches(c);
-    } else if (!strcmp(c.cmd, "BOINC_FETCH_OUTPUT")) {
+    } else if (!strcasecmp(c.cmd, "BOINC_FETCH_OUTPUT")) {
         handle_fetch_output(c);
-    } else if (!strcmp(c.cmd, "BOINC_ABORT_JOBS")) {
+    } else if (!strcasecmp(c.cmd, "BOINC_ABORT_JOBS")) {
         handle_abort_jobs(c);
-    } else if (!strcmp(c.cmd, "BOINC_PING")) {
+    } else if (!strcasecmp(c.cmd, "BOINC_RETIRE_BATCH")) {
+        handle_retire_batch(c);
+    } else if (!strcasecmp(c.cmd, "BOINC_PING")) {
         handle_ping(c);
     } else {
         c.out = strdup("Unknown command");
@@ -510,20 +558,38 @@ int COMMAND::parse_command() {
     }
     char* q = strtok_r(in, " ", &p);
     q = strtok_r(NULL, " ", &p);
-    if (!strcmp(cmd, "BOINC_SUBMIT")) {
+    if (!strcasecmp(cmd, "BOINC_SUBMIT")) {
         retval = parse_submit(p);
-    } else if (!strcmp(cmd, "BOINC_QUERY_BATCHES")) {
+    } else if (!strcasecmp(cmd, "BOINC_QUERY_BATCHES")) {
         retval = parse_query_batches(p);
-    } else if (!strcmp(cmd, "BOINC_FETCH_OUTPUT")) {
+    } else if (!strcasecmp(cmd, "BOINC_FETCH_OUTPUT")) {
         retval = parse_fetch_output(p);
-    } else if (!strcmp(cmd, "BOINC_ABORT_JOBS")) {
+    } else if (!strcasecmp(cmd, "BOINC_ABORT_JOBS")) {
         retval = parse_abort_jobs(p);
-    } else if (!strcmp(cmd, "BOINC_PING")) {
+    } else if (!strcasecmp(cmd, "BOINC_RETIRE_BATCH")) {
+        retval = parse_retire_batch(p);
+    } else if (!strcasecmp(cmd, "BOINC_PING")) {
         retval = 0;
     } else {
         retval = -1;
     }
     return retval;
+}
+
+void print_version() {
+    printf("$GahpVersion: 1.0 %s BOINC\\ GAHP $\n", __DATE__);
+}
+
+int n_results() {
+    int n = 0;
+    vector<COMMAND*>::iterator i;
+    for (i = commands.begin(); i != commands.end(); i++) {
+        COMMAND *c2 = *i;
+        if (c2->out) {
+            n++;
+        }
+    }
+    return n;
 }
 
 // p is a malloc'ed buffer
@@ -533,17 +599,27 @@ int handle_command(char* p) {
     int id;
 
     sscanf(p, "%s", cmd);
-    printf("cmd: %s\n", cmd);
-    if (!strcmp(cmd, "VERSION")) {
-        printf("1.0\n");
-    } else if (!strcmp(cmd, "QUIT")) {
+    if (!strcasecmp(cmd, "VERSION")) {
+        printf("S ");
+        print_version();
+    } else if (!strcasecmp(cmd, "COMMANDS")) {
+        printf("S ASYNC_MODE_OFF ASYNC_MODE_ON BOINC_ABORT_JOBS BOINC_FETCH_OUTPUT BOINC_PING BOINC_QUERY_BATCHES BOINC_RETIRE_BATCH BOINC_SELECT_PROJECT BOINC_SUBMIT COMMANDS QUIT RESULTS VERSION\n");
+    } else if (!strcasecmp(cmd, "RESPONSE_PREFIX")) {
+        printf("S\n");
+        strcpy(response_prefix, p+strlen("RESPONSE_PREFIX "));
+    } else if (!strcasecmp(cmd, "ASYNC_MODE_ON")) {
+        printf("S\n");
+    } else if (!strcasecmp(cmd, "ASYNC_MODE_OFF")) {
+        printf("S\n");
+    } else if (!strcasecmp(cmd, "QUIT")) {
         exit(0);
-    } else if (!strcmp(cmd, "RESULTS")) {
+    } else if (!strcasecmp(cmd, "RESULTS")) {
+        printf("S %d\n", n_results());
         vector<COMMAND*>::iterator i = commands.begin();
         while (i != commands.end()) {
             COMMAND *c2 = *i;
             if (c2->out) {
-                printf("%d %s\n", c2->id, c2->out);
+	        printf("%s%d %s\n", response_prefix, c2->id, c2->out);
                 free(c2->out);
                 free(c2->in);
                 free(c2);
@@ -552,7 +628,7 @@ int handle_command(char* p) {
                 i++;
             }
         }
-    } else if (!strcmp(cmd, "BOINC_SELECT_PROJECT")) {
+    } else if (!strcasecmp(cmd, "BOINC_SELECT_PROJECT")) {
         int n = sscanf(p, "%s %s %s", cmd, project_url, authenticator);
         if (n ==3) {
             printf("S\n");
@@ -622,7 +698,7 @@ void read_config() {
     FILE* f = fopen("config.txt", "r");
     if (!f) {
         fprintf(stderr, "no config.txt\n");
-        exit(1);
+        return;
     }
     fgets(project_url, 256, f);
     strip_whitespace(project_url);
@@ -641,9 +717,15 @@ void read_config() {
 
 int main() {
     read_config();
+    strcpy(response_prefix, "");
+    print_version();
+    fflush(stdout);
     while (1) {
         char* p = get_cmd();
         if (p == NULL) break;
+        if (strlen(response_prefix)) {
+            printf("%s", response_prefix);
+        }
         handle_command(p);
         fflush(stdout);
     }

@@ -17,25 +17,42 @@
   You should have received a copy of the GNU Lesser General Public License
   along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">     
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/white_smoke" >
+        
+    <TextView
+     	android:id="@+id/title"
+     	android:layout_width="fill_parent"
+     	android:layout_height="wrap_content"
+		android:padding="10dp"
+		android:layout_marginBottom="10dp"
+    	android:singleLine="true"
+    	android:textColor="@color/black"
+		android:textAppearance="?android:attr/textAppearanceMedium" 
+		android:background="@drawable/shape_light_blue_background" />
     
     <EditText
-         android:id="@+id/Input"
-         android:layout_width="200dp"
-         android:layout_height="wrap_content" 
-         android:inputType="textUri">
+        android:id="@+id/Input"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content" 
+        android:inputType="textUri"
+    	android:layout_margin="5dp">
          <requestFocus />
      </EditText>
          
     <Button
         android:id="@+id/buttonUrlSubmit"
-        android:layout_toRightOf="@+id/Input"
-        android:layout_width="50dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="@string/attachproject_list_manual__dialog_button"/>
-     
-</RelativeLayout>
+		android:background="@drawable/shape_button_blue"
+		android:textColor="@color/white_smoke"
+		android:textAppearance="?android:attr/textAppearanceMedium" 
+		android:padding="5dp"
+		android:layout_gravity="center_horizontal"
+		android:clickable="true"
+		android:layout_margin="5dp"
+        android:text="@string/attachproject_list_manual_dialog_button"/>
+</LinearLayout>

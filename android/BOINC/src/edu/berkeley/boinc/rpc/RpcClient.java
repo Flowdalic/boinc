@@ -63,6 +63,7 @@ public class RpcClient {
 	public static final int PROJECT_NNW     = 4;
 	public static final int PROJECT_ANW     = 5;
 	public static final int PROJECT_DETACH	= 6;
+	public static final int PROJECT_RESET	= 7;
 
 	public static final int RESULT_SUSPEND  = 1;
 	public static final int RESULT_RESUME   = 2;
@@ -581,6 +582,41 @@ public class RpcClient {
 	}
 
 	/**
+	 * Reports the current device state to the BOINC core client,
+	 * if not called frequently, BOINC core client will suspend
+	 * @return true for success, false for failure
+	 */
+	public synchronized boolean reportDeviceStatus(DeviceStatus deviceStatus) {
+		mLastErrorMessage = null;
+		mRequest.setLength(0);
+		mRequest.append("<report_device_status>\n <device_status>\n  <on_ac_power>");
+		mRequest.append(deviceStatus.isOn_ac_power() ? 1 : 0);
+		mRequest.append("</on_ac_power>\n  <on_usb_power>");
+		mRequest.append(deviceStatus.isOn_usb_power() ? 1 : 0);
+		mRequest.append("</on_usb_power>\n  <battery_charge_pct>");
+		mRequest.append(deviceStatus.getBattery_charge_pct());
+		mRequest.append("</battery_charge_pct>\n  <battery_state>");
+		mRequest.append(deviceStatus.getBattery_state());
+		mRequest.append("</battery_state>\n  <battery_temperature_celsius>");
+		mRequest.append(deviceStatus.getBattery_temperature_celcius());
+		mRequest.append("</battery_temperature_celsius>\n  <wifi_online>");
+		mRequest.append(deviceStatus.isWifi_online() ? 1 : 0);
+		mRequest.append("</wifi_online>\n </device_status>\n</report_device_status>\n");
+		try {
+			sendRequest(mRequest.toString());
+			SimpleReplyParser parser = SimpleReplyParser.parse(receiveReply());
+			if (parser == null)
+				return false;
+			mLastErrorMessage = parser.getErrorMessage();
+			return parser.result();
+		}
+		catch (IOException e) {
+			if (Logging.WARNING) Log.w(TAG, "error in networkAvailable()", e);
+			return false;
+		}
+	}
+
+	/**
 	 * Tells the BOINC core client that a network connection is available,
 	 * and that it should do as much network activity as it can.
 	 * @return true for success, false for failure
@@ -628,6 +664,9 @@ public class RpcClient {
 				break;
 			case PROJECT_DETACH:
 				opTag = "project_detach";
+				break;
+			case PROJECT_RESET:
+				opTag = "project_reset";
 				break;
 			default:
 				if (Logging.ERROR) Log.e(TAG, "projectOp() - unsupported operation: " + operation);
@@ -714,15 +753,17 @@ public class RpcClient {
 	 */
 	public synchronized boolean lookupAccount(AccountIn accountIn) {
 		try {
+			String id;
+			if(accountIn.email_addr == null || accountIn.email_addr.isEmpty()) id = accountIn.user_name;
+			else id = accountIn.email_addr;
 			mRequest.setLength(0);
-			mRequest.append("<lookup_account>\n   <url>");
+			mRequest.append("<lookup_account>\n <url>");
 			mRequest.append(accountIn.url);
-			mRequest.append("</url>\n   <email_addr>");
-			mRequest.append(accountIn.email_addr);
-			mRequest.append("</email_addr>\n   <passwd_hash>");
-			mRequest.append(getPasswdHash(accountIn.passwd, accountIn.email_addr));
-			mRequest.append("</passwd_hash>\n<lookup_account>\n");
-			
+			mRequest.append("</url>\n <email_addr>");
+			mRequest.append(id);
+			mRequest.append("</email_addr>\n <passwd_hash>");
+			mRequest.append(getPasswdHash(accountIn.passwd, id));
+			mRequest.append("</passwd_hash>\n</lookup_account>\n");
 			sendRequest(mRequest.toString());
 			
 			SimpleReplyParser parser = SimpleReplyParser.parse(receiveReply());
@@ -880,7 +921,9 @@ public class RpcClient {
 			mRequest.setLength(0);
 			mRequest.append("<set_global_prefs_override>\n<global_preferences>\n  <run_on_batteries>");
 			mRequest.append(globalPrefs.run_on_batteries ? 1 : 0);
-			mRequest.append("</run_on_batteries>\n  <run_gpu_if_user_active>");
+			mRequest.append("</run_on_batteries>\n  <battery_charge_min_pct>");
+			mRequest.append(globalPrefs.battery_charge_min_pct);
+			mRequest.append("</battery_charge_min_pct>\n  <run_gpu_if_user_active>");
 			mRequest.append(globalPrefs.run_gpu_if_user_active ? 1 : 0);
 			mRequest.append("</run_gpu_if_user_active>\n  <run_if_user_active>");
 			mRequest.append(globalPrefs.run_if_user_active ? 1 : 0);

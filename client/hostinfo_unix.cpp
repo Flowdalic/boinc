@@ -15,6 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
+// XIdleTime:
+// Copyright (C) 2011 Universidade Federal de Campina Grande
+// Initial version: Magnus Henoch
+// Contributors: Danny Kukawka, Eivind Magnus Hvidevold
+// LGPL Version of xidletime: https://github.com/rodrigods/xidletime
+
 // There is a reason that having a file called "cpp.h" that includes config.h
 // and some of the C++ header files is bad.  That reason is because there are
 // #defines that alter the behiour of the standard C and C++ headers.  In
@@ -222,7 +228,7 @@ bool HOST_INFO::host_is_running_on_batteries() {
     return retval;
 
 #elif ANDROID
-    return !(device_status.on_ac_power || device_status.on_usb_power);
+    return !(gstate.device_status.on_ac_power || gstate.device_status.on_usb_power);
 
 #elif LINUX_LIKE_SYSTEM
     static enum {
@@ -417,121 +423,6 @@ bool HOST_INFO::host_is_running_on_batteries() {
     return false;
 #endif
 }
-
-#ifdef ANDROID
-
-// Get battery state, charge percentage, and temperature
-//
-
-static const char* battery_dirs[] = {
-    "battery",
-    "BAT0",
-    "bq27520",
-    "bq27200-0",
-    "max17042-0",
-    "ds2760-battery.0",
-    NULL
-};
-
-void HOST_INFO::get_battery_status() {
-    static bool first = true;
-    static FILE *fcap, *fhealth, *fstatus, *ftemp;
-    FILE *f;
-    battery_charge_pct = -1;
-    battery_temperature_celsius = 0;
-    char buf[256];
-    char health[256];
-    char status[256];
-
-    strcpy(health, "");
-    strcpy(status, "");
-
-    if (first) {
-        first = false;
-        int i = 0;
-
-        // Find the battery location for this device.
-        // matszpk has already collected a bunch of battery locations.
-        //
-        for (i = 0; battery_dirs[i] != NULL; i++) {
-            snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/present",
-                battery_dirs[i]
-            );
-            f = fopen(buf, "r");
-            if (f != NULL) {
-                fclose(f);
-                break;
-            }
-        }
-
-        snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/capacity",
-            battery_dirs[i]
-        );
-        fcap = fopen(buf, "r");
-        if (fcap) setbuf(fcap, NULL);
-
-        snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/health",
-            battery_dirs[i]
-        );
-        fhealth = fopen(buf, "r");
-        if (fhealth) setbuf(fhealth, NULL);
-
-        snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/status",
-            battery_dirs[i]
-        );
-        fstatus = fopen(buf, "r");
-        if (fstatus) setbuf(fstatus, NULL);
-
-        snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/temp",
-            battery_dirs[i]
-        );
-        ftemp = fopen(buf, "r");
-        if (ftemp) {
-            setbuf(ftemp, NULL);
-        } else {
-            snprintf(buf, sizeof(buf), "/sys/class/power_supply/%s/batt_temp",
-                battery_dirs[i]
-            );
-            ftemp = fopen(buf, "r");
-            if (ftemp) setbuf(ftemp, NULL);
-        }
-    }
-
-    if (fcap) {
-        rewind(fcap);
-        fscanf(fcap, "%d", &battery_charge_pct);
-    }
-
-    if (fhealth) {
-        rewind(fhealth);
-        fgets(health, sizeof(health), fhealth);
-    }
-
-    if (fstatus) {
-        rewind(fstatus);
-        fgets(status, sizeof(status), fstatus);
-    }
-
-    battery_state = BATTERY_STATE_UNKNOWN;
-    if (strstr(health, "Overheat")) {
-        battery_state = BATTERY_STATE_OVERHEATED;
-    } else if (strstr(status, "Not charging")) {
-        battery_state = BATTERY_STATE_DISCHARGING;
-    } else if (strstr(status, "Charging")) {
-        battery_state = BATTERY_STATE_CHARGING;
-    } else if (strstr(status, "Full")) {
-        battery_state = BATTERY_STATE_FULL;
-    }
-
-    if (ftemp) {
-        int x;
-        rewind(ftemp);
-        if (fscanf(ftemp, "%d", &x) == 1) {
-            battery_temperature_celsius = x/10.;
-        }
-    }
-}
-#endif
 
 #if LINUX_LIKE_SYSTEM
 static void parse_meminfo_linux(HOST_INFO& host) {
@@ -732,7 +623,7 @@ static void parse_cpuinfo_linux(HOST_INFO& host) {
             }
         }
     }
-    strcpy(model_buf, host.p_model);
+    safe_strcpy(model_buf, host.p_model);
     if (family>=0 || model>=0 || stepping>0) {
         strcat(model_buf, " [");
         if (family>=0) {
@@ -750,10 +641,10 @@ static void parse_cpuinfo_linux(HOST_INFO& host) {
         strcat(model_buf, "]");
     }
     if (strlen(features)) {
-        strlcpy(host.p_features, features, sizeof(host.p_features));
+        safe_strcpy(host.p_features, features);
     }
 
-    strlcpy(host.p_model, model_buf, sizeof(host.p_model));
+    safe_strcpy(host.p_model, model_buf);
     fclose(f);
 }
 #endif  // LINUX_LIKE_SYSTEM
@@ -1313,7 +1204,7 @@ int HOST_INFO::get_virtualbox_version() {
     FILE* fd;
 
 #if LINUX_LIKE_SYSTEM
-    strcpy(path, "/usr/lib/virtualbox/VBoxManage");
+    safe_strcpy(path, "/usr/lib/virtualbox/VBoxManage");
 #elif defined( __APPLE__)
     FSRef theFSRef;
     OSStatus status = noErr;
@@ -1948,6 +1839,9 @@ bool xss_idle(long idle_treshold) {
         idle_time = xssInfo->idle;
 
 #if HAVE_DPMS
+        // XIdleTime Detection
+        // See header for location and copywrites.
+        //
         int dummy;
         CARD16 standby, suspend, off;
         CARD16 state;
@@ -1981,7 +1875,6 @@ bool xss_idle(long idle_treshold) {
                           break;
                     }
                 }
-
             } 
         }
 #endif

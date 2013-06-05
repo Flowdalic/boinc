@@ -19,8 +19,12 @@
 package edu.berkeley.boinc;
 
 import java.util.ArrayList;
+
+import edu.berkeley.boinc.adapter.GalleryAdapter;
 import edu.berkeley.boinc.client.ClientStatus;
+import edu.berkeley.boinc.client.ClientStatus.ImageWrapper;
 import edu.berkeley.boinc.client.Monitor;
+import edu.berkeley.boinc.rpc.DeviceStatus;
 import edu.berkeley.boinc.utils.BOINCDefs;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -29,22 +33,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
+import android.view.Display;
 import android.view.View;
-import android.view.View.OnTouchListener;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
-public class StatusActivity extends Activity {
+public class StatusActivity extends Activity implements OnClickListener{
 	
 	private final String TAG = "BOINC StatusActivity";
 	
@@ -56,32 +61,11 @@ public class StatusActivity extends Activity {
 	private Integer suspendReason = -1;
 	
 	//slide show
-    private ViewFlipper imageFrame;
-    
-    // gesture detection
-    private final GestureDetector gdt = new GestureDetector(new GestureListener());
-	private class GestureListener extends SimpleOnGestureListener {
-		// values taken from example on Stackoverflow. seems appropriate.
-	    private final int SWIPE_MIN_DISTANCE = 120;
-	    private final int SWIPE_THRESHOLD_VELOCITY = 200;
-	    @Override
-	    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-	       if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-	          //Log.d(TAG, "right to left...");
-	          imageFrame.setInAnimation(getApplicationContext(), R.anim.in_from_right);
-	          imageFrame.setOutAnimation(getApplicationContext(), R.anim.out_to_left);
-              imageFrame.showNext();
-	          return false;
-	       } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >  SWIPE_THRESHOLD_VELOCITY) {
-	          //Log.d(TAG, "left to right...");
-	          imageFrame.setInAnimation(getApplicationContext(), R.anim.in_from_left);
-	          imageFrame.setOutAnimation(getApplicationContext(), R.anim.out_to_right);
-              imageFrame.showPrevious();
-	          return false;
-	       }
-	       return false;
-	    }
-	}
+    private RelativeLayout slideshowWrapper;
+    private Integer screenHeight = 0;
+    private Integer screenWidth = 0;
+    private Integer minScreenHeightForSlideshow = 1000;
+    private Integer minScreenHeightForImage = 1000;;
 
 	private BroadcastReceiver mClientStatusChangeRec = new BroadcastReceiver() {
 		@Override
@@ -135,6 +119,16 @@ public class StatusActivity extends Activity {
 		registerReceiver(mClientStatusChangeRec,ifcsc);
 		loadLayout();
 		super.onResume();
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		screenWidth = display.getWidth();
+		screenHeight = display.getHeight();
+		Log.d(TAG,"screen dimensions: " + screenWidth + "*" + screenHeight);
+		
+		try{
+			minScreenHeightForSlideshow = getResources().getInteger(R.integer.status_min_screen_height_for_slideshow_px);
+			minScreenHeightForImage = getResources().getInteger(R.integer.status_min_screen_height_for_image_px);
+		} catch(Exception e){}
 	}
 	
 	public void onPause() {
@@ -171,38 +165,29 @@ public class StatusActivity extends Activity {
 				TextView statusHeader = (TextView) findViewById(R.id.status_header);
 				ImageView statusImage = (ImageView) findViewById(R.id.status_image);
 				TextView statusDescriptor = (TextView) findViewById(R.id.status_long);
-				ImageView changeRunmodeImage = (ImageView) findViewById(R.id.status_change_runmode_image);
-				TextView changeRunmodeDescriptor = (TextView) findViewById(R.id.status_change_runmode_long);
-		        imageFrame = (ViewFlipper) findViewById(R.id.slideshowFrame);
+				slideshowWrapper = (RelativeLayout) findViewById(R.id.slideshow_wrapper);
 				
 				// adapt to specific computing status
 				switch(status.computingStatus) {
 				case ClientStatus.COMPUTING_STATUS_NEVER:
-					imageFrame.setVisibility(View.GONE);
+					slideshowWrapper.setVisibility(View.GONE);
 					statusHeader.setText(R.string.status_computing_disabled);
-					statusImage.setImageResource(R.drawable.stopw48);
+					statusImage.setImageResource(R.drawable.playb48);
 					statusImage.setContentDescription(getString(R.string.status_computing_disabled));
+					statusImage.setClickable(true);
+					statusImage.setOnClickListener(this);
 					statusDescriptor.setText(R.string.status_computing_disabled_long);
-					changeRunmodeImage.setImageResource(R.drawable.playw24);
-					changeRunmodeImage.setContentDescription(getString(R.string.enable_computation));
-					changeRunmodeImage.setTag(true);
-					changeRunmodeDescriptor.setText(R.string.enable_computation);
-					changeRunmodeDescriptor.setTag(true);
 					break;
 				case ClientStatus.COMPUTING_STATUS_SUSPENDED:
-					imageFrame.setVisibility(View.GONE);
+					slideshowWrapper.setVisibility(View.GONE);
 					statusHeader.setText(R.string.status_paused);
-					statusImage.setImageResource(R.drawable.pausew48);
+					statusImage.setImageResource(R.drawable.pauseb48);
 					statusImage.setContentDescription(getString(R.string.status_paused));
-					changeRunmodeImage.setImageResource(R.drawable.stopw24);
-					changeRunmodeImage.setContentDescription(getString(R.string.disable_computation));
-					changeRunmodeImage.setTag(false);
-					changeRunmodeDescriptor.setText(R.string.disable_computation);
-					changeRunmodeDescriptor.setTag(false);
+					statusImage.setClickable(false);
 					switch(status.computingSuspendReason) {
 					case BOINCDefs.SUSPEND_REASON_BATTERIES:
 						statusDescriptor.setText(R.string.suspend_batteries);
-						statusImage.setImageResource(R.drawable.notconnectedw48);
+						statusImage.setImageResource(R.drawable.notconnectedb48);
 						statusHeader.setVisibility(View.GONE);
 						break;
 					case BOINCDefs.SUSPEND_REASON_USER_ACTIVE:
@@ -220,7 +205,7 @@ public class StatusActivity extends Activity {
 						break;
 					case BOINCDefs.SUSPEND_REASON_BENCHMARKS:
 						statusDescriptor.setText(R.string.suspend_bm);
-						statusImage.setImageResource(R.drawable.watchw48);
+						statusImage.setImageResource(R.drawable.watchb48);
 						statusHeader.setVisibility(View.GONE);
 						break;
 					case BOINCDefs.SUSPEND_REASON_DISK_SIZE:
@@ -251,13 +236,23 @@ public class StatusActivity extends Activity {
 						statusDescriptor.setText(R.string.suspend_wifi);
 						break;
 					case BOINCDefs.SUSPEND_REASON_BATTERY_CHARGING:
-						statusDescriptor.setText(R.string.suspend_battery_charging);
-						statusImage.setImageResource(R.drawable.batteryw48);
+						String text = getString(R.string.suspend_battery_charging);
+						try{
+							Double minCharge = Monitor.getClientStatus().getPrefs().battery_charge_min_pct;
+							DeviceStatus deviceStatus = new DeviceStatus(getApplicationContext());
+							deviceStatus.update();
+							Integer currentCharge = deviceStatus.getBattery_charge_pct();
+							text = getString(R.string.suspend_battery_charging_long) + " " + minCharge.intValue()
+							+ "% (" + getString(R.string.suspend_battery_charging_current) + " " + currentCharge  + "%) "
+							+ getString(R.string.suspend_battery_charging_long2);
+						} catch (Exception e) {}
+						statusDescriptor.setText(text);
+						statusImage.setImageResource(R.drawable.batteryb48);
 						statusHeader.setVisibility(View.GONE);
 						break;
 					case BOINCDefs.SUSPEND_REASON_BATTERY_OVERHEATED:
 						statusDescriptor.setText(R.string.suspend_battery_overheating);
-						statusImage.setImageResource(R.drawable.batteryw48);
+						statusImage.setImageResource(R.drawable.batteryb48);
 						statusHeader.setVisibility(View.GONE);
 						break;
 					default:
@@ -267,15 +262,11 @@ public class StatusActivity extends Activity {
 					suspendReason = status.computingSuspendReason;
 					break;
 				case ClientStatus.COMPUTING_STATUS_IDLE: 
-					imageFrame.setVisibility(View.GONE);
+					slideshowWrapper.setVisibility(View.GONE);
 					statusHeader.setText(R.string.status_idle);
-					statusImage.setImageResource(R.drawable.pausew48);
+					statusImage.setImageResource(R.drawable.pauseb48);
 					statusImage.setContentDescription(getString(R.string.status_idle));
-					changeRunmodeImage.setImageResource(R.drawable.stopw24);
-					changeRunmodeImage.setContentDescription(getString(R.string.disable_computation));
-					changeRunmodeImage.setTag(false);
-					changeRunmodeDescriptor.setText(R.string.disable_computation);
-					changeRunmodeDescriptor.setTag(false);
+					statusImage.setClickable(false);
 					Integer networkState = 0;
 					try{
 						networkState = status.networkSuspendReason;
@@ -292,15 +283,10 @@ public class StatusActivity extends Activity {
 					if(!loadSlideshow()) {
 						Log.d(TAG, "slideshow not available, load plain old status instead...");
 						statusHeader.setText(R.string.status_running);
-						statusImage.setImageResource(R.drawable.playw48);
+						statusImage.setImageResource(R.drawable.cogsb48);
 						statusImage.setContentDescription(getString(R.string.status_running));
 						statusDescriptor.setText(R.string.status_running_long);
 					}
-					changeRunmodeImage.setImageResource(R.drawable.stopw24);
-					changeRunmodeImage.setContentDescription(getString(R.string.disable_computation));
-					changeRunmodeImage.setTag(false);
-					changeRunmodeDescriptor.setText(R.string.disable_computation);
-					changeRunmodeDescriptor.setTag(false);
 					break;
 				}
 				computingStatus = status.computingStatus; //save new computing status
@@ -311,49 +297,72 @@ public class StatusActivity extends Activity {
 		}
 	}
 	
-	public void onClick (View v) {
-		Log.d(TAG,"onClick");
-		if(!mIsBound) {Log.w(TAG,"not bound");return;}
-		try {
-			Boolean enable = (Boolean) v.getTag();
-			if(enable) {
-				monitor.setRunMode(BOINCDefs.RUN_MODE_AUTO);
-			} else {
-				monitor.setRunMode(BOINCDefs.RUN_MODE_NEVER);
-			}
-		} catch (Exception e) {Log.e(TAG, "could not map status tag", e);}
-	}
-	
 	private Boolean loadSlideshow() {
+		// check if screen is high enough for slideshow
+		if(screenHeight < minScreenHeightForSlideshow) return false;
+		
 		// get slideshow images
-		ArrayList<Bitmap> images = Monitor.getClientStatus().getSlideshowImages();
+		final ArrayList<ImageWrapper> images = Monitor.getClientStatus().getSlideshowImages();
 		if(images == null || images.size() == 0) return false;
 		
 		// images available, adapt layout
+	    Gallery gallery = (Gallery) findViewById(R.id.gallery);
+	    final ImageView imageView = (ImageView) findViewById(R.id.image_view);
+	    final TextView imageDesc = (TextView)findViewById(R.id.image_description);
+        imageDesc.setText(images.get(0).projectName);
 		LinearLayout centerWrapper = (LinearLayout) findViewById(R.id.center_wrapper);
 		centerWrapper.setVisibility(View.GONE);
-        imageFrame.setVisibility(View.VISIBLE);
-        LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
-        imageFrame.removeAllViews();
+        slideshowWrapper.setVisibility(View.VISIBLE);
         
-        // create views for all available bitmaps
-    	for (Bitmap image: images) {
-            ImageView imageView = new ImageView(this);
-            imageView.setLayoutParams(params);
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setImageBitmap(image);
-            imageFrame.addView(imageView);
-    	}
+        //setup gallery
+        gallery.setAdapter(new GalleryAdapter(this,images));
         
-        // capture click events and pass on to Gesture Detector
-        imageFrame.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(final View view, final MotionEvent event) {
-                gdt.onTouchEvent(event);
-                return true;
-            }
-         });
+        // adapt layout according to screen size
+		if(screenHeight < minScreenHeightForImage) {
+			// screen is not high enough for large image
+			imageView.setVisibility(View.GONE);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+			params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+			LinearLayout galleryWrapper = (LinearLayout) findViewById(R.id.gallery_wrapper);
+			galleryWrapper.setLayoutParams(params);
+			galleryWrapper.setPadding(0, 0, 0, 5);
+	        gallery.setOnItemClickListener(new OnItemClickListener() {
+	            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	                imageDesc.setText(images.get(position).projectName);
+	            }
+	        });
+		} else {
+			// screen is high enough, fully blown layout
+	        imageView.setImageBitmap(images.get(0).image);
+	        gallery.setOnItemClickListener(new OnItemClickListener() {
+	            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	                imageView.setImageBitmap(images.get(position).image);
+	                imageDesc.setText(images.get(position).projectName);
+	            }
+	        });
+		}
         
         return true;
+	}
+
+	@Override
+	public void onClick(View v) {
+		new WriteClientRunModeAsync().execute(BOINCDefs.RUN_MODE_AUTO);
+	}
+	
+	private final class WriteClientRunModeAsync extends AsyncTask<Integer, Void, Boolean> {
+
+		private final String TAG = "WriteClientRunModeAsync";
+		
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			return monitor.setRunMode(params[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean success) {
+			if(success) monitor.forceRefresh();
+			else Log.w(TAG,"setting run mode failed");
+		}
 	}
 }

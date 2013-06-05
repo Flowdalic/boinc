@@ -91,7 +91,7 @@ int SCHED_CONFIG::parse(FILE* f) {
     strcpy(httpd_user, "apache");
     max_ncpus = MAX_NCPUS;
     scheduler_log_buffer = 32768;
-    version_select_random_factor = .1;
+    version_select_random_factor = 1.;
 
     if (!xp.parse_start("boinc")) return ERR_XML_PARSE;
     if (!xp.parse_start("config")) return ERR_XML_PARSE;
@@ -108,16 +108,16 @@ int SCHED_CONFIG::parse(FILE* f) {
             gethostname(hostname, 256);
             if (!strcmp(hostname, db_host)) strcpy(db_host, "localhost");
             if (!strlen(replica_db_host)) {
-                strcpy(replica_db_host, db_host);
+                safe_strcpy(replica_db_host, db_host);
             }
             if (!strlen(replica_db_name)) {
-                strcpy(replica_db_name, db_name);
+                safe_strcpy(replica_db_name, db_name);
             }
             if (!strlen(replica_db_user)) {
-                strcpy(replica_db_user, db_user);
+                safe_strcpy(replica_db_user, db_user);
             }
             if (!strlen(replica_db_passwd)) {
-                strcpy(replica_db_passwd, db_passwd);
+                safe_strcpy(replica_db_passwd, db_passwd);
             }
             return 0;
         }
@@ -336,8 +336,8 @@ int SCHED_CONFIG::parse_file(const char* dir) {
         snprintf(path, sizeof(path), "%s/%s", dir, CONFIG_FILE);
         snprintf(path_aux, sizeof(path_aux), "%s/%s", dir, CONFIG_FILE_AUX);
     } else {
-        strcpy(path, project_path(CONFIG_FILE));
-        strcpy(path_aux, project_path(CONFIG_FILE_AUX));
+        safe_strcpy(path, project_path(CONFIG_FILE));
+        safe_strcpy(path_aux, project_path(CONFIG_FILE_AUX));
     }
 #ifndef _USING_FCGI_
     FILE* f = fopen(path, "r");

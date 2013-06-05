@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.wifi.WifiManager;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
@@ -40,6 +41,7 @@ import edu.berkeley.boinc.R;
 import edu.berkeley.boinc.rpc.CcStatus;
 import edu.berkeley.boinc.rpc.GlobalPreferences;
 import edu.berkeley.boinc.rpc.Project;
+import edu.berkeley.boinc.rpc.ProjectInfo;
 import edu.berkeley.boinc.rpc.Result;
 import edu.berkeley.boinc.rpc.Transfer;
 import edu.berkeley.boinc.utils.BOINCDefs;
@@ -53,8 +55,10 @@ public class ClientStatus {
 	private final String TAG = "BOINC Client Status";
 	private Context ctx; // application context in order to fire broadcast events
 	
-	//WakeLock
-	WakeLock wakeLock;
+	// CPU WakeLock
+	private WakeLock wakeLock;
+	// WiFi lock
+	private WifiManager.WifiLock wifiLock;
 	
 	//RPC wrapper
 	private CcStatus status;
@@ -82,7 +86,7 @@ public class ClientStatus {
 	public Integer computingSuspendReason = 0; //reason why computing got suspended, only if COMPUTING_STATUS_SUSPENDED
 	private Boolean computingParseError = false; //indicates that status could not be parsed and is therefore invalid
 	
-	//network status
+	// network status
 	public Integer networkStatus = 2;
 	public static final int NETWORK_STATUS_NEVER = 0;
 	public static final int NETWORK_STATUS_SUSPENDED = 1;
@@ -90,19 +94,27 @@ public class ClientStatus {
 	public Integer networkSuspendReason = 0; //reason why network activity got suspended, only if NETWORK_STATUS_SUSPENDED
 	private Boolean networkParseError = false; //indicates that status could not be parsed and is therefore invalid
 	
+	// supported projects
+	public ArrayList<ProjectInfo> supportedProjects;
+	
 	public ClientStatus(Context ctx) {
 		this.ctx = ctx;
 		
-		// set up Wake Lock
+		// set up CPU Wake Lock
 		// see documentation at http://developer.android.com/reference/android/os/PowerManager.html
 		PowerManager pm = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		wakeLock.setReferenceCounted(false); // "one call to release() is sufficient to undo the effect of all previous calls to acquire()"
+		
+		// set up Wifi wake lock
+		WifiManager wm = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
+		wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL , "MyWifiLock");
+		wifiLock.setReferenceCounted(false);
 	}
 	
 	// call to acquire or release resources held by the WakeLock.
 	// acquisition: every time the Monitor loop calls setClientStatus and computingStatus == COMPUTING_STATUS_COMPUTING
-	// release: every time computingStatus != COMPUTING_STATUS_COMPUTING , and in Monitor.onDestroy()
+	// release: every time acquisition criteria is not met , and in Monitor.onDestroy()
 	public void setWakeLock(Boolean acquire) {
 		try {
 			if(wakeLock.isHeld() == acquire) return; // wakeLock already in desired state
@@ -115,6 +127,23 @@ public class ClientStatus {
 				Log.d(TAG, "wakeLock released");
 			}
 		} catch (Exception e) {Log.w(TAG, "Exception durign setWakeLock " + acquire, e);}
+	}
+	
+	// call to acquire or release resources held by the WifiLock.
+	// acquisition: every time the Monitor loop calls setClientStatus: computingStatus == COMPUTING_STATUS_COMPUTING || COMPUTING_STATUS_IDLE
+	// release: every time acquisition criteria is not met , and in Monitor.onDestroy()
+	public void setWifiLock(Boolean acquire) {
+		try {
+			if(wifiLock.isHeld() == acquire) return; // wifiLock already in desired state
+			
+			if(acquire) { // acquire wakeLock
+				wifiLock.acquire();
+				Log.d(TAG, "wifiLock acquired");
+			} else { // release wakeLock
+				wifiLock.release();
+				Log.d(TAG, "wifiLock released");
+			}
+		} catch (Exception e) {Log.w(TAG, "Exception durign setWifiLock " + acquire, e);}
 	}
 	
 	/*
@@ -165,6 +194,10 @@ public class ClientStatus {
 		this.prefs = prefs;
 	}
 	
+	public synchronized ArrayList<ProjectInfo> getSupprtedProjects () {
+		return supportedProjects;
+	}
+	
 	public synchronized CcStatus getClientStatus() {
 		if(results == null) { //check in case monitor is not set up yet (e.g. while logging in)
 			Log.d(TAG, "state is null");
@@ -206,40 +239,43 @@ public class ClientStatus {
 	}
 
 	// returns list with slideshow images of all projects
-	// 126 * 29 pixel from /projects/PNAME/slideshow_appname_n
+	// 126 * 290 pixel from /projects/PNAME/slideshow_appname_n
 	// not aware of project or application!
-	public synchronized ArrayList<Bitmap> getSlideshowImages() {
+	public synchronized ArrayList<ImageWrapper> getSlideshowImages() {
 
-		ArrayList<Bitmap> slideshowImages = new ArrayList<Bitmap>(); 
+		ArrayList<ImageWrapper> slideshowImages = new ArrayList<ImageWrapper>();
+		int maxImagesPerProject = ctx.getResources().getInteger(R.integer.status_max_slideshow_images_per_project);
 		
 		for (Project project: projects) {
-			// get file paths
-			File dir = new File(project.project_dir);
-			File[] foundFiles = dir.listFiles(new FilenameFilter() {
-			    public boolean accept(File dir, String name) {
-			        return name.startsWith("slideshow_");
-			    }
-			});
-			ArrayList<String> filePaths = new ArrayList<String>();
-			if(foundFiles == null) continue; // prevent NPE
-			for (File file: foundFiles) {
-				String slideshowImagePath = parseSoftLinkToAbsPath(file.getAbsolutePath(), project.project_dir);
-				//check whether path is not empty, and avoid duplicates (slideshow images can 
-				//re-occur for multiple apps, since we do not distinct apps, skip duplicates.
-				if(slideshowImagePath != null && !slideshowImagePath.isEmpty() && !filePaths.contains(slideshowImagePath)) filePaths.add(slideshowImagePath);
-				//Log.d(TAG, "getSlideshowImages() path: " + slideshowImagePath);
-			}
-			//Log.d(TAG,"getSlideshowImages() retrieve number file paths: " + filePaths.size());
-			
-			// load images from paths
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inDither = true;
-			options.inSampleSize = 1;
-			for (String filePath : filePaths) {
-				Bitmap tmp = BitmapFactory.decodeFile(filePath, options);
-				if(tmp!=null) slideshowImages.add(tmp);
-				else Log.d(TAG,"loadSlideshowImagesFromFile(): null for path: " + filePath);
-			}
+			try{
+				// get file paths
+				File dir = new File(project.project_dir);
+				File[] foundFiles = dir.listFiles(new FilenameFilter() {
+				    public boolean accept(File dir, String name) {
+				        return name.startsWith("slideshow_");
+				    }
+				});
+				ArrayList<String> filePaths = new ArrayList<String>();
+				if(foundFiles == null) continue; // prevent NPE
+				for (File file: foundFiles) {
+					String slideshowImagePath = parseSoftLinkToAbsPath(file.getAbsolutePath(), project.project_dir);
+					//check whether path is not empty, and avoid duplicates (slideshow images can 
+					//re-occur for multiple apps, since we do not distinct apps, skip duplicates.
+					if(slideshowImagePath != null && !slideshowImagePath.isEmpty() && !filePaths.contains(slideshowImagePath)) filePaths.add(slideshowImagePath);
+					//Log.d(TAG, "getSlideshowImages() path: " + slideshowImagePath);
+				}
+				//Log.d(TAG,"getSlideshowImages() retrieve number file paths: " + filePaths.size());
+				
+				// load images from paths
+				int x = 0;
+				for (String filePath : filePaths) {
+					if(x >= maxImagesPerProject) continue;
+					Bitmap tmp = BitmapFactory.decodeFile(filePath);
+					if(tmp!=null) slideshowImages.add(new ImageWrapper(tmp,project.project_name));
+					else Log.d(TAG,"loadSlideshowImagesFromFile(): null for path: " + filePath);
+					x++;
+				}
+			} catch(Exception e) {Log.w(TAG,"exception for project " + project.master_url,e);}
 		}
 		Log.d(TAG,"getSlideshowImages() loaded number of files: " + slideshowImages.size());
 		return slideshowImages;
@@ -256,7 +292,6 @@ public class ClientStatus {
 					String iconAbsPath = parseSoftLinkToAbsPath(project.project_dir + "/stat_icon", project.project_dir);
 					if (iconAbsPath == null) return null;
 					//Log.d(TAG, "getProjectIcons() absolute path to icon: " + iconAbsPath);
-					
 					Bitmap icon = BitmapFactory.decodeFile(iconAbsPath);
 					return icon;
 				}
@@ -349,13 +384,25 @@ public class ClientStatus {
 				computingSuspendReason = status.task_suspend_reason; // = 4 - SUSPEND_REASON_USER_REQ????
 				computingParseError = false;
 				setWakeLock(false);
+				setWifiLock(false);
 				return;
+			}
+			if(status.task_mode == BOINCDefs.RUN_MODE_AUTO && status.task_suspend_reason == BOINCDefs.SUSPEND_REASON_CPU_THROTTLE) {
+				// suspended due to CPU throttling, treat as if was running!
+				computingStatus = COMPUTING_STATUS_COMPUTING;
+				computingSuspendReason = status.task_suspend_reason; // = 64 - SUSPEND_REASON_CPU_THROTTLE
+				computingParseError = false;
+				setWakeLock(true);
+				setWifiLock(true);
+				return;
+				
 			}
 			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && (status.task_suspend_reason != BOINCDefs.SUSPEND_NOT_SUSPENDED)) {
 				computingStatus = COMPUTING_STATUS_SUSPENDED;
 				computingSuspendReason = status.task_suspend_reason;
 				computingParseError = false;
 				setWakeLock(false);
+				setWifiLock(false);
 				return;
 			}
 			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED)) {
@@ -375,12 +422,14 @@ public class ClientStatus {
 					computingSuspendReason = status.task_suspend_reason; // = 0 - SUSPEND_NOT_SUSPENDED
 					computingParseError = false;
 					setWakeLock(true);
+					setWifiLock(true);
 					return;
 				} else { // client "is able but idle"
 					computingStatus = COMPUTING_STATUS_IDLE;
 					computingSuspendReason = status.task_suspend_reason; // = 0 - SUSPEND_NOT_SUSPENDED
 					computingParseError = false;
 					setWakeLock(false);
+					setWifiLock(true);
 					return;
 				}
 			}
@@ -438,7 +487,7 @@ public class ClientStatus {
 			}
 		} catch (Exception e) {
 			// probably FileNotFoundException
-			Log.d(TAG,"Exception in parseSoftLinkToAbsPath() " + e.getMessage());
+			// Log.d(TAG,"Exception in parseSoftLinkToAbsPath() " + e.getMessage());
 			return null;
 		}
 		//Log.d(TAG,"parseSoftLinkToAbsPath() softLinkContent: " + softLinkContent);
@@ -456,5 +505,16 @@ public class ClientStatus {
 		//Log.d(TAG, "parseSoftLinkToAbsPath() fileName: " + fileName);
 		
 		return projectDir + "/" + fileName;
+	}
+	
+	// Wrapper for slideshow images
+	public class ImageWrapper {
+		public Bitmap image;
+		public String projectName;
+		
+		public ImageWrapper(Bitmap image, String projectName) {
+			this.image = image;
+			this.projectName = projectName;
+		}
 	}
 }
