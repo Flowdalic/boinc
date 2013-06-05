@@ -142,7 +142,7 @@ void CLIENT_STATE::parse_cmdline(int argc, char** argv) {
             check_all_logins = true;
         } else if (ARG(daemon)) {
             executing_as_daemon = true;
-        } else if (ARG(detach_phase_two)) {
+        } else if (ARG(detach_phase_two) || ARG(detach) || ARG(detach_console)) {
             detach_console = true;
         } else if (ARG(detach_project)) {
             if (i == argc-1) show_options = true;
@@ -288,9 +288,9 @@ void CLIENT_STATE::parse_env_vars() {
         case URL_PROTOCOL_HTTPS:
             env_var_proxy_info.present = true;
             env_var_proxy_info.use_http_proxy = true;
-            strcpy(env_var_proxy_info.http_user_name, purl.user);
-            strcpy(env_var_proxy_info.http_user_passwd, purl.passwd);
-            strcpy(env_var_proxy_info.http_server_name, purl.host);
+            safe_strcpy(env_var_proxy_info.http_user_name, purl.user);
+            safe_strcpy(env_var_proxy_info.http_user_passwd, purl.passwd);
+            safe_strcpy(env_var_proxy_info.http_server_name, purl.host);
             env_var_proxy_info.http_server_port = purl.port;
             break;
         default:
@@ -303,10 +303,10 @@ void CLIENT_STATE::parse_env_vars() {
     p = getenv("HTTP_USER_NAME");
     if (p) {
         env_var_proxy_info.use_http_auth = true;
-        strcpy(env_var_proxy_info.http_user_name, p);
+        safe_strcpy(env_var_proxy_info.http_user_name, p);
         p = getenv("HTTP_USER_PASSWD");
         if (p) {
-            strcpy(env_var_proxy_info.http_user_passwd, p);
+            safe_strcpy(env_var_proxy_info.http_user_passwd, p);
         }
     }
 
@@ -316,21 +316,21 @@ void CLIENT_STATE::parse_env_vars() {
         parse_url(p, purl);
         env_var_proxy_info.present = true;
         env_var_proxy_info.use_socks_proxy = true;
-        strcpy(env_var_proxy_info.socks5_user_name, purl.user);
-        strcpy(env_var_proxy_info.socks5_user_passwd, purl.passwd);
-        strcpy(env_var_proxy_info.socks_server_name, purl.host);
+        safe_strcpy(env_var_proxy_info.socks5_user_name, purl.user);
+        safe_strcpy(env_var_proxy_info.socks5_user_passwd, purl.passwd);
+        safe_strcpy(env_var_proxy_info.socks_server_name, purl.host);
         env_var_proxy_info.socks_server_port = purl.port;
     }
 
     p = getenv("SOCKS5_USER");
     if (!p) p = getenv("SOCKS_USER");
     if (p) {
-        strcpy(env_var_proxy_info.socks5_user_name, p);
+        safe_strcpy(env_var_proxy_info.socks5_user_name, p);
     }
 
     p = getenv("SOCKS5_PASSWD");
     if (p) {
-        strcpy(env_var_proxy_info.socks5_user_passwd, p);
+        safe_strcpy(env_var_proxy_info.socks5_user_passwd, p);
     }
 }
 
@@ -348,7 +348,7 @@ void CLIENT_STATE::do_cmdline_actions() {
     }
 
     if (strlen(detach_project_url)) {
-        canonicalize_master_url(detach_project_url);
+        canonicalize_master_url(detach_project_url, sizeof(detach_project_url));
         PROJECT* project = lookup_project(detach_project_url);
         if (project) {
             // do this before detaching - it frees the project
@@ -362,7 +362,7 @@ void CLIENT_STATE::do_cmdline_actions() {
     }
 
     if (strlen(reset_project_url)) {
-        canonicalize_master_url(reset_project_url);
+        canonicalize_master_url(reset_project_url, sizeof(reset_project_url));
         PROJECT* project = lookup_project(reset_project_url);
         if (project) {
             reset_project(project, false);
@@ -374,7 +374,7 @@ void CLIENT_STATE::do_cmdline_actions() {
     }
 
     if (strlen(update_prefs_url)) {
-        canonicalize_master_url(update_prefs_url);
+        canonicalize_master_url(update_prefs_url, sizeof(update_prefs_url));
         PROJECT* project = lookup_project(update_prefs_url);
         if (project) {
             project->sched_rpc_pending = RPC_REASON_USER_REQ;
@@ -384,7 +384,7 @@ void CLIENT_STATE::do_cmdline_actions() {
     }
 
     if (strlen(attach_project_url)) {
-        canonicalize_master_url(attach_project_url);
+        canonicalize_master_url(attach_project_url, sizeof(attach_project_url));
         add_project(attach_project_url, attach_project_auth, "", false);
     }
 }

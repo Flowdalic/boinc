@@ -244,7 +244,10 @@ struct XML_PARSER {
         strip_whitespace(buf);
         return retval;
     }
+    bool parse_str_aux(const char*, char*, int);
 
+    // interface starts here
+    //
     bool parse_start(const char*);
     bool parse_str(const char*, char*, int);
     bool parse_string(const char*, std::string&);
@@ -332,34 +335,6 @@ inline bool parse_double(const char* buf, const char* tag, double& x) {
     return true;
 }
 
-#if 0
-// Same, for unsigned long
-//
-inline bool parse_ulong(const char* buf, const char* tag, unsigned long& x) {
-    const char* p = strstr(buf, tag);
-    if (!p) return false;
-    errno = 0;
-    unsigned long y = strtoul(p+strlen(tag), NULL, 0);
-    if (errno) return false;
-    x = y;
-    return true;
-}
-
-// Same, for unsigned long long 
-// 
-inline bool parse_ulonglong(
-    const char* buf, const char* tag, unsigned long long& x
-) { 
-    const char* p = strstr(buf, tag); 
-    if (!p) return false; 
-    errno = 0;
-    unsigned long long y = boinc_strtoull(p+strlen(tag), NULL, 0);
-    if (errno) return false; 
-    x = y;
-    return true; 
-} 
-#endif
-
 extern bool parse(char* , char* );
 extern bool parse_str(const char*, const char*, char*, int);
 extern bool parse_str(const char* buf, const char* tag, std::string& dest);
@@ -384,7 +359,7 @@ extern void non_ascii_escape(const char*, char*, int len);
 extern void xml_escape(const char*, char*, int len);
 extern void xml_unescape(std::string&);
 extern void xml_unescape(char*);
-extern void extract_venue(const char*, const char*, char*);
+extern void extract_venue(const char*, const char*, char*, int len);
 extern int skip_unrecognized(char* buf, MIOFILE&);
 
 #endif

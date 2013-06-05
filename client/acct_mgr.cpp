@@ -33,6 +33,7 @@
 
 #include "client_msgs.h"
 #include "client_state.h"
+#include "cs_notice.h"
 #include "file_names.h"
 #include "filesys.h"
 #include "gui_http.h"
@@ -74,10 +75,11 @@ int ACCT_MGR_OP::do_rpc(
         for (i=0; i<gstate.projects.size(); i++) {
             gstate.projects[i]->detach_ams();
         }
+        ::rss_feeds.update_feed_list();
         return 0;
     }
 
-    canonicalize_master_url(url);
+    canonicalize_master_url(url, sizeof(url));
     if (!valid_master_url(url)) {
         error_num = ERR_INVALID_URL;
         return 0;
@@ -494,12 +496,12 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
     }
 
     if (sig_ok) {
-        strcpy(gstate.acct_mgr_info.master_url, ami.master_url);
-        strcpy(gstate.acct_mgr_info.project_name, ami.project_name);
-        strcpy(gstate.acct_mgr_info.signing_key, ami.signing_key);
-        strcpy(gstate.acct_mgr_info.login_name, ami.login_name);
-        strcpy(gstate.acct_mgr_info.password_hash, ami.password_hash);
-        strcpy(gstate.acct_mgr_info.opaque, ami.opaque);
+        safe_strcpy(gstate.acct_mgr_info.master_url, ami.master_url);
+        safe_strcpy(gstate.acct_mgr_info.project_name, ami.project_name);
+        safe_strcpy(gstate.acct_mgr_info.signing_key, ami.signing_key);
+        safe_strcpy(gstate.acct_mgr_info.login_name, ami.login_name);
+        safe_strcpy(gstate.acct_mgr_info.password_hash, ami.password_hash);
+        safe_strcpy(gstate.acct_mgr_info.opaque, ami.opaque);
         gstate.acct_mgr_info.no_project_notices = ami.no_project_notices;
 
         // process projects
@@ -533,7 +535,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                             if (is_weak_auth(pp->authenticator)
                                 && is_weak_auth(acct.authenticator.c_str())
                             ) {
-                                strcpy(pp->authenticator, acct.authenticator.c_str());
+                                safe_strcpy(pp->authenticator, acct.authenticator.c_str());
                                 msg_printf(pp, MSG_INFO,
                                     "Received new authenticator from account manager"
                                 );
@@ -574,7 +576,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                         if (pp->ams_resource_share >= 0) {
                             pp->ams_resource_share = -1;
                             PROJECT p2;
-                            strcpy(p2.master_url, pp->master_url);
+                            safe_strcpy(p2.master_url, pp->master_url);
                             retval = p2.parse_account_file();
                             if (!retval) {
                                 pp->resource_share = p2.resource_share;
@@ -639,7 +641,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
 
         bool read_prefs = false;
         if (strlen(host_venue) && strcmp(host_venue, gstate.main_host_venue)) {
-            strcpy(gstate.main_host_venue, host_venue);
+            safe_strcpy(gstate.main_host_venue, host_venue);
             read_prefs = true;
         }
 
@@ -666,7 +668,9 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
         }
     }
 
-    strcpy(gstate.acct_mgr_info.previous_host_cpid, gstate.host_info.host_cpid);
+    safe_strcpy(
+        gstate.acct_mgr_info.previous_host_cpid, gstate.host_info.host_cpid
+    );
     if (repeat_sec) {
         gstate.acct_mgr_info.next_rpc_time = gstate.now + repeat_sec;
     } else {
@@ -858,4 +862,3 @@ bool ACCT_MGR_INFO::poll() {
     }
     return false;
 }
-

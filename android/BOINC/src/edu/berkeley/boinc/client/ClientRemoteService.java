@@ -1,6 +1,7 @@
 package edu.berkeley.boinc.client;
 
 import edu.berkeley.boinc.rpc.AccountOut;
+import edu.berkeley.boinc.rpc.RpcClient;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -69,9 +70,9 @@ public class ClientRemoteService extends Service {
 		}
 
 		@Override
-		public AccountOut verifyCredentials(String url, String id, String pwd) throws RemoteException {
+		public AccountOut verifyCredentials(String url, String id, String pwd, boolean usesName) throws RemoteException {
 			if(mIsMonitorBound) {
-				return monitor.lookupCredentials(url, id, pwd);
+				return monitor.lookupCredentials(url, id, pwd, usesName);
 			} else {Log.e(TAG, "could not verify credentials, service not bound!"); return null;}
 		}
 
@@ -79,7 +80,7 @@ public class ClientRemoteService extends Service {
 		public boolean detachProject(String packageName, String url) throws RemoteException {
 			// TODO remove packageName in AppPreferences
 			if(mIsMonitorBound) {
-				return monitor.detachProject(url);
+				return monitor.projectOperation(RpcClient.PROJECT_DETACH,url);
 			} else {Log.e(TAG, "could not detach project, service not bound!"); return false;}
 		}
 

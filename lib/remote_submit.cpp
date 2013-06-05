@@ -34,6 +34,8 @@
 using std::vector;
 using std::string;
 
+//#define SHOW_REPLY
+
 // do an HTTP GET request.
 //
 static int do_http_get(
@@ -152,7 +154,9 @@ int query_files(
     retval = -1;
     error_msg = "";
     while (fgets(buf, 256, reply)) {
-        //printf("reply: %s", buf);
+#ifdef SHOW_REPLY
+        printf("query_files reply: %s", buf);
+#endif
         if (strstr(buf, "absent_files")) {
             retval = 0;
             continue;
@@ -202,7 +206,9 @@ int upload_files (
     retval = -1;
     error_msg = "";
     while (fgets(buf, 256, reply)) {
-        //printf("upload_files reply: %s", buf);
+#ifdef SHOW_REPLY
+        printf("upload_files reply: %s", buf);
+#endif
         if (strstr(buf, "success")) {
             retval = 0;
             continue;
@@ -250,7 +256,9 @@ int create_batch(
     int error_num = 0;
     error_msg = "";
     while (fgets(buf, 256, reply)) {
-        //printf("create_batch reply: %s", buf);
+#ifdef SHOW_REPLY
+        printf("create_batch reply: %s", buf);
+#endif
         if (parse_int(buf, "<batch_id>", batch_id)) continue;
         if (parse_int(buf, "<error_num>", error_num)) continue;
         if (parse_str(buf, "<error_msg>", error_msg)) continue;
@@ -279,8 +287,10 @@ int submit_jobs(
     );
     string request = buf;
     for (unsigned int i=0; i<req.jobs.size(); i++) {
-        JOB job=req.jobs[i];
+        JOB job = req.jobs[i];
         request += "<job>\n";
+        sprintf(buf, "  <name>%s</name>\n", job.job_name);
+        request += buf;
         if (!job.cmdline_args.empty()) {
             request += "<command_line>" + job.cmdline_args + "</command_line>\n";
         }
@@ -317,7 +327,9 @@ int submit_jobs(
     error_msg = "";
     int temp;
     while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
         printf("submit_batch reply: %s", buf);
+#endif
         if (parse_int(buf, "<batch_id>", temp)) {
             retval = 0;
             continue;
@@ -338,6 +350,8 @@ int query_batches(
 ) {
     string request;
     char url[1024], buf[256];
+    int batch_size;
+
     request = "<query_batch2>\n";
     sprintf(buf, "<authenticator>%s</authenticator>\n", authenticator);
     request += string(buf);
@@ -358,17 +372,28 @@ int query_batches(
     retval = -1;
     error_msg = "";
     while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
+        printf("query_batches reply: %s", buf);
+#endif
         if (strstr(buf, "jobs")) {
             retval = 0;
             continue;
         }
         if (parse_int(buf, "<error_num>", retval)) continue;
         if (parse_str(buf, "<error_msg>", error_msg)) continue;
+        if (parse_int(buf, "<batch_size>", batch_size)) {
+            qb_reply.batch_sizes.push_back(batch_size);
+            continue;
+        }
         if (strstr(buf, "<job>")) {
             QUERY_BATCH_JOB qbj;
             while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
+                printf("query_batches reply: %s", buf);
+#endif
                 if (strstr(buf, "</job>")) {
                     qb_reply.jobs.push_back(qbj);
+                    break;
                 }
                 if (parse_str(buf, "job_name", qbj.job_name)) continue;
                 if (parse_str(buf, "status", qbj.status)) continue;
@@ -383,7 +408,6 @@ int query_batches(
 int abort_jobs(
     const char* project_url,
     const char* authenticator,
-    string batch_name,
     vector<string> &job_names,
     string &error_msg
 ) {
@@ -391,8 +415,6 @@ int abort_jobs(
     char url[1024], buf[256];
     request = "<abort_jobs>\n";
     sprintf(buf, "<authenticator>%s</authenticator>\n", authenticator);
-    request += string(buf);
-    sprintf(buf, "<batch_name>%s</batch_name>\n", batch_name.c_str());
     request += string(buf);
     for (unsigned int i=0; i<job_names.size(); i++) {
         sprintf(buf, "<job_name>%s</job_name>\n", job_names[i].c_str());
@@ -411,6 +433,9 @@ int abort_jobs(
     retval = -1;
     error_msg = "";
     while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
+        printf("abort_jobs reply: %s", buf);
+#endif
         if (strstr(buf, "success")) {
             retval = 0;
             continue;
@@ -455,6 +480,9 @@ int get_templates(
     error_msg = "";
     fseek(reply, 0, SEEK_SET);
     while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
+        printf("get_templates reply: %s", buf);
+#endif
         if (parse_int(buf, "<error_num>", retval)) continue;
         if (parse_str(buf, "<error_msg>", error_msg)) continue;
         if (strstr(buf, "<templates>")) {
@@ -527,7 +555,7 @@ int get_output_file(
     sprintf(url, "%sget_output.php?cmd=workunit_file&auth_str=%s&wu_name=%s&file_num=%d",
         project_url, authenticator, job_name, file_num
     );
-    printf("fetching %s to %s\n", url, dst_path);
+    //printf("fetching %s to %s\n", url, dst_path);
     int retval = do_http_get(url, dst_path);
     error_msg = "";
     if (retval) {
@@ -565,6 +593,9 @@ int query_completed_job(
     error_msg = "";
     fseek(reply, 0, SEEK_SET);
     while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
+        printf("query_completed_job reply: %s", buf);
+#endif
         if (parse_int(buf, "<error_num>", retval)) continue;
         if (parse_str(buf, "<error_msg>", error_msg)) continue;
         if (strstr(buf, "<completed_job>")) {
@@ -572,6 +603,46 @@ int query_completed_job(
             XML_PARSER xp(&mf);
             mf.init_file(reply);
             retval = jd.parse(xp);
+        }
+    }
+    fclose(reply);
+    return retval;
+}
+
+int retire_batch(
+    const char* project_url,
+    const char* authenticator,
+    const char* batch_name,
+    string &error_msg
+) {
+    string request;
+    char url[1024], buf[256];
+    request = "<retire_batch>\n";
+    sprintf(buf, "<authenticator>%s</authenticator>\n", authenticator);
+    request += string(buf);
+    sprintf(buf, "<batch_name>%s</batch_name>\n", batch_name);
+    request += string(buf);
+    request += "</retire_batch>\n";
+    sprintf(url, "%ssubmit_rpc_handler.php", project_url);
+    FILE* reply = tmpfile();
+    vector<string> x;
+    int retval = do_http_post(url, request.c_str(), reply, x);
+    if (retval) {
+        fclose(reply);
+        return retval;
+    }
+    retval = -1;
+    error_msg = "";
+    fseek(reply, 0, SEEK_SET);
+    while (fgets(buf, 256, reply)) {
+#ifdef SHOW_REPLY
+        printf("retire_batch reply: %s", buf);
+#endif
+        if (parse_int(buf, "<error_num>", retval)) continue;
+        if (parse_str(buf, "<error_msg>", error_msg)) continue;
+        if (strstr(buf, "success")) {
+            retval = 0;
+            continue;
         }
     }
     fclose(reply);
@@ -597,7 +668,9 @@ int ping_server(
     error_msg = "";
     fseek(reply, 0, SEEK_SET);
     while (fgets(buf, 256, reply)) {
-        //printf("reply: %s\n", buf);
+#ifdef SHOW_REPLY
+        printf("reply: %s\n", buf);
+#endif
         if (parse_int(buf, "<error_num>", retval)) continue;
         if (parse_str(buf, "<error_msg>", error_msg)) continue;
         if (strstr(buf, "success")) {

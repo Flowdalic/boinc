@@ -31,7 +31,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <ctype.h>
 #include <errno.h>
 #if HAVE_IEEEFP_H
@@ -178,7 +178,12 @@ int dup_element_contents(FILE* in, const char* end_tag, char** pp) {
         int n = (int)strlen(line);
         if (nused + n >= bufsize) {
             bufsize *= 2;
-            buf = (char*)realloc(buf, bufsize);
+            char *b = buf;
+            buf = (char*)realloc(b, bufsize);
+            if (!buf) {
+                free(b);
+                return ERR_XML_PARSE;
+            }
         }
         strcpy(buf+nused, line);
         nused += n;
@@ -289,7 +294,7 @@ bool str_replace(char* str, const char* substr, const char* replacement) {
     p = strstr(str, substr);
     if (!p) return false;
     int n = (int)strlen(substr);
-    strcpy(temp, p+n);
+    safe_strcpy(temp, p+n);
     strcpy(p, replacement);
     strcat(p, temp);
     return true;
@@ -302,7 +307,7 @@ bool str_replace(char* str, const char* substr, const char* replacement) {
 // then return the contents of that element.
 // Otherwise strip out all <venue> elements
 //
-void extract_venue(const char* in, const char* venue_name, char* out) {
+void extract_venue(const char* in, const char* venue_name, char* out, int len) {
     const char* p, *q;
     char* wp;
     char buf[256];
@@ -312,7 +317,7 @@ void extract_venue(const char* in, const char* venue_name, char* out) {
         // prefs contain the specified venue
         //
         p += strlen(buf);
-        strcpy(out, p);
+        strlcpy(out, p, len);
         wp = strstr(out, "</venue");
         if (wp) *wp = 0;
     } else {
@@ -323,9 +328,9 @@ void extract_venue(const char* in, const char* venue_name, char* out) {
            while (1) {
                p = strstr(q, "<venue");
                if (!p) {
-                   strcat(out, q);
-                break;
-            }
+                   strlcat(out, q, len);
+                   break;
+               }
                strncat(out, q, p-q);
                q = strstr(p, "</venue>");
                if (!q) break;
@@ -535,18 +540,9 @@ int XML_PARSER::scan_cdata(char* buf, int len) {
     }
 }
 
-#define MAX_XML_STRING  262144
-
-// We just parsed "parsed_tag".
-// If it matches "start_tag", and is followed by a string
-// and by the matching close tag, return the string in "buf",
-// and return true.
-//
-bool XML_PARSER::parse_str(const char* start_tag, char* buf, int len) {
-    bool eof;
-    char end_tag[TAG_BUF_LEN], tag[TAG_BUF_LEN];
-
+static inline bool is_empty_string(char* parsed_tag, const char* start_tag) {
     size_t n = strlen(parsed_tag);
+    char tag[TAG_BUF_LEN];
 
     // handle the archaic form <tag/>, which means empty string
     //
@@ -554,14 +550,17 @@ bool XML_PARSER::parse_str(const char* start_tag, char* buf, int len) {
         strcpy(tag, parsed_tag);
         tag[n-1] = 0;
         if (!strcmp(tag, start_tag)) {
-            strcpy(buf, "");
             return true;
         }
     }
+    return false;
+}
 
-    // check for start tag
-    //
-    if (strcmp(parsed_tag, start_tag)) return false;
+// we've parsed the start tag of a string; parse the string itself.
+//
+bool XML_PARSER::parse_str_aux(const char* start_tag, char* buf, int len) {
+    bool eof;
+    char end_tag[TAG_BUF_LEN], tag[TAG_BUF_LEN];
 
     end_tag[0] = '/';
     strcpy(end_tag+1, start_tag);
@@ -593,12 +592,37 @@ bool XML_PARSER::parse_str(const char* start_tag, char* buf, int len) {
     return true;
 }
 
+// We just parsed "parsed_tag".
+// If it matches "start_tag", and is followed by a string
+// and by the matching close tag, return the string in "buf",
+// and return true.
+//
+bool XML_PARSER::parse_str(const char* start_tag, char* buf, int len) {
+    if (is_empty_string(parsed_tag, start_tag)) {
+        strcpy(buf, "");
+        return true;
+    }
+    if (strcmp(parsed_tag, start_tag)) return false;
+    return parse_str_aux(start_tag, buf, len);
+}
+
+#define MAX_XML_STRING  262144
+
+// same, for std::string
+//
 bool XML_PARSER::parse_string(const char* start_tag, string& str) {
-    char buf[MAX_XML_STRING];
-    bool flag = parse_str(start_tag, buf, sizeof(buf));
-    if (!flag) return false;
-    str = buf;
-    return true;
+    if (is_empty_string(parsed_tag, start_tag)) {
+        str = "";
+        return true;
+    }
+    if (strcmp(parsed_tag, start_tag)) return false;
+    char *buf=(char *)malloc(MAX_XML_STRING);
+    bool flag = parse_str_aux(start_tag, buf, MAX_XML_STRING);
+    if (flag) {
+        str = buf;
+    }
+    free(buf);
+    return flag;
 }
 
 // Same, for integers

@@ -20,13 +20,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.berkeley.boinc"
     
-    android:versionCode="1"
-    android:versionName="7.1.1"
+    android:versionCode="3"
+    android:versionName="7.1.7"
     
     android:installLocation="internalOnly" > <!-- installation on SD card would break boot receiver -->
+
+    <!-- Add Google Play store metadata informing the store we can run on tablets and other large screen devices -->
+    <supports-screens
+        android:anyDensity="true"
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true" />
+
+    <!-- CAUTION: increasing targetSDK to >10 changes AsyncTask's threadpool size!  -->
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="10" />
     
-	<!-- specifiying target sdk changes the layout! android:targetSdkVersion="15" -->
-    <uses-sdk android:minSdkVersion="9" />
+    <!-- Required Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -35,24 +47,21 @@
     <application
         android:icon="@drawable/boinc"
         android:label="@string/app_name"
-        android:allowBackup="true"
-        android:debuggable="true" >
+        android:theme="@style/Theme"
+        android:allowBackup="true" >
         
         <activity
             android:name="edu.berkeley.boinc.BOINCActivity"
-            android:label="@string/app_name"
-            android:configChanges="orientation">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AttachProjectListActivity"
-            android:configChanges="orientation"/>
-        <activity android:name=".AttachProjectLoginActivity"
-            android:configChanges="orientation"/>
-        <activity android:name=".AttachProjectRegistrationActivity"
-            android:configChanges="orientation"/>
+        <activity android:name=".AttachProjectListActivity"/>
+        <activity android:name=".AttachProjectLoginActivity"/>
+        <activity android:name=".AttachProjectRegistrationActivity"/>
+        <activity android:name=".AttachProjectWorkingActivity"/>
         <activity android:name=".StatusActivity" />
         <activity android:name=".TasksActivity" />
         <activity android:name=".TransActivity" />
@@ -62,8 +71,7 @@
         <service android:name=".client.Monitor"></service>
         <service android:name="edu.berkeley.boinc.client.ClientRemoteService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true"/>
         <receiver android:name=".receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

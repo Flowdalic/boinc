@@ -603,6 +603,7 @@ struct CC_STATUS {
 	double network_mode_delay;
     bool disallow_attach;
     bool simple_gui_only;
+    int max_event_log_lines;
 
     CC_STATUS();
     ~CC_STATUS();
@@ -686,6 +687,7 @@ struct RPC_CLIENT {
     int file_transfer_op(FILE_TRANSFER&, const char*);
     int result_op(RESULT&, const char*);
     int get_host_info(HOST_INFO&);
+    int set_host_info(HOST_INFO&);
     int quit();
     int acct_mgr_info(ACCT_MGR_INFO&);
     const char* mode_name(int mode);

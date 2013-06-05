@@ -8,7 +8,8 @@ bin_PROGRAMS =
 # Stuff needed for server builds goes here.
 if ENABLE_SERVER
 
-bin_PROGRAMS += crypt_prog parse_test
+serverbindir = $(prefix)/lib/boinc-server-maker/lib
+serverbin_PROGRAMS = crypt_prog parse_test
 
 endif
 # end of "if ENABLE_SERVER"
@@ -29,13 +30,13 @@ libfcgi_sources = \
     shmem.cpp \
     str_util.cpp \
     synch.cpp \
-	url.cpp \
+    url.cpp \
     util.cpp
 
 generic_sources = \
     app_ipc.cpp \
     base64.cpp \
-	cc_config.cpp \
+    cc_config.cpp \
     cert_sig.cpp \
     coproc.cpp \
     diagnostics.cpp \
@@ -51,17 +52,17 @@ generic_sources = \
     miofile.cpp \
     msg_log.cpp \
     network.cpp \
-	notice.cpp \
+    notice.cpp \
     parse.cpp \
     prefs.cpp \
-	procinfo.cpp \
-	proc_control.cpp \
+    procinfo.cpp \
+    proc_control.cpp \
     proxy_info.cpp \
     shmem.cpp \
     str_util.cpp \
     synch.cpp \
     unix_util.cpp \
-	url.cpp \
+    url.cpp \
     util.cpp
 
 if OS_DARWIN
@@ -99,7 +100,7 @@ pkginclude_HEADERS = \
     boinc_fcgi.h \
     boinc_win.h \
     cal_boinc.h \
-	cc_config.h \
+    cc_config.h \
     cert_sig.h \
     cl_boinc.h \
     common_defs.h \
@@ -118,15 +119,15 @@ pkginclude_HEADERS = \
     miofile.h \
     msg_log.h \
     network.h \
-	notice.h \
+    notice.h \
     parse.h \
     prefs.h \
-	procinfo.h \
+    procinfo.h \
     proxy_info.h \
     stackwalker_imports.h \
     stackwalker_win.h \
     str_util.h \
-	url.h \
+    url.h \
     util.h \
     win_util.h \
     $(mac_headers)
@@ -147,13 +148,13 @@ libboinc_la_SOURCES = $(generic_sources) $(mac_sources)
 libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
-libboinc_la_LIBADD =
+libboinc_la_LIBADD = -lm -lstdc++
 
 libboinc_crypt_la_SOURCES = crypt.cpp
 libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
 libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
 libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
-libboinc_crypt_la_LIBADD = 
+libboinc_crypt_la_LIBADD = -lm -lstdc++
 
 
 if ENABLE_FCGI

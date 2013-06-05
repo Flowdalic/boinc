@@ -19,10 +19,9 @@
 package edu.berkeley.boinc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-import edu.berkeley.boinc.adapter.ProjectsListAdapter;
-import edu.berkeley.boinc.client.Monitor;
-import edu.berkeley.boinc.rpc.Project;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -30,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
@@ -38,9 +38,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import edu.berkeley.boinc.adapter.ProjectControlsListAdapter;
+import edu.berkeley.boinc.adapter.ProjectsListAdapter;
+import edu.berkeley.boinc.client.Monitor;
+import edu.berkeley.boinc.rpc.Project;
+import edu.berkeley.boinc.rpc.RpcClient;
 
 
 public class ProjectsActivity extends FragmentActivity {
@@ -48,11 +55,16 @@ public class ProjectsActivity extends FragmentActivity {
 	private final String TAG = "BOINC ProjectsActivity";
 	
 	private Monitor monitor;
-	private Boolean mIsBound;
+	private Boolean mIsBound = false;
 
 	private ListView lv;
 	private ProjectsListAdapter listAdapter;
-	private ArrayList<Project> data = new ArrayList<Project>();
+	private ArrayList<ProjectData> data = new ArrayList<ProjectData>();
+	private final FragmentActivity activity = this;
+	private Integer numberProjects = 0;
+
+	// controls popup dialog
+	Dialog dialogControls;
 	
 	// Controls whether initialization of view elements of "projects_layout"
 	// is required. This is the case, every time the layout switched.
@@ -62,11 +74,13 @@ public class ProjectsActivity extends FragmentActivity {
 	// getService returns the Monitor object that is needed to call functions.
 	//
 	private ServiceConnection mConnection = new ServiceConnection() {
+		@Override
 	    public void onServiceConnected(ComponentName className, IBinder service) {
 	        monitor = ((Monitor.LocalBinder)service).getService();
 		    mIsBound = true;
+		    Log.d(TAG,"service bound");
 	    }
-
+		@Override
 	    public void onServiceDisconnected(ComponentName className) {
 	        monitor = null;
 		    mIsBound = false;
@@ -80,8 +94,8 @@ public class ProjectsActivity extends FragmentActivity {
 	private BroadcastReceiver mClientStatusChangeRec = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "ClientStatusChange - onReceive()");
-			populateLayout();
+			//Log.d(TAG, "ClientStatusChange - onReceive()");
+			populateLayout(false);
 		}
 	};
 
@@ -94,7 +108,7 @@ public class ProjectsActivity extends FragmentActivity {
 
 	    // Establish a connection with the service, onServiceConnected gets called when
 	    // (calling within Tab needs getApplicationContext() for bindService to work!)
-		getApplicationContext().bindService(new Intent(this, Monitor.class), mConnection, Service.START_STICKY_COMPATIBILITY);
+	    getApplicationContext().bindService(new Intent(this, Monitor.class), mConnection, Service.START_STICKY_COMPATIBILITY);
 	}
 	
 	@Override
@@ -108,10 +122,9 @@ public class ProjectsActivity extends FragmentActivity {
 	@Override
 	public void onResume() {
 		Log.d(TAG, "onResume()");
-
 		super.onResume();
 		
-		populateLayout();
+		populateLayout(true);
 
 		registerReceiver(mClientStatusChangeRec, ifcsc);
 	}
@@ -128,7 +141,7 @@ public class ProjectsActivity extends FragmentActivity {
 	    super.onDestroy();
 	}
 	
-	private void populateLayout() {
+	private void populateLayout(Boolean force) {
 		try {
 			// read projects from state saved in ClientStatus
 			ArrayList<Project> tmpA = Monitor.getClientStatus().getProjects();
@@ -137,6 +150,9 @@ public class ProjectsActivity extends FragmentActivity {
 				setLayoutLoading();
 				return;
 			}
+			
+			// limit layout update on when project number changes.
+			if(!force && tmpA.size() == numberProjects) return;
 
 			// Switch to a view that can actually display messages
 			if (initialSetupRequired) {
@@ -147,10 +163,7 @@ public class ProjectsActivity extends FragmentActivity {
 		    }
 			
 			// Update Project data
-			data.clear();
-			for (Project tmp: tmpA) {
-				data.add(tmp);
-			}
+			updateData(tmpA);
 			
 			// Force list adapter to refresh
 			listAdapter.notifyDataSetChanged(); 
@@ -158,6 +171,41 @@ public class ProjectsActivity extends FragmentActivity {
 		} catch (Exception e) {
 			// data retrieval failed, set layout to loading...
 			setLayoutLoading();
+		}
+	}
+	
+	private void updateData(ArrayList<Project> newData) {
+		//loop through all received Result items to add new results
+		for(Project rpcResult: newData) {
+			//check whether this Result is new
+			Integer index = null;
+			for(int x = 0; x < data.size(); x++) {
+				if(rpcResult.master_url.equals(data.get(x).id)) {
+					index = x;
+					continue;
+				}
+			}
+			if(index == null) { // result is new, add
+				Log.d(TAG,"new result found, id: " + rpcResult.master_url);
+				data.add(new ProjectData(rpcResult));
+			} else { // result was present before, update its data
+				data.get(index).updateProjectData(rpcResult);
+			}
+		}
+		
+		//loop through the list adapter to find removed (ready/aborted) Results
+		// use iterator to safely remove while iterating
+		Iterator<ProjectData> iData = data.iterator();
+		while(iData.hasNext()) {
+			Boolean found = false;
+			ProjectData listItem = iData.next();
+			for(Project rpcResult: newData) {
+				if(listItem.id.equals(rpcResult.master_url)) {
+					found = true;
+					continue;
+				}
+			}
+			if(!found) iData.remove();
 		}
 	}
 	
@@ -187,34 +235,158 @@ public class ProjectsActivity extends FragmentActivity {
 
 	    switch (item.getItemId()) {
 			case R.id.projects_add:
-				onProjectAdd();
+				addProject(null);
 				return true;
 			default:
 				return getParent().onOptionsItemSelected(item); // if item id can not be mapped, call parents method
 		}
 	}
 	
-	public void onProjectClicked(String url, String name) {
-	    Log.d(TAG, "onProjectClicked()");
-	}
-
-	public void addProjectClicked(View view) {
-		onProjectAdd();
-	}
-	
-	public void onProjectAdd() {
-		Log.d(TAG, "onProjectAdd()");
+	// on click of project add button
+	public void addProject(View view) {
 		startActivity(new Intent(this,AttachProjectListActivity.class));
 	}
 
-	public void onProjectUpdate(String url, String name) {
-	    Log.d(TAG, "onProjectUpdate()");
-	    monitor.updateProjectAsync(url);
+	public class ProjectData {
+		public Project project = null;
+		public String id = "";
+
+		public ProjectData(Project data) {
+			this.project = data;
+			this.id = data.master_url;
+		}
+		
+		public void updateProjectData(Project data) {
+			this.project = data;
+		}
+		
+		public final OnClickListener projectsListClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialogControls = new Dialog(activity);
+				// layout
+				dialogControls.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				dialogControls.setContentView(R.layout.dialog_list);
+				((TextView)dialogControls.findViewById(R.id.title)).setText(R.string.projects_control_dialog_title);
+				ListView list = (ListView)dialogControls.findViewById(R.id.options);
+				
+				// add control items depending on:
+				// - client status, e.g. either suspend or resume
+				// - show advanced preference
+				ArrayList<ProjectControl> controls = new ArrayList<ProjectControl>();
+				controls.add(new ProjectControl(project, RpcClient.PROJECT_UPDATE));
+				if(project.suspended_via_gui) controls.add(new ProjectControl(project, RpcClient.PROJECT_RESUME));
+				else controls.add(new ProjectControl(project, RpcClient.PROJECT_SUSPEND));
+				if(Monitor.getAppPrefs().getShowAdvanced() && project.dont_request_more_work) controls.add(new ProjectControl(project, RpcClient.PROJECT_ANW));
+				if(Monitor.getAppPrefs().getShowAdvanced() && !project.dont_request_more_work) controls.add(new ProjectControl(project, RpcClient.PROJECT_NNW));
+				if(Monitor.getAppPrefs().getShowAdvanced()) controls.add(new ProjectControl(project, RpcClient.PROJECT_RESET));
+				controls.add(new ProjectControl(project, RpcClient.PROJECT_DETACH));
+				
+				// list adapter
+				list.setAdapter(new ProjectControlsListAdapter(activity,list,R.layout.projects_controls_listitem_layout,controls));
+				Log.d(TAG,"dialog list adapter entries: " + controls.size());
+				
+				// buttons
+				Button cancelButton = (Button) dialogControls.findViewById(R.id.cancel);
+				cancelButton.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						dialogControls.dismiss();
+					}
+				});
+				
+				// show dialog
+				dialogControls.show();
+			}
+		};
 	}
 	
-	public void onProjectMore(String url, String name) {
-	    Log.d(TAG, "onProjectMore() - Name: " + name + ", URL: " + url);
-		Toast toast = Toast.makeText(getApplicationContext(), "not implemented yet...", Toast.LENGTH_LONG);
-		toast.show();
+	public class ProjectControl {
+		public Integer operation;
+		public Project project = null;
+		
+		public ProjectControl(Project project, Integer operation) {
+			this.operation = operation;
+			this.project = project;
+		}
+
+		public final OnClickListener projectCommandClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//check whether command requires confirmation
+				if(operation == RpcClient.PROJECT_DETACH || operation == RpcClient.PROJECT_RESET) {
+					final Dialog dialog = new Dialog(activity);
+					dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+					dialog.setContentView(R.layout.dialog_confirm);
+					Button confirm = (Button) dialog.findViewById(R.id.confirm);
+					TextView tvTitle = (TextView)dialog.findViewById(R.id.title);
+					TextView tvMessage = (TextView)dialog.findViewById(R.id.message);
+					
+					// operation dependend texts
+					if (operation == RpcClient.PROJECT_DETACH) {
+						tvTitle.setText(R.string.projects_confirm_detach_title);
+						tvMessage.setText(getString(R.string.projects_confirm_detach_message) + " "
+								+ project.project_name + " " + getString(R.string.projects_confirm_detach_message2));
+						confirm.setText(R.string.projects_confirm_detach_confirm);
+					} else if(operation == RpcClient.PROJECT_RESET) {
+						tvTitle.setText(R.string.projects_confirm_reset_title);
+						tvMessage.setText(getString(R.string.projects_confirm_reset_message) + " "
+								+ project.project_name + getString(R.string.projects_confirm_reset_message2));
+						confirm.setText(R.string.projects_confirm_reset_confirm);
+					}
+					
+					confirm.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							new ProjectOperationAsync().execute(project.master_url, "" + operation);
+							dialog.dismiss();
+							dialogControls.dismiss();
+						}
+					});
+					Button cancel = (Button) dialog.findViewById(R.id.cancel);
+					cancel.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							dialog.dismiss();
+						}
+					});
+					dialog.show();
+				} else { // command does not required confirmation
+					new ProjectOperationAsync().execute(project.master_url, "" + operation);
+					dialogControls.dismiss();
+				}
+			}
+		};
+	}
+	
+	private final class ProjectOperationAsync extends AsyncTask<String,Void,Boolean> {
+
+		private final String TAG = "ProjectOperationAsync";
+
+		@Override
+		protected void onPreExecute() {
+			Log.d(TAG,"onPreExecute");
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			Log.d(TAG,"doInBackground");
+			try{
+				String url = params[0];
+				Integer operation = Integer.parseInt(params[1]);
+				Log.d(TAG,"url: " + url + " operation: " + operation + " monitor bound: " + mIsBound);
+	
+				if(mIsBound) return monitor.projectOperation(operation, url);
+				else return false;
+			} catch(Exception e) {Log.w(TAG,"error in do in background",e);}
+			return false;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			if(success) monitor.forceRefresh();
+			else Log.w(TAG,"failed.");
+		}
 	}
 }

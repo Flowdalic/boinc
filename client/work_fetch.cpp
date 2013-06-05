@@ -84,13 +84,14 @@ void set_no_rsc_config() {
     }
 }
 
-// does the project have a downloading or runnable job?
+// does the project have a job that's not ready to report?
+// (don't request another job from NCI project if so)
 //
 static bool has_a_job(PROJECT* p) {
     for (unsigned int j=0; j<gstate.results.size(); j++) {
         RESULT* rp = gstate.results[j];
         if (rp->project != p) continue;
-        if (rp->state() <= RESULT_FILES_DOWNLOADED) {
+        if (rp->state() <= RESULT_FILES_UPLOADED) {
             return true;
         }
     }
@@ -459,17 +460,28 @@ bool WORK_FETCH::requested_work() {
     return false;
 }
 
-// we're going to contact this project for reasons other than work fetch;
-// decide if we should piggy-back a work fetch request.
+// We're going to contact this project for reasons other than work fetch
+// (e.g., to report completed results, or at user request).
+// Decide if we should "piggyback" a work fetch request.
 //
 void WORK_FETCH::piggyback_work_request(PROJECT* p) {
     DEBUG(msg_printf(p, MSG_INFO, "piggyback_work_request()");)
+    clear_request();
     if (config.fetch_minimal_work && gstate.had_or_requested_work) return;
-    if (p->dont_request_more_work) return;
     if (p->non_cpu_intensive) {
         if (!has_a_job(p)) {
             rsc_work_fetch[0].req_secs = 1;
         }
+        return;
+    }
+
+    setup();
+
+    switch (p->pwf.cant_fetch_work_reason) {
+    case 0:
+    case CANT_FETCH_WORK_MIN_RPC_TIME:
+        break;
+    default:
         return;
     }
 
@@ -481,8 +493,6 @@ void WORK_FETCH::piggyback_work_request(PROJECT* p) {
     if (p->sched_rpc_pending && config.fetch_on_update) {
         check_higher_priority_projects = false;
     }
-
-    setup();
 
     // For each resource, scan projects in decreasing priority,
     // seeing if there's one that's higher-priority than this
@@ -599,7 +609,9 @@ bool RSC_WORK_FETCH::can_fetch(PROJECT *p) {
     int nexcl = rpwf.ncoprocs_excluded;
     if (rsc_type && nexcl) {
         int n_not_excluded = ninstances - nexcl;
-        if (rpwf.queue_est > (gstate.work_buf_min() * n_not_excluded)/ninstances) {
+        if (rpwf.n_runnable_jobs >= n_not_excluded
+            && rpwf.queue_est > (gstate.work_buf_min() * n_not_excluded)/ninstances
+        ) {
             DEBUG(msg_printf(p, MSG_INFO, "skip: too much work");)
             return false;
         }
