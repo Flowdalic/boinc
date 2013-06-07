@@ -1,4 +1,4 @@
-boinc (7.1.10+dfsg-1) UNRELEASED; urgency=low
+boinc (7.1.10+dfsg-1) unstable; urgency=low
 
   * New upstream release.
   * Readding sleep (10 seconds) to workaround GPU bug (lp: #1177433)
