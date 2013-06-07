@@ -1,6 +1,6 @@
 --- a/client/app_control.cpp
 +++ b/client/app_control.cpp
-@@ -589,8 +589,8 @@
+@@ -590,8 +590,8 @@
      } else {
          x = y;
      }
@@ -11,7 +11,7 @@
      strip_whitespace(buf);
      fclose(f);
      return true;
-@@ -1421,13 +1421,13 @@
+@@ -1422,13 +1422,13 @@
      FILE* f = fopen(path, "r");
      if (!f) return;
      buf[0] = 0;
@@ -72,7 +72,7 @@
  }
 --- a/lib/diagnostics.cpp
 +++ b/lib/diagnostics.cpp
-@@ -607,7 +607,7 @@
+@@ -608,7 +608,7 @@
      size = backtrace (array, 64);
  //  Anything that calls malloc here (i.e *printf()) will probably fail
  //  so we'll do it the hard way.
@@ -81,7 +81,7 @@
      char mbuf[10];
      char *p=mbuf+9;
      int i=size;
-@@ -616,10 +616,10 @@
+@@ -617,10 +617,10 @@
        *(p--)=i%10+'0';
        i/=10;
      }
@@ -173,7 +173,7 @@
                  final_retval = retval;
 --- a/client/log_flags.cpp
 +++ b/client/log_flags.cpp
-@@ -509,7 +509,10 @@
+@@ -510,7 +510,10 @@
  #ifdef _WIN32
              _chdir(config.data_dir);
  #else
@@ -187,7 +187,7 @@
      } else {
 --- a/client/switcher.cpp
 +++ b/client/switcher.cpp
-@@ -46,6 +46,8 @@
+@@ -47,6 +47,8 @@
      char            newlibs[256];
      char            *projectDirName;
  
@@ -196,7 +196,7 @@
      strcpy(user_name, "boinc_project");
      strcpy(group_name, "boinc_project");
  
-@@ -73,12 +75,16 @@
+@@ -74,12 +76,16 @@
      // We are running setuid root, so setgid() sets real group ID,
      // effective group ID and saved set_group-ID for this process
      grp = getgrnam(group_name);
@@ -215,7 +215,7 @@
  
      // For unknown reasons, the LD_LIBRARY_PATH and DYLD_LIBRARY_PATH
      // environment variables are not passed in to switcher, though all
-@@ -125,7 +131,8 @@
+@@ -126,7 +132,8 @@
  
      execv(argv[1], argv+2);
  

@@ -100,6 +100,7 @@ is_running()
 
 start()
 {
+  sleep 10
   log_begin_msg "Starting $DESC: $NAME"
   if is_running; then
     log_progress_msg "already running"

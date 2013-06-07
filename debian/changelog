@@ -1,3 +1,10 @@
+boinc (7.1.10+dfsg-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Readding sleep (10 seconds) to workaround GPU bug (lp: #1177433)
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 07 Jun 2013 08:34:03 +0200
+
 boinc (7.1.7+dfsg-1) UNRELEASED; urgency=low
 
   * New upstream release.

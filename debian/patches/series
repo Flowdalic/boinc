@@ -42,7 +42,6 @@ opendir_error_messages.patch
 sched_driver_char_buffers.patch
 csh2tcsh.patch
 #socklenBuildFixByDavid.patch
-#cmath_missing.patch #trying to disable it
 investigate_boinc_api.patch
 slot_dir_source_trace.patch
 opendir_errno.patch
