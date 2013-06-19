@@ -2,7 +2,7 @@ Author: Steffen Moeller <moeller@debian.org>
 Description: Increased buffers and eliminated memory sink.
 --- a/sched/sched_driver.cpp
 +++ b/sched/sched_driver.cpp
-@@ -63,7 +63,7 @@
+@@ -62,7 +62,7 @@
  double max_time = 1;
  
  void read_hosts() {
