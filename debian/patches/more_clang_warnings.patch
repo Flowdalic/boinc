@@ -1,6 +1,8 @@
---- a/client/app_control.cpp
-+++ b/client/app_control.cpp
-@@ -590,8 +590,8 @@
+Index: boinc_debian/client/app_control.cpp
+===================================================================
+--- boinc_debian.orig/client/app_control.cpp
++++ boinc_debian/client/app_control.cpp
+@@ -589,8 +589,8 @@
      } else {
          x = y;
      }
@@ -11,7 +13,7 @@
      strip_whitespace(buf);
      fclose(f);
      return true;
-@@ -1422,13 +1422,13 @@
+@@ -1421,13 +1421,13 @@
      FILE* f = fopen(path, "r");
      if (!f) return;
      buf[0] = 0;
@@ -27,8 +29,10 @@
          msg_printf(wup->project, MSG_INTERNAL_ERROR,
              "no project URL in task state file"
          );
---- a/client/cs_platforms.cpp
-+++ b/client/cs_platforms.cpp
+Index: boinc_debian/client/cs_platforms.cpp
+===================================================================
+--- boinc_debian.orig/client/cs_platforms.cpp
++++ boinc_debian/client/cs_platforms.cpp
 @@ -143,7 +143,7 @@
          strlcat(cmdline," -m",256);
          if ((f=popen(cmdline,"r"))) {
@@ -47,8 +51,10 @@
                                  // If the library is 32-bit ELF, then we're
                                  // golden.
                                  if (strstr(cmdline, "ELF") && strstr(cmdline, "32-bit")) support32=1;
---- a/lib/crypt.cpp
-+++ b/lib/crypt.cpp
+Index: boinc_debian/lib/crypt.cpp
+===================================================================
+--- boinc_debian.orig/lib/crypt.cpp
++++ boinc_debian/lib/crypt.cpp
 @@ -208,14 +208,17 @@
      }
      if (j != len) return ERR_NULL;
@@ -70,9 +76,11 @@
  #endif
      return 0;
  }
---- a/lib/diagnostics.cpp
-+++ b/lib/diagnostics.cpp
-@@ -608,7 +608,7 @@
+Index: boinc_debian/lib/diagnostics.cpp
+===================================================================
+--- boinc_debian.orig/lib/diagnostics.cpp
++++ boinc_debian/lib/diagnostics.cpp
+@@ -607,7 +607,7 @@
      size = backtrace (array, 64);
  //  Anything that calls malloc here (i.e *printf()) will probably fail
  //  so we'll do it the hard way.
@@ -81,7 +89,7 @@
      char mbuf[10];
      char *p=mbuf+9;
      int i=size;
-@@ -617,10 +617,10 @@
+@@ -616,10 +616,10 @@
        *(p--)=i%10+'0';
        i/=10;
      }
@@ -95,8 +103,10 @@
      backtrace_symbols_fd(array, size, fileno(stderr));
  #endif
  
---- a/client/hostinfo_unix.cpp
-+++ b/client/hostinfo_unix.cpp
+Index: boinc_debian/client/hostinfo_unix.cpp
+===================================================================
+--- boinc_debian.orig/client/hostinfo_unix.cpp
++++ boinc_debian/client/hostinfo_unix.cpp
 @@ -1236,11 +1236,12 @@
  #endif
          fd = popen(cmd, "r");
@@ -115,8 +125,10 @@
              pclose(fd);
          }
      }
---- a/client/app_start.cpp
-+++ b/client/app_start.cpp
+Index: boinc_debian/client/app_start.cpp
+===================================================================
+--- boinc_debian.orig/client/app_start.cpp
++++ boinc_debian/client/app_start.cpp
 @@ -850,7 +850,10 @@
      char* argv[100];
      char current_dir[1024];
@@ -142,8 +154,10 @@
  
          if (!config.no_priority_change) {
  #if HAVE_SETPRIORITY
---- a/api/graphics2_unix.cpp
-+++ b/api/graphics2_unix.cpp
+Index: boinc_debian/api/graphics2_unix.cpp
+===================================================================
+--- boinc_debian.orig/api/graphics2_unix.cpp
++++ boinc_debian/api/graphics2_unix.cpp
 @@ -191,7 +191,9 @@
      FILE *f = boinc_fopen("gfx_info", "r");
      if (f) {
@@ -155,8 +169,10 @@
          fclose(f);
      }
  
---- a/lib/procinfo_unix.cpp
-+++ b/lib/procinfo_unix.cpp
+Index: boinc_debian/lib/procinfo_unix.cpp
+===================================================================
+--- boinc_debian.orig/lib/procinfo_unix.cpp
++++ boinc_debian/lib/procinfo_unix.cpp
 @@ -219,9 +219,11 @@
          sprintf(pidpath, "/proc/%s/stat", piddir->d_name);
          fd = fopen(pidpath, "r");
@@ -171,9 +187,11 @@
  
              if (retval) {
                  final_retval = retval;
---- a/client/log_flags.cpp
-+++ b/client/log_flags.cpp
-@@ -510,7 +510,10 @@
+Index: boinc_debian/client/log_flags.cpp
+===================================================================
+--- boinc_debian.orig/client/log_flags.cpp
++++ boinc_debian/client/log_flags.cpp
+@@ -509,7 +509,10 @@
  #ifdef _WIN32
              _chdir(config.data_dir);
  #else
@@ -185,9 +203,11 @@
  #endif
          }
      } else {
---- a/client/switcher.cpp
-+++ b/client/switcher.cpp
-@@ -47,6 +47,8 @@
+Index: boinc_debian/client/switcher.cpp
+===================================================================
+--- boinc_debian.orig/client/switcher.cpp
++++ boinc_debian/client/switcher.cpp
+@@ -46,6 +46,8 @@
      char            newlibs[256];
      char            *projectDirName;
  
@@ -196,7 +216,7 @@
      strcpy(user_name, "boinc_project");
      strcpy(group_name, "boinc_project");
  
-@@ -74,12 +76,16 @@
+@@ -73,12 +75,16 @@
      // We are running setuid root, so setgid() sets real group ID,
      // effective group ID and saved set_group-ID for this process
      grp = getgrnam(group_name);
@@ -215,7 +235,7 @@
  
      // For unknown reasons, the LD_LIBRARY_PATH and DYLD_LIBRARY_PATH
      // environment variables are not passed in to switcher, though all
-@@ -126,7 +132,8 @@
+@@ -125,7 +131,8 @@
  
      execv(argv[1], argv+2);
  
@@ -226,8 +246,10 @@
 +    if (errno) fprintf(stderr, "Process creation (%s) failed: errno=%d\n", argv[1], errno);
 +    return(errno);
  }
---- a/lib/shmem.cpp
-+++ b/lib/shmem.cpp
+Index: boinc_debian/lib/shmem.cpp
+===================================================================
+--- boinc_debian.orig/lib/shmem.cpp
++++ boinc_debian/lib/shmem.cpp
 @@ -337,7 +337,10 @@
          // area to all zeros because they write beyond the old EOF. 
          // See the lseek man page for details.

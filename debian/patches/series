@@ -61,3 +61,4 @@ rrsim_iterator_cppcheck.patch
 filesys_error_message.patch
 de.po.patch
 more_clang_warnings.patch
+#mmap_mem_only.patch
