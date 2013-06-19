@@ -20,8 +20,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.berkeley.boinc"
     
-    android:versionCode="5"
-    android:versionName="7.1.10"
+    android:versionCode="13"
+    android:versionName="7.1.18"
     
     android:installLocation="internalOnly" > <!-- installation on SD card would break boot receiver -->
 
@@ -43,6 +43,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
 
     <application
         android:icon="@drawable/boinc"
@@ -59,9 +60,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".AttachProjectListActivity"/>
-        <activity android:name=".AttachProjectLoginActivity"/>
+        <activity android:name=".AttachProjectLoginActivity"
+            android:configChanges="orientation"/>
         <activity android:name=".AttachProjectRegistrationActivity"/>
-        <activity android:name=".AttachProjectWorkingActivity"/>
+        <activity android:name=".AttachProjectWorkingActivity"
+            android:configChanges="orientation"/>
         <activity android:name=".StatusActivity" />
         <activity android:name=".TasksActivity" />
         <activity android:name=".TransActivity" />

@@ -18,6 +18,8 @@
  ******************************************************************************/
 package edu.berkeley.boinc.rpc;
 
+import edu.berkeley.boinc.utils.*;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,8 +29,6 @@ import android.os.BatteryManager;
 import android.util.Log;
 
 public class DeviceStatus{
-	
-	private final String TAG = "Rpc.DeviceState";
 	
 	// current data in structure valid?
 	// is only true if "update()" finished, i.e. did not fire exception
@@ -57,14 +57,12 @@ public class DeviceStatus{
 	}
 	
 	// polls current device status
-	// returns true if data model has actually changed
-	// returns false if device status is unchanged -> avoid RPC call
 	public Boolean update() throws Exception {
 		// invalid data
 		valid = false;
 		
 		if(ctx == null) {
-			if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 3) Log.w(TAG,"context not set");
+			if(Logging.WARNING) Log.w(Logging.TAG,"context not set");
 			return false;
 		}
 		
@@ -125,7 +123,8 @@ public class DeviceStatus{
 			wifi_online = true;
 		}
 		
-		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG, "change: " + change + " - ac: " + on_ac_power + " ; usb: " + on_usb_power + " ; level: " + battery_charge_pct + " ; temperature: " + battery_temperature_celcius + " ; wifi: " + wifi_online);
+		if(change) if(Logging.DEBUG) Log.d(Logging.TAG, "change: " + change + " - ac: " + on_ac_power + " ; usb: " + on_usb_power + " ; level: " + battery_charge_pct + " ; temperature: " + battery_temperature_celcius + " ; wifi: " + wifi_online);
+		if(Logging.VERBOSE) Log.v(Logging.TAG, "change: " + change + " - ac: " + on_ac_power + " ; usb: " + on_usb_power + " ; level: " + battery_charge_pct + " ; temperature: " + battery_temperature_celcius + " ; wifi: " + wifi_online);
 		
 		valid = true; // end reached without exception
 		return change;
