@@ -15,7 +15,7 @@
  }
 --- a/lib/diagnostics.cpp
 +++ b/lib/diagnostics.cpp
-@@ -305,7 +305,7 @@
+@@ -306,7 +306,7 @@
  
      // Store various pieces of inforation for future use.
      if (flags & BOINC_DIAG_BOINCAPPLICATION) {

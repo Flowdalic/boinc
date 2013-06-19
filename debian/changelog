@@ -1,3 +1,9 @@
+boinc (7.1.18+dfsg-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 19 Jun 2013 19:09:48 +0200
+
 boinc (7.1.10+dfsg-2) UNRELEASED; urgency=low
 
   * Experimenting with memory-only shared-memory
