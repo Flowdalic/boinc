@@ -1,0 +1,119 @@
+Index: boinc_debian/lib/shmem.cpp
+===================================================================
+--- boinc_debian.orig/lib/shmem.cpp
++++ boinc_debian/lib/shmem.cpp
+@@ -308,9 +308,8 @@
+ 
+ // V6 mmap() shared memory for Unix/Linux/Mac
+ //
+-int create_shmem_mmap(const char *path, size_t size, void** pp) {
++int create_shmem_mmap(const char *const path, size_t size, void** pp) {
+     int fd, retval;
+-    struct stat sbuf;
+     
+     // Return NULL pointer if create_shmem fails
+     *pp = 0;
+@@ -324,26 +323,12 @@
+     // it's a big headache for anyone it affects,
+     // and it's not a significant security issue.
+     //
+-    fd = open(path, O_RDWR | O_CREAT, 0666);
++    fd = shm_open(path, O_TRUNC | O_RDWR | O_CREAT, 0666);
+     if (fd < 0) return ERR_SHMGET;
+ 
+-    retval = fstat(fd, &sbuf);
+-    if (retval) {
+-        close(fd);
+-        return ERR_SHMGET;
+-    }
+-    if (sbuf.st_size < (long)size) {
+-        // The following 2 lines extend the file and clear its new 
+-        // area to all zeros because they write beyond the old EOF. 
+-        // See the lseek man page for details.
+-        lseek(fd, size-1, SEEK_SET);
+-        if (! write(fd, "\0", 1)) {
+-	    close(fd);
+-	    return ERR_SHMGET;
+-	}
+-    }
++    if (0>ftruncate(fd,size)) return ERR_SHMGET;
+ 
+-    *pp = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, fd, 0);
++    *pp = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+     
+     close(fd);
+ 
+@@ -360,13 +345,13 @@
+ }
+ 
+ 
+-int attach_shmem_mmap(const char *path, void** pp) {
++int attach_shmem_mmap(const char *const path, void** pp) {
+     int fd, retval;
+     struct stat sbuf;
+     
+     // Return NULL pointer if attach_shmem fails
+     *pp = 0;
+-    fd = open(path, O_RDWR);
++    fd = shm_open(path, O_RDWR, 0666);
+     if (fd < 0) return ERR_SHMGET;
+ 
+     retval = fstat(fd, &sbuf);
+@@ -392,8 +377,10 @@
+ }
+ 
+ 
+-int detach_shmem_mmap(void* p, size_t size) {
+-    return munmap((char *)p, size);
++int detach_shmem_mmap(const char* const memname, void* p, size_t size) {
++    int i=munmap((char *)p, size);
++    if (0==i) shm_unlink(memname);
++    return i;
+ }
+ 
+ #if HAVE_SYS_SHM_H
+Index: boinc_debian/lib/shmem.h
+===================================================================
+--- boinc_debian.orig/lib/shmem.h
++++ boinc_debian/lib/shmem.h
+@@ -42,9 +42,9 @@
+ #else
+ #ifndef __EMX__
+ #define MMAPPED_FILE_NAME    "boinc_mmap_file"
+-extern int create_shmem_mmap(const char *path, size_t size, void** pp);
+-extern int attach_shmem_mmap(const char *path, void** pp);
+-extern int detach_shmem_mmap(void* p, size_t size);
++extern int create_shmem_mmap(const char *const path, size_t size, void** pp);
++extern int attach_shmem_mmap(const char *const path, void** pp);
++extern int detach_shmem_mmap(const char* const path, void* p, size_t size);
+ #endif
+ extern int create_shmem(key_t, int size, gid_t gid, void**);
+ extern int attach_shmem(key_t, void**);
+Index: boinc_debian/client/app.cpp
+===================================================================
+--- boinc_debian.orig/client/app.cpp
++++ boinc_debian/client/app.cpp
+@@ -211,7 +211,9 @@
+     if (app_client_shm.shm) {
+ #ifndef __EMX__
+         if (app_version->api_major_version() >= 6) {
+-            retval = detach_shmem_mmap(app_client_shm.shm, sizeof(SHARED_MEM));
++	    char buf[MAXPATHLEN];
++	    sprintf(buf, "%s/%s", slot_dir, MMAPPED_FILE_NAME);
++            retval = detach_shmem_mmap(buf, app_client_shm.shm, sizeof(SHARED_MEM));
+         } else
+ #endif
+         {
+Index: boinc_debian/Makefile.incl
+===================================================================
+--- boinc_debian.orig/Makefile.incl
++++ boinc_debian/Makefile.incl
+@@ -44,7 +44,7 @@
+ LIBSCHED_FCGI = -lsched_fcgi
+ $(LIBSCHED_FCGI):
+ 	cd $(top_builddir)/sched; ${MAKE} libsched_fcgi.la
+-LIBBOINC = -lboinc
++LIBBOINC = -lboinc -lrt
+ $(LIBBOINC):
+ 	cd $(top_builddir)/lib; ${MAKE} libboinc.la
+ LIBBOINC_CRYPT = -lboinc_crypt
