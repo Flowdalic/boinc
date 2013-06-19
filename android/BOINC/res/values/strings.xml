@@ -128,7 +128,7 @@
     <string name="status_idle">Nothing to do</string>
     <string name="status_idle_long">Waiting for tasks&#8230;</string>
     <string name="status_computing_disabled">Suspended</string>
-    <string name="status_computing_disabled_long">Press play to resume computation.</string>
+    <string name="status_computing_disabled_long">Press play to resume network and computation.</string>
     <string name="status_launching">Starting&#8230;</string>
     <string name="status_noproject">Choose a project to participate in.</string>
     <string name="status_closing">Closing&#8230;</string>
@@ -257,15 +257,20 @@
 	<string name="trans_active">active</string>
 	<string name="trans_pending">pending</string>
 	<string name="trans_projectbackoff">project backoff</string>
-									    
-	<string name="confirm_abort">Abort transfer: </string>
-	<string name="confirm_abort_confirm">Abort</string>
-	<string name="confirm_abort_cancel">Cancel</string>
+	<string name="trans_header_name">File:</string>
+										    
+	<string name="confirm_abort_trans_title">Abort transfer</string>
+	<string name="confirm_abort_trans_message">Abort File:</string>
+	<string name="confirm_abort_trans_confirm">Abort</string>
 	
 	<!-- eventlog tab strings -->
 	<string name="eventlog_loading">Loading log messages&#8230;</string>
 	<string name="eventlog_client_header">Client Messages</string>
 	<string name="eventlog_gui_header">GUI Messages</string>
+	<string name="eventlog_copy_toast">Log copied to clipboard.</string>
+	<string name="eventlog_email_subject">Event Log for BOINC on Android:</string>
+	<string name="eventlog_client_text_header">Contents of the Client Event Log:</string>
+	<string name="eventlog_gui_text_header">Contents of the GUI Event Log:</string>
 
     <!-- suspend reasons -->
     <string name="suspend_unknown">Computation suspended.</string>
@@ -301,11 +306,22 @@
     <string name="rpcreason_unknown">Unknown reason</string>
     
     <!-- menu -->
+    <string name="menu_refresh">Refresh</string>
     <string name="menu_emailto">Send as Email</string>
     <string name="menu_copy">Copy to Clipboard</string>
     <string name="menu_eventlog">Event Log</string>
     <string name="menu_exit">Exit BOINC</string>
     <string name="menu_run_mode_disable">Suspend</string>
     <string name="menu_run_mode_enable">Resume</string>
+    <string name="menu_about">About</string>
+    <string name="menu_help">Help</string>
+    
+    <!-- about dialog -->
+    <string name="about_button">Return</string>
+    <string name="about_title">About</string>
+    <string name="about_name">BOINC</string>
+    <string name="about_version">Version</string>
+    <string name="about_name_long">Berkeley Open Infrastructure for Network Computing</string>
+    <string name="about_copyright">\u00A9 2003&#8211;2013 University of California, Berkeley.\nAll Rights Reserved.</string>
     
 </resources>

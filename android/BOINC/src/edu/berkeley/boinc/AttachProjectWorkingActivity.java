@@ -19,6 +19,8 @@
 
 package edu.berkeley.boinc;
 
+import edu.berkeley.boinc.utils.*;
+
 import java.util.ArrayList;
 
 import edu.berkeley.boinc.client.Monitor;
@@ -45,10 +47,8 @@ import edu.berkeley.boinc.utils.BOINCErrors;
 
 public class AttachProjectWorkingActivity extends Activity{
 	
-	private final String TAG = "BOINC AttachProjectWorkingActivity"; 
-	
 	private Monitor monitor;
-	private Boolean mIsBound;
+	private Boolean mIsBound = false;
 	
 	private Integer timeInterval;
 	
@@ -85,7 +85,6 @@ public class AttachProjectWorkingActivity extends Activity{
     @Override
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
-        if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG, "onCreate"); 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         
         // bind monitor service
@@ -103,9 +102,9 @@ public class AttachProjectWorkingActivity extends Activity{
         	pwd = getIntent().getStringExtra("pwd");
         	id = getIntent().getStringExtra("id");
         			
-        	if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG,"intent extras: " + projectUrl + projectName + id + userName + teamName + eMail + pwd.length() + usesName);
+        	if(Logging.DEBUG) Log.d(Logging.TAG,"AttachProjectWorkingActivity intent extras: " + projectUrl + projectName + id + userName + teamName + eMail + pwd.length() + usesName);
         } catch (Exception e) {
-        	if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 3) Log.w(TAG, "error while parsing extras", e);
+        	if(Logging.WARNING) Log.w(Logging.TAG, "AttachProjectWorkingActivity error while parsing extras", e);
         	finish(); // no point to continue without data
         }
         
@@ -122,7 +121,7 @@ public class AttachProjectWorkingActivity extends Activity{
     
 	@Override
 	protected void onDestroy() {
-    	if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG, "onDestroy");
+    	if(Logging.VERBOSE) Log.v(Logging.TAG, "AttachProjectWorkingActivity onDestroy");
 	    doUnbindService();
 	    super.onDestroy();
 	}
@@ -151,7 +150,7 @@ public class AttachProjectWorkingActivity extends Activity{
 	}
 	
 	private int mapErrorNumToString(int code) {
-		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG,"mapErrorNumToString for error: " + code);
+		if(Logging.DEBUG) Log.d(Logging.TAG,"mapErrorNumToString for error: " + code);
 		int stringResource;
 		switch (code) {
 		case BOINCErrors.ERR_DB_NOT_FOUND:
@@ -247,8 +246,6 @@ public class AttachProjectWorkingActivity extends Activity{
 	}
 	
 	private final class ProjectAccountAsync extends AsyncTask<Void, Update, Boolean> {
-
-		private final String TAG = "ProjectAccountAsync";
 		
 		private Boolean registration;
 		private String url;
@@ -274,7 +271,7 @@ public class AttachProjectWorkingActivity extends Activity{
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG,"doInBackground");
+			if(Logging.DEBUG) Log.d(Logging.TAG,"ProjectAccountAsync doInBackground");
 			
 			//check device online
 			publishProgress(new Update(false, false, R.string.attachproject_working_connect,0));
@@ -286,55 +283,109 @@ public class AttachProjectWorkingActivity extends Activity{
 			publishProgress(new Update(true, true, R.string.attachproject_working_connect,0));
 			
 			// get authenticator
-			AccountOut account;
+			AccountOut account = null;
+			Integer attemptCounter = 0;
+			Integer maxAttempts = 0;
+			Boolean success = false;
+			int err = -1;
 			if(registration) {
 				// register account
 				publishProgress(new Update(false, false, R.string.attachproject_working_register,0));
-				if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG,"" + url + email + userName + pwd.length() + teamName);
-				account = monitor.createAccount(url, email, userName, pwd, teamName);
-				try {Thread.sleep(timeInterval);} catch (Exception e){}
-				if(account == null) {
-					publishProgress(new Update(true, false, R.string.attachproject_working_register, mapErrorNumToString(0)));
+				maxAttempts = getResources().getInteger(R.integer.attach_creation_retries);
+				if(Logging.DEBUG) Log.d(Logging.TAG,"registration with: " + url + email + userName + pwd.length() + teamName + maxAttempts);
+				// retry a defined number of times, if non deterministic failure occurs.
+				// makes login more robust on bad network connections
+				while(!success && attemptCounter < maxAttempts) {
+					account = monitor.createAccount(url, email, userName, pwd, teamName);
+					
+					if(account == null || account.error_num != BOINCErrors.ERR_OK) {
+						// failed
+						if(account != null) err = account.error_num;
+						if(Logging.DEBUG) Log.d(Logging.TAG,"registration failed, error code: " + err);
+						if(err == -1 || err == BOINCErrors.ERR_GETHOSTBYNAME){
+							// worth a retry
+							attemptCounter++;
+						} else {
+							// not worth a retry, return
+							publishProgress(new Update(true, false, R.string.attachproject_working_register, mapErrorNumToString(err)));
+							return false;
+						}
+					} else {
+						// successful
+						try {Thread.sleep(timeInterval);} catch (Exception e){}
+						publishProgress(new Update(true, true, R.string.attachproject_working_register,0));
+						success = true;
+					}
+				}
+				// reached end of loop, check if successful
+				if(!success) {
+					publishProgress(new Update(true, false, R.string.attachproject_working_register, mapErrorNumToString(err)));
 					return false;
 				}
-				if(account.error_num != BOINCErrors.ERR_OK) {
-					publishProgress(new Update(true, false, R.string.attachproject_working_register, mapErrorNumToString(account.error_num)));
-					return false;
-				}
-				publishProgress(new Update(true, true, R.string.attachproject_working_register,0));
 			} else {
 				// lookup authenticator
 				publishProgress(new Update(false, false, R.string.attachproject_working_verify,0));
-				if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG,"" + url + id + pwd.length() + usesName);
-				account = monitor.lookupCredentials(url, id, pwd, usesName);
-				try {Thread.sleep(timeInterval);} catch (Exception e){}
-				if(account == null) {
-					publishProgress(new Update(true, false, R.string.attachproject_working_verify, mapErrorNumToString(0)));
+				maxAttempts = getResources().getInteger(R.integer.attach_login_retries);
+				if(Logging.DEBUG) Log.d(Logging.TAG,"loging with: " + url + id + pwd.length() + usesName + maxAttempts);
+				// retry a defined number of times, if non deterministic failure occurs.
+				// makes login more robust on bad network connections
+				while(!success && attemptCounter < maxAttempts) {
+					account = monitor.lookupCredentials(url, id, pwd, usesName);
+					
+					if(account == null || account.error_num != BOINCErrors.ERR_OK) {
+						// failed
+						if(account != null) err = account.error_num;
+						if(Logging.DEBUG) Log.d(Logging.TAG,"registration failed, error code: " + err);
+						if(err == -1 || err == BOINCErrors.ERR_GETHOSTBYNAME){
+							// worth a retry
+							attemptCounter++;
+						} else {
+							// not worth a retry, return
+							publishProgress(new Update(true, false, R.string.attachproject_working_verify, mapErrorNumToString(err)));
+							return false;
+						}
+					} else {
+						// successful
+						try {Thread.sleep(timeInterval);} catch (Exception e){}
+						publishProgress(new Update(true, true, R.string.attachproject_working_verify,0));
+						success = true;
+					}
+				}
+				// reached end of loop, check if successful
+				if(!success) {
+					publishProgress(new Update(true, false, R.string.attachproject_working_verify, mapErrorNumToString(err)));
 					return false;
 				}
-				if(account.error_num != BOINCErrors.ERR_OK) {
-					publishProgress(new Update(true, false, R.string.attachproject_working_verify, mapErrorNumToString(account.error_num)));
-					return false;
-				}
-				publishProgress(new Update(true, true, R.string.attachproject_working_verify,0));
 			}
 			
 			// attach project
+			attemptCounter = 0;
+			success = false;
+			maxAttempts = getResources().getInteger(R.integer.attach_attach_retries);
 			publishProgress(new Update(false, false, R.string.attachproject_working_login,0));
-			Boolean attach = monitor.attachProject(url, projectName, account.authenticator);
-			try {Thread.sleep(timeInterval);} catch (Exception e){}
-			if(!attach) {
+			while(!success && attemptCounter < maxAttempts) {
+				Boolean attach = monitor.attachProject(url, projectName, account.authenticator);
+				if(attach) {
+					// successful
+					success = true;
+					try {Thread.sleep(timeInterval);} catch (Exception e){}
+					publishProgress(new Update(true, true, R.string.attachproject_working_login,0));
+				} else {
+					// failed
+					attemptCounter++;
+				}
+			}
+			if(!success) {
+				// still failed
 				publishProgress(new Update(true, false, R.string.attachproject_working_login,0));
 				return false;
 			}
-			publishProgress(new Update(true, true, R.string.attachproject_working_login,0));
 			
 			return true;
 		}		
 		
 		@Override
 		protected void onProgressUpdate(Update... values) {
-			if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 1) Log.d(TAG,"onProgressUpdate");
 			appendElementToLayout(values[0]);
 			super.onProgressUpdate(values);
 		}

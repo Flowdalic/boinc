@@ -64,6 +64,7 @@ using std::vector;
 #include "filesys.h"
 #include "parse.h"
 #include "shmem.h"
+#include "str_replace.h"
 #include "str_util.h"
 #include "util.h"
 
@@ -1075,8 +1076,17 @@ void ACTIVE_TASK_SET::suspend_all(int reason) {
             //
             atp->preempt(REMOVE_NEVER);
             break;
+#ifdef ANDROID
+        case SUSPEND_REASON_BATTERIES:
+            // On Android, remove apps from memory if on batteries.
+            // The message polling in the BOINC runtime system
+            // imposes an overhead which drains the battery a bit
+            atp->preempt(REMOVE_ALWAYS);
+            break;
+#endif
         default:
             atp->preempt(REMOVE_MAYBE_USER);
+            break;
         }
     }
 }
