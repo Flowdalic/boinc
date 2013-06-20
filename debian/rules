@@ -250,7 +250,7 @@ override_dh_auto_build: update-boinc-applinks.1
 	@echo "**** CXX=$(CXX) *****"
 	@echo
 	# disable optimization in api/, for SETI to work
-	$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)" LDFLAGS=" -pthread"
+	$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
 ifneq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
 	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain)" CXXFLAGS="$(CXXFLAGS_plain)"
@@ -259,14 +259,15 @@ endif
 	$(MAKE)
 
 	# Generate binary message catalogs of the BOINC Manager.
-	#if [ -d locale ]; then \
-	  for i in `ls locale`; do \
-	    if [ -f "locale/$$i/BOINC-Manager.po" ]; then \
-	     msgfmt -o "locale/$$i/BOINC-Manager.mo" \
-	      "locale/$$i/BOINC-Manager.po"; \
-	    fi; \
-	  done; \
-	fi
+#	if [ -d locale ]; then \
+#	  for i in `ls locale`; do \
+#	    if [ -f "locale/$$i/BOINC-Manager.po" ]; then \
+#	     msgfmt -o "locale/$$i/BOINC-Manager.mo" \
+#	      "locale/$$i/BOINC-Manager.po"; \
+#	    fi; \
+#	  done; \
+#	fi
+
 ifneq (,$(ENABLE_SERVER_TEST))
 	$(MAKE) -C samples/sleeper
 	$(MAKE) -C samples/worker
