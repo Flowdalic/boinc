@@ -11,7 +11,7 @@
      strip_whitespace(buf);
      fclose(f);
      return true;
-@@ -1431,13 +1431,13 @@
+@@ -1440,13 +1440,13 @@
      FILE* f = fopen(path, "r");
      if (!f) return;
      buf[0] = 0;
@@ -97,7 +97,7 @@
  
 --- a/client/hostinfo_unix.cpp
 +++ b/client/hostinfo_unix.cpp
-@@ -1242,11 +1242,12 @@
+@@ -1244,11 +1244,12 @@
  #endif
          fd = popen(cmd, "r");
          if (fd) {
@@ -129,7 +129,7 @@
  
      sprintf(cmdline, "%s %s",
          wup->command_line.c_str(), app_version->cmdline
-@@ -993,7 +996,11 @@
+@@ -997,7 +1000,11 @@
  
          // hook up stderr to a specially-named file
          //

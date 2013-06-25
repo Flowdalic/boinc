@@ -1,3 +1,12 @@
+boinc (7.1.20+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+    - Italian translation fixed.
+    - Really fixed (lp: #179849), for a configure error
+      dpms code wasn't built.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Tue, 25 Jun 2013 09:25:31 +0200
+
 boinc (7.1.18+dfsg-1) UNRELEASED; urgency=low
 
   * New upstream release.
