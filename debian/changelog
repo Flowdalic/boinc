@@ -4,7 +4,7 @@ boinc (7.1.21+dfsg-1exp2) experimental; urgency=low
 
  -- Steffen Moeller <moeller@debian.org>  Thu, 27 Jun 2013 22:05:48 +0200
 
-boinc (7.1.21+dfsg-1~exp1) UNRELEASED; urgency=low
+boinc (7.1.21+dfsg-1exp1) UNRELEASED; urgency=low
 
   * Added boinc-server-maker package.
 
