@@ -236,7 +236,7 @@ Package: boinc-server-maker
 %Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends},
 % python, python-mysqldb,
 % mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
-% php5, php5-cli, php5-mysql, php5-gd,
+% php5, php5-cli, php5-mysql,
 % tcsh, openssl (>= 0.9.8), adduser, libfcgi0ldbl
 %Recommends: libapache2-mod-php5, php5-gd, uuid-runtime,
 % boinc-cgi-stripchart
