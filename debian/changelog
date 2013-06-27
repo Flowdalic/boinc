@@ -1,4 +1,4 @@
-boinc (7.1.21+dfsg-1~exp1) experimental; urgency=low
+boinc (7.1.21+dfsg-2~exp1) experimental; urgency=low
 
   * Added boinc-server-maker package.
 
