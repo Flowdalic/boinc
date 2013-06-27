@@ -1,10 +1,10 @@
-boinc (7.1.21+dfsg-1~exp2) UNRELEASED; urgency=low
+boinc (7.1.21+dfsg-1exp2) experimental; urgency=low
 
   * php5-gd only recommended for boinc-server-maker
 
  -- Steffen Moeller <moeller@debian.org>  Thu, 27 Jun 2013 22:05:48 +0200
 
-boinc (7.1.21+dfsg-1~exp1) experimental; urgency=low
+boinc (7.1.21+dfsg-1~exp1) UNRELEASED; urgency=low
 
   * Added boinc-server-maker package.
 
