@@ -1,3 +1,11 @@
+boinc (7.1.21+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * Added adding_lpthread_and_ljpeg.patch to fix a FTBFS
+    with ubuntu saucy.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 27 Jun 2013 14:49:00 +0200
+
 boinc (7.1.20+dfsg-1) unstable; urgency=low
 
   * New upstream release.

@@ -1,6 +1,6 @@
 --- a/lib/coproc.cpp
 +++ b/lib/coproc.cpp
-@@ -529,7 +529,7 @@
+@@ -563,7 +563,7 @@
      cuda_version = 0;
      display_driver_version = 0;
      strcpy(prop.name, "");
@@ -9,7 +9,7 @@
      prop.sharedMemPerBlock = 0;
      prop.regsPerBlock = 0;
      prop.warpSize = 0;
-@@ -559,7 +559,7 @@
+@@ -593,7 +593,7 @@
      while (!xp.get_tag()) {
          if (xp.match_tag("/coproc_cuda")) {
              if (!peak_flops) {
