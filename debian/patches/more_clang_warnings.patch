@@ -23,7 +23,7 @@
      // sanity checks - project and result name must match
      //
 -    if (!parse_str(buf, "<project_master_url>", s, sizeof(s))) {
-+    if (0 == fr || !parse_str(buf, "<project_master_url>", s, sizeof(s))) {
++    if (1 == fr || !parse_str(buf, "<project_master_url>", s, sizeof(s))) {
          msg_printf(wup->project, MSG_INTERNAL_ERROR,
              "no project URL in task state file"
          );
@@ -55,18 +55,18 @@
  #else
 -    fscanf(f, "%d", &num_bits);
 +    int fs = fscanf(f, "%d", &num_bits);
-+    if (EOF == fs) return ERR_NULL;
++    if (1 != fs) return ERR_NULL;
      key->bits = num_bits;
      len = size - sizeof(key->bits);
      for (i=0; i<len; i++) {
 -        fscanf(f, "%2x", &n);
 +        fs = fscanf(f, "%2x", &n);
++        if (1 != fs) return ERR_NULL;
          key->data[i] = n;
-+	if (EOF == fs) return ERR_NULL;
      }
 -    fscanf(f, ".");
 +    fs = fscanf(f, ".");
-+    if (EOF == fs) return ERR_NULL;
++    if (1 != fs) return ERR_NULL;
  #endif
      return 0;
  }
@@ -149,7 +149,7 @@
      if (f) {
          // ToDo: change this to XML parsing
 -        fscanf(f, "%d %d %d %d\n", &xpos, &ypos, &width, &height);
-+        if (! fscanf(f, "%d %d %d %d\n", &xpos, &ypos, &width, &height)) {
++        if (4 != fscanf(f, "%d %d %d %d\n", &xpos, &ypos, &width, &height)) {
 +	    fprintf(stderr,"Coud not parse parameters for xpos, ypos, width, height from glx_info file.\n");
 +	}
          fclose(f);
@@ -233,7 +233,7 @@
          // See the lseek man page for details.
          lseek(fd, size-1, SEEK_SET);
 -        write(fd, "\0", 1);
-+        if (! write(fd, "\0", 1)) {
++        if (-1 == write(fd, "\0", 1)) {
 +	    close(fd);
 +	    return ERR_SHMGET;
 +	}
