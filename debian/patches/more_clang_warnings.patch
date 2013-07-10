@@ -66,7 +66,7 @@
      }
 -    fscanf(f, ".");
 +    fs = fscanf(f, ".");
-+    if (1 != fs) return ERR_NULL;
++    if (0 != fs) return ERR_NULL;
  #endif
      return 0;
  }
@@ -233,7 +233,7 @@
          // See the lseek man page for details.
          lseek(fd, size-1, SEEK_SET);
 -        write(fd, "\0", 1);
-+        if (-1 == write(fd, "\0", 1)) {
++        if (1 != write(fd, "\0", 1)) {
 +	    close(fd);
 +	    return ERR_SHMGET;
 +	}
