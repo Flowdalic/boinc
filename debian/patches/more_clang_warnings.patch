@@ -23,7 +23,7 @@
      // sanity checks - project and result name must match
      //
 -    if (!parse_str(buf, "<project_master_url>", s, sizeof(s))) {
-+    if (4096 > fr || !parse_str(buf, "<project_master_url>", s, sizeof(s))) {
++    if (4096 != fr || !parse_str(buf, "<project_master_url>", s, sizeof(s))) {
          msg_printf(wup->project, MSG_INTERNAL_ERROR,
              "no project URL in task state file"
          );
