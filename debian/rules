@@ -209,6 +209,8 @@ override_dh_clean:
 	rm -f debian/boinc-cgi-stripchart.substvars
 	# sudden differences yet remaining to be resolved
 	rm -f api/libboinc_graphics2.la
+	rm -f test-driver
+	rm -f sched/adjust_user_priority sched/size_regulator
 
 # Commands not to execute - empty overrides
 override_dh_auto_test:
