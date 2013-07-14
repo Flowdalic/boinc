@@ -1,0 +1,30 @@
+Index: boinc_debian/samples/wrapper/Makefile.am
+===================================================================
+--- /dev/null
++++ boinc_debian/samples/wrapper/Makefile.am
+@@ -0,0 +1,25 @@
++## -*- mode: makefile; tab-width: 4 -*-
++## $Id$
++
++include $(top_srcdir)/Makefile.incl
++
++exampledir = $(prefix)/lib/boinc-apps-examples
++example_PROGRAMS = wrapper
++
++BOINC_API_DIR = $(top_srcdir)/api
++BOINC_LIB_DIR = $(top_srcdir)/lib
++BOINC_ZIP_DIR = $(top_srcdir)/zip
++
++libstdc++.a:
++	ln -s `g++ -print-file-name=libstdc++.a`
++-REGEXP_OBJS = \
++-       regexp.o \
++-       regsub.o \
++-       regerror.o \
++-       regexp_memory.o \
++-       regexp_report.o
++
++wrapper_SOURCES = regerror.c regexp.c regexp_custom.h regexp_memory.c regexp_report.c regsub.c wrapper.cpp
++wrapper_CXXFLAGS = $(PTHREAD_CFLAGS) -g -O0 -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -fno-common -I$(BOINC_API_DIR) -I$(BOINC_LIB_DIR) -I$(BOINC_ZIP_DIR)
++wrapper_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS) -L$(BOINC_API_DIR)/.libs -L$(BOINC_LIB_DIR)/.libs -L$(BOINC_ZIP_DIR)/.libs -L.
++wrapper_LDADD = $(APPLIBS)
