@@ -62,4 +62,3 @@ filesys_error_message.patch
 de.po.patch
 more_clang_warnings.patch
 #mmap_mem_only.patch
-adding_lpthread_and_ljpeg.patch #fixing FTBFS with saucy boinc-app-seti and boinc-app-milkyway
