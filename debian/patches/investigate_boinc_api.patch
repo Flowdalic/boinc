@@ -1,6 +1,8 @@
---- a/api/boinc_api.cpp
-+++ b/api/boinc_api.cpp
-@@ -354,7 +354,7 @@
+Index: boinc_debian_new/api/boinc_api.cpp
+===================================================================
+--- boinc_debian_new.orig/api/boinc_api.cpp
++++ boinc_debian_new/api/boinc_api.cpp
+@@ -356,7 +356,7 @@
  
      if (standalone) return true;
  
@@ -9,7 +11,7 @@
          "<current_cpu_time>%e</current_cpu_time>\n"
          "<checkpoint_cpu_time>%e</checkpoint_cpu_time>\n",
          cpu_t, cp_cpu_t
-@@ -633,6 +633,10 @@
+@@ -629,6 +629,10 @@
  }
  
  int boinc_get_status(BOINC_STATUS *s) {
@@ -20,7 +22,7 @@
      s->no_heartbeat = boinc_status.no_heartbeat;
      s->suspended = boinc_status.suspended;
      s->quit_request = boinc_status.quit_request;
-@@ -809,7 +813,7 @@
+@@ -804,7 +808,7 @@
  int boinc_parse_init_data_file() {
      FILE* f;
      int retval;
@@ -29,7 +31,7 @@
  
      if (aid.project_preferences) {
          free(aid.project_preferences);
-@@ -859,15 +863,15 @@
+@@ -854,15 +858,15 @@
      );
      if (other_pid) {
          sprintf(buf, "<other_pid>%d</other_pid>\n", other_pid);
@@ -48,7 +50,7 @@
      }
      if (app_client_shm->shm->app_status.send_msg(msg_buf)) {
          return 0;
-@@ -950,7 +954,7 @@
+@@ -957,7 +961,7 @@
  }
  
  static void handle_upload_file_status() {
@@ -57,7 +59,7 @@
      std::string filename;
      int status;
  
-@@ -1282,7 +1286,7 @@
+@@ -1170,7 +1174,7 @@
      // send graphics-related messages
      //
      if (send_web_graphics_url && !app_client_shm->shm->graphics_reply.has_msg()) {
@@ -66,7 +68,7 @@
              "<web_graphics_url>%s</web_graphics_url>",
              web_graphics_url
          );
-@@ -1290,7 +1294,7 @@
+@@ -1178,7 +1182,7 @@
          send_web_graphics_url = false;
      }
      if (send_remote_desktop_addr && !app_client_shm->shm->graphics_reply.has_msg()) {
@@ -75,7 +77,7 @@
              "<remote_desktop_addr>%s</remote_desktop_addr>",
              remote_desktop_addr
          );
-@@ -1506,7 +1510,7 @@
+@@ -1410,7 +1414,7 @@
          DirScanner dirscan(path);
          while (dirscan.scan(filename)) {
              if (strstr(filename.c_str(), "trickle_down")) {

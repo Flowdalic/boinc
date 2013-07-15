@@ -1,3 +1,10 @@
+boinc (7.2.4+dfsg-1exp1) experimental; urgency=low
+
+  * New upstream version.
+    - reduced clang warnings patches
+
+ -- Steffen Moeller <moeller@debian.org>  Tue, 16 Jul 2013 00:40:29 +0200
+
 boinc (7.1.21+dfsg-1exp2) experimental; urgency=low
 
   * php5-gd only recommended for boinc-server-maker
