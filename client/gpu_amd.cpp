@@ -23,6 +23,9 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 #else
 #ifdef __APPLE__
 // Suppress obsolete warning when building for OS 10.3.9
@@ -45,6 +48,8 @@ using std::string;
 
 #include "client_msgs.h"
 #include "gpu_detect.h"
+
+static void get_available_ati_ram(COPROC_ATI &cc, vector<string>& warnings);
 
 // criteria:
 //
@@ -191,18 +196,6 @@ void COPROC_ATI::get(
     }
     if (!__calDeviceGetInfo) {
         warnings.push_back("calDeviceGetInfo() missing from CAL library");
-        return;
-    }
-    if (!__calDeviceGetStatus) {
-        warnings.push_back("calDeviceGetStatus() missing from CAL library");
-        return;
-    }
-    if (!__calDeviceOpen) {
-        warnings.push_back("calDeviceOpen() missing from CAL library");
-        return;
-    }
-    if (!__calDeviceClose) {
-        warnings.push_back("calDeviceClose() missing from CAL library");
         return;
     }
 
@@ -372,7 +365,7 @@ void COPROC_ATI::get(
         cc.atirt_detected = atirt_detected;
         cc.device_num = i;
         cc.set_peak_flops();
-        cc.get_available_ram();
+        get_available_ati_ram(cc, warnings);
         ati_gpus.push_back(cc);
     }
 
@@ -413,7 +406,7 @@ void COPROC_ATI::correlate(
     //
     count = 0;
     for (i=0; i<ati_gpus.size(); i++) {
-        ati_gpus[i].description(buf);
+        ati_gpus[i].description(buf, sizeof(buf));
         if (in_vector(ati_gpus[i].device_num, ignore_devs)) {
             ati_gpus[i].is_used = COPROC_IGNORED;
         } else if (use_all || !ati_compare(ati_gpus[i], *this, true)) {
@@ -428,35 +421,62 @@ void COPROC_ATI::correlate(
 
 // get available RAM of ATI GPU
 //
-void COPROC_ATI::get_available_ram() {
+// CAUTION: as currently written, this method should be
+// called only from COPROC_ATI::get().  If in the future
+// you wish to call it from additional places:
+// * It must be called from a separate child process on
+//   dual-GPU laptops (e.g., Macbook Pros) with the results
+//   communicated to the main client process via IPC or a
+//   temp file.  See the comments about dual-GPU laptops 
+//   in gpu_detect.cpp and main.cpp for more details.
+// * The CAL library must be loaded and calInit() called 
+//   first.
+// * See client/coproc_detect.cpp and cpu_sched.cpp in
+//   BOINC 6.12.36 for an earlier attempt to call this
+//   from the scheduler.  Note that it was abandoned
+//   due to repeated calls crashing the driver.
+//
+static void get_available_ati_ram(COPROC_ATI &cc, vector<string>& warnings) {
     CALdevicestatus st;
     CALdevice dev;
+    char buf[256];
     int retval;
 
-    available_ram = attribs.localRAM*MEGA;
+    cc.available_ram = cc.attribs.localRAM*MEGA;
 
     st.struct_size = sizeof(CALdevicestatus);
 
-    retval = (*__calDeviceOpen)(&dev, device_num);
+    if (!__calDeviceOpen) {
+        warnings.push_back("calDeviceOpen() missing from CAL library");
+        return;
+    }
+    if (!__calDeviceGetStatus) {
+        warnings.push_back("calDeviceGetStatus() missing from CAL library");
+        return;
+    }
+    if (!__calDeviceClose) {
+        warnings.push_back("calDeviceClose() missing from CAL library");
+        return;
+    }
+
+    retval = (*__calDeviceOpen)(&dev, cc.device_num);
     if (retval) {
-        if (log_flags.coproc_debug) {
-            msg_printf(0, MSG_INFO,
-                "[coproc] calDeviceOpen(%d) returned %d", device_num, retval
-            );
-        }
+        snprintf(buf, sizeof(buf),
+            "[coproc] calDeviceOpen(%d) returned %d", cc.device_num, retval
+        );
+        warnings.push_back(buf);
         return;
     }
     retval = (*__calDeviceGetStatus)(&st, dev);
     if (retval) {
-        if (log_flags.coproc_debug) {
-            msg_printf(0, MSG_INFO,
-                "[coproc] calDeviceGetStatus(%d) returned %d",
-                device_num, retval
-            );
-        }
+        snprintf(buf, sizeof(buf),
+            "[coproc] calDeviceGetStatus(%d) returned %d",
+            cc.device_num, retval
+        );
+        warnings.push_back(buf);
         (*__calDeviceClose)(dev);
         return;
     }
-    available_ram = st.availLocalRAM*MEGA;
+    cc.available_ram = st.availLocalRAM*MEGA;
     (*__calDeviceClose)(dev);
 }

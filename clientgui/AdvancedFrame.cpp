@@ -1488,11 +1488,11 @@ void CAdvancedFrame::OnLaunchNewInstance(wxCommandEvent& WXUNUSED(event)) {
 #else
     int prog;
 #endif
-    int argc = 3;
-    char* const argv[3] = { 
+    int argc = 2;
+    char* const argv[3] = {
          const_cast<char *>("boincmgr"), 
          const_cast<char *>("--multiple"), 
-         const_cast<char *>("") 
+         NULL
     }; 
 
     wxString strExecutable = wxGetApp().GetRootDirectory() + wxGetApp().GetExecutableName();

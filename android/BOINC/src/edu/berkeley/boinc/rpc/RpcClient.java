@@ -35,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.util.Log;
 import android.util.Xml;
 import edu.berkeley.boinc.utils.BOINCDefs;
+import edu.berkeley.boinc.utils.BOINCUtils;
 import edu.berkeley.boinc.utils.Logging;
 
 
@@ -369,7 +370,7 @@ public class RpcClient {
 			String dl;
 			int ln = 0;
 			try {
-				while ((dl = dbr.readLine()) != null) {
+				while ((dl = BOINCUtils.readLineLimit(dbr, 4096)) != null) {
 					++ln;
 					if(Logging.DEBUG) Log.d(Logging.TAG, String.format("%4d: %s", ln, dl));
 				}
@@ -498,6 +499,7 @@ public class RpcClient {
 			}
 			sendRequest(request);
 			ArrayList<Message> messages = MessagesParser.parse(receiveReply());
+			if(messages == null) messages = new ArrayList<Message>(); // do not return null
 			return messages;
 		}
 		catch (IOException e) {

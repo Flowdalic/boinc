@@ -35,6 +35,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -46,6 +49,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import edu.berkeley.boinc.AppPreferences;
 import edu.berkeley.boinc.R;
@@ -70,6 +74,7 @@ public class Monitor extends Service {
 	
 	public static Boolean monitorActive = false;
 	
+	// XML defined variables, populated in onCreate
 	private String clientName; 
 	private String clientCLI; 
 	private String clientCABundle; 
@@ -78,10 +83,14 @@ public class Monitor extends Service {
 	private String allProjectsList; 
 	private String globalOverridePreferences;
 	private String clientPath; 
+	private Integer clientStatusInterval;
+	private Integer deviceStatusIntervalScreenOff;
 	
-	private Boolean started = false;
-	private Thread monitorThread = null;
-	private Boolean monitorRunning = true;
+	private Timer updateTimer = new Timer(true); // schedules frequent client status update
+	private TimerTask statusUpdateTask = new StatusUpdateTimerTask();
+	private boolean updateBroadcastEnabled = true;
+	private DeviceStatus deviceStatus = null;
+	private Integer screenOffStatusOmitCounter = 0;
 	
 	// screen on/off updated by screenOnOffBroadcastReceiver
 	private boolean screenOn = false;
@@ -96,6 +105,15 @@ public class Monitor extends Service {
 	// used by ClientMonitorAsync if no connection is available
 	// includes network communication => don't call from UI thread!
 	private Boolean clientSetup() {
+		if(Logging.DEBUG) Log.d(Logging.TAG,"Monitor.clientSetup()");
+		
+		// initialize full wakelock.
+		// gets used if client has to be started from scratch
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		WakeLock setupWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, Logging.TAG);
+		// do not acquire here, otherwise screen turns on, every time rpc connection
+		// gets reconnected.
+		
 		// try to get current client status from monitor
 		ClientStatus status;
 		try{
@@ -104,6 +122,7 @@ public class Monitor extends Service {
 			if(Logging.WARNING) Log.w(Logging.TAG,"Monitor.clientSetup: Could not load data, clientStatus not initialized.");
 			return false;
 		}
+		
 		status.setSetupStatus(ClientStatus.SETUP_STATUS_LAUNCHING,true);
 		String clientProcessName = clientPath + clientName;
 
@@ -141,10 +160,9 @@ public class Monitor extends Service {
 			// quit with OS signals
 			if(!success) quitProcessOsLevel(clientProcessName);
 
-			// Install BOINC client software
-			//
-	        if(!installClient()) {
-	        	if(Logging.DEBUG) Log.d(Logging.TAG, "BOINC client installation failed!");
+			// at this point client is definitely not running. install new binary...
+			if(!installClient()) {
+	        	if(Logging.WARNING) Log.w(Logging.TAG, "BOINC client installation failed!");
 	        	return false;
 	        }
 		}
@@ -154,8 +172,14 @@ public class Monitor extends Service {
 		Integer clientPid = getPidForProcessName(clientProcessName);
 		if(clientPid == null) {
         	if(Logging.DEBUG) Log.d(Logging.TAG, "Starting the BOINC client");
+    		// wake up device and acquire full WakeLock here to allow BOINC client to detect
+    		// all available CPU cores if not acquired and device in power saving mode, client
+    		// might detect fewer CPU cores than available.
+    		// Lock needs to be release, before return!
+    		setupWakeLock.acquire();
 			if (!runClient()) {
 	        	if(Logging.DEBUG) Log.d(Logging.TAG, "BOINC client failed to start");
+	        	setupWakeLock.release();
 				return false;
 			}
 		}
@@ -199,6 +223,9 @@ public class Monitor extends Service {
 			status.setSetupStatus(ClientStatus.SETUP_STATUS_ERROR,true);
 		}
 		
+		try{
+			setupWakeLock.release(); // throws exception if it has not been acquired before
+		} catch(Exception e){}
 		return connected;
 	}
 	
@@ -216,7 +243,7 @@ public class Monitor extends Service {
         	success = true;
     	} catch (IOException e) {
     		if(Logging.DEBUG) Log.d(Logging.TAG, "Starting BOINC client failed with exception: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "IOException", e);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "IOException", e);
     	}
     	return success;
     }
@@ -301,9 +328,7 @@ public class Monitor extends Service {
     		if(Logging.DEBUG) Log.d(Logging.TAG, "install of " + file + " successfull. executable: " + executable + "/" + isExecutable);
     		
     	} catch (IOException e) {  
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "IOException: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "IOException", e);
-    		
+    		if(Logging.ERROR) Log.e(Logging.TAG, "IOException: " + e.getMessage());
     		if(Logging.DEBUG) Log.d(Logging.TAG, "install of " + file + " failed.");
     	}
 		
@@ -326,6 +351,76 @@ public class Monitor extends Service {
 		return rpc.authorize(authKey); 
     }
 	
+    // updates ClientStatus data structure with values received from client via rpc calls.
+    private void updateStatus(){
+		// check whether RPC client connection is alive
+		if(!rpc.connectionAlive()) clientSetup(); // start setup routine
+		
+    	if(!screenOn && screenOffStatusOmitCounter < deviceStatusIntervalScreenOff) screenOffStatusOmitCounter++; // omit status reporting according to configuration
+    	else {
+    		// screen is on, or omit counter reached limit
+    		reportDeviceStatus();
+    		readClientStatus(); // readClientStatus is also required when screen is off, otherwise no wakeLock acquisition.
+    	}
+    }
+    
+    // reads client status via rpc calls
+    // if screen off, only computing status to adjust wakelocks
+    private void readClientStatus() {
+    	try{
+    		// read ccStatus and adjust wakelocks independently of screen status
+    		CcStatus status = rpc.getCcStatus();
+    		Boolean computationEnabled = (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED);
+    		if(Logging.VERBOSE) Log.d(Logging.TAG,"readClientStatus(): computation enabled: " + computationEnabled);
+			Monitor.getClientStatus().setWifiLock(computationEnabled);
+			Monitor.getClientStatus().setWakeLock(computationEnabled);
+    		
+			// complete status read, depending on screen status
+    		// screen off: only read computing status to adjust wakelock, do not send broadcast
+    		// screen on: read complete status, set ClientStatus, send broadcast
+	    	if(screenOn) {
+	    		// complete status read, with broadcast
+				if(Logging.VERBOSE) Log.d(Logging.TAG, "readClientStatus(): screen on, get complete status");
+				CcState state = rpc.getState();
+				ArrayList<Transfer>  transfers = rpc.getFileTransfers();
+				
+				if( (status != null) && (state != null) && (state.results != null) && (state.projects != null) && (transfers != null) && (state.host_info != null)) {
+					Monitor.getClientStatus().setClientStatus(status, state.results, state.projects, transfers, state.host_info);
+					// Update status bar notification
+					ClientNotification.getInstance(getApplicationContext()).update();
+				} else {
+					if(Logging.ERROR) Log.e(Logging.TAG, "readClientStatus(): connection problem");
+				}
+				
+				// check whether monitor is still intended to update, if not, skip broadcast and exit...
+				if(updateBroadcastEnabled) {
+			        Intent clientStatus = new Intent();
+			        clientStatus.setAction("edu.berkeley.boinc.clientstatus");
+			        getApplicationContext().sendBroadcast(clientStatus);
+				}
+	    	} 
+		}catch(Exception e) {
+			if(Logging.ERROR) Log.e(Logging.TAG, "Monitor.readClientStatus excpetion: " + e.getMessage(),e);
+		}
+    }
+    
+    // reports current device status to the client via rpc
+    // client uses data to enforce preferences, e.g. suspend on battery
+    private void reportDeviceStatus() {
+		if(Logging.VERBOSE) Log.d(Logging.TAG, "reportDeviceStatus()");
+    	try{
+	    	// set devices status
+			if(deviceStatus != null) { // make sure deviceStatus is initialized
+				deviceStatus.update(); // poll device status
+				Boolean reportStatusSuccess = rpc.reportDeviceStatus(deviceStatus); // transmit device status via rpc
+				if(reportStatusSuccess) screenOffStatusOmitCounter = 0;
+				else if(Logging.DEBUG) Log.d(Logging.TAG,"reporting device status returned false.");
+			} else if(Logging.WARNING) Log.w(Logging.TAG,"reporting device status failed, wrapper not initialized.");
+		}catch(Exception e) {
+			if(Logging.ERROR) Log.e(Logging.TAG, "Monitor.reportDeviceStatus excpetion: " + e.getMessage());
+		}
+    }
+    
     // Compute MD5 of the requested asset
     //
     private String ComputeMD5Asset(String file) {
@@ -349,11 +444,9 @@ public class Monitor extends Service {
     		
     		return sb.toString();
     	} catch (IOException e) {  
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "IOException: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "IOException", e);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "IOException: " + e.getMessage());
     	} catch (NoSuchAlgorithmException e) {
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "NoSuchAlgorithmException: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "NoSuchAlgorithmException", e);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "NoSuchAlgorithmException: " + e.getMessage());
 		}
 		
 		return "";
@@ -383,11 +476,9 @@ public class Monitor extends Service {
     		
     		return sb.toString();
     	} catch (IOException e) {  
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "IOException: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "IOException", e);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "IOException: " + e.getMessage());
     	} catch (NoSuchAlgorithmException e) {
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "NoSuchAlgorithmException: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "NoSuchAlgorithmException", e);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "NoSuchAlgorithmException: " + e.getMessage());
 		}
 		
 		return "";
@@ -410,8 +501,7 @@ public class Monitor extends Service {
 	    	    sb.append(buf, 0, count);
 	    	}
     	} catch (Exception e) {
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "Exception: " + e.getMessage());
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "Exception", e);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "Exception: " + e.getMessage());
     	}
     	
     	//parse output into hashmap
@@ -483,7 +573,7 @@ public class Monitor extends Service {
  	// projects not supporting Android. List does not change
     // during run-time. Called once during setup.
     // Stored in ClientStatus.
-	private void readAndroidProjectsList() {
+	public void readAndroidProjectsList() {
 		// try to get current client status from monitor
 		ClientStatus status;
 		try{
@@ -496,6 +586,8 @@ public class Monitor extends Service {
 		ArrayList<ProjectInfo> allProjects = rpc.getAllProjectsList();
 		ArrayList<ProjectInfo> androidProjects = new ArrayList<ProjectInfo>();
 		
+		if(allProjects == null) return;
+		
 		//filter projects that do not support Android
 		for (ProjectInfo project: allProjects) {
 			if(project.platforms.contains(getString(R.string.boinc_platform_name))) {
@@ -505,7 +597,7 @@ public class Monitor extends Service {
 		}
 		
 		// set list in ClientStatus
-		status.supportedProjects = androidProjects;
+		status.setSupportedProjects(androidProjects);
 	}
 	
 	public static ClientStatus getClientStatus() throws Exception{ //singleton pattern
@@ -560,6 +652,8 @@ public class Monitor extends Service {
 		authFileName = getString(R.string.auth_file_name); 
 		allProjectsList = getString(R.string.all_projects_list); 
 		globalOverridePreferences = getString(R.string.global_prefs_override);
+		clientStatusInterval = getResources().getInteger(R.integer.status_update_interval_ms);
+		deviceStatusIntervalScreenOff = getResources().getInteger(R.integer.device_status_update_screen_off_every_X_loop);
 		
 		// initialize singleton helper classes and provide application context
 		clientStatus = new ClientStatus(this);
@@ -570,22 +664,19 @@ public class Monitor extends Service {
 		getSystemService(Context.POWER_SERVICE);
 		screenOn = pm.isScreenOn();
 		
+		// initialize DeviceStatus wrapper
+		deviceStatus = new DeviceStatus(getApplicationContext());
+		
 		// register screen on/off receiver
         IntentFilter onFilter = new IntentFilter (Intent.ACTION_SCREEN_ON); 
         IntentFilter offFilter = new IntentFilter (Intent.ACTION_SCREEN_OFF); 
         registerReceiver(screenOnOffReceiver, onFilter);
         registerReceiver(screenOnOffReceiver, offFilter);
 		
-		if(!started) {
-			started = true;
-	        (new ClientMonitorAsync()).execute(new Integer[0]); //start monitor in new thread
-	        //if(Logging.DEBUG) Log.d(Logging.TAG, "asynchronous monitor started!");
-		}
-		else {
-			if(Logging.DEBUG) Log.d(Logging.TAG, "asynchronous monitor NOT started!");
-		}
-
-        //Toast.makeText(this, "BOINC Monitor Service Starting", Toast.LENGTH_SHORT).show();
+        // register and start update task
+        // using .scheduleAtFixedRate() can cause a series of bunched-up runs
+        // when previous executions are delayed (e.g. during clientSetup() )
+        updateTimer.schedule(statusUpdateTask, 0, clientStatusInterval);
 	}
 	
     @Override
@@ -598,10 +689,8 @@ public class Monitor extends Service {
         // Cancel the persistent notification.
     	((NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE)).cancel(getResources().getInteger(R.integer.autostart_notification_id));
         
-    	// Abort the ClientMonitorAsync thread
-    	//
-    	monitorRunning = false;
-		monitorThread.interrupt();
+    	updateBroadcastEnabled = false; // prevent broadcast from currently running update task
+		updateTimer.cancel(); // cancel task
 		
 		 // release locks, if held.
 		clientStatus.setWakeLock(false);
@@ -620,24 +709,12 @@ public class Monitor extends Service {
 		 */
 		return START_STICKY;
     }
-	
-    public void restartMonitor() {
-    	if(Monitor.monitorActive) { //monitor is already active, launch cancelled
-    		if(Logging.DEBUG) Log.d(Logging.TAG, "monitor active - restart cancelled");
-    	}
-    	else {
-        	if(Logging.DEBUG) Log.d(Logging.TAG,"restart monitor");
-        	(new ClientMonitorAsync()).execute(new Integer[0]);
-    	}
-    }
     
-    // force ClientMonitorAsync to start with loop.
-    // This will read client status using RPCs and fire event eventually.
+    // schedule manual status update, without any delay
+    // will fire clientstatuschange Broadcast updon completion
     public void forceRefresh() {
     	if(Logging.DEBUG) Log.d(Logging.TAG,"forceRefresh()");
-    	if(monitorThread != null) {
-    		monitorThread.interrupt();
-    	}
+        updateTimer.schedule(new StatusUpdateTimerTask(), 0);
     }
     
     // exits both, UI and BOINC client. 
@@ -653,9 +730,9 @@ public class Monitor extends Service {
 		}
     	String processName = clientPath + clientName;
     	
-    	monitorRunning = false; // stops ClientMonitorAsync loop
-    	monitorThread.interrupt(); // wakening ClientMonitorAsync from sleep
-    	// ClientMonitorAsync is not using RPC anymore
+    	updateBroadcastEnabled = false; // prevent broadcast from currently running update task
+		updateTimer.cancel(); // cancel task
+    	// no scheduled RPCs anymore
     	
     	// set client status to SETUP_STATUS_CLOSING to adapt layout accordingly
 		if(status!=null)status.setSetupStatus(ClientStatus.SETUP_STATUS_CLOSING,true);
@@ -748,10 +825,10 @@ public class Monitor extends Service {
     		br.close();
     	}
     	catch (FileNotFoundException fnfe) {
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "auth file not found",fnfe);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "auth file not found",fnfe);
     	}
     	catch (IOException ioe) {
-    		if(edu.berkeley.boinc.utils.Logging.LOGLEVEL <= 4) Log.e(Logging.TAG, "ioexception",ioe);
+    		if(Logging.ERROR) Log.e(Logging.TAG, "ioexception",ioe);
     	}
 
 		String authKey = fileData.toString();
@@ -979,8 +1056,10 @@ public class Monitor extends Service {
 			}
 		}
 		
-		if(!msgs.isEmpty()) if(Logging.DEBUG) Log.d(Logging.TAG,"getEventLogMessages: returning array with " + msgs.size() + " entries. for lowerBound: " + lowerBound + " at 0: " + msgs.get(0).seqno + " at " + (msgs.size()-1) + ": " + msgs.get(msgs.size()-1).seqno);
-		else if(Logging.DEBUG) Log.d(Logging.TAG,"getEventLogMessages: returning empty array for lowerBound: " + lowerBound);
+		if(!msgs.isEmpty()) 
+			if(Logging.DEBUG) Log.d(Logging.TAG,"getEventLogMessages: returning array with " + msgs.size() + " entries. for lowerBound: " + lowerBound + " at 0: " + msgs.get(0).seqno + " at " + (msgs.size()-1) + ": " + msgs.get(msgs.size()-1).seqno);
+		else 
+			if(Logging.DEBUG) Log.d(Logging.TAG,"getEventLogMessages: returning empty array for lowerBound: " + lowerBound);
 		return msgs;
 	}
 	
@@ -990,96 +1069,14 @@ public class Monitor extends Service {
 		return rpc.getMessages(seqNo);
 	}
 	
-	// this thread runs the whole time BOINC is running.
-	// it updates the ClientStatus data structure with the client
-	// status received from frequent RPC calls
-	// it also tell the client the current device status of properties
-	// that can only retrieved from Java, e.g. battery status
-	private final class ClientMonitorAsync extends AsyncTask<Integer, Void, Boolean> {
-		private final Boolean showRpcCommands = false;
-		
-		// Frequency of which the monitor updates client status via RPC, to often can cause reduced performance!
-		private Integer clientStatusInterval = getResources().getInteger(R.integer.client_status_refresh_rate_ms);
-		private Integer deviceStatusInterval = getResources().getInteger(R.integer.device_status_refresh_rate_screen_off_ms);
-		
-		// DeviceStatus wrapper class
-		private DeviceStatus deviceStatus = new DeviceStatus(getApplicationContext());
-		
+	// updates the client status via rpc
+	// reports current device status to the client via rpc
+	//
+	// get executed in seperate thread
+	private final class StatusUpdateTimerTask extends TimerTask {
 		@Override
-		protected Boolean doInBackground(Integer... params) {
-			// Save current thread, to interrupt sleep from outside...
-			monitorThread = Thread.currentThread();
-			Boolean sleep = true;
-			while(monitorRunning) {
-				//if(Logging.DEBUG) Log.d(Logging.TAG,"doInBackground() monitor loop...");
-				
-				if(!rpc.connectionAlive()) { //check whether connection is still alive
-					// If connection is not working, either client has not been set up yet or client crashed.
-					clientSetup();
-					sleep = false;
-				} else {
-					// connection alive
-					sleep = true;
-					
-					try{
-						// set devices status
-						deviceStatus.update(); // poll device status
-						Boolean reportStatusSuccess = rpc.reportDeviceStatus(deviceStatus); // transmit device status via rpc
-						if(!reportStatusSuccess) if(Logging.DEBUG) Log.d(Logging.TAG,"reporting device status returned false.");
-						
-						// update client status
-						// run only if screen is actually on
-						if(screenOn) {
-							// retrieve client status
-							if(showRpcCommands) if(Logging.DEBUG) Log.d(Logging.TAG, "getCcStatus");
-							CcStatus status = rpc.getCcStatus();
-							
-							if(showRpcCommands) if(Logging.DEBUG) Log.d(Logging.TAG, "getState"); 
-							CcState state = rpc.getState();
-							
-							if(showRpcCommands) if(Logging.DEBUG) Log.d(Logging.TAG, "getTransers");
-							ArrayList<Transfer>  transfers = rpc.getFileTransfers();
-							
-							if( (status != null) && (state != null) && (state.results != null) && (state.projects != null) && (transfers != null) && (state.host_info != null)) {
-								Monitor.getClientStatus().setClientStatus(status, state.results, state.projects, transfers, state.host_info);
-								// Update status bar notification
-								ClientNotification.getInstance(getApplicationContext()).update();
-							} else {
-								if(Logging.DEBUG) Log.d(Logging.TAG, "client status connection problem");
-							}
-							
-							// check whether monitor is still intended to update, if not, skip broadcast and exit...
-							if(monitorRunning) {
-						        Intent clientStatus = new Intent();
-						        clientStatus.setAction("edu.berkeley.boinc.clientstatus");
-						        getApplicationContext().sendBroadcast(clientStatus);
-							}
-						}
-					}catch(Exception e) {
-						if(Logging.WARNING) Log.w(Logging.TAG, "Monitor.ClientMonitorAsync excpetion: " + e.getMessage());
-					}
-				}
-				
-				if(sleep) {
-					sleep = false;
-					// determine sleep duration based on screen status
-					int sleepMs;
-					if (screenOn) sleepMs = clientStatusInterval;
-					else sleepMs = deviceStatusInterval;
-					if(Logging.VERBOSE) Log.v(Logging.TAG,"monitor sleep for " + sleepMs + " ms.");
-		    		try {
-		    			Thread.sleep(sleepMs);
-		    		} catch(InterruptedException e) {if(Logging.DEBUG) Log.d(Logging.TAG,"monitor thread sleep interrupted");}
-				}
-			}
-
-			return true;
-		}
-		
-		@Override
-		protected void onPostExecute(Boolean success) {
-			if(Logging.DEBUG) Log.d(Logging.TAG, "onPostExecute() monitor exit"); 
-			Monitor.monitorActive = false;
+		public void run() {
+			updateStatus();
 		}
 	}
 
