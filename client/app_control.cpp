@@ -555,6 +555,11 @@ void ACTIVE_TASK::handle_exited_app(int stat) {
 
     cleanup_task();
 
+    if (gstate.run_test_app) {
+        msg_printf(0, MSG_INFO, "test app finished - exiting");
+        exit(0);
+    }
+
     if (!will_restart) {
         copy_output_files();
         int retval = read_stderr_file();
@@ -590,8 +595,8 @@ bool ACTIVE_TASK::temporary_exit_file_present(double& x, char* buf) {
     } else {
         x = y;
     }
-    fgets(buf, 256, f);     // read the \n
-    fgets(buf, 256, f);
+    (void) fgets(buf, 256, f);     // read the \n
+    (void) fgets(buf, 256, f);
     strip_whitespace(buf);
     fclose(f);
     return true;
@@ -892,6 +897,8 @@ int ACTIVE_TASK::read_stderr_file() {
 // This is called when project prefs change,
 // or when a user file has finished downloading.
 //
+// TODO: get rid of this function
+//
 int ACTIVE_TASK::request_reread_prefs() {
     int retval;
     APP_INIT_DATA aid;
@@ -901,10 +908,12 @@ int ACTIVE_TASK::request_reread_prefs() {
     init_app_init_data(aid);
     retval = write_app_init_file(aid);
     if (retval) return retval;
+#if 0
     graphics_request_queue.msg_queue_send(
         xml_graphics_modes[MODE_REREAD_PREFS],
         app_client_shm.shm->graphics_request
     );
+#endif
     return 0;
 }
 
@@ -1054,9 +1063,10 @@ void ACTIVE_TASK_SET::suspend_all(int reason) {
         if (reason == SUSPEND_REASON_CPU_THROTTLE) {
             if (atp->result->dont_throttle()) continue;
             // if we're doing CPU throttling,
-            // don't suspend CPU apps that use < 1 CPU
+            // don't suspend apps that use < .5 CPU (like GPU and NCI apps)
             //
-            if (!atp->result->uses_coprocs() && atp->app_version->avg_ncpus < 1) continue;
+            if (atp->app_version->avg_ncpus < .5) continue;
+
             atp->preempt(REMOVE_NEVER);
             continue;;
         }
@@ -1440,7 +1450,7 @@ void ACTIVE_TASK::read_task_state_file() {
     FILE* f = fopen(path, "r");
     if (!f) return;
     buf[0] = 0;
-    fread(buf, 1, 4096, f);
+    (void) fread(buf, 1, 4096, f);
     fclose(f);
     buf[4095] = 0;
     double x;

@@ -32,7 +32,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_entry"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
     
     <!-- tabbed layout, for normal manager operation -->
 	<TabHost 
@@ -127,8 +128,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="@string/main_error"
-	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:onClick="reinitClient" />
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
 	
 	    <ImageView
 	        android:id="@+id/error_imageView1"
@@ -137,8 +137,7 @@
 	        android:layout_marginBottom="30dip"
 	        android:layout_marginTop="30dip"
 	        android:contentDescription="@string/main_error"
-	        android:src="@drawable/reloadw48"
-	        android:onClick="reinitClient" />
+	        android:src="@drawable/reloadb48" />
 	
 	    <TextView
 	        android:id="@+id/error_textView2"
@@ -148,8 +147,7 @@
 	        android:layout_marginRight="20dip"
 	        android:gravity="center"
 	        android:text="@string/main_error_long"
-	        android:textAppearance="?android:attr/textAppearanceMedium"
-	        android:onClick="reinitClient" />
+	        android:textAppearance="?android:attr/textAppearanceMedium"/>
 	
 	</LinearLayout>
 </LinearLayout>

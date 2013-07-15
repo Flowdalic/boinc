@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -99,7 +100,7 @@ public class ClientStatus {
 	private Boolean networkParseError = false; //indicates that status could not be parsed and is therefore invalid
 	
 	// supported projects
-	public ArrayList<ProjectInfo> supportedProjects;
+	private ArrayList<ProjectInfo> supportedProjects = new ArrayList<ProjectInfo>();
 	
 	public ClientStatus(Context ctx) {
 		this.ctx = ctx;
@@ -119,6 +120,7 @@ public class ClientStatus {
 	// call to acquire or release resources held by the WakeLock.
 	// acquisition: every time the Monitor loop calls setClientStatus and computingStatus == COMPUTING_STATUS_COMPUTING
 	// release: every time acquisition criteria is not met , and in Monitor.onDestroy()
+	@SuppressLint("Wakelock")
 	public void setWakeLock(Boolean acquire) {
 		try {
 			if(wakeLock.isHeld() == acquire) return; // wakeLock already in desired state
@@ -199,7 +201,11 @@ public class ClientStatus {
 		this.prefs = prefs;
 	}
 	
-	public synchronized ArrayList<ProjectInfo> getSupprtedProjects () {
+	public synchronized void setSupportedProjects (ArrayList<ProjectInfo> projects) {
+		this.supportedProjects = projects;
+	}
+	
+	public synchronized ArrayList<ProjectInfo> getSupportedProjects () {
 		return supportedProjects;
 	}
 	
@@ -293,11 +299,11 @@ public class ClientStatus {
 				}
 				if(numberOfLoadedImages >= maxImagesPerProject) continue;
 				
-				// get file paths
+				// get file paths of soft link files
 				File dir = new File(project.project_dir);
 				File[] foundFiles = dir.listFiles(new FilenameFilter() {
 				    public boolean accept(File dir, String name) {
-				        return name.startsWith("slideshow_");
+				        return name.startsWith("slideshow_") && !name.endsWith(".png");
 				    }
 				});
 				if(foundFiles == null) continue; // prevent NPE
@@ -449,8 +455,6 @@ public class ClientStatus {
 				computingStatus = COMPUTING_STATUS_NEVER;
 				computingSuspendReason = status.task_suspend_reason; // = 4 - SUSPEND_REASON_USER_REQ????
 				computingParseError = false;
-				setWakeLock(false);
-				setWifiLock(false);
 				return;
 			}
 			if(status.task_mode == BOINCDefs.RUN_MODE_AUTO && status.task_suspend_reason == BOINCDefs.SUSPEND_REASON_CPU_THROTTLE) {
@@ -458,8 +462,6 @@ public class ClientStatus {
 				computingStatus = COMPUTING_STATUS_COMPUTING;
 				computingSuspendReason = status.task_suspend_reason; // = 64 - SUSPEND_REASON_CPU_THROTTLE
 				computingParseError = false;
-				setWakeLock(true);
-				setWifiLock(true);
 				return;
 				
 			}
@@ -467,8 +469,6 @@ public class ClientStatus {
 				computingStatus = COMPUTING_STATUS_SUSPENDED;
 				computingSuspendReason = status.task_suspend_reason;
 				computingParseError = false;
-				setWakeLock(false);
-				setWifiLock(false);
 				return;
 			}
 			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED)) {
@@ -487,15 +487,11 @@ public class ClientStatus {
 					computingStatus = COMPUTING_STATUS_COMPUTING;
 					computingSuspendReason = status.task_suspend_reason; // = 0 - SUSPEND_NOT_SUSPENDED
 					computingParseError = false;
-					setWakeLock(true);
-					setWifiLock(true);
 					return;
 				} else { // client "is able but idle"
 					computingStatus = COMPUTING_STATUS_IDLE;
 					computingSuspendReason = status.task_suspend_reason; // = 0 - SUSPEND_NOT_SUSPENDED
 					computingParseError = false;
-					setWakeLock(false);
-					setWifiLock(true);
 					return;
 				}
 			}
@@ -537,11 +533,14 @@ public class ClientStatus {
 	// and returns absolute path to an image file.
 	private String parseSoftLinkToAbsPath(String pathOfSoftLink, String projectDir){
 		//if(Logging.DEBUG) Log.d(Logging.TAG,"parseSoftLinkToAbsPath() for path: " + pathOfSoftLink);
+		// setup file
+		File softLink = new File(pathOfSoftLink);
+		if (!softLink.exists()) return null; // return if file does not exist
 		
 		// reading text of symbolic link
 		String softLinkContent = "";
 		try {
-			FileInputStream stream = new FileInputStream(new File(pathOfSoftLink));
+			FileInputStream stream = new FileInputStream(softLink);
 			try {
 				FileChannel fc = stream.getChannel();
 			    MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
@@ -564,7 +563,7 @@ public class ClientStatus {
 		Pattern statIconPattern = Pattern.compile("/(\\w+?\\.?\\w*?)</soft_link>");
 		Matcher m = statIconPattern.matcher(softLinkContent);
 		if(!m.find()) {
-			if(Logging.WARNING) Log.w(Logging.TAG,"parseSoftLinkToAbsPath() could not match pattern in soft link!");
+			if(Logging.WARNING) Log.w(Logging.TAG,"parseSoftLinkToAbsPath() could not match pattern in soft link file: " + pathOfSoftLink);
 			return null;
 		}
 		String fileName = m.group(1);

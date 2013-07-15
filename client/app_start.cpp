@@ -22,9 +22,11 @@
 #ifdef _WIN32
 #include "boinc_win.h"
 #include "win_util.h"
+#define unlink _unlink
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #define strdup   _strdup
+#define getcwd  _getcwd
 #endif
 #else
 #include "config.h"
@@ -491,7 +493,9 @@ int ACTIVE_TASK::copy_output_files() {
 // else
 //   ACTIVE_TASK::task_state is PROCESS_EXECUTING
 //
-int ACTIVE_TASK::start() {
+// If "test" is set, we're doing the API test; just run "test_app".
+//
+int ACTIVE_TASK::start(bool test) {
     char exec_name[256], file_path[MAXPATHLEN], buf[256], exec_path[MAXPATHLEN];
     char cmdline[80000];    // 64KB plus some extra
     unsigned int i;
@@ -562,7 +566,12 @@ int ACTIVE_TASK::start() {
 
     // set up applications files
     //
-    strcpy(exec_name, "");
+    if (test) {
+        strcpy(exec_name, "test_app");
+        strcpy(exec_path, "test_app");
+    } else {
+        strcpy(exec_name, "");
+    }
     for (i=0; i<app_version->app_files.size(); i++) {
         fref = app_version->app_files[i];
         fip = fref.file_info;
@@ -850,7 +859,10 @@ int ACTIVE_TASK::start() {
     char* argv[100];
     char current_dir[1024];
 
-    getcwd(current_dir, sizeof(current_dir));
+    if (getcwd(current_dir, sizeof(current_dir)) == NULL) {
+        sprintf(buf, "Can't get cwd");
+        goto error;
+    }
 
     sprintf(cmdline, "%s %s",
         wup->command_line.c_str(), app_version->cmdline
@@ -997,7 +1009,7 @@ int ACTIVE_TASK::start() {
 
         // hook up stderr to a specially-named file
         //
-        freopen(STDERR_FILE, "a", stderr);
+        (void) freopen(STDERR_FILE, "a", stderr);
 
         if (!config.no_priority_change) {
 #if HAVE_SETPRIORITY
@@ -1017,7 +1029,11 @@ int ACTIVE_TASK::start() {
             }
 #endif
         }
-        sprintf(buf, "../../%s", exec_path);
+        if (test) {
+            strcpy(buf, exec_path);
+        } else {
+            sprintf(buf, "../../%s", exec_path);
+        }
         if (g_use_sandbox) {
             char switcher_path[MAXPATHLEN];
             sprintf(switcher_path, "../../%s/%s",
@@ -1041,7 +1057,7 @@ int ACTIVE_TASK::start() {
             parse_command_line(cmdline, argv+1);
             retval = execv(buf, argv);
         }
-        msg_printf(wup->project, MSG_INTERNAL_ERROR,
+        fprintf(stderr,
             "Process creation (%s) failed: %s, errno=%d\n",
             buf, boincerror(retval), errno
         );
@@ -1063,6 +1079,9 @@ int ACTIVE_TASK::start() {
     // go here on error; "buf" contains error message, "retval" is nonzero
     //
 error:
+    if (test) {
+        return retval;
+    }
 
     // if something failed, it's possible that the executable was munged.
     // Verify it to trigger another download.
@@ -1142,7 +1161,8 @@ union headeru {
 
 // Read the mach-o headers to determine the architectures
 // supported by executable file.
-// Returns 1 if application can run natively on i386 / x86_64 Macs, else returns 0.
+// Returns 1 if application can run natively on i386 / x86_64 Macs,
+// else returns 0.
 //
 int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     FILE *f;
@@ -1208,3 +1228,64 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     return result;
 }
 #endif
+
+// The following runs "test_app" and sends it various messages.
+// Used for testing the runtime system.
+//
+void run_test_app() {
+    WORKUNIT wu;
+    PROJECT project;
+    APP app;
+    APP_VERSION av;
+    ACTIVE_TASK at;
+    ACTIVE_TASK_SET ats;
+    RESULT result;
+
+    char buf[256];
+    getcwd(buf, sizeof(buf));   // so we can see where we're running
+
+    gstate.run_test_app = true;
+
+    wu.project = &project;
+    wu.app = &app;
+    wu.command_line = string("--critical_section");
+
+    strcpy(app.name, "test app");
+    av.init();
+    av.avg_ncpus = 1;
+
+    strcpy(result.name, "test result");
+    result.avp = &av;
+    result.wup = &wu;
+    result.project = &project;
+    result.app = &app;
+
+    at.result = &result;
+    at.wup = &wu;
+    at.app_version = &av;
+    at.max_elapsed_time = 1e6;
+    at.max_disk_usage = 1e14;
+    at.max_mem_usage = 1e14;
+    strcpy(at.slot_dir, ".");
+
+    ats.active_tasks.push_back(&at);
+
+    unlink("boinc_finish_called");
+    unlink("boinc_lockfile");
+    unlink("boinc_temporary_exit");
+    unlink("stderr.txt");
+    int retval = at.start(true);
+    if (retval) {
+        fprintf(stderr, "start() failed: %s\n", boincerror(retval));
+    }
+    while (1) {
+        gstate.now = dtime();
+        at.preempt(REMOVE_NEVER);
+        ats.poll();
+        boinc_sleep(.1);
+        at.unsuspend();
+        ats.poll();
+        boinc_sleep(.2);
+        //at.request_reread_prefs();
+    }
+}

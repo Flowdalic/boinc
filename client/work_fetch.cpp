@@ -474,7 +474,7 @@ void WORK_FETCH::piggyback_work_request(PROJECT* p) {
     clear_request();
     if (config.fetch_minimal_work && gstate.had_or_requested_work) return;
     if (p->non_cpu_intensive) {
-        if (!has_a_job_in_progress(p)) {
+        if (!has_a_job_in_progress(p) && !p->dont_request_more_work) {
             rsc_work_fetch[0].req_secs = 1;
         }
         return;
@@ -664,6 +664,17 @@ void WORK_FETCH::setup() {
         PROJECT* p = rp->project;
         p->sched_priority -= rp->estimated_flops_remaining()/max_queued_flops;
     }
+
+    // don't request work from projects w/ > 1000 runnable jobs
+    //
+    int job_limit = 1000;
+    for (unsigned int i=0; i<gstate.projects.size(); i++) {
+        PROJECT* p = gstate.projects[i];
+        if (p->pwf.n_runnable_jobs > job_limit && !p->pwf.cant_fetch_work_reason) {
+            p->pwf.cant_fetch_work_reason = CANT_FETCH_WORK_TOO_MANY_RUNNABLE;
+        }
+    }
+
     std::sort(
         gstate.projects.begin(),
         gstate.projects.end(),

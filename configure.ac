@@ -6,7 +6,7 @@ dnl not sure exactly what the minimum version is (but 2.13 wont work)
 AC_PREREQ(2.58)
 
 dnl Set the BOINC version here.  You can also use the set-version script.
-AC_INIT(BOINC, 7.1.21)
+AC_INIT(BOINC, 7.2.4)
 AC_CONFIG_MACRO_DIR([m4])
 LIBBOINC_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\./:/g'`
 AC_SUBST([LIBBOINC_VERSION])
@@ -465,7 +465,7 @@ SAH_CHECK_LIB([cups], [md5_finish],
 LIBS=${SAVELIBS_AAF}
 
 dnl check for pthread
-ACX_PTHREAD(AC_DEFINE(HAVE_PTHREAD,1, [Have pthread]))
+AX_PTHREAD(AC_DEFINE(HAVE_PTHREAD,1, [Have pthread]))
 dnl There are better ways to do this.
 dnl CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
 dnl CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
