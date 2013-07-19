@@ -1,9 +1,13 @@
 boinc (7.2.4+dfsg-1exp1) experimental; urgency=low
 
+  [ Steffen Moeller ]
   * New upstream version.
     - reduced clang warnings patches
 
- -- Steffen Moeller <moeller@debian.org>  Tue, 16 Jul 2013 00:40:29 +0200
+  [ Guo Yixuan ]
+  * Removed a workaround (for seti segfault).
+
+ -- Guo Yixuan <culu.gyx@gmail.com>  Wed, 24 Jul 2013 14:21:51 +0800
 
 boinc (7.1.21+dfsg-1exp2) experimental; urgency=low
 

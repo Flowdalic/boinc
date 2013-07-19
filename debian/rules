@@ -238,9 +238,9 @@ override_dh_auto_configure:
 update-boinc-applinks.1: debian/manpages/update-boinc-applinks.xml
 	docbook2x-man debian/manpages/update-boinc-applinks.xml
 
-# noopt
-CFLAGS_noopt = $(subst -O2,-O0,$(CFLAGS))
-CXXFLAGS_noopt = $(subst -O2,-O0,$(CXXFLAGS))
+# noopt, not necessary
+# CFLAGS_noopt = $(subst -O2,-O0,$(CFLAGS))
+# CXXFLAGS_noopt = $(subst -O2,-O0,$(CXXFLAGS))
 # noopt and no hardening
 CFLAGS_plain = -g -O0 -Wall
 CXXFLAGS_plain = $(CFLAGS_plain)
@@ -254,7 +254,7 @@ override_dh_auto_build: update-boinc-applinks.1
 	@echo "**** CXX=$(CXX) *****"
 	@echo
 	# disable optimization in api/, for SETI to work
-	$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
+	#$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
 ifneq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
 	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain)" CXXFLAGS="$(CXXFLAGS_plain)"
