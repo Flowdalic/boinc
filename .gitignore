@@ -12,6 +12,7 @@ libtool
 Makefile
 Makefile.in
 stamp-h1
+test-driver
 override_dh_auto_install
 *.o
 *.la
@@ -20,7 +21,6 @@ override_dh_auto_install
 *.a
 */.deps/
 */.libs/
-py/build/.*
 debian/*.debhelper
 debian/*.debhelper.log
 debian/*.substvars
@@ -43,6 +43,7 @@ debian/boinc-dbg/
 debian/boinc-dev/
 debian/boinc-manager/
 debian/boinc-server/
+debian/boinc-server-dbg/
 debian/boinc/
 debian/files
 debian/tmp/
@@ -76,6 +77,7 @@ samples/example_app/uc2
 samples/sleeper/sleeper
 samples/worker/worker
 samples/wrapper/wrapper
+sched/adjust_user_priority
 sched/antique_file_deleter
 sched/boinc_path_config.py
 sched/census
@@ -99,6 +101,7 @@ sched/sample_work_generator
 sched/sched_driver
 sched/show_shmem
 sched/single_job_assimilator
+sched/size_regulator
 sched/status
 sched/stop
 sched/transitioner
@@ -131,6 +134,8 @@ test/version.inc
 py/Boinc/version.py
 py/boinc_path_config.py
 py/setup.py
+py/build/
+py/lib.linux-x86_64-2.7/
 test/boinc_path_config.py
 tools/boinc_path_config.py
 debian/control
