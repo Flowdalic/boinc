@@ -1,7 +1,5 @@
-Index: boinc_debian_new/lib/coproc.cpp
-===================================================================
---- boinc_debian_new.orig/lib/coproc.cpp
-+++ boinc_debian_new/lib/coproc.cpp
+--- a/lib/coproc.cpp
++++ b/lib/coproc.cpp
 @@ -584,7 +584,7 @@
      cuda_version = 0;
      display_driver_version = 0;
