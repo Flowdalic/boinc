@@ -21,9 +21,13 @@ public class ClientNotification {
 	private NotificationManager nm;
 	private Integer notificationId;
 	private PendingIntent contentIntent;
-
+	private Notification n = null;
+	
 	private int mOldComputingStatus = -1;
 	private int mOldSuspendReason = -1;
+	// debug foreground state by running
+	// adb shell: dumpsys activity services edu.berkeley.boinc
+	private boolean foreground = false;
 
 	/**
 	 * Returns a reference to a singleton ClientNotification object.
@@ -50,39 +54,51 @@ public class ClientNotification {
 	 * Updates notification with client's current status
 	 */
 	public synchronized void update() {
-		// check whether notification is allowed in preferences	
-		if (!Monitor.getAppPrefs().getShowNotification()) {
-			nm.cancel(notificationId);
-			clientNotification.mOldComputingStatus = -1;
-			return;
-		}
-
-		// try to get current client status from monitor
-		ClientStatus updatedStatus;
-		try{
-			updatedStatus  = Monitor.getClientStatus();
-		} catch (Exception e){
-			if(Logging.WARNING) Log.w(Logging.TAG,"ClientNotification: Could not load data, clientStatus not initialized.");
-			return;
-		}
-		
-		// update notification
-		if (clientNotification.mOldComputingStatus == -1 
-				|| updatedStatus.computingStatus.intValue() != clientNotification.mOldComputingStatus
-				|| (updatedStatus.computingStatus == ClientStatus.COMPUTING_STATUS_SUSPENDED
-				&& updatedStatus.computingSuspendReason != clientNotification.mOldSuspendReason)) {
+		try {
+			ClientStatus updatedStatus = Monitor.getClientStatus();
 			
-			nm.notify(notificationId, buildNotification(updatedStatus));
-			
-			// save status for comparison next time
-			clientNotification.mOldComputingStatus = updatedStatus.computingStatus;
-			clientNotification.mOldSuspendReason = updatedStatus.computingSuspendReason;
+			// update notification, only after change in status
+			if (clientNotification.mOldComputingStatus == -1 
+					|| updatedStatus.computingStatus.intValue() != clientNotification.mOldComputingStatus
+					|| (updatedStatus.computingStatus == ClientStatus.COMPUTING_STATUS_SUSPENDED
+					&& updatedStatus.computingSuspendReason != clientNotification.mOldSuspendReason)) {
+				
+				buildNotification(updatedStatus);
+				
+				// update notification
+				if(foreground || Monitor.getAppPrefs().getShowNotification()) nm.notify(notificationId, n);
+				
+				// save status for comparison next time
+				clientNotification.mOldComputingStatus = updatedStatus.computingStatus;
+				clientNotification.mOldSuspendReason = updatedStatus.computingSuspendReason;
+			}
+		} catch (Exception e) {if(Logging.WARNING) Log.d(Logging.TAG, "ClientNotification.update failed.");}
+	}
+	
+	// called by Monitor to enable foreground with notification
+	public synchronized void setForeground(Boolean setForeground, Monitor service) {
+		if(foreground != setForeground) {
+			if(setForeground) {
+				// check whether notification is available
+				if (n == null) update();
+				// set service foreground
+				service.startForeground(notificationId, n);
+				if(Logging.DEBUG) Log.d(Logging.TAG,"ClientNotification.setForeground() start service as foreground.");
+				foreground = true;
+			} else {
+				// set service background
+				foreground = false;
+				Boolean remove = !Monitor.getAppPrefs().getShowNotification();
+				service.stopForeground(remove);
+				if(Logging.DEBUG) Log.d(Logging.TAG,"ClientNotification.setForeground() stop service as foreground.");
+			}
 		}
 	}
 	
-	// cancels notification, called during client shutdown
+	// cancels notification, called during client shutdown or when disabling preference
 	public synchronized void cancel() {
 		nm.cancel(notificationId);
+		clientNotification.mOldComputingStatus = -1;
 	}
 
 	private Notification buildNotification(ClientStatus status) {
@@ -92,7 +108,7 @@ public class ClientNotification {
 		String statusText = status.getCurrentStatusString();
 		
 		// build notification
-		Notification notification = new NotificationCompat.Builder(context)
+		n = new NotificationCompat.Builder(context)
         	.setContentTitle(context.getString(R.string.app_name))
         	.setContentText(statusText)
         	.setSmallIcon(getIcon(computingStatus))
@@ -101,7 +117,7 @@ public class ClientNotification {
         	.setOngoing(true)
         	.build();
 		
-		return notification;
+		return n;
 	}
 
 	// returns resource id of icon

@@ -65,7 +65,9 @@
     <string name="attachproject_login_header_creation_disabled">Project does currently now allow creation of new accounts!</string>
     <string name="attachproject_login_button_registration">Register</string>
     <string name="attachproject_login_button_login">Sign in</string>
+    <string name="attachproject_login_button_forgotpw">Forgot Password</string>
     <string name="attachproject_login_error_toast">Contacting project failed!</string>
+    <string name="attachproject_login_attached">Attached</string>
     	<!-- project registration -->
     <string name="attachproject_registration_header">Account registration for </string>
     <string name="attachproject_registration_header_url">Project:</string>
@@ -76,7 +78,6 @@
     <string name="attachproject_registration_header_pwd_confirm">&#8230; Retype:</string>
     <string name="attachproject_registration_button">Create</string>
     	<!-- error strings -->
-    <string name="attachproject_error_project_exists">Project is already attached</string>
     <string name="attachproject_error_wrong_name">User not found</string>
     <string name="attachproject_error_short_pwd">Password too short</string>
     <string name="attachproject_error_no_internet">Connection failure</string>
@@ -159,7 +160,7 @@
 	<string name="prefs_network_daily_xfer_limit_mb_description">Limits the daily data traffic caused by BOINC.</string>
 	<string name="prefs_network_wifi_only_header">Transfer tasks on WiFi only</string>
 	<string name="prefs_autostart_header">Autostart</string>
-	<string name="prefs_show_notification_header">Show notifications</string>
+	<string name="prefs_show_notification_header">Show notification when suspended</string>
 	<string name="prefs_cpu_number_cpus_header">Used CPU cores</string>
 	<string name="prefs_cpu_number_cpus_description">Limits the number of CPU cores BOINC uses for computation.</string>
 	<string name="prefs_cpu_other_load_suspension_header">Pause at CPU usage above</string>

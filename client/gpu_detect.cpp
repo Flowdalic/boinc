@@ -18,7 +18,9 @@
 
 // client-specific GPU code.  Mostly GPU detection
 
+#ifndef _WIN32
 #define USE_CHILD_PROCESS_TO_DETECT_GPUS 1
+#endif
 
 #include "cpp.h"
 
@@ -328,7 +330,7 @@ int COPROCS::read_coproc_info_file(vector<string> &warnings) {
     nvidia_opencls.clear();
     intel_gpu_opencls.clear();
 
-    f = fopen(COPROC_INFO_FILENAME, "r");
+    f = boinc_fopen(COPROC_INFO_FILENAME, "r");
     if (!f) return ERR_FOPEN;
     XML_PARSER xp(&mf);
     mf.init_file(f);
@@ -433,10 +435,20 @@ int COPROCS::launch_child_process_to_detect_gpus() {
 #endif
     char quotedDataDir[MAXPATHLEN+2];
     char dataDir[MAXPATHLEN];
-    int i;
     int retval = 0;
     
-    boinc_delete_file(COPROC_INFO_FILENAME);
+    retval = boinc_delete_file(COPROC_INFO_FILENAME);
+    if (retval) {
+        msg_printf(0, MSG_INFO,
+            "Failed to delete old %s. error code %d",
+            COPROC_INFO_FILENAME, retval
+        );
+    } else {
+        for (;;) {
+            if (!boinc_file_exists(COPROC_INFO_FILENAME)) break;
+            boinc_sleep(0.01);
+        }
+    }
     
     boinc_getcwd(dataDir);
 
@@ -482,6 +494,7 @@ int COPROCS::launch_child_process_to_detect_gpus() {
         0,
         prog
     );
+
     chdir(dataDir);
     
     if (retval) {
@@ -493,18 +506,14 @@ int COPROCS::launch_child_process_to_detect_gpus() {
         }
         return retval;
     }
-    
-    // Wait for child to run and exit
-    for (i=0; i<300; ++i) {
-        if (process_exists(prog)) break;
-        if (boinc_file_exists(COPROC_INFO_FILENAME)) break;
-        boinc_sleep(0.01);
+
+    retval = get_exit_status(prog);
+    if (retval) {
+        msg_printf(0, MSG_INFO,
+            "GPU detection failed. error code %d",
+            retval
+        );
     }
-    
-    for (i=0; i<300; ++i) {
-        if (!process_exists(prog)) break;
-        boinc_sleep(0.01);
-    }
-    
+
     return 0;
 }
