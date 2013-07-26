@@ -49,7 +49,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import edu.berkeley.boinc.AppPreferences;
 import edu.berkeley.boinc.R;
@@ -106,13 +105,6 @@ public class Monitor extends Service {
 	// includes network communication => don't call from UI thread!
 	private Boolean clientSetup() {
 		if(Logging.DEBUG) Log.d(Logging.TAG,"Monitor.clientSetup()");
-		
-		// initialize full wakelock.
-		// gets used if client has to be started from scratch
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		WakeLock setupWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, Logging.TAG);
-		// do not acquire here, otherwise screen turns on, every time rpc connection
-		// gets reconnected.
 		
 		// try to get current client status from monitor
 		ClientStatus status;
@@ -172,14 +164,8 @@ public class Monitor extends Service {
 		Integer clientPid = getPidForProcessName(clientProcessName);
 		if(clientPid == null) {
         	if(Logging.DEBUG) Log.d(Logging.TAG, "Starting the BOINC client");
-    		// wake up device and acquire full WakeLock here to allow BOINC client to detect
-    		// all available CPU cores if not acquired and device in power saving mode, client
-    		// might detect fewer CPU cores than available.
-    		// Lock needs to be release, before return!
-    		setupWakeLock.acquire();
 			if (!runClient()) {
 	        	if(Logging.DEBUG) Log.d(Logging.TAG, "BOINC client failed to start");
-	        	setupWakeLock.release();
 				return false;
 			}
 		}
@@ -223,9 +209,6 @@ public class Monitor extends Service {
 			status.setSetupStatus(ClientStatus.SETUP_STATUS_ERROR,true);
 		}
 		
-		try{
-			setupWakeLock.release(); // throws exception if it has not been acquired before
-		} catch(Exception e){}
 		return connected;
 	}
 	
@@ -354,31 +337,39 @@ public class Monitor extends Service {
     // updates ClientStatus data structure with values received from client via rpc calls.
     private void updateStatus(){
 		// check whether RPC client connection is alive
-		if(!rpc.connectionAlive()) clientSetup(); // start setup routine
+		if(!rpc.connectionAlive()) {
+			clientSetup(); // start setup routine
+			reportDeviceStatus();
+			readClientStatus(true); // read initial data
+		}
 		
     	if(!screenOn && screenOffStatusOmitCounter < deviceStatusIntervalScreenOff) screenOffStatusOmitCounter++; // omit status reporting according to configuration
     	else {
     		// screen is on, or omit counter reached limit
     		reportDeviceStatus();
-    		readClientStatus(); // readClientStatus is also required when screen is off, otherwise no wakeLock acquisition.
+    		readClientStatus(false); // readClientStatus is also required when screen is off, otherwise no wakeLock acquisition.
     	}
     }
     
     // reads client status via rpc calls
     // if screen off, only computing status to adjust wakelocks
-    private void readClientStatus() {
+    private void readClientStatus(Boolean forceCompleteUpdate) {
     	try{
-    		// read ccStatus and adjust wakelocks independently of screen status
+    		// read ccStatus and adjust wakelocks and service state independently of screen status
+    		// wake locks and foreground enabled when Client is not suspended, therefore also during
+    		// idle.
     		CcStatus status = rpc.getCcStatus();
-    		Boolean computationEnabled = (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED);
-    		if(Logging.VERBOSE) Log.d(Logging.TAG,"readClientStatus(): computation enabled: " + computationEnabled);
-			Monitor.getClientStatus().setWifiLock(computationEnabled);
-			Monitor.getClientStatus().setWakeLock(computationEnabled);
+    		Boolean computing = (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED);
+    		if(Logging.VERBOSE) Log.d(Logging.TAG,"readClientStatus(): computation enabled: " + computing);
+			Monitor.getClientStatus().setWifiLock(computing);
+			Monitor.getClientStatus().setWakeLock(computing);
+			ClientNotification.getInstance(getApplicationContext()).setForeground(computing, this);
     		
 			// complete status read, depending on screen status
     		// screen off: only read computing status to adjust wakelock, do not send broadcast
     		// screen on: read complete status, set ClientStatus, send broadcast
-	    	if(screenOn) {
+			// forceCompleteUpdate: read complete status, independently of screen setting
+	    	if(screenOn || forceCompleteUpdate) {
 	    		// complete status read, with broadcast
 				if(Logging.VERBOSE) Log.d(Logging.TAG, "readClientStatus(): screen on, get complete status");
 				CcState state = rpc.getState();
@@ -399,6 +390,7 @@ public class Monitor extends Service {
 			        getApplicationContext().sendBroadcast(clientStatus);
 				}
 	    	} 
+			
 		}catch(Exception e) {
 			if(Logging.ERROR) Log.e(Logging.TAG, "Monitor.readClientStatus excpetion: " + e.getMessage(),e);
 		}
@@ -641,7 +633,7 @@ public class Monitor extends Service {
      */
 	@Override
     public void onCreate() {
-		if(Logging.DEBUG) Log.d(Logging.TAG,"Monitor onCreate()");
+		if(Logging.ERROR) Log.d(Logging.TAG,"Monitor onCreate()");
 		
 		// populate attributes with XML resource values
 		clientPath = getString(R.string.client_path); 
@@ -681,7 +673,7 @@ public class Monitor extends Service {
 	
     @Override
     public void onDestroy() {
-    	if(Logging.DEBUG) Log.d(Logging.TAG,"Monitor onDestroy()");
+    	if(Logging.ERROR) Log.d(Logging.TAG,"Monitor onDestroy()");
     	
     	// remove screen on/off receiver
     	unregisterReceiver(screenOnOffReceiver);
@@ -700,7 +692,7 @@ public class Monitor extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {	
     	//this gets called after startService(intent) (either by BootReceiver or AndroidBOINCActivity, depending on the user's autostart configuration)
-    	if(Logging.DEBUG) Log.d(Logging.TAG, "Monitor onStartCommand()");
+    	if(Logging.ERROR) Log.d(Logging.TAG, "Monitor onStartCommand()");
 		/*
 		 * START_STICKY causes service to stay in memory until stopSelf() is called, even if all
 		 * Activities get destroyed by the system. Important for GUI keep-alive
