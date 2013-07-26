@@ -19,8 +19,8 @@ Build-Depends: debhelper (>= 9), po-debconf, pkg-config,
  libxcb-util0-dev, libxcb-dpms0-dev,
  libxss-dev, libxext-dev
 Homepage: http://boinc.berkeley.edu/
-Vcs-Git: git://git.debian.org/git/pkg-boinc/boinc.git
-Vcs-Browser: http://git.debian.org/?p=pkg-boinc/boinc.git
+Vcs-Git: git://anonscm.debian.org/pkg-boinc/boinc.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-boinc/boinc.git
 
 Package: boinc
 @Architecture: all
