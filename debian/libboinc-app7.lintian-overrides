@@ -2,4 +2,4 @@
 # libboinc-api7. It is not.
 libboinc-app7 binary: package-name-doesnt-match-sonames
 # built with -O0, for -O2 cause boinc-app-seti segfault
-libboinc-app7 binary: hardening-no-fortify-functions
+#libboinc-app7 binary: hardening-no-fortify-functions
