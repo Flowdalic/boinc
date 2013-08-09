@@ -62,8 +62,8 @@ Package: boinc
 @Architecture: amd64 i386
 @Section: contrib/net
 @Priority: extra
-@Depends: ${misc:Depends}, boinc, libcuda1|nvidia-current,
-@Recommends: libcuda1-ia32 [amd64]|nvidia-current [amd64], ia32-libs [amd64]|nvidia-current [amd64]
+@Depends: ${misc:Depends}, boinc, libcuda1 | nvidia-current | libcuda-5.0-1,
+@Recommends: libcuda1-ia32 [amd64]|nvidia-current [amd64]|libcuda-5.0-1 [amd64], ia32-libs [amd64]|nvidia-current [amd64]|libcuda-5.0-1 [amd64]
 @Description: metapackage for CUDA-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
