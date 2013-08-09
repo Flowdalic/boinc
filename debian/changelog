@@ -1,6 +1,7 @@
 boinc (7.2.7+dfsg-2) unstable; urgency=low
 
-  * Build-depend on nvidia-current | libcuda-5.0-1 (LP: #1129409).
+  * boinc-nvidia-cuda depends on libcuda1 | nvidia-current | libcuda-5.0-1
+    (LP: #1129409).
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 09 Aug 2013 09:33:44 +0200
 
