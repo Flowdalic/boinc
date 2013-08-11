@@ -1,3 +1,9 @@
+boinc (7.2.10+dfsg-1exp1) experimental; urgency=low
+
+  * New upstream release, enabled server building.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 12 Aug 2013 00:43:09 +0200
+
 boinc (7.2.10+dfsg-1) unstable; urgency=low
 
   * New upstream release, patch refresh.
