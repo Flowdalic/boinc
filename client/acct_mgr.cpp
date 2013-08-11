@@ -156,6 +156,7 @@ int ACCT_MGR_OP::do_rpc(
             "      <dont_request_more_work>%d</dont_request_more_work>\n"
             "      <detach_when_done>%d</detach_when_done>\n"
             "      <ended>%d</ended>\n"
+            "      <resource_share>%f</resource_share>\n"
             "   </project>\n",
             p->master_url,
             p->project_name,
@@ -167,7 +168,8 @@ int ACCT_MGR_OP::do_rpc(
             p->attached_via_acct_mgr?1:0,
             p->dont_request_more_work?1:0,
             p->detach_when_done?1:0,
-            p->ended?1:0
+            p->ended?1:0,
+            p->resource_share
         );
     }
     MIOFILE mf;
@@ -639,6 +641,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
             }
         }
 
+#ifdef USE_NET_PREFS
         bool read_prefs = false;
         if (strlen(host_venue) && strcmp(host_venue, gstate.main_host_venue)) {
             safe_strcpy(gstate.main_host_venue, host_venue);
@@ -662,6 +665,7 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
         if (read_prefs) {
             gstate.read_global_prefs();
         }
+#endif
 
         handle_sr_feeds(rss_feeds, &gstate.acct_mgr_info);
 
