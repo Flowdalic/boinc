@@ -1,4 +1,10 @@
-boinc (7.2.7+dfsg-2) unstable; urgency=low
+boinc (7.2.10+dfsg-1) unstable; urgency=low
+
+  * New upstream release, patch refresh.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 12 Aug 2013 00:39:28 +0200
+
+boinc (7.2.7+dfsg-2) UNRELEASED; urgency=low
 
   * boinc-nvidia-cuda depends on libcuda1 | nvidia-current | libcuda-5.0-1
     (LP: #1129409).
