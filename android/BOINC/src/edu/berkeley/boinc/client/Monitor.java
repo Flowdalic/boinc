@@ -58,6 +58,7 @@ import edu.berkeley.boinc.rpc.CcStatus;
 import edu.berkeley.boinc.rpc.DeviceStatus;
 import edu.berkeley.boinc.rpc.GlobalPreferences;
 import edu.berkeley.boinc.rpc.Message;
+import edu.berkeley.boinc.rpc.Notice;
 import edu.berkeley.boinc.rpc.Project;
 import edu.berkeley.boinc.rpc.ProjectAttachReply;
 import edu.berkeley.boinc.rpc.ProjectInfo;
@@ -190,18 +191,6 @@ public class Monitor extends Service {
 			rpc.readGlobalPrefsOverride();
 			// read preferences for GUI to be able to display data
 			GlobalPreferences clientPrefs = rpc.getGlobalPrefsWorkingStruct();
-
-			// setting cpu_usage_limit to 100
-			// preference got remove from UI for two reasons:
-			// - science apps would crash (timeout)
-			// - wakelock and foreground service would be frequently acquired / released
-			// hard-wire to 100% in case user has changed this preference manually before
-			// it got removed from the UI
-			// TODO needs to be removed when migrating override prefs to common mechanism
-			clientPrefs.cpu_usage_limit = 100.0;
-			rpc.setGlobalPrefsOverrideStruct(clientPrefs);
-			// TODO -- end of stuff to be removed
-			
 			status.setPrefs(clientPrefs);
 			// read supported projects
 			readAndroidProjectsList();
@@ -370,7 +359,8 @@ public class Monitor extends Service {
     		// wake locks and foreground enabled when Client is not suspended, therefore also during
     		// idle.
     		CcStatus status = rpc.getCcStatus();
-    		Boolean computing = (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED);
+    		// treat cpu throttling as if it was computing
+    		Boolean computing = (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED) || (status.task_suspend_reason == BOINCDefs.SUSPEND_REASON_CPU_THROTTLE);
     		if(Logging.VERBOSE) Log.d(Logging.TAG,"readClientStatus(): computation enabled: " + computing);
 			Monitor.getClientStatus().setWifiLock(computing);
 			Monitor.getClientStatus().setWakeLock(computing);
@@ -391,7 +381,16 @@ public class Monitor extends Service {
 					// Update status bar notification
 					ClientNotification.getInstance(getApplicationContext()).update();
 				} else {
-					if(Logging.ERROR) Log.e(Logging.TAG, "readClientStatus(): connection problem");
+					String nullValues = "";
+					try{
+						if(status == null) nullValues += "status,";
+						if(state == null) nullValues += "state,";
+						if(state.results == null) nullValues += "state.results,";
+						if(state.projects == null) nullValues += "state.projects,";
+						if(transfers == null) nullValues += "transfers,";
+						if(state.host_info == null) nullValues += "state.host_info,";
+					} catch (NullPointerException e) {};
+					if(Logging.ERROR) Log.e(Logging.TAG, "readClientStatus(): connection problem, null: " + nullValues);
 				}
 				
 				// check whether monitor is still intended to update, if not, skip broadcast and exit...
@@ -1096,6 +1095,17 @@ public class Monitor extends Service {
 	public ArrayList<Message> getEventLogMessages(int seqNo) {
 		//if(Logging.DEBUG) Log.d(Logging.TAG, "getEventLogMessage more recent than seqNo: " + seqNo);
 		return rpc.getMessages(seqNo);
+	}
+	
+	// returns notices sent by the project server / scheduler
+	// i.e. when scheduler request does not satisfy minimal requirements
+	public ArrayList<Notice> getServerNotices() {
+		ArrayList<Notice> allNotices = rpc.getNotices(0);
+		ArrayList<Notice> serverNotices = new ArrayList<Notice>();
+		for(Notice notice: allNotices) {
+			if(notice.isServerNotice) serverNotices.add(notice);
+		}
+		return serverNotices;
 	}
 	
 	// updates the client status via rpc
