@@ -228,7 +228,7 @@ override_dh_auto_test:
 override_dh_auto_configure:
 	./_autosetup
 	#if [ ! -r ltmain.sh ]; then libtoolize; fi
-	#aclocal-1.9 -I m4 && autoheader && automake-1.9 --add-missing && autoconf
+	#aclocal -I m4 && autoheader && automake --add-missing && autoconf
 	@echo
 	@echo "****             *****"
 	@echo "**** Configuring *****"
