@@ -1,3 +1,10 @@
+boinc (7.2.11+dfsg-1exp3) experimental; urgency=low
+
+  * Tweaked again hurd patches, now the missing
+    MAXPATHLEN should have been addressed
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 22 Aug 2013 23:14:34 +0200
+
 boinc (7.2.11+dfsg-1exp2) experimental; urgency=low
 
   * Trying to fix hurd ftbfs

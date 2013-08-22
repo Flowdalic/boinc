@@ -8,13 +8,115 @@ Forwarded: <yes>
 Reviewed-By: <costamagnagianfranco@yahoo.it>
 Last-Update: <2013-08-22>
 
---- boinc-7.2.11+dfsg.orig/sched/sched_shmem.h
-+++ boinc-7.2.11+dfsg/sched/sched_shmem.h
-@@ -29,6 +29,7 @@
- #include "sched_types.h"
- #include "hr_info.h"
- #include "sched_customize.h"
+--- a/sched/make_work.cpp
++++ b/sched/make_work.cpp
+@@ -52,6 +52,7 @@
+ #include "str_replace.h"
+ #include "str_util.h"
+ #include "svn_version.h"
 +#include "filesys.h"
  
- // the following must be at least as large as DB tables
- // (counting only non-deprecated entries for the current major version)
+ #define LOCKFILE            "make_work.out"
+ #define PIDFILE             "make_work.pid"
+--- a/sched/get_file.cpp
++++ b/sched/get_file.cpp
+@@ -38,6 +38,7 @@
+ 
+ #include "backend_lib.h"
+ #include "str_replace.h"
++#include "filesys.h"
+ 
+ #include "sched_config.h"
+ #include "sched_util.h"
+--- a/sched/sched_assign.cpp
++++ b/sched/sched_assign.cpp
+@@ -33,6 +33,7 @@
+ #include "crypt.h"
+ #include "backend_lib.h"
+ #include "error_numbers.h"
++#include "filesys.h"
+ 
+ #include "sched_main.h"
+ #include "sched_msgs.h"
+--- a/sched/sample_work_generator.cpp
++++ b/sched/sample_work_generator.cpp
+@@ -47,6 +47,7 @@
+ #include "str_replace.h"
+ #include "util.h"
+ #include "svn_version.h"
++#include "filesys.h"
+ 
+ #include "sched_config.h"
+ #include "sched_util.h"
+--- a/sched/sched_timezone.cpp
++++ b/sched/sched_timezone.cpp
+@@ -28,6 +28,7 @@
+ 
+ #include "sched_types.h"
+ #include "sched_msgs.h"
++#include "filesys.h"
+ #include "sched_config.h"
+ 
+ #ifdef _USING_FCGI_
+--- a/sched/feeder.cpp
++++ b/sched/feeder.cpp
+@@ -115,6 +115,7 @@
+ #include "util.h"
+ #include "str_util.h"
+ #include "svn_version.h"
++#include "filesys.h"
+ 
+ #include "credit.h"
+ #include "sched_config.h"
+--- a/sched/wu_check.cpp
++++ b/sched/wu_check.cpp
+@@ -35,6 +35,7 @@
+ #include "error_numbers.h"
+ #include "parse.h"
+ #include "util.h"
++#include "filesys.h"
+ 
+ #include "sched_config.h"
+ #include "sched_util.h"
+--- a/sched/sched_shmem.cpp
++++ b/sched/sched_shmem.cpp
+@@ -40,6 +40,7 @@
+ #include "sched_msgs.h"
+ #include "sched_types.h"
+ #include "sched_util.h"
++#include "filesys.h"
+ 
+ #include "sched_shmem.h"
+ 
+--- a/sched/transitioner.cpp
++++ b/sched/transitioner.cpp
+@@ -44,7 +44,7 @@
+ #include "error_numbers.h"
+ #include "str_util.h"
+ #include "svn_version.h"
+-
++#include "filesys.h"
+ #include "sched_config.h"
+ #include "credit.h"
+ #include "sched_util.h"
+--- a/tools/create_work.cpp
++++ b/tools/create_work.cpp
+@@ -37,6 +37,7 @@
+ #include "sched_config.h"
+ #include "str_replace.h"
+ #include "util.h"
++#include "filesys.h"
+ 
+ void usage() {
+     fprintf(stderr,
+--- a/tools/dir_hier_path.cpp
++++ b/tools/dir_hier_path.cpp
+@@ -29,7 +29,7 @@
+ #include "sched_config.h"
+ #include "sched_util.h"
+ #include "str_util.h"
+-
++#include "filesys.h"
+ 
+ const char *usage = 
+ "\nUsage: dir_hier_path <filename>\n"
