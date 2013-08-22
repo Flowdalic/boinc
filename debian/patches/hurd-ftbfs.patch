@@ -1,0 +1,20 @@
+Author: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+Author: Guo Yixuan <culu.gyx@gmail.com> (original hurd-ftbfs.patch used in 7.0.52+dfsg-2)
+Description: Hurd ftbts: missing definition for MAXPATHLEN
+ Hurd kernel doesn't limit path length.
+---
+Origin: <debian>
+Forwarded: <yes>
+Reviewed-By: <costamagnagianfranco@yahoo.it>
+Last-Update: <2013-08-22>
+
+--- boinc-7.2.11+dfsg.orig/sched/sched_shmem.h
++++ boinc-7.2.11+dfsg/sched/sched_shmem.h
+@@ -29,6 +29,7 @@
+ #include "sched_types.h"
+ #include "hr_info.h"
+ #include "sched_customize.h"
++#include "filesys.h"
+ 
+ // the following must be at least as large as DB tables
+ // (counting only non-deprecated entries for the current major version)

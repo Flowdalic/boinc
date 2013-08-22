@@ -63,3 +63,4 @@ de.po.patch
 more_clang_warnings.patch
 #mmap_mem_only.patch
 add-ldflags.patch
+hurd-ftbfs.patch
