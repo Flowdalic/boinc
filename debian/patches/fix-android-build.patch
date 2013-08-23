@@ -1,0 +1,10 @@
+Author: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+
+--- boinc-7.2.11+dfsg.orig/samples/wrapper/build_android.sh
++++ boinc-7.2.11+dfsg/samples/wrapper/build_android.sh
+@@ -1,4 +1,4 @@
+-#/bin/sh
++#!/bin/sh
+ #script to compile Wrapper for Android
+ 
+ export ANDROIDTC="$HOME/android-tc"

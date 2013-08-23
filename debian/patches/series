@@ -64,3 +64,5 @@ more_clang_warnings.patch
 #mmap_mem_only.patch
 add-ldflags.patch
 hurd-ftbfs.patch
+fixed-tools-permissions.patch
+fix-android-build.patch
