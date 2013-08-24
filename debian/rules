@@ -407,8 +407,6 @@ override_dh_fixperms:
 	  debian/boinc-manager/usr/share/doc/boinc-manager/examples/run-boincmgr
 ifneq (,$(ENABLE_SERVER_TEST))
 	chmod +x \
-	  debian/boinc-server-maker/usr/lib/boinc-server-maker/sched/transitioner_catchup.php \
-	  debian/boinc-server-maker/usr/share/boinc-server-maker/db/init_db \
 	  debian/boinc-server-maker/usr/share/boinc-server-maker/html/ops/delete_job_files
 endif
 
