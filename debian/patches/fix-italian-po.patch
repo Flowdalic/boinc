@@ -1,0 +1,11 @@
+--- a/locale/Makefile.am
++++ b/locale/Makefile.am
+@@ -21,7 +21,7 @@
+ 	gl \
+ 	hr \
+ 	hu \
+-	it \
++	it_IT \
+ 	ja \
+ 	ko \
+ 	lt \

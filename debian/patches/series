@@ -66,3 +66,5 @@ add-ldflags.patch
 hurd-ftbfs.patch
 fixed-tools-permissions.patch
 fix-android-build.patch
+fix-file-perms.patch
+fix-italian-po.patch

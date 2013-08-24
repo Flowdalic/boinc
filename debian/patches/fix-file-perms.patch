@@ -1,0 +1,34 @@
+--- a/db/Makefile.am
++++ b/db/Makefile.am
+@@ -10,4 +10,5 @@
+ 
+ ## other stuff to go into the distribution
+ extradir = $(prefix)/share/boinc-server-maker/db
+-dist_extra_DATA = constraints.sql schema.sql init_db
++dist_extra_DATA = constraints.sql schema.sql
++dist_extra_SCRIPTS = init_db
+--- a/sched/Makefile.am
++++ b/sched/Makefile.am
+@@ -116,7 +116,7 @@
+     sample_trivial_validator \
+     sample_work_generator \
+     single_job_assimilator \
+-	size_regulator \
++    size_regulator \
+     transitioner \
+     trickle_credit \
+     trickle_echo \
+@@ -129,11 +129,10 @@
+ schedshare_DATA = \
+     db_dump_spec.xml \
+     assimilator.py \
+-    pymw_assimilator.py \
+-    transitioner_catchup.php
++    pymw_assimilator.py
+ 
+ # scripts that 'make install' should put in bindir
+-schedshare_SCRIPTS = start stop status
++schedshare_SCRIPTS = start stop status transitioner_catchup.php
+ 
+ noinst_HEADERS = \
+     assimilate_handler.h \
