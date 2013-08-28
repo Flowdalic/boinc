@@ -383,7 +383,7 @@ override_dh_install:
 
 override_dh_strip:
 	[ -d debian/boinc-dbg ] && dh_strip -a --no-package=-boinc-server-dbg --no-package=boinc-server-maker --no-package=boinc-app-examples --dbg-package=boinc-dbg || true
-	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda -Nboinc-amd-opencl -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib || true
+	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda -Nboinc-amd-opencl -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib --dbg-package=boinc-server-dbg || true
 
 override_dh_fixperms:
 	dh_fixperms
