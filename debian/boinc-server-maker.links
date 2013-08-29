@@ -1,4 +1,3 @@
-/usr/lib/boinc-server-maker/bin /usr/share/boinc-server-maker/bin
 /usr/lib/boinc-server-maker/tools /usr/share/boinc-server-maker/tools
 /usr/lib/boinc-server-maker/lib /usr/share/boinc-server-maker/lib
 /usr/lib/boinc-server-maker/sched /usr/share/boinc-server-maker/sched
