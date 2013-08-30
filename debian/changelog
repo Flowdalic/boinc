@@ -1,3 +1,14 @@
+boinc (7.2.14+dfsg-1) unstable; urgency=low
+
+  * New upstream release
+  * Now the server package is built or not depending on
+    the debian target series:
+    - target=unstable, server NOT built
+    - target=experimental, server built
+  * Fixed clean in debian/rules file
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 31 Aug 2013 00:57:40 +0200
+
 boinc (7.2.11+dfsg-1exp4) UNRELEASED; urgency=low
 
   [ Gianfranco Costamagna ]

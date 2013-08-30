@@ -1,6 +1,6 @@
---- boinc-7.2.11+dfsg.orig/tools/Makefile.am
-+++ boinc-7.2.11+dfsg/tools/Makefile.am
-@@ -31,7 +31,9 @@ dist_tools_SCRIPTS = \
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -31,7 +31,9 @@
      manage_privileges \
      run_in_ops \
      stage_file \

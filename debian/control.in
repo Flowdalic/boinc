@@ -230,7 +230,7 @@ Package: boinc
 @ This package contains dynamic libraries that are needed for applications
 @ which utilizes the BOINC infrastructure and the boinc-client itself.
 %
-Package: boinc-server-maker
+%Package: boinc-server-maker
 %Architecture: any
 %Provides: boinc-server
 %Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},

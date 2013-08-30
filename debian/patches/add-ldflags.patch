@@ -1,6 +1,6 @@
---- boinc-7.2.10+dfsg.orig/samples/wrapper/Makefile
-+++ boinc-7.2.10+dfsg/samples/wrapper/Makefile
-@@ -37,4 +37,4 @@ REGEXP_OBJS = \
+--- a/samples/wrapper/Makefile
++++ b/samples/wrapper/Makefile
+@@ -37,4 +37,4 @@
  	regexp_report.o
  
  wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(REGEXP_OBJS)
