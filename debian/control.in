@@ -106,7 +106,7 @@ Package: boinc
 @Architecture: any
 @Depends: ${shlibs:Depends}, ${misc:Depends},
 @ libboinc7 (= ${binary:Version}),
-@ python,
+@ ${python:Depends},
 @ adduser,
 @ ca-certificates
 @Recommends: ia32-libs [amd64]
@@ -233,7 +233,7 @@ Package: boinc
 Package: boinc-server-maker
 %Architecture: any
 %Provides: boinc-server
-%Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends},
+%Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},
 % python, python-mysqldb,
 % mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
 % php5, php5-cli, php5-mysql,
@@ -311,7 +311,7 @@ Package: boinc-server-maker
 %Section: libs
 %Priority: extra
 %Architecture: all
-%Depends: ${misc:Depends}, gnuplot-nox, perl
+%Depends: ${misc:Depends}, gnuplot-nox, ${perl:Depends},
 %Recommends: apache2|httpd-cgi
 %Description: CGI script for plotting basic statistical graphs
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a

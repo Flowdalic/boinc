@@ -1,10 +1,14 @@
 boinc (7.2.11+dfsg-1exp4) UNRELEASED; urgency=low
 
+  [ Gianfranco Costamagna ]
   * Addressed executable-not-elf-or-script lintian warning
     - usr/lib/boinc-server-maker/tools/project.xml
     - usr/share/doc/boinc-server-maker/examples/wrapper/build_android.sh
   * Addressed other file permissions problems
   * Fixed italian localization problem
+
+  [ Guo Yixuan ]
+  * Added ${python:Depends} and ${perl:Depends} to debian/control.in
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 24 Aug 2013 01:20:07 +0200
 
