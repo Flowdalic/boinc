@@ -46,7 +46,6 @@
 #endif
 #include <signal.h>
 #if HAVE_SYS_SIGNAL_H
-#include <sys/signal.h>
 #endif
 #include <unistd.h>
 
@@ -60,6 +59,7 @@
 #include "filesys.h"
 #include "util.h"
 #include "cpu_benchmark.h"
+
 #include "client_msgs.h"
 #include "log_flags.h"
 #include "client_state.h"
@@ -171,7 +171,24 @@ int cpu_benchmarks(BENCHMARK_DESC* bdp) {
 
     bdp->error_str[0] = '\0';
     host_info.clear_host_info();
+
+#ifdef ANDROID
+    // check for FP accelerator: VFP, Neon, or none;
+    // run the appropriate version of Whetstone
+    // (separated using namespaces)
+    //
+    if (strstr(gstate.host_info.p_features, " neon ")) { 
+        // have ARM neon FP capabilities
+        retval = android_neon::whetstone(host_info.p_fpops, fp_time, MIN_CPU_TIME);
+    } else if (strstr(gstate.host_info.p_features, " vfp ")) { 
+        // have ARM vfp FP capabilities
+        retval = android_vfp::whetstone(host_info.p_fpops, fp_time, MIN_CPU_TIME);
+    } else { // just run normal test
+        retval = whetstone(host_info.p_fpops, fp_time, MIN_CPU_TIME);
+    }
+#else
     retval = whetstone(host_info.p_fpops, fp_time, MIN_CPU_TIME);
+#endif
     if (retval) {
         bdp->error = true;
         sprintf(bdp->error_str, "FP benchmark ran only %f sec; ignoring", fp_time);
