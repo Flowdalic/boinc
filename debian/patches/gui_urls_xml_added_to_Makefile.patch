@@ -1,0 +1,14 @@
+Index: boinc_debian_new/tools/Makefile.am
+===================================================================
+--- boinc_debian_new.orig/tools/Makefile.am
++++ boinc_debian_new/tools/Makefile.am
+@@ -34,7 +34,8 @@
+     watch_tcp
+ 
+ dist_tools_DATA = \
+-    project.xml
++    project.xml \
++    gui_urls.xml
+ 
+ AM_CXXFLAGS += $(MYSQL_CFLAGS)
+ AM_LDFLAGS += -static -L../sched -L../lib/.libs

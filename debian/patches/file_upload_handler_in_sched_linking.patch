@@ -1,0 +1,22 @@
+Index: boinc_debian_new/sched/Makefile.am
+===================================================================
+--- boinc_debian_new.orig/sched/Makefile.am
++++ boinc_debian_new/sched/Makefile.am
+@@ -256,7 +256,7 @@
+ update_stats_LDADD = $(SERVERLIBS)
+ 
+ file_upload_handler_SOURCES = file_upload_handler.cpp
+-file_upload_handler_LDADD = $(SERVERLIBS)
++file_upload_handler_LDADD = $(SERVERLIBS) -lboinc
+ 
+ make_work_SOURCES = make_work.cpp
+ make_work_LDADD = $(SERVERLIBS)
+@@ -298,7 +298,7 @@
+     sched_config.cpp \
+     sched_msgs.cpp 
+ fcgi_file_upload_handler_CPPFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
+-fcgi_file_upload_handler_LDADD = $(SERVERLIBS_FCGI)
++fcgi_file_upload_handler_LDADD = $(SERVERLIBS_FCGI) -lboinc
+ 
+ endif
+ # end of "if ENABLE_FCGI"

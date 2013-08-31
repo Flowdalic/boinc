@@ -1,5 +1,7 @@
---- a/Makefile.incl
-+++ b/Makefile.incl
+Index: boinc_debian_new/Makefile.incl
+===================================================================
+--- boinc_debian_new.orig/Makefile.incl
++++ boinc_debian_new/Makefile.incl
 @@ -38,22 +38,22 @@
  # dependencies to make sure libs gets compiled before
  # programs linking to them:

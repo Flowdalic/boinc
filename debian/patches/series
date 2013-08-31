@@ -69,3 +69,5 @@ fix-android-build.patch
 fix-file-perms.patch
 fix-italian-po.patch
 addressing_addional_html_dirs.patch
+gui_urls_xml_added_to_Makefile.patch
+file_upload_handler_in_sched_linking.patch
