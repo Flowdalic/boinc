@@ -68,3 +68,4 @@ fixed-tools-permissions.patch
 fix-android-build.patch
 fix-file-perms.patch
 fix-italian-po.patch
+addressing_addional_html_dirs.patch
