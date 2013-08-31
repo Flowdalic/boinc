@@ -237,7 +237,7 @@ Package: boinc
 % python, python-mysqldb,
 % mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
 % php5, php5-cli, php5-mysql,
-% tcsh, openssl (>= 0.9.8), adduser, libfcgi0ldbl
+% tcsh, openssl, adduser, libfcgi0ldbl
 %Recommends: libapache2-mod-php5, php5-gd, uuid-runtime
 %Suggests: boinc-app-examples, boinc-cgi-stripchart
 %Description: BOINC server applications and data files
