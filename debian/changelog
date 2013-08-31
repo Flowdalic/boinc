@@ -1,3 +1,61 @@
+boinc (7.2.14+dfsg-1exp1) experimental; urgency=low
+
+  * Building boinc-server-maker package
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 31 Aug 2013 01:05:41 +0200
+
+boinc (7.2.14+dfsg-1) unstable; urgency=low
+
+  * New upstream release
+  * Now the server package is built or not depending on
+    the debian target series:
+    - target=unstable, server NOT built
+    - target=experimental, server built
+  * Fixed clean in debian/rules file
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 31 Aug 2013 00:57:40 +0200
+
+boinc (7.2.11+dfsg-1exp4) UNRELEASED; urgency=low
+
+  [ Gianfranco Costamagna ]
+  * Addressed executable-not-elf-or-script lintian warning
+    - usr/lib/boinc-server-maker/tools/project.xml
+    - usr/share/doc/boinc-server-maker/examples/wrapper/build_android.sh
+  * Addressed other file permissions problems
+  * Fixed italian localization problem
+
+  [ Guo Yixuan ]
+  * Added ${python:Depends} and ${perl:Depends} to debian/control.in
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 24 Aug 2013 01:20:07 +0200
+
+boinc (7.2.11+dfsg-1exp3) experimental; urgency=low
+
+  * Tweaked again hurd patches, now the missing
+    MAXPATHLEN should have been addressed
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 22 Aug 2013 23:14:34 +0200
+
+boinc (7.2.11+dfsg-1exp2) experimental; urgency=low
+
+  * Trying to fix hurd ftbfs
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 22 Aug 2013 14:19:03 +0200
+
+boinc (7.2.11+dfsg-1exp1) experimental; urgency=low
+
+  * Added boinc-server-maker package
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 21 Aug 2013 16:51:49 +0200
+
+boinc (7.2.11+dfsg-1) unstable; urgency=low
+
+  * New upstream release
+    - Localizations updated
+  * Fixed some lintian warnings
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 21 Aug 2013 16:36:51 +0200
+
 boinc (7.2.10+dfsg-1exp1) experimental; urgency=low
 
   * New upstream release, enabled server building.

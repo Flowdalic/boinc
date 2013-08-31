@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: BOINC translation team <boinc_loc@boinc.berkeley.edu>\n"
 "POT-Creation-Date: 2012-11-13 16:40 PST\n"
-"PO-Revision-Date: 2013-06-21 11:10+0200\n"
-"Last-Translator: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>\n"
+"PO-Revision-Date: 2013-08-08 15:43+0200\n"
+"Last-Translator: Gianfranco <costamagnagianfranco@yahoo.it>\n"
 "Language-Team: \n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
@@ -310,7 +310,7 @@ msgid ""
 "This post is not shown because the sender is on your 'ignore' list.  Click "
 "%1here%2 to view this post"
 msgstr ""
-"Questo messaggio non è mostrato perché l'autore è nella tua lista degli "
+"Questo messaggio non è mostrato perchè l'autore è nella tua lista degli "
 "ignorati. Clicca %1qui%2 per vedere questo messaggio"
 
 #: ../inc/forum.inc:667 ../inc/forum.inc:678
@@ -980,7 +980,8 @@ msgstr "non letto"
 #: ../inc/pm.inc:186
 msgid "For email notification, %1edit community prefs%2"
 msgstr ""
-"Per ricevere le notifiche via mail, %1modifica le preferenze della comunità%2"
+"Per ricevere le notifiche via mail, %1modifica le preferenze della comunità%"
+"2"
 
 # ########################################
 # Private messages
@@ -993,8 +994,8 @@ msgid ""
 "Suspend work while computer is on battery power? %1 Matters only for "
 "portable computers %2"
 msgstr ""
-"Sospendere l'elaborazione mentre il computer funziona a batterie? %1"
-"(riguarda solo i computer portatili)%2"
+"Sospendere l'elaborazione mentre il computer funziona a batterie? %"
+"1(riguarda solo i computer portatili)%2"
 
 #: ../inc/prefs.inc:84
 msgid "Suspend work while computer is in use?"
@@ -1004,7 +1005,7 @@ msgstr "Sospendere l'elaborazione mentre il computer è in uso?"
 msgid ""
 "Suspend GPU work while computer is in use? %1 Enforced by version 6.6.21+ %2"
 msgstr ""
-"Sospendere l'elaborazione della GPU mentre il computer è in uso? %1 Si "
+"Sospendere l'elaborazione della GPU mentre il computer è in uso? %1Si "
 "applica dalla versione 6.6.21+ %2"
 
 #: ../inc/prefs.inc:98
@@ -1020,8 +1021,8 @@ msgid ""
 "Suspend work if no mouse/keyboard activity in last %1 Needed to enter low-"
 "power mode on some computers %2"
 msgstr ""
-"Sospende l'elaborazione se non c'è attività di mouse/tastiera negli ultimi "
-"%1 Necessario per entrare in modalità risparmio energetico in certi computer "
+"Sospende l'elaborazione se non c'è attività di mouse/tastiera negli ultimi %"
+"1(Necessario per entrare in modalità risparmio energetico in certi computer)"
 "%2"
 
 #: ../inc/prefs.inc:113
@@ -1041,8 +1042,8 @@ msgid ""
 "Leave tasks in memory while suspended? %1 Suspended tasks will consume swap "
 "space if 'yes' %2"
 msgstr ""
-"Lasciare le attività in memoria mentre sono sospese? %1 Se 'sì' le attività "
-"sospese consumeranno memoria di swap %2"
+"Lasciare le attività in memoria mentre sono sospese? %1(se \"sì\" le attività "
+"sospese consumano memoria di swap)%2"
 
 #: ../inc/prefs.inc:138
 msgid "Switch between tasks every %1 Recommended: 60 minutes %2"
@@ -2654,8 +2655,8 @@ msgid ""
 "If you would like include a picture with your profile, click the \"Browse\" "
 "button and select a JPEG or PNG file. Please select images of %1 or less."
 msgstr ""
-"Se vuoi aggiungere una immagine al tuo profilo, clicca sul pulsante \"Browse"
-"\" e seleziona una file JPEG o PNG. Sei pregato di scegliere un file più "
+"Se vuoi aggiungere una immagine al tuo profilo, clicca sul pulsante \"Browse\" "
+"e seleziona una file JPEG o PNG. Sei pregato di scegliere un file più "
 "piccolo di %1."
 
 #: ../user/create_profile.php:89
@@ -2951,7 +2952,8 @@ msgstr ""
 #: ../user/donations.php:324
 msgid "To assign the donation with your user ID, please log in."
 msgstr ""
-"Per associare la donazione al tuo ID utente devi accedere con il tuo account."
+"Per associare la donazione al tuo ID utente devi accedere con il tuo "
+"account."
 
 #: ../user/donations.php:328
 msgid "Proceed"
@@ -2991,8 +2993,8 @@ msgstr ""
 #: ../user/download_network.php:36
 msgid "Instructions for installing and running BOINC are %1here%2."
 msgstr ""
-"Le istruzioni per l'installazione e il funzionamento di BOINC si trovano "
-"%1qui%2."
+"Le istruzioni per l'installazione e il funzionamento di BOINC si trovano %"
+"1qui%2."
 
 #: ../user/download_network.php:38
 msgid "This list is managed centrally at %1the BOINC website%2."
@@ -3009,7 +3011,8 @@ msgstr "Il nuovo indirizzo email '%1' non è valido."
 #: ../user/edit_email_action.php:38
 msgid "New email address is same as existing address. Nothing is changed."
 msgstr ""
-"Il nuovo indirizzo email è uguale a quello esistente. Nulla è stato cambiato."
+"Il nuovo indirizzo email è uguale a quello esistente. Nulla è stato "
+"cambiato."
 
 #: ../user/edit_email_action.php:42
 msgid "There's already an account with that email address"
@@ -3108,7 +3111,7 @@ msgstr "In una singola email giornaliera"
 
 #: ../user/edit_forum_preferences_form.php:75
 msgid "Message-board identity"
-msgstr "Visualizza identità dei messaggi"
+msgstr "Itentità messaggi"
 
 #: ../user/edit_forum_preferences_form.php:76
 msgid "Avatar"
@@ -3175,7 +3178,7 @@ msgstr "La tua firma nel forum apparirà così:"
 
 #: ../user/edit_forum_preferences_form.php:127
 msgid "Message display"
-msgstr "Visualizza messaggio"
+msgstr "Visualizza messaggi"
 
 #: ../user/edit_forum_preferences_form.php:129
 msgid "What to display"
@@ -3237,7 +3240,7 @@ msgstr "Utenti filtrati"
 
 #: ../user/edit_forum_preferences_form.php:165
 msgid "Ignore message board posts and private messages from these users."
-msgstr "Ignora i post e i messaggi privati da questi utenti"
+msgstr "Ignora i post e i messaggi privati da questi utenti."
 
 #: ../user/edit_forum_preferences_form.php:167
 msgid "User ID (For instance: 123456789)"
@@ -3262,7 +3265,7 @@ msgstr "Oppure clicca qui per resettare le preferenze ai valorid di default"
 
 #: ../user/edit_passwd_action.php:50
 msgid "Invalid account key"
-msgstr "Chiave dell'account non valida"
+msgstr "Chiave account non valida"
 
 #: ../user/edit_passwd_action.php:55
 msgid "No account with that email address was found"
@@ -3279,14 +3282,14 @@ msgstr "Cambia password"
 
 #: ../user/edit_passwd_action.php:67
 msgid "Your password has been changed."
-msgstr "La tua password è stata modificata."
+msgstr "La tua password è stata cambiata."
 
 #: ../user/edit_passwd_action.php:69
 msgid ""
 "We can't update your password due to a database problem. Please try again "
 "later."
 msgstr ""
-"Impossibile aggiornare la password a causa di un problema al database - per "
+"Impossibile aggiornare la password a causa di un problema al database. Per "
 "favore riprova più tardi."
 
 #: ../user/edit_passwd_form.php:42
@@ -3299,7 +3302,7 @@ msgstr "il tuo indirizzo mail e la vecchia password"
 
 #: ../user/edit_passwd_form.php:45
 msgid "your account key"
-msgstr "La tua chiave account"
+msgstr "la tua chiave di accesso"
 
 #: ../user/edit_passwd_form.php:49
 msgid "Current password"
@@ -3335,7 +3338,7 @@ msgstr "Non posso aggiornare le informazioni utente."
 
 #: ../user/edit_user_info_form.php:29
 msgid "Edit account information"
-msgstr "Modifica le informazioni sull'account"
+msgstr "Modifica le informazioni account"
 
 #: ../user/edit_user_info_form.php:34
 msgid "Name %1 real name or nickname%2"
@@ -3381,11 +3384,11 @@ msgstr "Il lavoro è pronto per essere spedito, ma non è stata ancora inviato."
 
 #: ../user/explain_state.php:40
 msgid "In Progress"
-msgstr "In corso"
+msgstr "In Corso"
 
 #: ../user/explain_state.php:41
 msgid "The task has been sent; waiting for completion."
-msgstr "Il lavoro è stato inviato; in attesa di completamento."
+msgstr "Il lavoro è stato inviato; in attesa del completamento."
 
 #: ../user/explain_state.php:44
 msgid ""
@@ -3462,7 +3465,7 @@ msgstr ""
 
 #: ../user/explain_state.php:80
 msgid "Client states"
-msgstr "Stato dei client"
+msgstr "Stato client"
 
 #: ../user/explain_state.php:81
 msgid ""
@@ -3506,7 +3509,7 @@ msgstr ""
 
 #: ../user/explain_state.php:110
 msgid "Already reported"
-msgstr "Già riportati"
+msgstr "Già riportato"
 
 #: ../user/explain_state.php:110
 msgid "The date/time it was reported"
@@ -3534,7 +3537,7 @@ msgstr "Campo sconosciuto"
 
 #: ../user/ffmail_action.php:47
 msgid "Email preview"
-msgstr "Anteprima e-mail"
+msgstr "Anteprima email"
 
 #: ../user/ffmail_action.php:48
 msgid "Your email will appear as follows:"
@@ -3542,16 +3545,17 @@ msgstr "La tua e-mail apparirà come segue:"
 
 #: ../user/ffmail_action.php:57
 msgid "Send email"
-msgstr "Spedisci il messaggio"
+msgstr "Spedisci una email"
 
 #: ../user/ffmail_action.php:59
 msgid "Use your browser's back button to return to message form"
 msgstr ""
-"Usa il tasto indietro del browser per tornare alla compilazione del messaggio"
+"Usa il tasto indietro del browser per tornare alla compilazione del "
+"messaggio"
 
 #: ../user/ffmail_action.php:63
 msgid "Sending emails"
-msgstr "invio mail in corso"
+msgstr "Invio email"
 
 #: ../user/ffmail_action.php:84
 msgid "email sent successfully to %1"
@@ -3605,19 +3609,19 @@ msgstr "Il tuo nome:"
 
 #: ../user/ffmail_form.php:43
 msgid "Your email address:"
-msgstr "Il tuo indirizzo e-mail:"
+msgstr "Il tuo indirizzo email:"
 
 #: ../user/ffmail_form.php:49
 msgid "Friend's name:"
-msgstr "Nomi degli amici:"
+msgstr "Nome dell'amico:"
 
 #: ../user/ffmail_form.php:49
 msgid "Friend's email address:"
-msgstr "E-mail degli amici:"
+msgstr "Indirizzo email dell'amico:"
 
 #: ../user/ffmail_form.php:57
 msgid "Additional message (optional)"
-msgstr "Aggiungi un messaggio (facoltativo)"
+msgstr "Aggiungi un messaggio (facoltativo):"
 
 #: ../user/ffmail_form.php:60
 msgid "Send"
@@ -3741,7 +3745,7 @@ msgstr "Non è visibile a te"
 
 #: ../user/forum_forum.php:80
 msgid "Team message board for %1"
-msgstr "Messaggi per il team %1"
+msgstr "Forum dei messaggi del team per %1"
 
 #: ../user/forum_forum.php:96
 msgid "New thread"
@@ -3753,13 +3757,13 @@ msgstr "Aggiungi un nuovo thread a questo forum"
 
 #: ../user/forum_forum.php:116
 msgid "This message board is available as an %1RSS feed%2"
-msgstr "Questa bacheca è disponibile come %1feed RSS%2"
+msgstr "Puoi ricevere le news con un %1RSS feed%2"
 
 # ########################################
 # Forum thread
 #: ../user/forum_forum.php:174
 msgid "This thread is hidden"
-msgstr "Questo thread è nascosto"
+msgstr "Questo thread è stato nascosto dai moderatori"
 
 #: ../user/forum_forum.php:178
 msgid "This thread is sticky and locked, and you haven't read it yet"
@@ -3775,7 +3779,7 @@ msgstr "Questo thread è evidenzato e non letto"
 
 #: ../user/forum_forum.php:180
 msgid "sticky/unread"
-msgstr "evidenziato/non letto"
+msgstr "offensivo/non letto"
 
 #: ../user/forum_forum.php:184
 msgid "You haven't read this thread yet, and it's locked"
@@ -3792,7 +3796,7 @@ msgstr "Non hai ancora letto questo thread"
 
 #: ../user/forum_forum.php:192
 msgid "This thread is sticky and locked"
-msgstr "Questo thread è evidenziato e bloccato"
+msgstr "Questo thread è offensivo e bloccato"
 
 #: ../user/forum_forum.php:192
 msgid "sticky/locked"
@@ -3800,11 +3804,11 @@ msgstr "evidenziato/bloccato"
 
 #: ../user/forum_forum.php:194
 msgid "This thread is sticky"
-msgstr "Questo thread è evidenziato"
+msgstr "Questo thread è offensivo"
 
 #: ../user/forum_forum.php:194
 msgid "sticky"
-msgstr "evidenziato"
+msgstr "offensivo"
 
 #: ../user/forum_forum.php:198
 msgid "This thread is locked"
@@ -3820,7 +3824,7 @@ msgstr "Hai letto questo thread"
 
 #: ../user/forum_forum.php:200
 msgid "read"
-msgstr "letto"
+msgstr "leggi"
 
 # ########################################
 # Links from the main page
@@ -3864,7 +3868,7 @@ msgstr ""
 
 #: ../user/forum_index.php:123
 msgid "Subscribed threads"
-msgstr "Thread con notifica"
+msgstr "Thread seguiti"
 
 #: ../user/forum_moderate_post.php:43
 msgid "Moderate post"
@@ -3985,7 +3989,7 @@ msgstr "Forum corrente"
 
 #: ../user/forum_moderate_thread.php:73
 msgid "Destination forum"
-msgstr "Forum di destinazione"
+msgstr "Forum destinazione"
 
 #: ../user/forum_moderate_thread.php:77
 msgid "New title:"
@@ -4035,15 +4039,15 @@ msgstr "Votazione offline"
 
 #: ../user/forum_rate.php:27
 msgid "This function is turned off by the project"
-msgstr "Questa funzione è sospesa dal progetto"
+msgstr "Questa funziona è disabilitata dal progetto"
 
 #: ../user/forum_rate.php:58
 msgid "You need more average or total credit to rate a post."
-msgstr "Ti serve più credito medio o totale per votare un post."
+msgstr "Ti serve un credito medio o totale maggiore per votare un post."
 
 #: ../user/forum_rate.php:62
 msgid "You have already rated this post."
-msgstr "Non hai ancora votato questo post."
+msgstr "Hai già votato questo post."
 
 #: ../user/forum_rate.php:62 ../user/forum_rate.php:78
 #: ../user/forum_rate.php:83 ../user/forum_report_post.php:69
@@ -4066,7 +4070,7 @@ msgstr "Il voto è stato registrato"
 
 #: ../user/forum_rate.php:76
 msgid "Your rating has been recorded. Thanks for your input."
-msgstr "La tua raccomandazione è stata registrata. Grazie per l'input."
+msgstr "Il tuo voto è stato registrato. Grazie per il tuo contributo."
 
 #: ../user/forum_rate.php:80
 msgid "Vote Submission Problem"
@@ -4077,8 +4081,8 @@ msgid ""
 "Your post has been flagged as spam by the Akismet anti-spam system. Please "
 "modify your text and try again."
 msgstr ""
-"Le cose che hai scritto nel primo spazio sono state segnalate come spam dal "
-"sistema anti-spam Akismet.  Modifica il testo e riprova."
+"Il tuo post è stato contrassegnato come spam dal sistema anti-spam Akismet. "
+"Per favore modifica il testo e riprova."
 
 #: ../user/forum_reply.php:88 ../user/forum_thread.php:156
 #: ../user/forum_thread.php:272
@@ -4104,16 +4108,15 @@ msgstr "Aggiungi la mia firma a questa risposta"
 # 90%
 #: ../user/forum_report_post.php:45
 msgid "You need more average or total credit to report a post."
-msgstr ""
-"Ti serve un numero totale o medio di crediti maggiore per segnalare un post."
+msgstr "Ti serve più credito medio o totale per segnalare un post."
 
 #: ../user/forum_report_post.php:65
 msgid "Report Registered"
-msgstr "Report registrato"
+msgstr "Segnalazione Registrata"
 
 #: ../user/forum_report_post.php:66
 msgid "Your report has been recorded. Thanks for your input."
-msgstr "Il tuo report è stata registrato. Grazie per il tuo supporto."
+msgstr ""
 
 #: ../user/forum_report_post.php:67
 msgid ""
@@ -4125,7 +4128,7 @@ msgstr ""
 
 #: ../user/forum_report_post.php:71
 msgid "Report a forum post"
-msgstr "Riporta un post del forum"
+msgstr "Segnala un post del forum"
 
 #: ../user/forum_report_post.php:73
 msgid ""
@@ -4140,7 +4143,7 @@ msgstr ""
 
 #: ../user/forum_report_post.php:80
 msgid "Report post"
-msgstr "Riporta post"
+msgstr "Segnala post"
 
 #: ../user/forum_report_post.php:81
 msgid ""
@@ -4155,7 +4158,7 @@ msgstr ""
 
 #: ../user/forum_report_post.php:90
 msgid "Report not registered"
-msgstr "Report non registrato"
+msgstr "Segnalazione non registrata"
 
 #: ../user/forum_report_post.php:91
 msgid "Your report could not be recorded. Please wait a while and try again."
@@ -4211,11 +4214,11 @@ msgstr "Cerca nel forum"
 
 #: ../user/forum_search.php:31
 msgid "Search query"
-msgstr "Query di ricerca"
+msgstr "Tipo ricerca"
 
 #: ../user/forum_search.php:32
 msgid "Search for keywords:"
-msgstr "Cerca le parole chiave:"
+msgstr "Cerca per parole chiave:"
 
 #: ../user/forum_search.php:33
 msgid "Posts that contain all the specified words will be displayed"
@@ -4243,7 +4246,7 @@ msgstr "Opzioni di ricerca"
 
 #: ../user/forum_search.php:42
 msgid "Search limits"
-msgstr "Limita la ricerca"
+msgstr "Limita ricerca"
 
 #: ../user/forum_search.php:43
 msgid "Search at most this many days back in time"
@@ -4275,7 +4278,7 @@ msgstr "Risultato della ricerca nel forum"
 
 #: ../user/forum_search_action.php:174
 msgid "Thread titles matching your query:"
-msgstr "Nessun titolo di thread corrisponde ai tuoi criteri di ricerca:"
+msgstr "Nessun titolo corrisponde alla tua ricerca:"
 
 #: ../user/forum_search_action.php:194
 msgid "Messages matching your query:"
@@ -4300,14 +4303,15 @@ msgstr "Eseguire un'altra ricerca"
 
 #: ../user/forum_subscribe.php:46
 msgid "Subscription successful"
-msgstr "Sottoscrizione eseguita"
+msgstr "Sottoscrizione eseguita con successo"
 
 #: ../user/forum_subscribe.php:49
 msgid ""
 "You are now subscribed to %1. You will be notified whenever there is a new "
 "post."
 msgstr ""
-"Sei ora iscritto a %1. Ti verrà notificato quando ci sarà un nuovo messaggio."
+"Sei ora iscritto a %1. Ti verrà notificato quando ci sarà un nuovo "
+"messaggio."
 
 #: ../user/forum_subscribe.php:51
 msgid "Subscription failed"
@@ -4317,12 +4321,12 @@ msgstr "Sottoscrizione fallita"
 msgid ""
 "We are currently unable to subscribe you to %1. Please try again later.."
 msgstr ""
-"Non è momentaneamente possibile sottoscriverti a %1. Per favore riprova più "
-"tardi.."
+"Non è stato momentaneamente possibile sottoscriverti a %1. Per favore "
+"riprova più tardi."
 
 #: ../user/forum_subscribe.php:61
 msgid "Unsubscription successful"
-msgstr "Cancellazione sottoscrizione eseguita correttamente"
+msgstr "Rimozione sottoscrizione eseguita con successo"
 
 #: ../user/forum_subscribe.php:64
 msgid ""
@@ -4333,14 +4337,14 @@ msgstr ""
 
 #: ../user/forum_subscribe.php:66
 msgid "Unsubscription failed"
-msgstr "Cancellazione sottoscrizione fallita"
+msgstr "Rimozione sottoscrizione fallita"
 
 #: ../user/forum_subscribe.php:67
 msgid ""
 "We are currently unable to unsubscribe you from %1. Please try again later.."
 msgstr ""
-"Non è momentaneamente possibile cancellare la tua iscrizione a %1. Per "
-"favore riprova più tardi.."
+"Non è momentaneamente possibile rimuovere la sottoscrizione da %1. Per "
+"favore riprova più tardi."
 
 #: ../user/forum_subscribe.php:74
 msgid "Unknown subscription action"
@@ -4354,7 +4358,7 @@ msgstr "Non ti è concesso vedere questo forum."
 # Forum thread
 #: ../user/forum_thread.php:69
 msgid "This thread has been hidden by moderators."
-msgstr "Questo argomento è stato nascosto dai moderatori."
+msgstr "Questo thread è stato nascosto dai moderatori."
 
 #: ../user/forum_thread.php:127
 msgid "My question was answered"
@@ -4362,7 +4366,9 @@ msgstr "E' stata data risposta alla mia domanda"
 
 #: ../user/forum_thread.php:128
 msgid "Click here if your question has been adequately answered"
-msgstr "Clicca qui se la tua domanda è stata risposta adeguatamente"
+msgstr ""
+"Se è stata data una adeguata risposta alla tua domanda, sei pregato di "
+"premere qui."
 
 #: ../user/forum_thread.php:136
 msgid "I've also got this question"
@@ -4405,7 +4411,7 @@ msgstr "Non evidenziare"
 
 #: ../user/forum_thread.php:201
 msgid "Make this thread not sticky"
-msgstr "Fai in modo che questo thread non sia in evidenza"
+msgstr "Fai in modo che questo argomento non sia in evidenza"
 
 #: ../user/forum_thread.php:206
 msgid "Make sticky"
@@ -4475,7 +4481,7 @@ msgstr "Lo stato è stato aggiornato."
 # Forum
 #: ../user/forum_user_posts.php:73
 msgid "Posts by %1"
-msgstr "Messaggi da %1"
+msgstr "Messaggi di %1"
 
 #: ../user/friend.php:33
 msgid "Already friends"
@@ -4506,8 +4512,8 @@ msgid ""
 "You have asked to add %1 as a friend. We will notify %1 and will ask him/her "
 "to confirm that you are friends."
 msgstr ""
-"Hai richiesto di aggiungere %1 agli amici. Notificheremo la cosa a %1 e gli/"
-"le chiederemo di confermare che siete amici."
+"Hai richiesto di aggiungere %1 agli amici. Notificheremo la cosa a %1 e "
+"gli/le chiederemo di confermare che siete amici."
 
 #: ../user/friend.php:77
 msgid "Add an optional message here:"
@@ -4523,7 +4529,7 @@ msgstr "Abbiamo notificato a %1 la tua richiesta."
 
 #: ../user/friend.php:126
 msgid "Please log in as %1"
-msgstr "Per favore esegui il login come %1"
+msgstr "Per favore esegui il log in come %1"
 
 #: ../user/friend.php:127
 msgid "You must log in as %1 to view this friend request"
@@ -4535,7 +4541,7 @@ msgstr "Richiesta di amicizia"
 
 #: ../user/friend.php:141
 msgid "%1 has requested friendship with you."
-msgstr "%1 ti ha mandato una richiesta di amicizia."
+msgstr "Hai ricevuto una richiesta di amicizia da %1."
 
 #: ../user/friend.php:143
 msgid "%1 says: %2"
@@ -4607,7 +4613,7 @@ msgstr "La tua amicizia con %1 è stata cancellata."
 
 #: ../user/get_passwd.php:25
 msgid "Forgot your account info?"
-msgstr "Hai dimenticato le informazioni sul tuo account?"
+msgstr "Hai dimenticato le tue informazioni account?"
 
 #: ../user/get_passwd.php:28
 msgid ""
@@ -4746,11 +4752,11 @@ msgstr "Numero di lavori completati"
 
 #: ../user/host_app_versions.php:56
 msgid "Max tasks per day"
-msgstr "Numero massimo di lavori al giorno"
+msgstr "Massimo numero di lavori giornalieri"
 
 #: ../user/host_app_versions.php:57
 msgid "Number of tasks today"
-msgstr "Numero di lavori odierni"
+msgstr "Numero di lavori giornaliero"
 
 #: ../user/host_app_versions.php:58
 msgid "Consecutive valid tasks"
@@ -4768,7 +4774,7 @@ msgstr "Dettagli applicazione per l'host %1"
 
 #: ../user/host_delete.php:31
 msgid "We have no record of that computer."
-msgstr "Non hai risultati di quel computer."
+msgstr "Non ci sono record per questo computer."
 
 #: ../user/host_delete.php:38
 msgid ""
@@ -4782,7 +4788,7 @@ msgstr ""
 
 #: ../user/host_delete.php:40
 msgid "Delete record of computer"
-msgstr "Cancella questo computer"
+msgstr "Cancella record del computer"
 
 #: ../user/host_delete.php:41
 msgid "Record deleted."
@@ -4794,7 +4800,7 @@ msgstr "Ritorna alla lista dei tuoi computer"
 
 #: ../user/host_edit_action.php:39
 msgid "Merge computer records"
-msgstr "Unisci i record dei computer"
+msgstr "Unisci i record del computer"
 
 #: ../user/host_edit_form.php:35
 msgid "Merge computers"
@@ -4831,7 +4837,7 @@ msgstr "creato"
 
 #: ../user/host_edit_form.php:70
 msgid "computer ID"
-msgstr "ID Computer"
+msgstr "ID computer"
 
 #: ../user/host_edit_form.php:77
 msgid "no hostname"
@@ -4839,7 +4845,7 @@ msgstr "nessun hostname"
 
 #: ../user/host_edit_form.php:109
 msgid "Merge hosts"
-msgstr "Unisci gli host"
+msgstr "Unisci hosts"
 
 #: ../user/host_update_credit.php:28
 msgid "Updating computer credit"
@@ -4875,7 +4881,7 @@ msgstr "Computer appartenente a %1"
 
 #: ../user/hosts_user.php:55
 msgid "Computers hidden"
-msgstr "Computer nascosti"
+msgstr "Computer nascosto"
 
 #: ../user/hosts_user.php:56
 msgid ""
@@ -4950,8 +4956,8 @@ msgid ""
 "using their computers for projects such as %1."
 msgstr ""
 "Avvia %1 solo sui tuoi computer o su quelli per cui hai ottenuto il permesso "
-"dal proprietario. Alcune aziende e scuole proibiscono l'uso di progetti come "
-"%1 sui propri computer."
+"dal proprietario. Alcune aziende e scuole proibiscono l'uso di progetti "
+"come %1 sui propri computer."
 
 #: ../user/info.php:38
 msgid "How %1 will use your computer"
@@ -5004,8 +5010,8 @@ msgstr ""
 "processore, quantità di memoria, ecc...) saranno registrate da %1 e usate "
 "per decidere il tipo di lavoro da assegnare al tuo computer. Queste "
 "informazioni saranno inoltre mostrati sul sito web di %1. Non verrà mostrato "
-"niente che possa rivelare l'ubicazione del tuo computer (per esempio il nome "
-"del suo dominio o gli indirizzi di rete)."
+"niente che possa rivelare l'ubicazione del tuo computer (per esempio il "
+"nome del suo dominio o gli indirizzi di rete)."
 
 #: ../user/info.php:45
 msgid ""
@@ -5029,8 +5035,8 @@ msgid ""
 msgstr ""
 "I messaggi privati inviati sul sito web di %1 sono visibili solo al mittente "
 "e al ricevente.  %1 non controlla o censura il contenuto dei messaggi "
-"privati.  Se ricevi un messaggio privato non gradito da un altro utente di "
-"%1, puoi aggiungerlo al tuo %2filtro dei messaggi%3.  Questo ti evita di "
+"privati.  Se ricevi un messaggio privato non gradito da un altro utente di %"
+"1, puoi aggiungerlo al tuo %2filtro dei messaggi%3.  Questo ti evita di "
 "dover vedere altri messaggi publici o privati di quell'utente."
 
 #: ../user/info.php:47
@@ -5173,8 +5179,8 @@ msgid ""
 "Translations are done by volunteers.  If your native language is not here, "
 "%1you can provide a translation%2."
 msgstr ""
-"Le traduzioni sono fatte da volontari.  Se la tua lingua madre non è qui, "
-"%1puoi tradurla tu%2."
+"Le traduzioni sono fatte da volontari.  Se la tua lingua madre non è qui, %"
+"1puoi tradurla tu%2."
 
 #: ../user/login_form.php:52
 msgid "Email address:"
@@ -5202,11 +5208,11 @@ msgstr "oppure %1crea un account%2."
 
 #: ../user/merge_by_name.php:33
 msgid "Processing %1"
-msgstr "%1 in elaborazione"
+msgstr "Elaborazione %1"
 
 #: ../user/merge_by_name.php:45
 msgid "Merged %1 into %2"
-msgstr "%1 unito con %2"
+msgstr "Unito %1 con %2"
 
 #: ../user/merge_by_name.php:74
 msgid "Return to the list of your computers"
@@ -5293,8 +5299,7 @@ msgstr ""
 "Chi offende potrebbe avere la sua capacità di scrivere revocata "
 "temporaneamente\n"
 "(per prevenire abusi solo gli amministratori dei progetti possono farlo).\n"
-"Tutti gli altri tipi di  comportamenti negativi (\"bugging\" post per "
-"scoprire\n"
+"Tutti gli altri tipi di  comportamenti negativi (\"bugging\" post per scoprire\n"
 "l'indirizzo IP degli altri partecipanti, creazione di thread eccessiva per "
 "spammare\n"
 "i forum, etc.), anche se non scritti nelle regole formali, potrebbero "
@@ -5342,11 +5347,11 @@ msgstr "ID host"
 
 #: ../user/pending.php:66
 msgid "Claimed credit"
-msgstr "Credito richiesto"
+msgstr "Credito garantito"
 
 #: ../user/pending.php:79
 msgid "Pending credit: %1"
-msgstr "Crediti non ancora assegnati: %1"
+msgstr "Crediti non attesa assegnati: %1"
 
 #: ../user/pm.php:32
 msgid "Block messages from this user"
@@ -5408,7 +5413,7 @@ msgid ""
 msgstr ""
 "Il tuo messaggio è stato segnalato come spam\n"
 "                dal sistema anti-spam Akismet.\n"
-"                Modifica il testo e riprova."
+"                Per favore modifica il testo e riprova."
 
 #: ../user/pm.php:205
 msgid "Could not find user with id %1"
@@ -5568,8 +5573,8 @@ msgid ""
 "Browse profiles %1at random%2, %3at random with pictures%2, or %4at random "
 "without pictures%2."
 msgstr ""
-"Visualizza i profili %1casualmente%2, %3casualmente con immagine%2 o "
-"%4casualmente senza immagine%2."
+"Visualizza i profili %1casualmente%2, %3casualmente con immagine%2 o %"
+"4casualmente senza immagine%2."
 
 #: ../user/profile_menu.php:67
 msgid "Alphabetical profile listings:"
@@ -5621,7 +5626,7 @@ msgstr "Nome utente"
 
 #: ../user/profile_search_action.php:41
 msgid "Joined project"
-msgstr "Entrato con successo nel progetto"
+msgstr "Entrato nel progetto"
 
 #: ../user/profile_search_action.php:44
 msgid "Recent credit"
@@ -5803,7 +5808,7 @@ msgstr "non inviato"
 
 #: ../user/server_status.php:428
 msgid "in progress"
-msgstr "In corso"
+msgstr "in corso"
 
 #: ../user/server_status.php:429
 msgid "avg runtime of last 100 results in h (min-max)"
@@ -5852,8 +5857,8 @@ msgid ""
 "You can also get your current statistics in the form of a \"signature image"
 "\":"
 msgstr ""
-"Puoi anche ottenere le tue attuali statistiche in forma di immagine (\"firma"
-"\"):"
+"Puoi anche ottenere le tue attuali statistiche in forma di immagine "
+"(\"firma\"):"
 
 #: ../user/stats.php:43
 msgid ""
@@ -5892,7 +5897,7 @@ msgstr "modificare il nome e la descrizione del team"
 
 #: ../user/team.php:35
 msgid "add or remove team admins"
-msgstr "Aggiungi o rimuovi admin nel team"
+msgstr "aggiungi o rimuovi admin del team"
 
 #: ../user/team.php:36
 msgid "remove members from the team"
@@ -5928,8 +5933,8 @@ msgstr "Crea un nuovo team"
 msgid ""
 "If you cannot find a team that is right for you, you can %1create a team%2."
 msgstr ""
-"Se non riesci a trovare un team giusto per te, puoi sempre %1creare un team"
-"%2."
+"Se non riesci a trovare un team giusto per te, puoi sempre %1creare un team%"
+"2."
 
 #: ../user/team_admins.php:34
 msgid "Remove Team Admin status from this member"
@@ -6026,14 +6031,14 @@ msgstr "Impossibile aggiungere l'amministratore"
 #: ../user/team_admins.php:110 ../user/team_manage.php:85
 #: ../user/team_quit_form.php:30 ../user/team_remove_inactive_action.php:28
 msgid "No such team"
-msgstr "Team non esistente"
+msgstr "Nessun team"
 
 #: ../user/team_change_founder_action.php:30
 #: ../user/team_change_founder_form.php:33 ../user/team_display.php:67
 #: ../user/team_edit_action.php:30 ../user/team_edit_form.php:29
 #: ../user/team_email_list.php:55
 msgid "no such team"
-msgstr "team non esistente"
+msgstr "nessun team"
 
 #: ../user/team_change_founder_action.php:38
 msgid "User is not a member of %1"
@@ -6066,7 +6071,7 @@ msgid ""
 "you left the team or haven't had contact with the team for a long time."
 msgstr ""
 "Il membro %1 ha richiesto di essere il fondatore di questo team. Potrebbe "
-"essere perché hai abbandonato il team oppure non hai avuto contatti con il "
+"essere perchè hai abbandonato il team oppure non hai avuto contatti con il "
 "team per un lungo periodo."
 
 #: ../user/team_change_founder_form.php:55
@@ -6431,7 +6436,7 @@ msgstr "Non puoi entrare nel team - per favore riprova più tardi."
 
 #: ../user/team_join_action.php:40
 msgid "Joined %1"
-msgstr "Sei entrato in %1"
+msgstr "Entrato in %1"
 
 #: ../user/team_join_action.php:41
 msgid "You have joined %1."
@@ -6631,7 +6636,7 @@ msgstr ""
 
 #: ../user/team_quit_form.php:42
 msgid "Quit Team"
-msgstr "Abbandona il team"
+msgstr "Abbandona il Team"
 
 #: ../user/team_remove_inactive_action.php:31
 msgid "Removing users from %1"
@@ -6671,7 +6676,7 @@ msgstr "Nome team"
 
 #: ../user/team_search.php:92
 msgid "Team search results"
-msgstr "Risultato della ricerca dei team"
+msgstr "Risultato della ricerca team"
 
 #: ../user/team_search.php:94
 msgid "No teams were found matching your criteria. Try another search."
@@ -6687,7 +6692,7 @@ msgid ""
 "            To join a team, click its name to go to the team page,\n"
 "               then click %1Join this team%2."
 msgstr ""
-"I team seguienti soddisfano uno o più dei tuoi criteri di ricerca.\n"
+"I team seguenti soddisfano uno o più dei tuoi criteri di ricerca.\n"
 "            Per entrare in un team, clicca sul nome o vai sulla sua pagina,\n"
 "               poi clicca su %1Unisciti a questo team%2."
 
@@ -6701,7 +6706,7 @@ msgid ""
 "country, company, or school."
 msgstr ""
 "Puoi entrare in un team con persone aventi interessi simili, provenienti "
-"dallo stesso paese, compagnia, o scuola."
+"dallo stesso paese, luogo di lavoro, o scuola."
 
 #: ../user/team_search.php:182
 msgid "Use this form to find teams that might be right for you."
@@ -6774,11 +6779,11 @@ msgstr "Decremento tempo di sign-up"
 
 #: ../user/user_search.php:68
 msgid "Decreasing average credit"
-msgstr "Media dei crediti recenti"
+msgstr "Decrescita del credito medio"
 
 #: ../user/user_search.php:69
 msgid "Decreasing total credit"
-msgstr "Media dei crediti recenti"
+msgstr "Decrescita del credito totale"
 
 #: ../user/user_search.php:100
 msgid "search string must be at least 3 characters"
@@ -6786,7 +6791,7 @@ msgstr "la stringa deve essere di almeno 3 caratteri"
 
 #: ../user/user_search.php:133
 msgid "User search results"
-msgstr "Risultato della ricerca nel forum"
+msgstr "Risultato della ricerca utenti"
 
 #: ../user/user_search.php:140
 msgid "Joined"
@@ -6846,7 +6851,7 @@ msgstr ""
 
 #: ../user/validate_email_addr.php:44
 msgid "No such user."
-msgstr "Nessun utente."
+msgstr "Utente non trovato."
 
 #: ../user/validate_email_addr.php:49
 msgid "Error in URL data - can't validate email address"
@@ -7001,7 +7006,7 @@ msgid ""
 "    </ol>"
 msgstr ""
 "Dicci i tuoi pensieri riguardo %1<ol>\n"
-"    <li>Perché utilizzi %1?\n"
+"    <li>Perchè utilizzi %1?\n"
 "    <li>Quali sono i tuoi punti di vista sul progetto?\n"
 "    <li>Suggerimenti?\n"
 "    </ol>"
@@ -7036,14 +7041,14 @@ msgstr "(tutte le applicazioni)"
 #~ "(max 10 days). %3"
 #~ msgstr ""
 #~ "Computer connesso a Internet ogni %1 Lascia in bianco o scrivi 0 se è "
-#~ "sempre connesso. %2 BOINC cercherà di mantenere sufficiente lavoro "
+#~ "sempre connesso. %2 BOINC cercherà di mantenere abbastanza lavoro "
 #~ "(massimo 10 giorni). %3"
 
 #~ msgid "Maintain enough work for an additional"
 #~ msgstr "Mantieni abbastanza riserva di lavoro per"
 
 #~ msgid "Update failed: "
-#~ msgstr "Aggiornamento fallito: "
+#~ msgstr "Aggiornamento fallito"
 
 #~ msgid "Provides %1limited access%2 to your account"
 #~ msgstr "Consente un %1accesso limitato%2 al tuo account"
@@ -7056,13 +7061,16 @@ msgstr "(tutte le applicazioni)"
 #~ "inserisci un indirizzo mail e una password."
 
 #~ msgid "Do not reorder sticky posts"
-#~ msgstr "Non riordinare i post in evidenza"
+#~ msgstr "Non riordinare i post offensivi"
 
 #~ msgid "If a thread contains more than this number of posts"
 #~ msgstr "Se un thread contiene più di questo numero di post"
 
 #~ msgid "only display the first one and this many of the last ones"
 #~ msgstr "visualizza solo il primo e questo numero di ultimi"
+
+#~ msgid "Your report has been recorded. Thanks you for your input."
+#~ msgstr "La tua segnalazione è stata registrata. Grazie per il tuo aiuto."
 
 #~ msgid "Search type"
 #~ msgstr "Tipo ricerca"
@@ -7098,8 +7106,8 @@ msgstr "(tutte le applicazioni)"
 #~ msgstr ""
 #~ "Per usare la tua chiave di accesso debole su un computer, trova o crea il "
 #~ "'file dell'account' per questo progetto. Il nome di questo file deve "
-#~ "essere del tipo: <b>account_URL_PROGETTO.xml</b>. Il file dell'account "
-#~ "per %1 è <b>%2</b>."
+#~ "essere del tipo: <b>account_URL_DEL_PROGETTO.xml</b>. Il file "
+#~ "dell'account per %1 è <b>%2</b>."
 
 #~ msgid "Create this file if needed. Set its contents to:"
 #~ msgstr "Crea questo file se è necessario. Inserisci i contenuti come segue:"
@@ -7119,6 +7127,7 @@ msgstr "(tutte le applicazioni)"
 #~ msgid "Provides full access to your account"
 #~ msgstr "Consente un accesso completo al tuo account"
 
+#, fuzzy
 #~ msgid "Export"
 #~ msgstr "Ordina"
 

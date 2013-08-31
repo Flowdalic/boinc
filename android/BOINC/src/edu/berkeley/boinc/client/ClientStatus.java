@@ -342,6 +342,7 @@ public class ClientStatus {
 					}
 				}
 			} catch(Exception e) {if(Logging.WARNING) Log.w(Logging.TAG,"exception for project " + project.master_url,e);}
+			catch (OutOfMemoryError oome) {if(Logging.WARNING) Log.w(Logging.TAG,"updateSlideshowImages, OutOfMemeryError");}
 		}
 		if(Logging.DEBUG) Log.d(Logging.TAG, "updateSlideshowImages() has added " + counter + " images.");
 		if(Logging.DEBUG) Log.d(Logging.TAG,"updateSlideshowImages() slideshow contains " + slideshowImages.size() + " bitmaps.");
@@ -457,21 +458,15 @@ public class ClientStatus {
 				computingParseError = false;
 				return;
 			}
-			if(status.task_mode == BOINCDefs.RUN_MODE_AUTO && status.task_suspend_reason == BOINCDefs.SUSPEND_REASON_CPU_THROTTLE) {
-				// suspended due to CPU throttling, treat as if was running!
-				computingStatus = COMPUTING_STATUS_COMPUTING;
-				computingSuspendReason = status.task_suspend_reason; // = 64 - SUSPEND_REASON_CPU_THROTTLE
-				computingParseError = false;
-				return;
-				
-			}
-			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && (status.task_suspend_reason != BOINCDefs.SUSPEND_NOT_SUSPENDED)) {
+			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && (status.task_suspend_reason != BOINCDefs.SUSPEND_NOT_SUSPENDED) && (status.task_suspend_reason != BOINCDefs.SUSPEND_REASON_CPU_THROTTLE)) {
+				// do not expose cpu throttling as suspension to UI
 				computingStatus = COMPUTING_STATUS_SUSPENDED;
 				computingSuspendReason = status.task_suspend_reason;
 				computingParseError = false;
 				return;
 			}
-			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && (status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED)) {
+			if((status.task_mode == BOINCDefs.RUN_MODE_AUTO) && ((status.task_suspend_reason == BOINCDefs.SUSPEND_NOT_SUSPENDED) || (status.task_suspend_reason == BOINCDefs.SUSPEND_REASON_CPU_THROTTLE))) {
+				// treat cpu throttling as if client was active (either idle, or computing, depending on tasks)
 				//figure out whether we have an active task
 				Boolean activeTask = false;
 				if(results!=null) {

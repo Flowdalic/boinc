@@ -8,7 +8,7 @@
  This file is licensed under the terms of the GNU General Public License,
  Version 2 or any later version published by the Free Software Foundation.
 
- Copyright © 2006, 2008 Debian BOINC Maintainers
+ Copyright © 2006, 2013 Debian BOINC Maintainers
 -->
 
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
@@ -37,7 +37,7 @@
     </author>
     <copyright>
       <year>2006</year>
-      <year>2008</year>
+      <year>2013</year>
       <holder>&dhgroupname;</holder>
     </copyright>
     &dhdate;
@@ -147,7 +147,7 @@
 
   <refsect1>
     <title>COPYRIGHT</title>
-    <para>Copyright &copy; 2006, 2008 &dhgroupname;.</para>
+    <para>Copyright &copy; 2006, 2013 &dhgroupname;.</para>
     <para>
       This is free software; you can redistribute it and/or modify it under the
       terms of the &gnu; General Public License, Version 2 or any later version

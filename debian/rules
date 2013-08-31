@@ -138,22 +138,28 @@ CXXFLAGS += $(DEB_OPT_FLAGS)
 CFLAGS_boinc-client := $(CFLAGS)
 CXXFLAGS_boinc-client := $(CXXFLAGS)
 
-ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control.in)
-ENABLE_SERVER := --disable-server
-ifneq (,$(ENABLE_SERVER_TEST))
+#copy the original control.in file
+$(shell cp debian/control.in debian/control)
+
+# check if we need to enable server packages, based on "exp" string in changelog
+ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental')
+#ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control.in)
+
+ifeq (,$(ENABLE_SERVER_TEST))
 ENABLE_SERVER := --enable-server
-TMP=$(shell sed -e 's/^%//' debian/control.in > debian/control)
+$(shell sed 's/^%//' -i debian/control)
 else
-TMP=$(shell egrep -v '^%' debian/control.in > debian/control)
+ENABLE_SERVER := --disable-server
+$(shell sed '/^%/d' -i debian/control)
 endif
 
 ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control.in)
-ENABLE_CLIENT := --disable-client --disable-manager
 ifneq (,$(ENABLE_CLIENT_TEST))
 ENABLE_CLIENT := --enable-client --enable-manager --enable-dynamic-client-linkage
-TMP=$(shell sed -i 's/^@//' debian/control)
+$(shell sed 's/^@//' -i debian/control)
 else
-TMP=$(shell sed -i '/^@/d' debian/control)
+ENABLE_CLIENT := --disable-client --disable-manager
+$(shell sed '/^@/d' -i debian/control)
 endif
 
 # --disable-static
@@ -180,7 +186,8 @@ CFGFLAGS_boinc-client = \
 # Default rule
 
 %:
-	if [ ! -f debian/control -o debian/control.in -nt debian/control ]; then \
+	dh $@ --parallel --with python2
+#	if [ ! -f debian/control -o debian/control.in -nt debian/control ]; then \
 		echo "Generating debian/control file from debian/control.in" ; \
 		( \
 		if egrep -q '^Package:.*boinc-server-maker' debian/control.in; then \
@@ -196,13 +203,16 @@ CFGFLAGS_boinc-client = \
 		fi \
 		) > debian/control; \
 	fi
-	dh $@ --parallel --with python2
 
 override_dh_clean:
 	dh_clean
 	rm -rf config.log
 	rm -rf clientscr/.libs override_dh_auto_install
-	rm -rf debian/boinc-app-examples debian/boinc-server-maker debian/boinc-app-examples.substvars debian/boinc-server-maker.substvars
+	rm -rf debian/boinc-app-examples   debian/boinc-app-examples.substvars
+	rm -rf debian/boinc-server-maker   debian/boinc-server-maker.substvars
+	rm -rf debian/boinc-server-dbg     debian/boinc-server-dbg.substvars
+	rm -rf debian/boinc-cgi-stripchart debian/boinc-cgi-stripchart.substvars
+	rm -rf debian/*.debhelper
 	rm -rf debian/tmp autoreconf-stamp build-*-stamp install-*-stamp
 	rm -fr debian/boinc-amd-opencl debian/boinc-screensaver # for cases when this is not in debian/control
 	rm -f debian/boinc-screensaver.substvars debian/boinc-amd-opencl.substvars # dito
@@ -225,7 +235,7 @@ override_dh_auto_test:
 override_dh_auto_configure:
 	./_autosetup
 	#if [ ! -r ltmain.sh ]; then libtoolize; fi
-	#aclocal-1.9 -I m4 && autoheader && automake-1.9 --add-missing && autoconf
+	#aclocal -I m4 && autoheader && automake --add-missing && autoconf
 	@echo
 	@echo "****             *****"
 	@echo "**** Configuring *****"
@@ -250,15 +260,15 @@ override_dh_auto_build: update-boinc-applinks.1
 	@echo "****            *****"
 	@echo "**** Making     *****"
 	@echo "****            *****"
-	@echo "**** CC=$(CC)   *****"
-	@echo "**** CXX=$(CXX) *****"
+	@echo "**** CC=$(CC)      *****"
+	@echo "**** CXX=$(CXX)    *****"
 	@echo
 	# disable optimization in api/, for SETI to work
 	#$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
-ifneq (,$(ENABLE_SERVER_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
-	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain)" CXXFLAGS="$(CXXFLAGS_plain)"
-	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain)" CXXFLAGS="$(CXXFLAGS_plain)"
+	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
+	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 endif
 	$(MAKE)
 
@@ -272,7 +282,7 @@ endif
 #	  done; \
 #	fi
 
-ifneq (,$(ENABLE_SERVER_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 	$(MAKE) -C samples/sleeper
 	$(MAKE) -C samples/worker
 	$(MAKE) -C samples/example_app
@@ -359,7 +369,7 @@ SAMPLES=samples/sleeper/sleeper samples/worker/worker samples/example_app/uc2 sa
 
 override_dh_auto_install: update-boinc-applinks.1
 	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
-ifneq (,$(ENABLE_SERVER_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
 	cp $(SAMPLES) $(CURDIR)/debian/tmp/samples || echo "W: Could not install samples ($(SAMPLES))"
@@ -368,7 +378,6 @@ endif
 	do \
 		egrep -l "^#!.*env..*python" $$i/* | xargs -r sed -i '1s%#!.*%#!/usr/bin/python%' ; \
 	done
-#	-chmod +x $(CURDIR)/debian/boinc-server-maker/usr/share/boinc-server/sched/transitioner_catchup.php ; \
 
 override_dh_install:
 	# boinc apps are built only together with the server
@@ -381,7 +390,7 @@ override_dh_install:
 
 override_dh_strip:
 	[ -d debian/boinc-dbg ] && dh_strip -a --no-package=-boinc-server-dbg --no-package=boinc-server-maker --no-package=boinc-app-examples --dbg-package=boinc-dbg || true
-	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda -Nboinc-amd-opencl -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib || true
+	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda -Nboinc-amd-opencl -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib --dbg-package=boinc-server-dbg || true
 
 override_dh_fixperms:
 	dh_fixperms
@@ -403,6 +412,10 @@ override_dh_fixperms:
 	  debian/boinc-client/usr/share/boinc-client/udev-cpu_share \
 	  debian/boinc-client/usr/share/bug/boinc-client/script \
 	  debian/boinc-manager/usr/share/doc/boinc-manager/examples/run-boincmgr
+ifeq (,$(ENABLE_SERVER_TEST))
+	chmod +x \
+	  debian/boinc-server-maker/usr/share/boinc-server-maker/html/ops/delete_job_files
+endif
 
 override_dh_compress:
 	dh_compress -Xsamples -X.cpp

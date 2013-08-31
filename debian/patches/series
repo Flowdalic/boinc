@@ -62,3 +62,9 @@ filesys_error_message.patch
 de.po.patch
 more_clang_warnings.patch
 #mmap_mem_only.patch
+add-ldflags.patch
+hurd-ftbfs.patch
+fixed-tools-permissions.patch
+fix-android-build.patch
+fix-file-perms.patch
+fix-italian-po.patch

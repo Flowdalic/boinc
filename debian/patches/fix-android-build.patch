@@ -1,0 +1,10 @@
+Author: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+
+--- a/samples/wrapper/build_android.sh
++++ b/samples/wrapper/build_android.sh
+@@ -1,4 +1,4 @@
+-#/bin/sh
++#!/bin/sh
+ #script to compile Wrapper for Android
+ 
+ export ANDROIDTC="$HOME/android-tc"
