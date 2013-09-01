@@ -1,6 +1,7 @@
 boinc (7.2.14+dfsg-1exp2) UNRELEASED; urgency=low
 
   * Adapting for upstream's additional directories in html/
+  * boinc-server-maker works with Apache 2.4's extra security
 
  -- Steffen Moeller <moeller@debian.org>  Sat, 31 Aug 2013 20:08:38 +0200
 
