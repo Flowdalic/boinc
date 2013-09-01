@@ -1,4 +1,5 @@
 # patches to get Debian going
+make_project_overcomes_Apache24_security.patch
 libnotify-0.7.patch
 # undisputed patches above
 sched_driver_f_free.patch

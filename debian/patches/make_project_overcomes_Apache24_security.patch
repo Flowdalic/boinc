@@ -1,0 +1,20 @@
+Index: boinc_debian_new/tools/make_project
+===================================================================
+--- boinc_debian_new.orig/tools/make_project
++++ boinc_debian_new/tools/make_project
+@@ -321,6 +321,7 @@
+     <Directory "%(proot)s/html">
+         Options Indexes FollowSymlinks MultiViews
+         AllowOverride AuthConfig
++	Require all granted
+         Order allow,deny
+         Allow from all
+     </Directory>
+@@ -328,6 +329,7 @@
+     <Directory "%(proot)s/cgi-bin">
+         Options ExecCGI
+         AllowOverride AuthConfig
++	Require all granted
+         Order allow,deny
+         Allow from all
+     </Directory>
