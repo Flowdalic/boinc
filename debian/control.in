@@ -238,7 +238,7 @@ Package: boinc
 % mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
 % php5, php5-cli, php5-mysql,
 % tcsh, openssl, adduser, libfcgi0ldbl
-%Recommends: libapache2-mod-php5, php5-gd, uuid-runtime
+%Recommends: libapache2-mod-php5, php5-gd, uuid-runtime, apache2-utils
 %Suggests: boinc-app-examples, boinc-cgi-stripchart
 %Description: BOINC server applications and data files
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a
