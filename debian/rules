@@ -436,14 +436,12 @@ get-orig-source:
 	#  sed 's/boinc_core_release_\(.*\)\//\1/' | \
 	#  sort -g -t_ -k1 -k2 -k3 | sed 's/_/./g' | tail -n 1 | tr -d '\n'`; \
 	#
-	#echo "this script doesn't work anymore since the upstream switch from svn to git"
 	VERSION=$(shell dpkg-parsechangelog | egrep '^Version:' | \
 	cut -d ' ' -f 2 | cut -d '-' -f 1 | cut -d '+' -f 1 | cut -d '~' -f 1 | perl -pe 's/^.*?://')
 	nice="nice -5"; if [ -x /usr/bin/ionice ]; then nice="$$nice ionice -c 3"; fi ; \
 	$$nice wget -O $(EXB) "http://boinc.berkeley.edu/git/boinc-v2.git/refs/tags/client_release/7.2/" --quiet;
-	LATEST_VERSION=$(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1)
-	$(shell echo $(LATEST_VERSION))
-	echo $$VERSION
+	LATEST_VERSION=$(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) \
+	$(shell echo $(LATEST_VERSION)) \
 	#rm -f $$EXB
 	#FIXME
 	#next part should be done only if the two versions are different, how to perform this if?
@@ -452,7 +450,7 @@ get-orig-source:
 	$$nice wget -O $$EXB "http://git.debian.org/?p=pkg-boinc/scripts.git;a=blob_plain;f=export-boinc;hb=HEAD" --quiet; \
 	chmod +x $$EXB; \
 	$$nice $$EXB -r $(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) -t $(origDir); \
-	rm -f $$EXB ;
+	rm -f $$EXB ; \
 	#fi ;
 
 .PHONY: get-orig-source
