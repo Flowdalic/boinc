@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: BOINC translation team <boinc_loc@ssl.berkeley.edu>\n"
 "POT-Creation-Date: 2013-08-22 16:22 PDT\n"
-"PO-Revision-Date: 2013-08-07 20:08+0200\n"
+"PO-Revision-Date: 2013-09-19 08:30+0000\n"
 "Last-Translator: 宇謙 <df910105@yahoo.com.tw>\n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -15,11 +15,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Pootle 2.5.0\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-BOINC-UTF8-Marker: 简体中文, 日本語\n"
 "X-Poedit-SearchPath-0: doc\n"
 "X-Poedit-Basepath: C:\\Src\\BOINCSVN\\trunk\\boinc\n"
-"X-BOINC-UTF8-Marker: 简体中文, 日本語\n"
+"X-POOTLE-MTIME: 1379579457.0\n"
 "X-Poedit-KeywordsList: tra\n"
 
 #: projects.inc:14
@@ -289,6 +290,8 @@ msgid ""
 "star formation history) on a resolved pixel-by-pixel basis using spectral "
 "energy distribution (SED) fitting techniques in a distributed computing mode."
 msgstr ""
+"我們將結合 GALEX、Pan-STARRS1 和 WISE 的光譜覆蓋範圍，來建立鄰近宇宙的多波長紫外線光近紅外星系圖譜。我們將在分散式模型上利用光譜"
+"能量分佈擬合技術(SED)解析每個像素來測量物理參數(例如同恆星的表面密度、恆星形成的表面密度、衰減和一級恆星的形成歷史)。"
 
 #: projects.inc:225
 msgid "University of Texas at Austin"
@@ -496,11 +499,11 @@ msgstr "物理學、材料科學和生物醫藥學方面的研究"
 
 #: projects.inc:365
 msgid "IBM Corporate Citizenship"
-msgstr ""
+msgstr "IBM企業公民"
 
 #: projects.inc:366
 msgid "Medical, environmental and other humanitarian research"
-msgstr ""
+msgstr "醫療、環境和其他人道主義研究"
 
 #: projects.inc:367
 msgid ""
@@ -509,6 +512,7 @@ msgid ""
 "includes HIV-AIDS, cancer, tropical and neglected diseases, solar energy, "
 "clean water and many more."
 msgstr ""
+"透過建立世界上最大的志願者網格運算，進一步研究關鍵且非營利對於人類最緊迫的問題。研究包括愛滋病、癌症、熱帶和被忽視的各種疾病、太陽能、乾淨的水…等等。"
 
 #: projects.inc:373
 msgid "Mathematics, computing, and games"
@@ -599,17 +603,13 @@ msgid ""
 "any real h > 1. The ABC conjecture is currently one of the greatest open "
 "problems in mathematics. If it is proven to be true, a lot of other open "
 "problems can be answered directly from it."
-msgstr ""
-"尋找滿足ABC 猜想條件的abc 三元組，條件是：c=a+b, a<b, b<c, rad(ABC)<C，其中rad(n) 稱為n "
-"的根積，意即n的所有質因數的乘積，若有重複的質因數則只取一個。 ABC 猜想的具體內容是：對於所有e>0，存在與e "
-"有關的常數C(e)，對於所有滿足a+b=c,a 與b 互質的三元整數組(a,b,c) ，均成立c<=C(e)((rad(abc))^(1+e))。 "
-"ABC 猜想是當前數論中最重要的未解決問題之一，如果它能夠被證明，其它不少未解決問題也能得到直接的證明。"
+msgstr "Primegrid 有許多子專案，這些用來尋找非常大且不同型態的質數，包括尋找已知的最大質數。"
 
 #: projects.inc:491
 msgid ""
 "Primegrid has multiple projects searching for different forms of very large "
 "prime numbers, including searching for the largest known prime number."
-msgstr ""
+msgstr "Primegrid 有許多子專案，用於尋找非常大且型態不同的質數，包括尋找已知的最大質數。"
 
 #: projects.inc:497
 msgid "Hochschule RheinMain University of Applied Sciences"
@@ -657,8 +657,8 @@ msgid ""
 "computer, you can connect it to as many of these projects as you like."
 msgstr ""
 "BOINC 使得您可以把電腦的閒置時間捐獻給 "
-"SETI@home、Einstein@home、Climateprediction.net、Rosetta@home、World Commnunity "
-"Grid 等等許多科研專案。 <p>在將 BOINC 安裝到您的電腦上之後，您可以加入多個您喜歡的專案。 <p>"
+"SETI@home、Einstein@home、Climateprediction.net、Rosetta@home 和 World "
+"Commnunity Grid 等等許多科研專案。 <p>在將 BOINC 安裝到您的電腦上之後，您可以加入多個您喜歡的專案。 <p>"
 
 #: download.php:89
 msgid ""
@@ -826,9 +826,9 @@ msgid ""
 "%sDownload%s and run BOINC software  %sEnter%s an email address and "
 "password. "
 msgstr ""
-"將您電腦(包括 Windows、Mac 以及 Linux) "
-"的閒置時間利用起來，就可以幫助科學家們治療疾病、了解全球變暖、發現脈衝星以及其它多種類型的科學研究，而且這還很簡單和安全：%s選擇%s 專案 %s下載%"
-"s 並運行 BOINC 軟體%s 輸入%s 您的電子郵件地址以及專案密碼。"
+" 將您電腦(包括 Windows、Mac 以及 Linux) "
+"的閒置時間利用起來，就可以幫助治療疾病、了解全球暖化、發現脈衝星以及其它多種類型的科學研究。而且這還很安全、可靠和簡單： %s選擇%s 專案 %s下載%"
+"s 並執行 BOINC 軟體 %s輸入%s 您的電子郵件地址以及專案密碼。"
 
 #: index.php:105
 #, php-format
@@ -942,12 +942,12 @@ msgstr "Boinc發起於加州大學柏克萊分校"
 
 #: ../html/inc/news.inc:40
 msgid "Comment"
-msgstr ""
+msgstr "評論"
 
 #: ../html/inc/news.inc:111
 #, php-format
 msgid "News is available as an %sRSS feed%s"
-msgstr ""
+msgstr "可以透過 %sRSS feed%s 來查看新聞"
 
 #~ msgid "IBM Corporate Community Relations"
 #~ msgstr "IBM 協作社群關係部"

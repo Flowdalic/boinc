@@ -7,27 +7,27 @@ msgstr ""
 "Project-Id-Version: BOINC Manager 6.8x\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-18 11:32-0500\n"
-"PO-Revision-Date: 2013-08-15 15:27+0200\n"
-"Last-Translator: Aycan <aycandemirel@hotmail.com>\n"
+"PO-Revision-Date: 2013-09-07 18:50+0200\n"
+"Last-Translator: Aycan Demirel <aycandemirel@hotmail.com>\n"
 "Language-Team: Donanım Haber <bilgi@donanimhaber.com>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Poedit 1.5.7\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: C:\\Src\\BOINCGIT\\boinc\n"
 "X-Poedit-SearchPath-0: clientgui\n"
 "X-Poedit-SearchPath-1: clientgui/msw\n"
 "X-Poedit-SearchPath-2: clientgui/gtk\n"
 "X-Poedit-SearchPath-3: clientgui/mac\n"
+"X-POOTLE-MTIME: 1378064441.0\n"
 "X-BOINC-UTF8-Marker: 简体中文, 日本語\n"
 
 # 81%
 #: clientgui/AccountInfoPage.cpp:387
 #, c-format
-#, c-format, c-format
 msgid "Identify your account at %s"
 msgstr "%s için hesap bilgilerinizi girin"
 
@@ -1144,11 +1144,11 @@ msgstr "geçersiz değer"
 
 #: clientgui/DlgAdvPreferences.cpp:543
 msgid "invalid time, format is HH:MM"
-msgstr "geçersiz saat, format SS:DD şeklinde olmalı"
+msgstr "geçersiz saat, biçim SS:DD şeklinde olmalı"
 
 #: clientgui/DlgAdvPreferences.cpp:544
 msgid "invalid time interval, format is HH:MM-HH:MM"
-msgstr "geçersiz saat aralığı, format SS:DD-SS:DD şeklinde olmalı"
+msgstr "geçersiz saat aralığı, biçim SS:DD-SS:DD şeklinde olmalı"
 
 #: clientgui/DlgAdvPreferences.cpp:664
 msgid "invalid input value detected"
@@ -1216,7 +1216,7 @@ msgid ""
 "Click OK to set preferences.\n"
 "Click Clear to restore web-based settings (except exclusive apps)."
 msgstr ""
-"Bu pencere, tercihlerinizi yalnızca bu bilgisayar için özelleştirir.\n"
+"Bu pencere, tercihlerinizi yalnızca bu bilgisayarınız için özelleştirir.\n"
 "Tercihlerinizi kaydetmek için 'Tamam'ı tıklayın.\n"
 "İnternet tabanlı ayarlarınıza dönmek için 'Temizle'yi tıklayın (ayrıcalıklı "
 "uygulama listesi silinmez)."
@@ -1271,44 +1271,45 @@ msgstr "Hesaplama izinleri"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:139
 msgid "While computer is on batteries"
-msgstr "Bilgisayar pil gücünde olduğunda"
+msgstr "Bilgisayarım pil gücündeyken hesaplama çalışsın"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:142
 msgid "check this if you want this computer to do work while it runs on batteries"
 msgstr ""
-"bilgisayar pille çalışırken hesaplamanın çalışmasını istiyorsanız bunu "
+"bilgisayarınız pille çalışırken hesaplamaların çalışmasını istiyorsanız bunu "
 "işaretleyin"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:148
 msgid "While computer is in use"
-msgstr "Bilgisayar kullanımda olduğunda"
+msgstr "Bilgisayarımı kullanırken işlemci ile hesaplama çalışsın"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:151
 msgid "check this if you want this computer to do work even when you're using it"
 msgstr ""
-"bilgisayarınızı kullandığınız sırada hesaplamanın çalışmasını istiyorsanız "
-"bunu işaretleyin"
+"BOINC normalde bilgisayar boştayken çalışır. Bilgisayarınızı kullandığınız "
+"sırada da işlemci (CPU) ile hesaplamanın çalışmasını istiyorsanız bunu "
+"işaretleyin"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:157
 msgid "Use GPU while computer is in use"
-msgstr "Bilgisayar kullanımda olduğunda GPU kullanılsın"
+msgstr "Bilgisayarımı kullanırken ekran kartı ile hesaplama çalışsın"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:160
 msgid "check this if you want your GPU to do work even when you're using the computer"
 msgstr ""
-"bilgisayarınızı kullandığınız sırada ekran kartınızın da hesaplamada "
-"kullanılmasını istiyorsanız bunu işaretleyin (bazı bilgisayarlarda yavaşlama "
-"yaratabilir)"
+"BOINC normalde bilgisayar boştayken çalışır. Bilgisayarınızı kullandığınız "
+"sırada da ekran kartınızla (GPU) hesaplamanın çalışmasını istiyorsanız bunu "
+"işaretleyin (bazı ekran kartlarıyla sistemde yavaşlama yaratabilir)"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:172
 msgid "Only after computer has been idle for"
-msgstr "Yalnızca bilgisayar bu süre kadar boşta kaldığında:"
+msgstr "Yalnızca bilgisayarım bu süre kadar boşta kaldığında:"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:182
 msgid "do work only after you haven't used the computer for this number of minutes"
 msgstr ""
-"bilgisayarınızı kaç dakika kullanılmadığınızda hesaplamanın başlamasını "
-"istediğinizi belirleyin"
+"bilgisayarınızı kaç dakika kullanılmadığınızda (klavye ve fare hareketi "
+"olmadığında) hesaplamanın başlamasını istediğinizi belirleyin"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:187
 #: clientgui/DlgAdvPreferencesBase.cpp:336
@@ -1350,12 +1351,12 @@ msgstr "bu saatte hesaplamayı durdur"
 #: clientgui/DlgAdvPreferencesBase.cpp:251
 #: clientgui/DlgAdvPreferencesBase.cpp:511
 msgid "(no restriction if equal)"
-msgstr "(birbirine eşitse, sınırlama yok)"
+msgstr "(birbirine eşitse, sınırlama ortadan kalkar)"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:256
 #: clientgui/DlgAdvPreferencesBase.cpp:516
 msgid "Day-of-week override:"
-msgstr "Haftanın günü sınırlamaları:"
+msgstr "Haftanın günlerinde sınırlamalar:"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:261
 #: clientgui/DlgAdvPreferencesBase.cpp:521
@@ -1409,7 +1410,7 @@ msgstr "Bu kadar sürede bir, çalışan uygulamayı değiştir:"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:339
 msgid "On multiprocessor systems, use at most"
-msgstr "Çok işlemcili sistemlerde işlemcilerin en fazla"
+msgstr "Çok çekirdekli sistemlerde çekirdeklerin en çok"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:346
 #, no-c-format
@@ -1423,7 +1424,7 @@ msgstr "% kadarı kullanılsın"
 #: clientgui/DlgAdvPreferencesBase.cpp:668
 #: clientgui/DlgAdvPreferencesBase.cpp:678
 msgid "Use at most"
-msgstr "En fazla"
+msgstr "En çok"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:356
 #, no-c-format
@@ -1463,25 +1464,24 @@ msgstr "her"
 #: clientgui/DlgAdvPreferencesBase.cpp:443
 #: clientgui/DlgAdvPreferencesBase.cpp:462
 msgid "days"
-msgstr "günlük"
+msgstr "gün"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:428
 msgid "Minimum work buffer"
-msgstr "Depoda en az bu kadar iş bulundur:"
+msgstr "En az bu kadar yetecek iş indirilsin:"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:437
 msgid "Try to maintain enough tasks to keep busy for this many days"
-msgstr "Depoda, en az bu kadar gün boyunca yetecek miktarda iş bulundur"
+msgstr "En az bu kadar gün boyunca yetecek miktarda iş indirilir"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:449
 msgid "Max additional work buffer"
-msgstr "Depoda en fazla bu kadar iş bulundur:"
+msgstr "En çok bu kadarda tüketilecek iş indirilsin:"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:458
 msgid "In addition, maintain enough tasks for up to this many days"
 msgstr ""
-"Bunun yanında, depoda en fazla bu kadar günde tüketilebilecek miktarda iş "
-"bulundur"
+"Bunun yanında, en çok bu kadar günde tüketilebilecek miktarda iş indirilir"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:465
 msgid "Skip image file verification"
@@ -1536,7 +1536,7 @@ msgstr "Disk kullanımı"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:608
 msgid "the maximum disk space used by BOINC (in Gigabytes)"
-msgstr "BOINC tarafından kullanılacak en fazla disk alanı (Gigabayt olarak)"
+msgstr "BOINC, disk alanının gigabayt olarak en çok bu kadarını kullanabilecek"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:612
 msgid "Gigabytes disk space"
@@ -1548,7 +1548,7 @@ msgstr "En az"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:619
 msgid "BOINC leaves at least this amount of disk space free (in Gigabytes)"
-msgstr "BOINC en az bu miktar kadar disk alanını serbest bırakacak"
+msgstr "BOINC, disk dolarsa en az bu miktarda disk alanını boş bırakacak"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:623
 msgid "Gigabytes disk space free"
@@ -1556,7 +1556,7 @@ msgstr "GB disk alanı boş kalsın"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:630
 msgid "BOINC uses at most this percentage of total disk space"
-msgstr "BOINC disk alanının yüzde olarak en fazla bu kadarını kullanacak"
+msgstr "BOINC, disk alanının yüzde olarak en çok bu kadarını kullanabilecek"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:635
 #, no-c-format
@@ -1565,11 +1565,11 @@ msgstr "% kadar disk alanı kullanılsın"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:638
 msgid "Tasks checkpoint to disk at most every"
-msgstr "İşler kontrol noktasını diske en fazla"
+msgstr "İşler kontrol noktasını diske en erken"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:644
 msgid "seconds"
-msgstr "saniyede bir kaydetsin"
+msgstr "saniyede bir kaydedebilsin"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:654
 #, no-c-format
@@ -1578,17 +1578,17 @@ msgstr "% kadar sanal bellek (swap alanı) kullanılsın"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:661
 msgid "Memory usage"
-msgstr "Bellek kullanımı"
+msgstr "Bellek (RAM) kullanımı"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:675
 #, no-c-format
 msgid "% when computer is in use"
-msgstr "% kadar bellek kullanılsın (bilgisayar kullanımdayken)"
+msgstr "% kadar bellek kullanılsın (bilgisayarımı kullanırken)"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:685
 #, no-c-format
 msgid "% when computer is idle"
-msgstr "% kadar bellek kullanılsın (bilgisayar boştayken)"
+msgstr "% kadar bellek kullanılsın (bilgisayarım boştayken)"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:690
 msgid "Leave applications in memory while suspended"
@@ -1602,7 +1602,7 @@ msgstr ""
 
 #: clientgui/DlgAdvPreferencesBase.cpp:712
 msgid "Suspend processor and network usage when these applications are running:"
-msgstr "Bu uygulamalar çalışırken, işlemci ve ağ kullanımını duraklat:"
+msgstr "Bu uygulamalar çalışırken, işlemci ve ağ kullanımı duraklatılacak:"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:721
 msgid "Add..."
@@ -1784,11 +1784,11 @@ msgstr "İstemci yapılandırması bunu içermez: "
 
 #: clientgui/DlgItemProperties.cpp:176
 msgid " work fetch deferred for"
-msgstr " iş alma ertelendi"
+msgstr " iş indirme ertelendi"
 
 #: clientgui/DlgItemProperties.cpp:177
 msgid " work fetch deferral interval"
-msgstr " iş alma erteleme aralığı"
+msgstr " iş indirme erteleme aralığı"
 
 #: clientgui/DlgItemProperties.cpp:208
 msgid "Properties of project "
@@ -1993,7 +1993,7 @@ msgstr "Yerel:"
 #: clientgui/DlgOptions.cpp:129
 #: clientgui/DlgOptions.cpp:135
 msgid "Options"
-msgstr "Tercihler"
+msgstr "Seçenekler"
 
 #: clientgui/DlgOptions.cpp:175
 msgid "Language:"
@@ -2139,7 +2139,6 @@ msgstr "%s - Dil Seçimi"
 
 #: clientgui/DlgOptions.cpp:695
 #, c-format
-#, c-format, c-format
 msgid "The %s's language has been changed.  In order for this change to take effect, you must restart the %s."
 msgstr ""
 "%s'ın varsayılan dili değişti.  Değişikliğin etkili olması için %s yeniden "
@@ -2829,7 +2828,7 @@ msgstr "Gelişmiş grafiksel arayüzü görüntüler."
 
 #: clientgui/sg_BoincSimpleFrame.cpp:144
 msgid "Skin"
-msgstr "Görünüm"
+msgstr "Kaplama"
 
 #: clientgui/sg_BoincSimpleFrame.cpp:146
 msgid "Select the appearance of the user interface."
@@ -3058,7 +3057,7 @@ msgstr "60"
 
 #: clientgui/sg_DlgPreferences.cpp:282
 msgid "This dialog controls preferences for this computer only."
-msgstr "Bu pencere, tercihleri yalnızca bu bilgisayar için özelleştirir."
+msgstr "Bu pencere, tercihleri yalnızca bu bilgisayarınız için özelleştirir."
 
 #: clientgui/sg_DlgPreferences.cpp:287
 msgid "Click OK to set preferences."
@@ -3133,7 +3132,7 @@ msgstr "%%%d"
 
 #: clientgui/sg_DlgPreferences.cpp:798
 msgid "0 (Run Always)"
-msgstr "0 (Daima Çalış)"
+msgstr "0 (Daima çalış)"
 
 #: clientgui/sg_DlgPreferences.cpp:801
 #, c-format
@@ -3198,11 +3197,11 @@ msgstr "Bu projenin işlerini durdurur."
 #: clientgui/sg_ProjectCommandPopup.cpp:73
 #: clientgui/sg_ProjectCommandPopup.cpp:121
 msgid "No new tasks"
-msgstr "Yeni işler alma"
+msgstr "Yeni işler indirme"
 
 #: clientgui/sg_ProjectCommandPopup.cpp:74
 msgid "Don't get new tasks for this project."
-msgstr "Bu projeye artık yeni işler alınmaz."
+msgstr "Bu proje artık yeni işler indirmez."
 
 #: clientgui/sg_ProjectCommandPopup.cpp:79
 msgid "Reset project"
@@ -3237,11 +3236,11 @@ msgstr "Bu projenin işleri yeniden çalıştırılır."
 
 #: clientgui/sg_ProjectCommandPopup.cpp:118
 msgid "Allow new tasks"
-msgstr "Yeni işler al"
+msgstr "Yeni işler indir"
 
 #: clientgui/sg_ProjectCommandPopup.cpp:119
 msgid "Allow fetching new tasks for this project."
-msgstr "Bu projeye yeni işler alınmasına izin verir."
+msgstr "Bu projenin yeni işler indirmesine izin verir."
 
 #: clientgui/sg_ProjectCommandPopup.cpp:122
 msgid "Don't fetch new tasks for this project."
@@ -3254,7 +3253,7 @@ msgstr "'%s' projesini sıfırlamak istediğinize emin misiniz?"
 
 #: clientgui/sg_ProjectCommandPopup.cpp:220
 msgid "Reset Project"
-msgstr "Projeyi Sıfırla"
+msgstr "Projeyi sıfırla"
 
 #: clientgui/sg_ProjectCommandPopup.cpp:251
 #: clientgui/sg_StatImageLoader.cpp:192
@@ -3266,11 +3265,11 @@ msgstr "'%s' projesini kaldırmak istediğinize emin misiniz?"
 #: clientgui/sg_StatImageLoader.cpp:138
 #: clientgui/sg_StatImageLoader.cpp:198
 msgid "Remove Project"
-msgstr "Projeyi Kaldır"
+msgstr "Projeyi kaldır"
 
 #: clientgui/sg_ProjectPanel.cpp:72
 msgid "Add Project"
-msgstr "Proje Ekle"
+msgstr "Proje ekle"
 
 #: clientgui/sg_ProjectPanel.cpp:73
 msgid "Synchronize"
@@ -3291,21 +3290,21 @@ msgstr "Aşağıdaki kontrollere erişimek için bir proje seçin"
 
 #: clientgui/sg_ProjectPanel.cpp:145
 msgid "Project Web Pages"
-msgstr "Proje İnternet Sayfaları"
+msgstr "Proje internet sayfaları"
 
 #: clientgui/sg_ProjectPanel.cpp:149
 msgid "Project Commands"
-msgstr "Proje Komutları"
+msgstr "Proje komutları"
 
 #: clientgui/sg_ProjectPanel.cpp:267
 #, c-format
 msgid "Pop up a menu of websites for project %s"
-msgstr "%s projesinin internet sayfaları menüsünü açar"
+msgstr "%s projesinin internet sayfalarını açar"
 
 #: clientgui/sg_ProjectPanel.cpp:269
 #, c-format
 msgid "Pop up a menu of commands to apply to project %s"
-msgstr "%s projeye uygulanacak komutlar menüsünü açar"
+msgstr "%s projesine verilebilecek komutları gösterir"
 
 #: clientgui/sg_ProjectsComponent.cpp:196
 #: clientgui/sg_ProjectsComponent.cpp:207
@@ -3406,11 +3405,11 @@ msgstr "Bu işin ilerleme oranı"
 
 #: clientgui/sg_TaskPanel.cpp:549
 msgid "Task Commands"
-msgstr "İş Komutları"
+msgstr "İş komutları"
 
 #: clientgui/sg_TaskPanel.cpp:550
 msgid "Pop up a menu of commands to apply to this task"
-msgstr "Bu işe uygulanacak komutlar menüsünü açar"
+msgstr "Bu işe verilebilecek komutları gösterir"
 
 #: clientgui/sg_TaskPanel.cpp:685
 #, c-format
@@ -3428,7 +3427,7 @@ msgstr "Uygulama: Mevcut değil"
 
 #: clientgui/sg_TaskPanel.cpp:816
 msgid "Not Available"
-msgstr "Mevcut Değil"
+msgstr "Mevcut değil"
 
 #: clientgui/sg_TaskPanel.cpp:831
 #, c-format
@@ -3794,19 +3793,19 @@ msgstr "başka programlarca kullanılan: "
 
 #: clientgui/ViewStatistics.cpp:1195
 msgid "User Total"
-msgstr "Kullanıcı Toplamı"
+msgstr "Toplam Krediniz"
 
 #: clientgui/ViewStatistics.cpp:1196
 msgid "User Average"
-msgstr "Kullanıcı Ortalaması"
+msgstr "Günlük Ortalama Krediniz"
 
 #: clientgui/ViewStatistics.cpp:1197
 msgid "Host Total"
-msgstr "Bilgisayar Toplamı"
+msgstr "Bilgisayarınızın Toplam Kredisi"
 
 #: clientgui/ViewStatistics.cpp:1198
 msgid "Host Average"
-msgstr "Bilgisayar Ortalaması"
+msgstr "Bilgisayarınızın Günlük Ortalama Kredisi"
 
 #: clientgui/ViewStatistics.cpp:1345
 #, c-format
@@ -3815,35 +3814,35 @@ msgstr "Son güncelleme: %.0f gün önce"
 
 #: clientgui/ViewStatistics.cpp:1969
 msgid "Show user total"
-msgstr "Kullanıcı toplamı"
+msgstr "Toplam kredim"
 
 #: clientgui/ViewStatistics.cpp:1970
 msgid "Show total credit for user"
-msgstr "Kullanıcının toplam kredisi"
+msgstr "Toplam kredinizi görüntüler"
 
 #: clientgui/ViewStatistics.cpp:1976
 msgid "Show user average"
-msgstr "Kullanıcı ortalaması"
+msgstr "Günlük ortalama kredim"
 
 #: clientgui/ViewStatistics.cpp:1977
 msgid "Show average credit for user"
-msgstr "Kullanıcının ortalama kredisi"
+msgstr "Günlük üretilen ortalama kredinizi görüntüler"
 
 #: clientgui/ViewStatistics.cpp:1983
 msgid "Show host total"
-msgstr "Bilgisayar toplamı"
+msgstr "Bilgisayarımın toplam kredisi"
 
 #: clientgui/ViewStatistics.cpp:1984
 msgid "Show total credit for host"
-msgstr "Bilgisayarın toplam kredisi"
+msgstr "Bu bilgisayarınızın toplam kredisini görüntüler"
 
 #: clientgui/ViewStatistics.cpp:1990
 msgid "Show host average"
-msgstr "Bilgisayar ortalaması"
+msgstr "Bilgisayarımın ortalama kredisi"
 
 #: clientgui/ViewStatistics.cpp:1991
 msgid "Show average credit for host"
-msgstr "Bilgisayarın ortalama kredisi"
+msgstr "Bu bilgisayarınızın ortalama kredisini görüntüler"
 
 #: clientgui/ViewStatistics.cpp:2000
 msgid "< &Previous project"
