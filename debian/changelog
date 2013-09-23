@@ -1,6 +1,11 @@
 boinc (7.2.14+dfsg-1exp2) UNRELEASED; urgency=low
 
+  [ Steffen Moeller ]
   * Adapting for upstream's additional directories in html/
+
+  [ Guo Yixuan ]
+  * Disabled silent rules for build log check.
+    (debian/patches/disable_silent_rules.patch)
 
  -- Steffen Moeller <moeller@debian.org>  Sat, 31 Aug 2013 20:08:38 +0200
 
