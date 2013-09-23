@@ -18,8 +18,17 @@
   along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
+    <!-- path and file configuration -->
+        <string name="client_path" translatable="false">/data/data/edu.berkeley.boinc/client/</string>
+        <string name="client_name" translatable="false">boinc</string>
+        <string name="client_cli" translatable="false">boinccmd</string>
+        <string name="client_cabundle" translatable="false">ca-bundle.crt</string>
+        <string name="client_config" translatable="false">cc_config.xml</string>
+        <string name="auth_file_name" translatable="false">gui_rpc_auth.cfg</string>
+        <string name="all_projects_list" translatable="false">all_projects_list.xml</string>
+        <string name="global_prefs_override" translatable="false">global_prefs_override.xml</string>
     <!-- BOINC platform -->
-    	<string name="boinc_platform_name">arm-android-linux-gnu</string>
+    	<string name="boinc_platform_name" translatable="false">arm-android-linux-gnu</string>
     <!-- Default preferences of Android app, for BOINC client see assets/global_prefs_override.xml -->
     	<bool name="prefs_default_autostart">true</bool>
         <bool name="prefs_default_notifications">true</bool>
@@ -37,6 +46,7 @@
     	<integer name="attach_login_retries">5</integer>
     	<integer name="attach_creation_retries">5</integer>
     	<integer name="attach_attach_retries">5</integer>
+    	<integer name="attach_acctmgr_retries">5</integer>
     <!-- configuration on tab layout -->
     	<bool name="tab_status">true</bool>
         <bool name="tab_projects">true</bool>
@@ -57,7 +67,7 @@
     <!-- eventlog -->
     	<integer name="eventlog_gui_messages">100</integer>
     <!-- preferences -->	
-    	<string-array name="prefs_client_log_flags">
+    	<string-array name="prefs_client_log_flags" translatable="false">
     	    <item>android_debug</item>
     	    <item>http_debug</item>
     	    <item>task_debug</item>
