@@ -424,6 +424,7 @@ override_dh_installexamples:
 	dh_installexamples -Xjpeglib 
 
 origDir ?= .
+EXB     ?=/tmp/index.html
 
 get-orig-source:
 	diskfree=`df -k . | awk '{print $$4}' | tail -n +2` ; \
@@ -435,23 +436,22 @@ get-orig-source:
 	#  sed 's/boinc_core_release_\(.*\)\//\1/' | \
 	#  sort -g -t_ -k1 -k2 -k3 | sed 's/_/./g' | tail -n 1 | tr -d '\n'`; \
 	#
-	echo "this script doesn't work anymore since the upstream switch from svn to git"
-	#VERSION=$(shell dpkg-parsechangelog | egrep '^Version:' | \
-	#cut -d ' ' -f 2 | cut -d '-' -f 1 | cut -d '+' -f 1 | cut -d '~' -f 1 | perl -pe 's/^.*?://')
-	#EXB=/tmp/index.html; \
-	#nice="nice -5"; if [ -x /usr/bin/ionice ]; then nice="$$nice ionice -c 3"; fi ; \
-	#$$nice wget -O $$EXB "http://boinc.berkeley.edu/git/boinc.git/refs/tags/" --quiet;
-	#LATEST_VERSION=`grep -e 'client_release_[0-9]\.[0-9]\.[0-9]*' $$EXB -o | tail -n 1 | sed 's/client_release_//g'`
+	VERSION=$(shell dpkg-parsechangelog | egrep '^Version:' | \
+	cut -d ' ' -f 2 | cut -d '-' -f 1 | cut -d '+' -f 1 | cut -d '~' -f 1 | perl -pe 's/^.*?://')
+	nice="nice -5"; if [ -x /usr/bin/ionice ]; then nice="$$nice ionice -c 3"; fi ; \
+	$$nice wget -O $(EXB) "http://boinc.berkeley.edu/git/boinc-v2.git/refs/tags/client_release/7.2/" --quiet;
+	LATEST_VERSION=$(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) \
+	$(shell echo $(LATEST_VERSION)) \
 	#rm -f $$EXB
 	#FIXME
 	#next part should be done only if the two versions are different, how to perform this if?
 	##if [ "$$VERSION"!="$$LATEST_VERSION" ]; then
-	#EXB=/tmp/export-boinc; \
-	#$$nice wget -O $$EXB "http://git.debian.org/?p=pkg-boinc/scripts.git;a=blob_plain;f=export-boinc;hb=HEAD" --quiet; \
-	#chmod +x $$EXB; \
-	#$$nice $$EXB -r $$VERSION -t $(origDir); \
-	#rm -f $$EXB ;
-	##fi ;
+	EXB=/tmp/export-boinc; \
+	$$nice wget -O $$EXB "http://git.debian.org/?p=pkg-boinc/scripts.git;a=blob_plain;f=export-boinc;hb=HEAD" --quiet; \
+	chmod +x $$EXB; \
+	$$nice $$EXB -r $(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) -t $(origDir); \
+	rm -f $$EXB ; \
+	#fi ;
 
 .PHONY: get-orig-source
 
