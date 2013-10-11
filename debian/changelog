@@ -1,3 +1,9 @@
+boinc (7.2.22+dfsg-1) UNRELEASED; urgency=low
+
+  * New upstream release
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 11 Oct 2013 18:06:33 +0200
+
 boinc (7.2.17+dfsg-1) UNRELEASED; urgency=low
 
   * New upstream release.

@@ -1,7 +1,5 @@
-Index: boinc_debian_new/tools/Makefile.am
-===================================================================
---- boinc_debian_new.orig/tools/Makefile.am
-+++ boinc_debian_new/tools/Makefile.am
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
 @@ -34,7 +34,8 @@
      watch_tcp
  
