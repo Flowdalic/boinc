@@ -1,3 +1,9 @@
+boinc (7.2.22+dfsg-1exp1) experimental; urgency=low
+
+  * Same as -1, with server packages.
+
+ -- Guo Yixuan <culu.gyx@gmail.com>  Sat, 19 Oct 2013 00:24:11 -0400
+
 boinc (7.2.22+dfsg-1) unstable; urgency=low
 
   [ Gianfranco Costamagna ]
