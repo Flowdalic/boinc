@@ -422,10 +422,10 @@ ifeq (,$(ENABLE_SERVER_TEST))
 endif
 
 override_dh_compress:
-	dh_compress -Xsamples -X.cpp
+	dh_compress -Xsamples -X.cpp -X.py -XMakefile
 
 override_dh_installexamples:
-	dh_installexamples -Xjpeglib 
+	dh_installexamples -X.gz -Xjpeglib 
 
 origDir ?= .
 EXB     ?=/tmp/index.html
