@@ -20,8 +20,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.berkeley.boinc"
     
-    android:versionCode="34"
-    android:versionName="7.2.17"
+    android:versionCode="36"
+    android:versionName="7.2.21"
     
     android:installLocation="internalOnly" > <!-- installation on SD card would break boot receiver -->
 
@@ -70,7 +70,7 @@
             android:configChanges="orientation"/>
         <activity android:name=".StatusActivity" />
         <activity android:name=".TasksActivity" />
-        <activity android:name=".TransActivity" />
+        <activity android:name=".NoticesActivity" />
         <activity android:name=".PrefsActivity" />
         <activity android:name=".ProjectsActivity" />
         <activity android:name=".EventLogActivity" />

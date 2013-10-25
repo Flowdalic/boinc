@@ -1,7 +1,5 @@
-Index: boinc_debian_new/tools/make_project
-===================================================================
---- boinc_debian_new.orig/tools/make_project
-+++ boinc_debian_new/tools/make_project
+--- a/tools/make_project
++++ b/tools/make_project
 @@ -321,6 +321,7 @@
      <Directory "%(proot)s/html">
          Options Indexes FollowSymlinks MultiViews

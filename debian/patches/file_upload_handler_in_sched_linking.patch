@@ -1,7 +1,5 @@
-Index: boinc_debian_new/sched/Makefile.am
-===================================================================
---- boinc_debian_new.orig/sched/Makefile.am
-+++ boinc_debian_new/sched/Makefile.am
+--- a/sched/Makefile.am
++++ b/sched/Makefile.am
 @@ -256,7 +256,7 @@
  update_stats_LDADD = $(SERVERLIBS)
  
