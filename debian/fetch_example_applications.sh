@@ -76,6 +76,7 @@ shortver=$(echo $version|cut -d . -f-2)
 
 appsdir="apps"
 downloaddir="collection"
+appsdirdownload="/usr/lib/boinc-server-maker/apps" # used as relative path below
 
 if [ -d "$appsdir"]; then
 	echo "Directory '$appsdir' is already existing. Please clean this up first."
@@ -103,11 +104,11 @@ do
 
   ar xvf ${arch}.deb data.tar.gz
   echo "I: Untaring for architecture ${arch}"
-  tar xzf data.tar.gz ./usr/lib/boinc-server/apps/
+  tar xzf data.tar.gz ./$appsdirdownload
   echo -n "I: Contents:"
-  ls ./usr/lib/boinc-server/apps/
+  ls ./$appsdirdownload
   mkdir -p $downloaddir
-  mv ./usr/lib/boinc-server/apps $downloaddir/$arch
+  mv ./$appsdirdownload $downloaddir/$arch
   mv usr deleteThisDir
   rm -rf deleteThisDir data.tar.gz ${arch}.deb
 done
