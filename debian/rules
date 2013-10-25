@@ -132,6 +132,10 @@ ifneq (,$(findstring clang,$(DEB_BUILD_OPTIONS)))
   export CXX=clang
 endif
 
+ifeq(,$(DEB_OPT_FLAGS))
+   DEB_OPT_FLAGS = -O3 -funroll-loops -fforce-addr -ffast-math
+endif
+
 CFLAGS += $(DEB_OPT_FLAGS)
 CXXFLAGS += $(DEB_OPT_FLAGS)
 
