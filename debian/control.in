@@ -3,7 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 Uploaders: Steffen Moeller <moeller@debian.org>, 
- Guo Yixuan <culu.gyx@gmail.com>,
+ Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
  Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
 Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 9), po-debconf, pkg-config,
