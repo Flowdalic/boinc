@@ -7,8 +7,8 @@
 # This script is released under the same license
 # as BOINC, created and copyright by
 # Steffen Moeller <moeller@debian.org>
-#
-# Modified by
+# with contributions by
+# Christian Beer <djangofett@gmx.net>
 # Natalia Nikitina <nevecie@yandex.ru>
 
 set -e
@@ -21,12 +21,18 @@ Usage: $0 [<boinc project root dir>|--help]
   This script collects the binaries for multiple platforms of a Debian
   package.  All parameters are specified by environment variables.
 
-    installroot      path to install directory that together with the
-    fileprojectname  defines the project's root directory.
-    packagename      determines the name of the Debian package to install
+    installroot        path to install directory that together with the
+    projectname        defines the project's root directory.
+    packagename        determines the name of the Debian package to install
 
   Optional:
-    version          what version exactly shall be installed
+    version            what version exactly shall be installed
+    sourcepackagename  name of source package from which binary is produced,
+                       autoretrieved by 'apt-cache show \$packagename'
+    downloaddir        directory into which the Debian packages are downloaded,
+                       defaults to 'collection'
+    appsdir            directory to harbor unpackaged binaries and project
+                       signatures, defaults to '\$projectroot/apps'
 
   If the packagename is not specified, then it defaults to
   boinc-app-examples.
@@ -57,17 +63,29 @@ fi
 
 version=$(apt-cache show $packagename | grep ^Version | tail -1 | cut -f2 -d\  )
 if [ -z "$version" ]; then
-	echo "apt-cache does not know any version for package '$packagename'."
+	echo "E: apt-cache does not know any version for package '$packagename'."
 	exit 1
 fi
+
+if [ -z "$sourcepackagename" ]; then
+	sourcepackagename=$(apt-cache show $packagename|grep ^Source:|sort -u|cut -f2 -d\ |head -n 1)
+	if [ -z "$sourcepackagename" ]; then
+		echo "I: Could not determine source package name of '$packagename'"
+		exit 1
+	else
+		echo "I: Determined source package of '$packagename' as '$sourcepackagename'"
+	fi
+fi
+# first letter or libL to constrain download directory
+spn=$(echo $sourcepackagename|sed -e 's/^\(lib.\|.\).*/\1/')
 
 if [ -n "$1" ]; then
 	projectroot=$1
 elif [ -z "$projectroot" ]; then
-	if [ -n "$installroot" -a -n "$fileprojectname" ]; then
-		projectroot="$installroot/$fileprojectname"
+	if [ -n "$installroot" -a -n "$projectname" ]; then
+		projectroot="$installroot/$projectname"
 	else
-		echo "Please specify the project root directory."
+		echo "E: Please specify the project root directory via the 'projectroot' environment variable."
 		exit 1
 	fi
 fi
@@ -77,11 +95,22 @@ key="$projectroot/keys/code_sign_private"
 
 shortver=$(echo $version|cut -d . -f-2)
 
-appsdir="apps"
-downloaddir="collection"
+if [ -z "$appsdir" ]; then
+	if [ -d "$projectroot/apps" ]; then
+		echo "W: 'appsdir' not specified, chose '\$projectroot/apps'."
+		appsdir="$projectroot/apps"
+	else
+		echo "W: 'appsdir' not specified, and no apps directory in \$projectroot, decided for 'apps'.".
+		appsdir="apps"
+	fi
+fi
+
+if [ -z "$downloaddir" ]; then
+	downloaddir="collection"
+fi
 
 if [ -d "$appsdir" ]; then
-	echo "Directory '$appsdir' is already existing. Please clean this up first."
+	echo "E: Directory '$appsdir' is already existing. Please clean this up first."
 	exit
 fi
 
@@ -95,7 +124,7 @@ do
   fi
 
   if [ ! -r $arch.deb ]; then 
-    url="$mirror/pool/main/b/boinc/boinc-app-examples_${version}_${arch}.deb"
+    url="$mirror/pool/main/${spn}/${sourcepackagename}/${packagename}_${version}_${arch}.deb"
     if ! wget --quiet -O - $url > ${arch}.deb ; then
        echo "E: Platform '$arch' failed to download .... skipping."
        rm -f ${arch}.deb
@@ -120,7 +149,7 @@ then
     exit
 fi
 
-echo "Creating directories for all applications in folder '$downloaddir' now in folder '$appsdir'."
+echo "I: Creating directories for all applications in folder '$downloaddir' now in folder '$appsdir'."
 for f in `find collection -type f | xargs -r -l basename| sort -u`
 do
     appname=`echo $f|cut -d / -f3`
@@ -137,15 +166,18 @@ do
     echo -n "  "
     for folder in $downloaddir/*
     do 
-      archname=$(echo $folder|cut -d / -f2)
-      echo -n " $archname"
-      cp $folder/$appname $appsdir/$appname/$shortver/${deb2boinc[$archname]}/${appname}_${shortver}_${deb2boinc[$archname]}
+	archname=$(echo $folder|cut -d / -f2)
+        echo -n " $archname"
+	#echo Creating new apps directory structure
+	mkdir -p $appsdir/$appname/${shortver}/${deb2boinc[$archname]}
+	#echo Copying $folder/$appname $appsdir/$appname/${shortver}/${deb2boinc[$archname]}/${appname}_${shortver}_${deb2boinc[$archname]}
+	cp $folder/$appname $appsdir/$appname/${shortver}/${deb2boinc[$archname]}/${appname}_${shortver}_${deb2boinc[$archname]}
     done
     echo
 done
 
 if [ ! -x "$sign" ]; then
-	echo "I: You need to sign the applictions, still. This is to be performed specifically for your project."
+	echo "I: You need to sign the applications, still. This is to be performed specifically for your project."
 	cat <<EOINSTRUCTIONS
    Follow the following scheme:
      sign="\$projectroot/bin/sign_executable"
@@ -162,4 +194,3 @@ else
 	    $sign $binary $key > ${binary}.sig
 	done
 fi
-

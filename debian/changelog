@@ -24,6 +24,9 @@ boinc (7.2.14+dfsg-1exp2) UNRELEASED; urgency=low
 
   [ Steffen Moeller ]
   * Adapting for upstream's additional directories in html/
+  * boinc-server-maker
+    - works with Apache 2.4's extra security
+    - added recommends for coreutils because of 'arch' utility
 
   [ Guo Yixuan ]
   * Disabled silent rules for build log check.
