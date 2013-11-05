@@ -7,6 +7,9 @@
 # This script is released under the same license
 # as BOINC, created and copyright by
 # Steffen Moeller <moeller@debian.org>
+#
+# Modified by
+# Natalia Nikitina <nevecie@yandex.ru>
 
 set -e
 
@@ -76,9 +79,8 @@ shortver=$(echo $version|cut -d . -f-2)
 
 appsdir="apps"
 downloaddir="collection"
-appsdirdownload="/usr/lib/boinc-server-maker/apps" # used as relative path below
 
-if [ -d "$appsdir"]; then
+if [ -d "$appsdir" ]; then
 	echo "Directory '$appsdir' is already existing. Please clean this up first."
 	exit
 fi
@@ -87,7 +89,6 @@ echo "I: Retrieving application for all of Debian's architectures."
 
 for arch in ${!deb2boinc[@]}
 do
-
   if [ -d $downloaddir/$arch ]; then
     echo "W: Destination directory '$downloaddir/$arch' already exiting ... skipping."
     continue
@@ -102,15 +103,15 @@ do
     fi
   fi
 
-  ar xvf ${arch}.deb data.tar.gz
+  ar xvf ${arch}.deb data.tar.xz               
   echo "I: Untaring for architecture ${arch}"
-  tar xzf data.tar.gz ./$appsdirdownload
+  tar xfJ data.tar.xz ./usr/lib/boinc-server/apps/  
   echo -n "I: Contents:"
-  ls ./$appsdirdownload
+  ls ./usr/lib/boinc-server/apps/
   mkdir -p $downloaddir
-  mv ./$appsdirdownload $downloaddir/$arch
+  mv ./usr/lib/boinc-server/apps $downloaddir/$arch
   mv usr deleteThisDir
-  rm -rf deleteThisDir data.tar.gz ${arch}.deb
+  rm -rf deleteThisDir data.tar.xz ${arch}.deb     
 done
 
 if [ -d "$appsdir" ]
@@ -123,7 +124,10 @@ echo "Creating directories for all applications in folder '$downloaddir' now in 
 for f in `find collection -type f | xargs -r -l basename| sort -u`
 do
     appname=`echo $f|cut -d / -f3`
-    mkdir -p $appsdir/$appname
+    for arch in ${!deb2boinc[@]}
+    do
+      mkdir -p $appsdir/$appname/$shortver/${deb2boinc[$arch]}
+    done
 done
 
 for app in $appsdir/*
@@ -133,10 +137,9 @@ do
     echo -n "  "
     for folder in $downloaddir/*
     do 
-	archname=$(echo $folder|cut -d / -f2)
-        echo -n " $archname"
-	#echo Copying $folder/$appname $appsdir/$appname/${appname}_${shortver}_${deb2boinc[$archname]}
-	cp $folder/$appname $appsdir/$appname/${appname}_${shortver}_${deb2boinc[$archname]}
+      archname=$(echo $folder|cut -d / -f2)
+      echo -n " $archname"
+      cp $folder/$appname $appsdir/$appname/$shortver/${deb2boinc[$archname]}/${appname}_${shortver}_${deb2boinc[$archname]}
     done
     echo
 done
@@ -147,13 +150,13 @@ if [ ! -x "$sign" ]; then
    Follow the following scheme:
      sign="\$projectroot/bin/sign_executable"
      key="\$projectroot/keys/code_sign_private"
-     for binary in $appsdir/*/*
+     for binary in $appsdir/*/*/*/*
      do
         \$sign \$binary \$key > ${binary}.sig
      done
 EOINSTRUCTIONS
 else
-	for binary in $appsdir/*/*
+	for binary in $appsdir/*/*/*/*
 	do
 	    echo Signing $binary
 	    $sign $binary $key > ${binary}.sig
