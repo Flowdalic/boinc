@@ -60,7 +60,8 @@ lib_cppcheck.patch
 fopen_closing.patch
 rrsim_iterator_cppcheck.patch
 filesys_error_message.patch
-de.po.patch
+#clashes with 7.2.27 - we should not waste our time on this here
+#de.po.patch
 more_clang_warnings.patch
 #mmap_mem_only.patch
 add-ldflags.patch

@@ -1,6 +1,8 @@
---- a/client/app.cpp
-+++ b/client/app.cpp
-@@ -423,8 +423,8 @@
+Index: boinc/client/app.cpp
+===================================================================
+--- boinc.orig/client/app.cpp
++++ boinc/client/app.cpp
+@@ -436,8 +436,8 @@
      char new_path[MAXPATHLEN], old_path[MAXPATHLEN];
      int retval;
  
@@ -11,7 +13,7 @@
          "%s/trickle_up_%s_%d.xml",
          result->project->project_dir(), result->name, (int)time(0)
      );
-@@ -459,7 +459,7 @@
+@@ -472,7 +472,7 @@
      return 0;
  }
  
@@ -20,7 +22,7 @@
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
          if (active_tasks[i]->slot == slot) {
-@@ -469,7 +469,7 @@
+@@ -482,7 +482,7 @@
      return false;
  }
  
@@ -29,8 +31,8 @@
      char path[MAXPATHLEN];
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
-@@ -510,7 +510,7 @@
- #endif
+@@ -533,7 +533,7 @@
+     return 0;
  }
  
 -bool ACTIVE_TASK_SET::slot_taken(int slot) {
@@ -38,7 +40,7 @@
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
          if (active_tasks[i]->slot == slot) return true;
-@@ -622,7 +622,7 @@
+@@ -645,7 +645,7 @@
  #endif
  
  int ACTIVE_TASK::parse(XML_PARSER& xp) {
@@ -47,8 +49,10 @@
      int n, dummy;
      unsigned int i;
      PROJECT* project=0;
---- a/client/app.h
-+++ b/client/app.h
+Index: boinc/client/app.h
+===================================================================
+--- boinc.orig/client/app.h
++++ boinc/client/app.h
 @@ -48,6 +48,7 @@
  typedef int PROCESS_ID;
  
@@ -97,8 +101,10 @@
      void get_memory_usage();
  
      void process_control_poll();
---- a/lib/filesys.cpp
-+++ b/lib/filesys.cpp
+Index: boinc/lib/filesys.cpp
+===================================================================
+--- boinc.orig/lib/filesys.cpp
++++ boinc/lib/filesys.cpp
 @@ -86,7 +86,7 @@
  
  // routines for enumerating the entries in a directory
@@ -320,8 +326,10 @@
  #ifdef STATFS
      struct STATFS fs_info;
  
---- a/lib/filesys.h
-+++ b/lib/filesys.h
+Index: boinc/lib/filesys.h
+===================================================================
+--- boinc.orig/lib/filesys.h
++++ boinc/lib/filesys.h
 @@ -43,30 +43,30 @@
  #ifdef __cplusplus
  extern "C" {

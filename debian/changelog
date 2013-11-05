@@ -1,3 +1,10 @@
+boinc (7.2.27+dfsg-1exp1) experimental; urgency=low
+
+  * New upstream version, with server packages.
+  * Bumped policy to 3.9.5 - no changes required
+
+ -- Steffen Moeller <moeller@debian.org>  Tue, 05 Nov 2013 21:03:04 +0100
+
 boinc (7.2.22+dfsg-1exp1) experimental; urgency=low
 
   * Same as -1, with server packages.
