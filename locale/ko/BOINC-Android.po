@@ -6,14 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BOINC 7.2.x\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-10 12:00-0700\n"
-"PO-Revision-Date: 2013-09-01 09:08+0900\n"
-"Last-Translator: Lee Kangsan <treppolse@gmail.com>\n"
+"POT-Creation-Date: 2013-10-18 00:00-0700\n"
+"PO-Revision-Date: 2013-09-01 00:11+0000\n"
+"Last-Translator: Kangsan Lee <treppolse@gmail.com>\n"
 "Language-Team: SETIKAH@HOME\n"
-"Plural-Forms: nplurals=1; plural=(0)\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Translate Toolkit 1.10.0\n"
 "Generated-By: Babel 1.0dev\n"
 
 #. app global
@@ -48,10 +50,9 @@ msgctxt "attachproject_list_manual_no_url"
 msgid "Please enter project URL"
 msgstr "프로젝트 URL를 입력하세요"
 
-#, fuzzy
 msgctxt "attachproject_list_acctmgr_button"
 msgid "Add account manager"
-msgstr "계정 관리자에서 요청함"
+msgstr ""
 
 msgctxt "attachproject_list_no_internet"
 msgid "No Internet connection"
@@ -194,10 +195,9 @@ msgid "Create"
 msgstr "생성"
 
 #. account manager
-#, fuzzy
 msgctxt "attachproject_acctmgr_header"
 msgid "Add account manager"
-msgstr "계정 관리자에서 요청함"
+msgstr ""
 
 msgctxt "attachproject_acctmgr_header_url"
 msgid "URL"
@@ -207,12 +207,10 @@ msgctxt "attachproject_acctmgr_header_name"
 msgid "User:"
 msgstr ""
 
-#, fuzzy
 msgctxt "attachproject_acctmgr_header_pwd"
 msgid "Password:"
 msgstr "비밀번호:"
 
-#, fuzzy
 msgctxt "attachproject_acctmgr_header_pwd_confirm"
 msgid "… Retype:"
 msgstr "… 재입력:"
@@ -238,10 +236,9 @@ msgctxt "attachproject_error_pwd_no_match"
 msgid "Passwords do not match"
 msgstr "비밀번호가 일치하지 않습니다"
 
-#, fuzzy
 msgctxt "attachproject_error_no_url"
 msgid "Please enter URL"
-msgstr "사용자 이름을 입력해 주세요"
+msgstr ""
 
 msgctxt "attachproject_error_no_email"
 msgid "Please enter eMail address"
@@ -332,10 +329,9 @@ msgctxt "attachproject_working_login"
 msgid "Log in"
 msgstr "로그인"
 
-#, fuzzy
 msgctxt "attachproject_working_acctmgr"
 msgid "Add account manager"
-msgstr "계정 관리자에서 요청함"
+msgstr ""
 
 msgctxt "attachproject_working_acctmgr_sync"
 msgid "Synchronize"
@@ -671,6 +667,10 @@ msgctxt "projects_control_dialog_title"
 msgid "Project commands:"
 msgstr "프로젝트 명령:"
 
+msgctxt "projects_control_visit_website"
+msgid "Visit website"
+msgstr ""
+
 msgctxt "projects_control_update"
 msgid "Update"
 msgstr "업데이트"
@@ -740,15 +740,13 @@ msgctxt "projects_confirm_reset_confirm"
 msgid "Reset"
 msgstr "재설정"
 
-#, fuzzy
 msgctxt "projects_confirm_remove_acctmgr_title"
 msgid "Disable account manager"
-msgstr "계정 관리자에서 요청함"
+msgstr ""
 
-#, fuzzy
 msgctxt "projects_confirm_remove_acctmgr_message"
 msgid "Are you sure you want to stop using"
-msgstr "다음 프로젝트가 재설정됩니다 괘찮습니까: "
+msgstr ""
 
 msgctxt "projects_confirm_remove_acctmgr_confirm"
 msgid "Disable"
@@ -897,6 +895,10 @@ msgctxt "trans_header_name"
 msgid "File:"
 msgstr "파일:"
 
+msgctxt "trans_control_retry"
+msgid "Retry transfers"
+msgstr ""
+
 msgctxt "confirm_abort_trans_title"
 msgid "Abort transfer?"
 msgstr "전송을 중단할까요?"
@@ -910,10 +912,9 @@ msgid "Abort"
 msgstr "중단"
 
 #. notices tab strings
-#, fuzzy
 msgctxt "notices_loading"
 msgid "Reading notices…"
-msgstr "프로젝트를 불러오는 중…"
+msgstr ""
 
 #. eventlog tab strings
 msgctxt "eventlog_loading"
@@ -1115,4 +1116,3 @@ msgid ""
 msgstr ""
 "© 2003–2013 University of California, Berkeley.\n"
 "All Rights Reserved."
-

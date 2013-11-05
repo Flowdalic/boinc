@@ -68,6 +68,7 @@
 #include "procinfo.h"
 #include "result.h"
 #include "sandbox.h"
+#include "diagnostics.h"
 
 #include "app.h"
 
@@ -297,6 +298,11 @@ void procinfo_show(PROCINFO& pi, PROC_MAP& pm) {
 }
 #endif
 
+// scan the set of all processes to
+// 1) get the working-set size of active tasks
+// 2) see if exclusive apps are running
+// 3) get CPU time of non-BOINC processes
+//
 void ACTIVE_TASK_SET::get_memory_usage() {
     static double last_mem_time=0;
     unsigned int i;
@@ -349,7 +355,14 @@ void ACTIVE_TASK_SET::get_memory_usage() {
             v = &(atp->other_pids);
         }
         procinfo_app(pi, v, pm, atp->app_version->graphics_exec_file);
-        pi.working_set_size_smoothed = .5*(pi.working_set_size_smoothed + pi.working_set_size);
+        if (atp->app_version->is_vm_app) {
+            // the memory of virtual machine apps is not reported correctly,
+            // at least on Windows.  Use the VM size instead.
+            //
+            pi.working_set_size_smoothed = atp->wup->rsc_memory_bound;
+        } else {
+            pi.working_set_size_smoothed = .5*(pi.working_set_size_smoothed + pi.working_set_size);
+        }
 
         if (!first) {
             int pf = pi.page_fault_count - last_page_fault_count;
@@ -482,7 +495,7 @@ bool ACTIVE_TASK_SET::is_slot_dir_in_use(char* dir) {
 // Get a free slot,
 // and make a slot dir if needed
 //
-void ACTIVE_TASK::get_free_slot(RESULT* rp) {
+int ACTIVE_TASK::get_free_slot(RESULT* rp) {
 #ifndef SIM
     int j, retval;
     char path[MAXPATHLEN];
@@ -502,12 +515,22 @@ void ACTIVE_TASK::get_free_slot(RESULT* rp) {
             retval = make_slot_dir(j);
             if (!retval) break;
         }
+
+        // paranoia - don't allow unbounded slots
+        //
+        if (j > gstate.ncpus*100) {
+            msg_printf(rp->project, MSG_INTERNAL_ERROR,
+                "exceeded limit of %d slot directories", gstate.ncpus*100
+            );
+            return ERR_NULL;
+        }
     }
     slot = j;
     if (log_flags.slot_debug) {
         msg_printf(rp->project, MSG_INFO, "[slot] assigning slot %d to %s", j, rp->name);
     }
 #endif
+    return 0;
 }
 
 bool ACTIVE_TASK_SET::slot_taken(int slot) {
