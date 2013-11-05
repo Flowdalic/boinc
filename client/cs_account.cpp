@@ -87,7 +87,7 @@ int PROJECT::write_account_file() {
     return 0;
 }
 
-void handle_no_rsc_pref(PROJECT* p, const char* name) {
+static void handle_no_rsc_pref(PROJECT* p, const char* name) {
     int i = rsc_index(name);
     if (i < 0) return;
     p->no_rsc_pref[i] = true;
@@ -143,6 +143,10 @@ int PROJECT::parse_account(FILE* in) {
         }
         else if (xp.parse_bool("no_ati", btemp)) {
             if (btemp) handle_no_rsc_pref(this, GPU_TYPE_ATI);
+            continue;
+        }
+        else if (xp.parse_bool("no_intel_gpu", btemp)) {
+            if (btemp) handle_no_rsc_pref(this, GPU_TYPE_INTEL);
             continue;
         }
 
@@ -246,6 +250,10 @@ int PROJECT::parse_account_file_venue() {
         }
         else if (xp.parse_bool("no_ati", btemp)) {
             if (btemp) handle_no_rsc_pref(this, GPU_TYPE_ATI);
+            continue;
+        }
+        else if (xp.parse_bool("no_intel_gpu", btemp)) {
+            if (btemp) handle_no_rsc_pref(this, GPU_TYPE_INTEL);
             continue;
         }
 

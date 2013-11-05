@@ -6,15 +6,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-10 12:00-0700\n"
-"PO-Revision-Date: 2013-10-08 18:14+0000\n"
+"POT-Creation-Date: 2013-10-18 00:00-0700\n"
+"PO-Revision-Date: 2013-10-26 22:27+0000\n"
 "Last-Translator: pryds <thomas@pryds.eu>\n"
 "Language-Team: da <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=((n == 1) ? 0 : 1)\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.5.0\n"
 "Generated-By: Babel 1.0dev\n"
+"X-POOTLE-MTIME: 1382826431.0\n"
 
 #. app global
 msgctxt "app_name"
@@ -48,10 +51,9 @@ msgctxt "attachproject_list_manual_no_url"
 msgid "Please enter project URL"
 msgstr "Indtast venligst projekt-URL"
 
-#, fuzzy
 msgctxt "attachproject_list_acctmgr_button"
 msgid "Add account manager"
-msgstr "Forespurgt af kontohåndtering"
+msgstr "Tilføj kontohåndtering"
 
 msgctxt "attachproject_list_no_internet"
 msgid "No Internet connection"
@@ -100,15 +102,15 @@ msgstr "Dette projekt understøtter ikke Android-enheder"
 
 msgctxt "attachproject_login_category_terms_of_use"
 msgid "Terms of use for"
-msgstr "Brugervilkår for"
+msgstr "Brugsvilkår for"
 
 msgctxt "attachproject_login_accept_terms_of_use"
 msgid ""
 "By creating an account with this project, you accept the terms of use as "
 "shown above."
 msgstr ""
-"Ved at oprette en konto hos dette projekt, accepterer du brugervilkårene,"
-" som vises herover."
+"Ved at oprette en konto hos dette projekt, accepterer du brugsvilkårene, som "
+"vises herover."
 
 msgctxt "attachproject_login_category_login"
 msgid "Sign in with existing account"
@@ -196,32 +198,29 @@ msgid "Create"
 msgstr "Opret"
 
 #. account manager
-#, fuzzy
 msgctxt "attachproject_acctmgr_header"
 msgid "Add account manager"
-msgstr "Forespurgt af kontohåndtering"
+msgstr "Tilføj kontohåndtering"
 
 msgctxt "attachproject_acctmgr_header_url"
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 msgctxt "attachproject_acctmgr_header_name"
 msgid "User:"
-msgstr ""
+msgstr "Bruger:"
 
-#, fuzzy
 msgctxt "attachproject_acctmgr_header_pwd"
 msgid "Password:"
 msgstr "Kodeord:"
 
-#, fuzzy
 msgctxt "attachproject_acctmgr_header_pwd_confirm"
 msgid "… Retype:"
 msgstr "… Tast igen:"
 
 msgctxt "attachproject_acctmgr_button"
 msgid "Add"
-msgstr ""
+msgstr "Tilføj"
 
 #. error strings
 msgctxt "attachproject_error_wrong_name"
@@ -240,10 +239,9 @@ msgctxt "attachproject_error_pwd_no_match"
 msgid "Passwords do not match"
 msgstr "Kodeord passer ikke sammen"
 
-#, fuzzy
 msgctxt "attachproject_error_no_url"
 msgid "Please enter URL"
-msgstr "Indtast venligst brugernavn"
+msgstr "Indtast venligst URL"
 
 msgctxt "attachproject_error_no_email"
 msgid "Please enter eMail address"
@@ -287,7 +285,7 @@ msgstr "Oprettelse af konti er slået fra for dette projekt"
 
 msgctxt "attachproject_error_invalid_url"
 msgid "Invalid URL"
-msgstr ""
+msgstr "Ugyldig URL"
 
 #. working activity
 msgctxt "attachproject_working_back_button"
@@ -334,14 +332,13 @@ msgctxt "attachproject_working_login"
 msgid "Log in"
 msgstr "Log ind"
 
-#, fuzzy
 msgctxt "attachproject_working_acctmgr"
 msgid "Add account manager"
-msgstr "Forespurgt af kontohåndtering"
+msgstr "Tilføj kontohåndtering"
 
 msgctxt "attachproject_working_acctmgr_sync"
 msgid "Synchronize"
-msgstr ""
+msgstr "Synkronisér"
 
 #. main activity
 msgctxt "main_noproject_warning"
@@ -357,7 +354,7 @@ msgid ""
 "…this should not happen!\n"
 "Click on the icon to try again."
 msgstr ""
-"… dette burde ikke ske!\n"
+"…dette burde ikke ske!\n"
 "Klik på ikonet for at prøve igen."
 
 msgctxt "main_title_icon_desc"
@@ -387,7 +384,7 @@ msgstr "Indstillinger"
 
 msgctxt "tab_notices"
 msgid "Notices"
-msgstr ""
+msgstr "Meddelelser"
 
 msgctxt "tab_desc"
 msgid "Navigation"
@@ -501,7 +498,7 @@ msgstr "Min. batteriniveau"
 
 msgctxt "battery_charge_min_pct_description"
 msgid "BOINC suspends computation below defined battery charge level."
-msgstr "BOINC stopper beregninger under defineret batteriopladningsniveau."
+msgstr "BOINC stopper beregninger under defineret batteriniveau."
 
 msgctxt "battery_temperature_max_header"
 msgid "Max. battery temperature"
@@ -512,8 +509,8 @@ msgid ""
 "BOINC suspends computation above defined battery temperature. It is not "
 "recommended to change this value."
 msgstr ""
-"BOINC stopper beregninger over defineret batteritemperatur. Det anbefales"
-" ikke at ændre denne værdi."
+"BOINC stopper beregninger over defineret batteritemperatur. Det anbefales "
+"ikke at ændre denne værdi."
 
 msgctxt "prefs_disk_max_pct_header"
 msgid "Max. used storage space"
@@ -677,6 +674,10 @@ msgctxt "projects_control_dialog_title"
 msgid "Project commands:"
 msgstr "Projektkommandoer:"
 
+msgctxt "projects_control_visit_website"
+msgid "Visit website"
+msgstr "Besøg hjemmeside"
+
 msgctxt "projects_control_update"
 msgid "Update"
 msgstr "Opdatér"
@@ -707,15 +708,15 @@ msgstr "Nulstil"
 
 msgctxt "projects_control_dialog_title_acctmgr"
 msgid "Account manager commands:"
-msgstr ""
+msgstr "Kommandoer for kontohåndtering:"
 
 msgctxt "projects_control_sync_acctmgr"
 msgid "Synchronize"
-msgstr ""
+msgstr "Synkronisér"
 
 msgctxt "projects_control_remove_acctmgr"
 msgid "Disable"
-msgstr ""
+msgstr "Deaktivér"
 
 #. project confirm dialog
 msgctxt "projects_confirm_detach_title"
@@ -746,19 +747,17 @@ msgctxt "projects_confirm_reset_confirm"
 msgid "Reset"
 msgstr "Nulstil"
 
-#, fuzzy
 msgctxt "projects_confirm_remove_acctmgr_title"
 msgid "Disable account manager"
-msgstr "Forespurgt af kontohåndtering"
+msgstr "Deaktivér kontohåndtering"
 
-#, fuzzy
 msgctxt "projects_confirm_remove_acctmgr_message"
 msgid "Are you sure you want to stop using"
-msgstr "Er du sikker på, at du vil nulstille"
+msgstr "Er du sikker på, du vil stoppe med at bruge"
 
 msgctxt "projects_confirm_remove_acctmgr_confirm"
 msgid "Disable"
-msgstr ""
+msgstr "Deaktivér"
 
 #. tasks tab strings
 msgctxt "tasks_header_name"
@@ -903,6 +902,10 @@ msgctxt "trans_header_name"
 msgid "File:"
 msgstr "Fil:"
 
+msgctxt "trans_control_retry"
+msgid "Retry transfers"
+msgstr "Prøv filoverførsler igen"
+
 msgctxt "confirm_abort_trans_title"
 msgid "Abort transfer?"
 msgstr "Afbryd overførsel?"
@@ -916,10 +919,9 @@ msgid "Abort"
 msgstr "Afbryd"
 
 #. notices tab strings
-#, fuzzy
 msgctxt "notices_loading"
 msgid "Reading notices…"
-msgstr "Indlæser projekter…"
+msgstr "Indlæser meddelelser"
 
 #. eventlog tab strings
 msgctxt "eventlog_loading"
@@ -989,7 +991,7 @@ msgstr "Din enhed er optaget af andre apps."
 
 msgctxt "suspend_network_quota"
 msgid "BOINC reached network transfer limit."
-msgstr "BOINC har nået begrænsningen for netværksoverførsel-"
+msgstr "BOINC har nået begrænsningen for netværksoverførsel."
 
 msgctxt "suspend_os"
 msgid "Stopped by Android."
@@ -1121,4 +1123,3 @@ msgid ""
 msgstr ""
 "© 2003–2013 University of California, Berkeley.\n"
 "Alle rettigheder forbeholdes."
-

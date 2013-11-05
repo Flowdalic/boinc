@@ -745,6 +745,7 @@ void APP_VERSION::init() {
     strcpy(missing_coproc_name, "");
     dont_throttle = false;
     needs_network = false;
+    is_vm_app = false;
 }
 
 int APP_VERSION::parse(XML_PARSER& xp) {
@@ -786,12 +787,20 @@ int APP_VERSION::parse(XML_PARSER& xp) {
                     }
                 }
             }
+            if (strstr(plan_class, "vbox")) {
+                is_vm_app = true;
+            }
             return 0;
         }
         if (xp.parse_str("app_name", app_name, sizeof(app_name))) continue;
         if (xp.match_tag("file_ref")) {
-            file_ref.parse(xp);
-            app_files.push_back(file_ref);
+            int retval = file_ref.parse(xp);
+            if (!retval) {
+                if (strstr(file_ref.file_name, "vboxwrapper")) {
+                    is_vm_app = true;
+                }
+                app_files.push_back(file_ref);
+            }
             continue;
         }
         if (xp.parse_int("version_num", version_num)) continue;
