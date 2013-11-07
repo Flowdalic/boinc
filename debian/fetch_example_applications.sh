@@ -134,11 +134,11 @@ do
 
   ar xvf ${arch}.deb data.tar.xz               
   echo "I: Untaring for architecture ${arch}"
-  tar xfJ data.tar.xz ./usr/lib/boinc-server/apps/  
+  tar xfJ data.tar.xz ./usr/lib/boinc-server-maker/apps/  
   echo -n "I: Contents:"
-  ls ./usr/lib/boinc-server/apps/
+  ls ./usr/lib/boinc-server-maker/apps/
   mkdir -p $downloaddir
-  mv ./usr/lib/boinc-server/apps $downloaddir/$arch
+  mv ./usr/lib/boinc-server-maker/apps $downloaddir/$arch
   mv usr deleteThisDir
   rm -rf deleteThisDir data.tar.xz ${arch}.deb     
 done
