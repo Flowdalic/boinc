@@ -1,0 +1,18 @@
+Index: boinc/html/user/server_status.php
+===================================================================
+--- boinc.orig/html/user/server_status.php
++++ boinc/html/user/server_status.php
+@@ -207,7 +207,12 @@
+ }
+ $uldl_pid = parse_element($config_vars,"<uldl_pid>");
+ if ($uldl_pid == "") {
+-    $uldl_pid = "/etc/httpd/run/httpd.pid";
++    foreach (array("/etc/httpd/run/httpd.pid","/var/run/apache2/apache2.pid") as $f) {
++        if (file_exists($f)) {
++          $uldl_pid = $f
++	  break;
++	}
++    }
+ }
+ $uldl_host = parse_element($config_vars,"<uldl_host>");
+ if ($uldl_host == "") {
