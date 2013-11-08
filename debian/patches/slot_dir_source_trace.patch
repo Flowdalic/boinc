@@ -1,7 +1,5 @@
-Index: boinc/client/app.cpp
-===================================================================
---- boinc.orig/client/app.cpp
-+++ boinc/client/app.cpp
+--- a/client/app.cpp
++++ b/client/app.cpp
 @@ -436,8 +436,8 @@
      char new_path[MAXPATHLEN], old_path[MAXPATHLEN];
      int retval;
@@ -49,10 +47,8 @@ Index: boinc/client/app.cpp
      int n, dummy;
      unsigned int i;
      PROJECT* project=0;
-Index: boinc/client/app.h
-===================================================================
---- boinc.orig/client/app.h
-+++ boinc/client/app.h
+--- a/client/app.h
++++ b/client/app.h
 @@ -48,6 +48,7 @@
  typedef int PROCESS_ID;
  
@@ -101,10 +97,8 @@ Index: boinc/client/app.h
      void get_memory_usage();
  
      void process_control_poll();
-Index: boinc/lib/filesys.cpp
-===================================================================
---- boinc.orig/lib/filesys.cpp
-+++ boinc/lib/filesys.cpp
+--- a/lib/filesys.cpp
++++ b/lib/filesys.cpp
 @@ -86,7 +86,7 @@
  
  // routines for enumerating the entries in a directory
@@ -326,10 +320,8 @@ Index: boinc/lib/filesys.cpp
  #ifdef STATFS
      struct STATFS fs_info;
  
-Index: boinc/lib/filesys.h
-===================================================================
---- boinc.orig/lib/filesys.h
-+++ boinc/lib/filesys.h
+--- a/lib/filesys.h
++++ b/lib/filesys.h
 @@ -43,30 +43,30 @@
  #ifdef __cplusplus
  extern "C" {

@@ -1,39 +1,39 @@
 --- a/html/languages/translations/de.po
 +++ b/html/languages/translations/de.po
-@@ -1066,8 +1066,8 @@
+@@ -1073,8 +1073,8 @@
  
- #: ../inc/prefs.inc:157
+ #: ../inc/prefs.inc:158
  #, php-format
 -msgid "% of the processors"
--msgstr "% von den Prozessoren"
+-msgstr "% der Prozessoren"
 +msgid "%% of the processors"
-+msgstr "%% von den Prozessoren"
++msgstr "%% der Prozessoren"
  
- #: ../inc/prefs.inc:161
+ #: ../inc/prefs.inc:162
  msgid "Use at most %1 Can be used to reduce CPU heat %2"
-@@ -1075,8 +1075,8 @@
+@@ -1083,8 +1083,8 @@
  
- #: ../inc/prefs.inc:166
+ #: ../inc/prefs.inc:167
  #, php-format
 -msgid "% of CPU time"
 -msgstr "% der Prozessorzeit"
 +msgid "%% of CPU time"
 +msgstr "%% der Prozessorzeit"
  
- #: ../inc/prefs.inc:174 ../inc/prefs.inc:188
+ #: ../inc/prefs.inc:175 ../inc/prefs.inc:189
  msgid "Disk: use at most"
-@@ -1095,8 +1095,8 @@
- #: ../inc/prefs.inc:190 ../inc/prefs.inc:200 ../inc/prefs.inc:205
- #: ../inc/prefs.inc:210
+@@ -1103,8 +1103,8 @@
+ #: ../inc/prefs.inc:191 ../inc/prefs.inc:201 ../inc/prefs.inc:206
+ #: ../inc/prefs.inc:211
  #, php-format
 -msgid "% of total"
 -msgstr "% von Gesamt"
 +msgid "%% of total"
 +msgstr "%% von Gesamt"
  
- #: ../inc/prefs.inc:193
+ #: ../inc/prefs.inc:194
  msgid "Tasks checkpoint to disk at most every"
-@@ -5279,9 +5279,10 @@
+@@ -5365,9 +5365,10 @@
  "our message boards are moderated.\n"
  "Message board postings are subject to the following posting rules:\n"
  msgstr ""
@@ -46,13 +46,3 @@
  
  #: ../user/moderation.php:30
  msgid ""
---- a/html/languages/translations/ru.po
-+++ b/html/languages/translations/ru.po
-@@ -386,6 +386,7 @@
- "<li> Не должно быть оскорбительных комментариев, затрагивающих расу, "
- "религию,\n"
- " национальность, пол, класс или сексуальность.\n"
-+"        "
- 
- #: ../inc/forum.inc:734
- msgid "Rules:"
