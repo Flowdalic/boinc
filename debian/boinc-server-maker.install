@@ -6,3 +6,4 @@ py/Boinc/*.py			     usr/share/boinc-server-maker/py/Boinc
 usr/lib/libboinc_zip.so.*            usr/lib
 usr/lib/libsched.so.*                usr/lib
 debian/fetch_example_applications.sh	usr/share/boinc-server-maker
+debian/get_latest_windows_wrappers.sh   usr/share/boinc-server-maker
