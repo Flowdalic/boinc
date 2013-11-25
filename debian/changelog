@@ -1,3 +1,9 @@
+boinc (7.2.33+dfsg-1exp1) experimental; urgency=low
+
+  * Upload to experimental.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:03:56 +0100
+
 boinc (7.2.33+dfsg-1) unstable; urgency=low
 
   * New upstream public release.
