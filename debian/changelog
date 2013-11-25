@@ -1,3 +1,9 @@
+boinc (7.2.33+dfsg-1) unstable; urgency=low
+
+  * New upstream public release.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:02:52 +0100
+
 boinc (7.2.28+dfsg-1exp2) UNRELEASED; urgency=low
 
   * Enabling boinc-amd-opencl for experimental builds
