@@ -78,30 +78,30 @@ Package: boinc
 @ section to the regular boinc package. This also meant this binary
 @ package to be redistributed in the contrib section of Debian.
 @
-#Package: boinc-amd-opencl
-#Architecture: amd64 i386
-#Section: contrib/net
-#Priority: extra
-#Depends: ${misc:Depends}, boinc, fglrx-driver, amd-libopencl1|fglrx|fglrx-updates
-#Description: metapackage for AMD/ATI OpenCL-savvy BOINC client and manager
-# The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-# software platform for distributed computing: several initiatives of
-# various scientific disciplines all compete for the idle time of
-# desktop computers. The developers' web site at the University of
-# Berkeley serves as a common portal to the otherwise independently run
-# projects.
-# .
-# Regular users (righteously) often find it an unbearable nuisance to
-# care for the configuration of BOINC for the OpenCL-savvy AMD/ATI
-# graphics cards.  This package adds a series of dependencies from the
-# non-free section to the regular boinc package. This also meant this
-# binary package to be redistributed in the contrib section of Debian.
-# .
-# This package is not perfect, yet. A major problem for the moment
-# is the availability of the OpenCL driver for 32bit binaries for
-# amd64. If this is planned, install the amd-app package provided
-# through the AMD developer forum.
-#
+%Package: boinc-amd-opencl
+%Architecture: amd64 i386
+%Section: contrib/net
+%Priority: extra
+%Depends: ${misc:Depends}, boinc, fglrx-driver, amd-libopencl1|fglrx|fglrx-updates
+%Description: metapackage for AMD/ATI OpenCL-savvy BOINC client and manager
+% The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+% software platform for distributed computing: several initiatives of
+% various scientific disciplines all compete for the idle time of
+% desktop computers. The developers' web site at the University of
+% Berkeley serves as a common portal to the otherwise independently run
+% projects.
+% .
+% Regular users (righteously) often find it an unbearable nuisance to
+% care for the configuration of BOINC for the OpenCL-savvy AMD/ATI
+% graphics cards.  This package adds a series of dependencies from the
+% non-free section to the regular boinc package. This also meant this
+% binary package to be redistributed in the contrib section of Debian.
+% .
+% This package is not perfect, yet. A major problem for the moment
+% is the availability of the OpenCL driver for 32bit binaries for
+% amd64. If this is planned, install the amd-app package provided
+% through the AMD developer forum.
+%
 @Package: boinc-client
 @Architecture: any
 @Depends: ${shlibs:Depends}, ${misc:Depends},

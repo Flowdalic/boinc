@@ -1,3 +1,21 @@
+boinc (7.2.33+dfsg-1exp1) experimental; urgency=low
+
+  * Upload to experimental.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:03:56 +0100
+
+boinc (7.2.33+dfsg-1) unstable; urgency=low
+
+  * New upstream public release.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:02:52 +0100
+
+boinc (7.2.28+dfsg-1exp2) UNRELEASED; urgency=low
+
+  * Enabling boinc-amd-opencl for experimental builds
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 21 Nov 2013 11:35:52 +0100
+
 boinc (7.2.28+dfsg-1exp1) experimental; urgency=low
 
   * Same as -1, with server packages.
