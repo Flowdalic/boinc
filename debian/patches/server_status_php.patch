@@ -9,7 +9,7 @@ Index: boinc/html/user/server_status.php
 -    $uldl_pid = "/etc/httpd/run/httpd.pid";
 +    foreach (array("/etc/httpd/run/httpd.pid","/var/run/apache2/apache2.pid") as $f) {
 +        if (file_exists($f)) {
-+          $uldl_pid = $f
++          $uldl_pid = $f;
 +	  break;
 +	}
 +    }
