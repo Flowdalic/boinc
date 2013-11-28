@@ -96,17 +96,11 @@ key="$projectroot/keys/code_sign_private"
 shortver=$(echo $version|cut -d . -f-2)
 
 if [ -z "$appsdir" ]; then
-	if [ -d "$projectroot/apps" ]; then
-		echo "W: 'appsdir' not specified, chose '\$projectroot/apps'."
-		appsdir="$projectroot/apps"
-	else
-		echo "W: 'appsdir' not specified, and no apps directory in \$projectroot, decided for 'apps'.".
-		appsdir="apps"
-	fi
+    appsdir="apps"
 fi
 
 if [ -z "$downloaddir" ]; then
-	downloaddir="collection"
+    downloaddir="collection"
 fi
 
 if [ -d "$appsdir" ]; then
@@ -142,12 +136,6 @@ do
   mv usr deleteThisDir
   rm -rf deleteThisDir data.tar.xz ${arch}.deb     
 done
-
-if [ -d "$appsdir" ]
-then
-    echo "E: App directory '$appsdir' already exists, exiting!!"
-    exit
-fi
 
 echo "I: Creating directories for all applications in folder '$downloaddir' now in folder '$appsdir'."
 for f in `find collection -type f | xargs -r -l basename| sort -u`
