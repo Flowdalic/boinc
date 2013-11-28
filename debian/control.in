@@ -229,47 +229,47 @@ Package: boinc
 @ .
 @ This package contains dynamic libraries that are needed for applications
 @ which utilizes the BOINC infrastructure and the boinc-client itself.
-%
-%Package: boinc-server-maker
-%Architecture: any
-%Provides: boinc-server
-%Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},
-% python, python-mysqldb,
-% mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
-% php5, php5-cli, php5-mysql,
-% tcsh, openssl, adduser, libfcgi0ldbl
-%Recommends: libapache2-mod-php5, php5-gd, uuid-runtime, apache2-utils
-%Suggests: boinc-app-examples, boinc-cgi-stripchart
-%Description: BOINC server applications and data files
-% The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-% software platform for distributed computing using volunteered computer
-% resources. For every scientific problem its own distinct project-server
-% must be provided. The users only run a common client with project-specific
-% additions (if not self-compiled or available as a Linux distribution's
-% package itself) being downloaded from the server.
-% .
-% This package contains the daemons and tools to create and run BOINC
-% projects.
-%
-%Package: boinc-app-examples
-%Architecture: any
-%Depends: ${shlibs:Depends}, ${misc:Depends}
-%Recommends: boinc-server-maker
-%Description: example binaries for BOINC servers
-% The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-% software platform for distributed computing using volunteered computer
-% resources. For every scientific problem its own distinct project-server
-% must be provided. The users only run a common client with project-specific
-% additions (if not self-compiled or available as a Linux distribution's
-% package itself) being downloaded from the server.
-% .
-% This package extends the boinc-server-maker package. It features a
-% series of small applications that a newly installed environment may
-% decide to use for testing purposes. Having them separated has the neat
-% side effect that those binaries may be retrieved more easily for foreign
-% platforms to feed the local servers with.
-% .
-% The package also features the wrapper application, which is likely
+@
+@Package: boinc-server-maker
+@Architecture: any
+@Provides: boinc-server
+@Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},
+@ python, python-mysqldb,
+@ mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
+@ php5, php5-cli, php5-mysql,
+@ tcsh, openssl, adduser, libfcgi0ldbl
+@Recommends: libapache2-mod-php5, php5-gd, uuid-runtime, apache2-utils
+@Suggests: boinc-app-examples, boinc-cgi-stripchart
+@Description: BOINC server applications and data files
+@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+@ software platform for distributed computing using volunteered computer
+@ resources. For every scientific problem its own distinct project-server
+@ must be provided. The users only run a common client with project-specific
+@ additions (if not self-compiled or available as a Linux distribution's
+@ package itself) being downloaded from the server.
+@ .
+@ This package contains the daemons and tools to create and run BOINC
+@ projects.
+@
+@Package: boinc-app-examples
+@Architecture: any
+@Depends: ${shlibs:Depends}, ${misc:Depends}
+@Recommends: boinc-server-maker
+@Description: example binaries for BOINC servers
+@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+@ software platform for distributed computing using volunteered computer
+@ resources. For every scientific problem its own distinct project-server
+@ must be provided. The users only run a common client with project-specific
+@ additions (if not self-compiled or available as a Linux distribution's
+@ package itself) being downloaded from the server.
+@ .
+@ This package extends the boinc-server-maker package. It features a
+@ series of small applications that a newly installed environment may
+@ decide to use for testing purposes. Having them separated has the neat
+@ side effect that those binaries may be retrieved more easily for foreign
+@ platforms to feed the local servers with.
+@ .
+@ The package also features the wrapper application, which is likely
 % to find its audience also in real projects.
 @
 @Package: boinc-dbg

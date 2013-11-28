@@ -2,7 +2,7 @@ Index: boinc/html/user/server_status.php
 ===================================================================
 --- boinc.orig/html/user/server_status.php
 +++ boinc/html/user/server_status.php
-@@ -196,7 +196,12 @@
+@@ -207,7 +207,12 @@
  }
  $uldl_pid = parse_element($config_vars,"<uldl_pid>");
  if ($uldl_pid == "") {

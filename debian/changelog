@@ -1,6 +1,6 @@
-boinc (7.2.33+dfsg-1exp1) experimental; urgency=low
+boinc (7.2.33+dfsg-2) UNRELEASED; urgency=low
 
-  * Upload to experimental.
+  * Moved BOINC server work from experimental into unstable.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:03:56 +0100
 
