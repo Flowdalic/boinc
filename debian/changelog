@@ -1,6 +1,10 @@
 boinc (7.2.33+dfsg-2) UNRELEASED; urgency=low
 
-  * Moved BOINC server work from experimental into unstable.
+  * debian/control 
+    - moved BOINC server work from experimental into unstable.
+    - Moved from libcuda1-ia32 to libcuda1-i386 (Closes: #730841)
+    - Removed ia32-libs references
+    - Removed libcuda-5.0-1, provided by libcuda1
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:03:56 +0100
 
