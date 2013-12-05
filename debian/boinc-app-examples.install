@@ -2,11 +2,11 @@
 samples/wrapper/wrapper              usr/lib/boinc-server-maker/apps
 
 #usr/libexec/examples/1sec            usr/lib/boinc-server-maker/apps
-apps/1sec                            usr/lib/boinc-server-maker/apps
+#apps/1sec                            usr/lib/boinc-server-maker/apps
 #usr/libexec/examples/concat          usr/lib/boinc-server-maker/apps
-apps/concat                          usr/lib/boinc-server-maker/apps
+#apps/concat                          usr/lib/boinc-server-maker/apps
 #usr/libexec/examples/upper_case      usr/lib/boinc-server-maker/apps
-apps/upper_case                      usr/lib/boinc-server-maker/apps
+#apps/upper_case                      usr/lib/boinc-server-maker/apps
 # where should it go
 samples/example_app/uc2              usr/lib/boinc-server-maker/apps
 samples/worker/worker                usr/lib/boinc-server-maker/apps
