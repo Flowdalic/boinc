@@ -1,5 +1,7 @@
-boinc (7.2.33+dfsg-2) UNRELEASED; urgency=low
+boinc (7.2.33+dfsg-2) unstable; urgency=low
 
+  * debian/rules
+    - server always built
   * debian/control 
     - moved BOINC server work from experimental into unstable.
     - Moved from libcuda1-ia32 to libcuda1-i386 (Closes: #730841)
