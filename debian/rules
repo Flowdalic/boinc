@@ -146,16 +146,16 @@ CXXFLAGS_boinc-client := $(CXXFLAGS)
 $(shell cp debian/control.in debian/control)
 
 # check if we need to enable server packages, based on "exp" string in changelog
-#ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'unstable|experimental|UNRELEASED')
+ENABLE_EXPERIMENTAL_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
 #ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control.in)
 
-#ifeq (,$(ENABLE_SERVER_TEST))
 ENABLE_SERVER := --enable-server
-#$(shell sed 's/^%//' -i debian/control)
-#else
-#ENABLE_SERVER := --disable-server
-#$(shell sed '/^%/d' -i debian/control)
-#endif
+ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
+$(shell sed 's/^%//' -i debian/control)
+else
+ENABLE_SERVER := --disable-server
+$(shell sed '/^%/d' -i debian/control)
+endif
 
 ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control.in)
 ifneq (,$(ENABLE_CLIENT_TEST))
