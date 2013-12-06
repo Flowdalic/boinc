@@ -18,6 +18,7 @@ Build-Depends: debhelper (>= 9), po-debconf, pkg-config,
  libsqlite3-dev, libmysqlclient-dev, python, libfcgi-dev, libjpeg-dev,
  libxcb-util0-dev, libxcb-dpms0-dev,
  libxss-dev, libxext-dev
+# libwebkitgtk-dev will be needed in the wx3.0 switch
 Homepage: http://boinc.berkeley.edu/
 Vcs-Git: git://anonscm.debian.org/pkg-boinc/boinc.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-boinc/boinc.git
