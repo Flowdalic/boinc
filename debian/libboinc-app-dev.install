@@ -8,6 +8,4 @@ config.h			usr/include/boinc
 project_specific_defines.h	usr/include/boinc
 Makefile.am                     usr/share/boinc-dev
 
-usr/lib/libboinc_api.so*        usr/lib
-usr/lib/libboinc_graphics2.so*  usr/lib
-usr/lib/libboinc_opencl.so*     usr/lib
+usr/lib/lib*.so                 usr/lib
