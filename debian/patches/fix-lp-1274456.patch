@@ -1,0 +1,23 @@
+Author: Jussi Lahtinen
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1274456
+
+--- boinc-7.2.33+dfsg.orig/client/hostinfo_unix.cpp
++++ boinc-7.2.33+dfsg/client/hostinfo_unix.cpp
+@@ -1867,6 +1867,7 @@ bool xss_idle(long idle_treshold) {
+     static Display* disp = NULL;
+     
+     long idle_time = 0;
++    int  event_base_return, error_base_return;
+     
+     if(disp != NULL) {
+         XScreenSaverQueryInfo(disp, DefaultRootWindow(disp), xssInfo);
+@@ -1923,6 +1924,9 @@ bool xss_idle(long idle_treshold) {
+         // or DISPLAY points to wrong/invalid display
+         if(disp != NULL) {
+             xssInfo = XScreenSaverAllocInfo();
++            if (!XScreenSaverQueryExtension(disp, &event_base_return, &error_base_return)){
++               // How to handle failing?
++            }
+         }
+     }
+ 
