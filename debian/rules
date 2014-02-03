@@ -146,24 +146,24 @@ CXXFLAGS_boinc-client := $(CXXFLAGS)
 $(shell cp debian/control.in debian/control)
 
 # check if we need to enable server packages, based on "exp" string in changelog
-ENABLE_EXPERIMENTAL_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
+#ENABLE_EXPERIMENTAL_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
 #ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control.in)
 
 ENABLE_SERVER := --enable-server
-ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
+#ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
 $(shell sed 's/^%//' -i debian/control)
-else
-$(shell sed '/^%/d' -i debian/control)
-endif
+#else
+#$(shell sed '/^%/d' -i debian/control)
+#endif
 
-ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control.in)
-ifneq (,$(ENABLE_CLIENT_TEST))
+#ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control.in)
+#ifneq (,$(ENABLE_CLIENT_TEST))
 ENABLE_CLIENT := --enable-client --enable-manager --enable-dynamic-client-linkage
 $(shell sed 's/^@//' -i debian/control)
-else
-ENABLE_CLIENT := --disable-client --disable-manager
-$(shell sed '/^@/d' -i debian/control)
-endif
+#else
+#ENABLE_CLIENT := --disable-client --disable-manager
+#$(shell sed '/^@/d' -i debian/control)
+#endif
 
 # --disable-static
 # For debugging, these options are useful:
