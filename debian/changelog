@@ -7,7 +7,7 @@ boinc (7.2.33+dfsg-2) unstable; urgency=low
     - Moved from libcuda1-ia32 to libcuda1-i386 (Closes: #730841)
     - Removed ia32-libs references (Closes: #736814)
     - Removed libcuda-5.0-1, provided by libcuda1
-    - Reenabled boinc-amd-opencl for unstable
+    - Re-enabled boinc-amd-opencl for unstable
     - Dropped nvidia-current in favour of nvidia-304 | nvidia-310 | nvidia-319
       (LP: #1268409)
 
