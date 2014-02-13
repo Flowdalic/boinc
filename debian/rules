@@ -429,36 +429,3 @@ override_dh_compress:
 
 override_dh_installexamples:
 	dh_installexamples -X.gz -Xjpeglib 
-
-origDir ?= .
-EXB     ?=/tmp/index.html
-
-get-orig-source:
-	diskfree=`df -k . | awk '{print $$4}' | tail -n +2` ; \
-	if [ -z "$$diskfree" -o "$$diskfree" -lt $$((250*1024)) ]; then \
- 	  echo "Not enough disk space for download. Have 250MB available if not more."; \
-	  exit 1; \
-	fi
-	#LATEST_VERSION=`svn list http://boinc.berkeley.edu/svn/tags/ | \
-	#  sed 's/boinc_core_release_\(.*\)\//\1/' | \
-	#  sort -g -t_ -k1 -k2 -k3 | sed 's/_/./g' | tail -n 1 | tr -d '\n'`; \
-	#
-	VERSION=$(shell dpkg-parsechangelog | egrep '^Version:' | \
-	cut -d ' ' -f 2 | cut -d '-' -f 1 | cut -d '+' -f 1 | cut -d '~' -f 1 | perl -pe 's/^.*?://')
-	nice="nice -5"; if [ -x /usr/bin/ionice ]; then nice="$$nice ionice -c 3"; fi ; \
-	$$nice wget -O $(EXB) "http://boinc.berkeley.edu/git/boinc-v2.git/refs/tags/client_release/7.4/" --quiet;
-	LATEST_VERSION=$(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) \
-	$(shell echo $(LATEST_VERSION)) \
-	#rm -f $$EXB
-	#FIXME
-	#next part should be done only if the two versions are different, how to perform this if?
-	##if [ "$$VERSION"!="$$LATEST_VERSION" ]; then
-	EXB=/tmp/export-boinc; \
-	$$nice wget -O $$EXB "http://git.debian.org/?p=pkg-boinc/scripts.git;a=blob_plain;f=export-boinc;hb=HEAD" --quiet; \
-	chmod +x $$EXB; \
-	$$nice $$EXB -r $(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) -t $(origDir); \
-	rm -f $$EXB ; \
-	#fi ;
-
-.PHONY: get-orig-source
-
