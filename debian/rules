@@ -446,7 +446,7 @@ get-orig-source:
 	VERSION=$(shell dpkg-parsechangelog | egrep '^Version:' | \
 	cut -d ' ' -f 2 | cut -d '-' -f 1 | cut -d '+' -f 1 | cut -d '~' -f 1 | perl -pe 's/^.*?://')
 	nice="nice -5"; if [ -x /usr/bin/ionice ]; then nice="$$nice ionice -c 3"; fi ; \
-	$$nice wget -O $(EXB) "http://boinc.berkeley.edu/git/boinc-v2.git/refs/tags/client_release/7.2/" --quiet;
+	$$nice wget -O $(EXB) "http://boinc.berkeley.edu/git/boinc-v2.git/refs/tags/client_release/7.4/" --quiet;
 	LATEST_VERSION=$(shell grep -e '[0-9]\.[0-9]\.[0-9]*' $(EXB) -o |sort -n |tail -n 1) \
 	$(shell echo $(LATEST_VERSION)) \
 	#rm -f $$EXB
