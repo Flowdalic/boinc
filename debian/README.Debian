@@ -5,14 +5,6 @@ Debian and Ubuntu developers maintain the BOINC packages together
 on the pkg-boinc alioth.debian.org project. You may be interested
 to hear
 
- * There is a 'boinc' source package for regular clients. Additionally,
-   a 'boinc-experimental' source package provides the very latest
-   developments.
-
-   The motivation for the redundancy is because of Upstream developing
-   the BOINC client and server code asynchronously. The packaging code
-   is mostly shared between the two.
-
  * The package provides two virtual packages to help with package
    dependencies to support the employment of graphics cards with the
    computations. For NVidia this is fine, but the AMD/ATI fglrx drivers

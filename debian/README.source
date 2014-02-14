@@ -31,14 +31,11 @@ Repackaged upstream source:
  but they are tagged in the BOINC Git repository.  Anonymous Git access
  is explained on http://boinc.berkeley.edu/trac/wiki/SourceCodeGit .
  The 'boinc' source package refers to the respective release tags.
- The 'boinc-experimental' source package uses the commit of a particular
- day.  For more information see:
+ For more information see:
 
    http://boinc.berkeley.edu/trac/wiki/SourceCode
 
- Upstream's change to Git has hit us unprepared. Our traditional approach 
- was to check everything out and then prepare a tarball from it. We have
- put that approach into the script 'export-boinc' which is available in
+ We put the tarball generation into an 'export-boinc' script, which is available in
  our pkg-boinc Git repository:
 
    wget -O export-boinc \
@@ -47,10 +44,14 @@ Repackaged upstream source:
 
  It will take a considerable while to download as the final tarball yields >15MB.
  The script will take care of remove the non-DFSG files from the upstream
- tag.  Above process is integrated into debian/rules's get-orig-source target.
+ tag.  Above process is integrated into debian/get-orig-source.sh target.
 
- Since the advent of git there should be better ways, also for an improved
- communication with upstream. We are still experimenting.
+ This target can be easily called by running "uscan" in your source tree, the first
+ time will download the "boinc-v2" git repository in your parent directory, while on the
+ next runs will just perform a "git update" to retrieve new commits and new tags.
+
+ The final tarball is put on the parent directory, and can be easily imported with
+ git-import-orig ../boinc_VERSION+dfsg.orig.tar.gz
 
 
 Screen saver
