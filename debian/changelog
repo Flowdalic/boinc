@@ -1,5 +1,6 @@
 boinc (7.2.33+dfsg-2) unstable; urgency=low
 
+  [Gianfranco Costamagna]
   * debian/rules
     - server always built
   * debian/control 
@@ -13,7 +14,10 @@ boinc (7.2.33+dfsg-2) unstable; urgency=low
     - Added Jussi Lahtinen patch for fixing LP: #1274456
     - moved all so library files into libboinc7
 
- -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 25 Nov 2013 18:03:56 +0100
+  [Steffen Moeller]
+  * Removed Daniel Hahler and Rene Mayorga from uploaders list
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 15 Feb 2014 14:33:45 +0100
 
 boinc (7.2.33+dfsg-1) unstable; urgency=low
 

@@ -4,8 +4,6 @@ Priority: optional
 Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 Uploaders: Steffen Moeller <moeller@debian.org>, 
  Guo Yixuan <culu.gyx@gmail.com>,
- Rene Mayorga <rmayorga@debian.org>,
- Daniel Hahler <ubuntu@thequod.de>,
  Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
 Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 9), po-debconf, pkg-config,
