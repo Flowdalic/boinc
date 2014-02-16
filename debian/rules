@@ -144,19 +144,23 @@ CXXFLAGS_boinc-client := $(CXXFLAGS)
 
 #copy the original control.in file
 $(shell cp debian/control.in debian/control)
+$(shell sed '/^#/d' -i debian/control)
 
 # check if we need to enable server packages, based on "exp" string in changelog
-#ENABLE_EXPERIMENTAL_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
-#ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control.in)
+ENABLE_EXPERIMENTAL_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
 
-ENABLE_SERVER := --enable-server
-#ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
+ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
 $(shell sed 's/^%//' -i debian/control)
-#else
-#$(shell sed '/^%/d' -i debian/control)
-#endif
+else
+$(shell sed '/^%/d' -i debian/control)
+endif
 
-#ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control.in)
+ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control debian/control.in | grep -v boinc-server-maker)
+ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
+ENABLE_SERVER := --enable-server
+endif
+
+#ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control debian/control.in)
 #ifneq (,$(ENABLE_CLIENT_TEST))
 ENABLE_CLIENT := --enable-client --enable-manager --enable-dynamic-client-linkage
 $(shell sed 's/^@//' -i debian/control)
@@ -393,11 +397,7 @@ override_dh_install:
 
 override_dh_strip:
 	[ -d debian/boinc-dbg ] && dh_strip -a --no-package=-boinc-server-dbg --no-package=boinc-server-maker --no-package=boinc-app-examples --dbg-package=boinc-dbg || true
-#ifeq (,$(ENABLE_SERVER_TEST))
 	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda -Nboinc-amd-opencl -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib --dbg-package=boinc-server-dbg || true
-#else
-#	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda                    -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib --dbg-package=boinc-server-dbg || true
-#endif
 
 override_dh_fixperms:
 	dh_fixperms
@@ -415,14 +415,12 @@ override_dh_fixperms:
 	fi
 	# Correct catalog file perms
 	find debian -name "*.mo" -exec chmod 644   {} \;
-	chmod 755 \
+	[ -d debian/boinc-client ] && chmod 755 \
 	  debian/boinc-client/usr/share/boinc-client/udev-cpu_share \
 	  debian/boinc-client/usr/share/bug/boinc-client/script \
-	  debian/boinc-manager/usr/share/doc/boinc-manager/examples/run-boincmgr
-#ifeq (,$(ENABLE_SERVER_TEST))
-	chmod +x \
-	  debian/boinc-server-maker/usr/share/boinc-server-maker/html/ops/delete_job_files
-#endif
+	  debian/boinc-manager/usr/share/doc/boinc-manager/examples/run-boincmgr || true
+	[ -d  debian/boinc-server-maker ] && chmod +x \
+	  debian/boinc-server-maker/usr/share/boinc-server-maker/html/ops/delete_job_files || true
 
 override_dh_compress:
 	dh_compress -Xsamples -X.cpp -X.py -XMakefile
