@@ -38,24 +38,6 @@ Package: boinc
 @ BOINC Manager, a graphical monitor and control utility for the
 @ BOINC core client.
 @
-@Package: libboinc7
-@Provides: libboinc
-@Breaks: libboinc (<= 7.0.34+dfsg-1)
-@Replaces: libboinc (<= 7.0.34+dfsg-1)
-@Architecture: any
-@Section: libs
-@Depends: ${shlibs:Depends}, ${misc:Depends}
-@Description: libraries of BOINC the client depends on
-@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-@ software platform for distributed computing using volunteered computer
-@ resources.
-@ .
-@ The environment offers a series of libraries that both the user-run
-@ client and the client-invoked scientific applications depend on. With
-@ the number of cores per machine growing, and with scientific apps
-@ commonly started for every core, it is essential to have memory
-@ shared as much as possible between binaries of all projects.
-@
 @# Not compatible with Wheezy with direct notion of libcuda1:i386 [amd64]
 @Package: boinc-nvidia-cuda
 @Architecture: amd64 i386
@@ -228,82 +210,101 @@ Package: boinc
 @ This package contains dynamic libraries that are needed for applications
 @ which utilizes the BOINC infrastructure and the boinc-client itself.
 @
-@Package: boinc-server-maker
+@Package: libboinc7
+@Provides: libboinc
+@Breaks: libboinc (<= 7.0.34+dfsg-1)
+@Replaces: libboinc (<= 7.0.34+dfsg-1)
 @Architecture: any
-@Provides: boinc-server
-@Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},
-@ python, python-mysqldb,
-@ mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
-@ php5, php5-cli, php5-mysql,
-@ tcsh, openssl, adduser, libfcgi0ldbl
-@Recommends: libapache2-mod-php5, php5-gd, uuid-runtime, apache2-utils
-@Suggests: boinc-app-examples, boinc-cgi-stripchart
-@Description: BOINC server applications and data files
-@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-@ software platform for distributed computing using volunteered computer
-@ resources. For every scientific problem its own distinct project-server
-@ must be provided. The users only run a common client with project-specific
-@ additions (if not self-compiled or available as a Linux distribution's
-@ package itself) being downloaded from the server.
-@ .
-@ This package contains the daemons and tools to create and run BOINC
-@ projects.
-@
-@Package: boinc-app-examples
-@Architecture: any
+@Section: libs
 @Depends: ${shlibs:Depends}, ${misc:Depends}
-@Recommends: boinc-server-maker
-@Description: example binaries for BOINC servers
+@Description: libraries of BOINC the client depends on
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing using volunteered computer
-@ resources. For every scientific problem its own distinct project-server
-@ must be provided. The users only run a common client with project-specific
-@ additions (if not self-compiled or available as a Linux distribution's
-@ package itself) being downloaded from the server.
+@ resources.
 @ .
-@ This package extends the boinc-server-maker package. It features a
-@ series of small applications that a newly installed environment may
-@ decide to use for testing purposes. Having them separated has the neat
-@ side effect that those binaries may be retrieved more easily for foreign
-@ platforms to feed the local servers with.
-@ .
-@ The package also features the wrapper application, which is likely
-% to find its audience also in real projects.
+@ The environment offers a series of libraries that both the user-run
+@ client and the client-invoked scientific applications depend on. With
+@ the number of cores per machine growing, and with scientific apps
+@ commonly started for every core, it is essential to have memory
+@ shared as much as possible between binaries of all projects.
 @
+%Package: boinc-server-maker
+%Architecture: any
+%Provides: boinc-server
+%Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},
+% python, python-mysqldb,
+% mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
+% php5, php5-cli, php5-mysql,
+% tcsh, openssl, adduser, libfcgi0ldbl
+%Recommends: libapache2-mod-php5, php5-gd, uuid-runtime, apache2-utils
+%Suggests: boinc-app-examples, boinc-cgi-stripchart
+%Description: BOINC server applications and data files
+% The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+% software platform for distributed computing using volunteered computer
+% resources. For every scientific problem its own distinct project-server
+% must be provided. The users only run a common client with project-specific
+% additions (if not self-compiled or available as a Linux distribution's
+% package itself) being downloaded from the server.
+% .
+% This package contains the daemons and tools to create and run BOINC
+% projects.
+%
+%Package: boinc-app-examples
+%Architecture: any
+%Depends: ${shlibs:Depends}, ${misc:Depends}
+%Recommends: boinc-server-maker
+%Description: example binaries for BOINC servers
+% The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+% software platform for distributed computing using volunteered computer
+% resources. For every scientific problem its own distinct project-server
+% must be provided. The users only run a common client with project-specific
+% additions (if not self-compiled or available as a Linux distribution's
+% package itself) being downloaded from the server.
+% .
+% This package extends the boinc-server-maker package. It features a
+% series of small applications that a newly installed environment may
+% decide to use for testing purposes. Having them separated has the neat
+% side effect that those binaries may be retrieved more easily for foreign
+% platforms to feed the local servers with.
+% .
+% The package also features the wrapper application, which is likely
+% to find its audience also in real projects.
+%
 @Package: boinc-dbg
 @Section: debug
 @Priority: extra
 @Architecture: any
 @Depends: boinc-client (= ${binary:Version}) | boinc-manager (= ${binary:Version}) | libboinc7 (= ${binary:Version}) | libboinc-app7 (= ${binary:Version}),
 @ ${misc:Depends}
-@Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk2.8-dbg
+@Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk2.8-dbg, boinc-server-dbg
 @Description: debugging symbols for BOINC binaries
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing using volunteered computer
 @ resources.
 @ .
 @ This package contains unstripped versions of all binaries included in
-@ the BOINC packages. It is provided primarily to provide a backtrace
+@ the BOINC client packages. It is provided primarily to provide a backtrace
 @ with names in a debugger, this makes it somewhat easier to interpret
-@ core dumps.
+@ core dumps. For installations running a BOINC server locally, it may
+@ be of interest to also install the boinc-server-dbg package.
 @
-@Package: boinc-server-dbg
-@Section: debug
-@Priority: extra
-@Architecture: any
-@Depends: boinc-client (= ${binary:Version}) | boinc-manager (= ${binary:Version}) | libboinc7 (= ${binary:Version}) | libboinc-app7 (= ${binary:Version}),
-@ ${misc:Depends}
-@Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk2.8-dbg
-@Description: debugging symbols for BOINC server binaries
-@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-@ software platform for distributed computing using volunteered computer
-@ resources.
-@ .
-@ This package contains unstripped versions of all binaries included in
-@ the BOINC packages. It is provided primarily to provide a backtrace
-@ with names in a debugger, this makes it somewhat easier to interpret
-@ core dumps.
-@
+%Package: boinc-server-dbg
+%Section: debug
+%Priority: extra
+%Architecture: any
+%Depends: boinc-client (= ${binary:Version}) | boinc-manager (= ${binary:Version}) | libboinc7 (= ${binary:Version}) | libboinc-app7 (= ${binary:Version}),
+% ${misc:Depends}
+%Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk2.8-dbg
+%Description: debugging symbols for BOINC server binaries
+% The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+% software platform for distributed computing using volunteered computer
+% resources.
+% .
+% This package contains unstripped versions of all binaries included in
+% the BOINC packages. It is provided primarily to provide a backtrace
+% with names in a debugger, this makes it somewhat easier to interpret
+% core dumps.
+%
 %Package: boinc-cgi-stripchart
 %Section: libs
 %Priority: extra

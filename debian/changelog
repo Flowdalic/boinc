@@ -1,4 +1,4 @@
-boinc (7.2.33+dfsg-2) unstable; urgency=low
+boinc (7.2.33+dfsg-2) UNRELEASED; urgency=low
 
   [Gianfranco Costamagna]
   * debian/rules
@@ -16,6 +16,11 @@ boinc (7.2.33+dfsg-2) unstable; urgency=low
 
   [Steffen Moeller]
   * Removed Daniel Hahler and Rene Mayorga from uploaders list
+  * Moved boinc-server-maker and boinc-server-dbg into experimental
+    (again) to prevent them from appearing in testing.
+  * Moved libboinc_api and libboinc_graphics back from libboinc7
+    package to libboinc-api7.
+  * More rigorous clean: target (.libs, config.status, libtool)
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 15 Feb 2014 14:33:45 +0100
 

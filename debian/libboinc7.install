@@ -1,1 +1,4 @@
-usr/lib/*.so.*         usr/lib
+usr/lib/libboinc.so.*          usr/lib
+usr/lib/libsched.so.*          usr/lib
+usr/lib/libboinc_zip.so.*      usr/lib
+usr/lib/libboinc_crypt.so.*    usr/lib
