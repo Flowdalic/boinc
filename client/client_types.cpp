@@ -639,9 +639,9 @@ void FILE_INFO::failure_message(string& s) {
     sprintf(buf,
         "<file_xfer_error>\n"
         "  <file_name>%s</file_name>\n"
-        "  <error_code>%d</error_code>\n",
+        "  <error_code>%d (%s)</error_code>\n",
         name,
-        status
+        status, boincerror(status)
     );
     s = buf;
     if (error_msg.size()) {
@@ -744,6 +744,7 @@ void APP_VERSION::init() {
     missing_coproc = false;
     strcpy(missing_coproc_name, "");
     dont_throttle = false;
+    is_wrapper = false;
     needs_network = false;
     is_vm_app = false;
 }
@@ -758,6 +759,7 @@ int APP_VERSION::parse(XML_PARSER& xp) {
         if (xp.match_tag("/app_version")) {
             rt = gpu_usage.rsc_type;
             if (rt) {
+				dont_throttle = true;		// don't throttle GPU apps
                 if (strstr(plan_class, "opencl")) {
                     if (!coprocs.coprocs[rt].have_opencl) {
                         msg_printf(0, MSG_INFO,
@@ -844,6 +846,7 @@ int APP_VERSION::parse(XML_PARSER& xp) {
             continue;
         }
         if (xp.parse_bool("dont_throttle", dont_throttle)) continue;
+        if (xp.parse_bool("is_wrapper", is_wrapper)) continue;
         if (xp.parse_bool("needs_network", needs_network)) continue;
         if (log_flags.unparsed_xml) {
             msg_printf(0, MSG_INFO,
@@ -922,6 +925,11 @@ int APP_VERSION::write(MIOFILE& out, bool write_file_info) {
     if (dont_throttle) {
         out.printf(
             "    <dont_throttle/>\n"
+        );
+    }
+    if (is_wrapper) {
+        out.printf(
+            "    <is_wrapper/>\n"
         );
     }
     if (needs_network) {

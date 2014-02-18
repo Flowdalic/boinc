@@ -67,6 +67,7 @@ BEGIN_EVENT_TABLE (CBOINCGUIApp, wxApp)
 #endif
 END_EVENT_TABLE ()
 
+wxString language = wxEmptyString;
 
 bool s_bSkipExitConfirmation = false;
 
@@ -152,7 +153,6 @@ bool CBOINCGUIApp::OnInit() {
     m_hClientLibraryDll = NULL;
 #endif
 
-
     // Initialize local variables
     int      iErrorCode = 0;
     int      iSelectedLanguage = 0;
@@ -160,7 +160,6 @@ bool CBOINCGUIApp::OnInit() {
     wxString strDesiredSkinName = wxEmptyString;
     wxString strDialogMessage = wxEmptyString;
     bool     success = false;
-
 
     // Configure wxWidgets platform specific code
 #ifdef __WXMSW__
@@ -276,7 +275,6 @@ bool CBOINCGUIApp::OnInit() {
     m_pLocale = new wxLocale();
     wxASSERT(m_pLocale);
 
-
     // Look for the localization files by absolute and relative locations.
     //   preference given to the absolute location.
     m_pLocale->Init(iSelectedLanguage);
@@ -292,12 +290,12 @@ bool CBOINCGUIApp::OnInit() {
 
     InitSupportedLanguages();
 
+	language = m_pLocale->GetCanonicalName();
 
     // Note: JAWS for Windows will only speak the context-sensitive
     // help if you use this help provider:
     wxHelpProvider::Set(new wxHelpControllerHelpProvider());
 
- 
     // Enable known image types
     wxInitAllImageHandlers();
 
@@ -956,6 +954,9 @@ bool CBOINCGUIApp::SetActiveGUI(int iGUISelection, bool bShowWindow) {
             m_pConfig->Read(wxT("XPos"), &iLeft, 30);
             m_pConfig->Read(wxT("Width"), &iWidth, 800);
             m_pConfig->Read(wxT("Height"), &iHeight, 600);
+            // Guard against a rare situation where registry values are zero
+            if (iWidth < 50) iWidth = 800;
+            if (iHeight < 50) iHeight = 600;
         } else {
             m_pConfig->SetPath(wxT("/Simple"));
             m_pConfig->Read(wxT("YPos"), &iTop, 30);

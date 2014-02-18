@@ -47,11 +47,32 @@ int APP_CONFIG::parse(XML_PARSER& xp, PROJECT* p) {
         }
         if (log_flags.unparsed_xml) {
             msg_printf(p, MSG_INFO,
-                "Unparsed line in app_info.xml: %s",
+                "Unparsed line in app_config.xml: %s",
                 xp.parsed_tag
             );
         }
         xp.skip_unexpected(log_flags.unparsed_xml, "APP_CONFIG::parse");
+    }
+    return ERR_XML_PARSE;
+}
+
+int APP_VERSION_CONFIG::parse(XML_PARSER& xp, PROJECT* p) {
+    memset(this, 0, sizeof(APP_VERSION_CONFIG));
+
+    while (!xp.get_tag()) {
+        if (xp.match_tag("/app_version")) return 0;
+        if (xp.parse_str("app_name", app_name, 256)) continue;
+        if (xp.parse_str("plan_class", plan_class, 256)) continue;
+        if (xp.parse_str("cmdline", cmdline, 256)) continue;
+        if (xp.parse_double("avg_ncpus", avg_ncpus)) continue;
+        if (xp.parse_double("ngpus", ngpus)) continue;
+        if (log_flags.unparsed_xml) {
+            msg_printf(p, MSG_INFO,
+                "Unparsed line in app_config.xml: %s",
+                xp.parsed_tag
+            );
+        }
+        xp.skip_unexpected(log_flags.unparsed_xml, "APP_VERSION_CONFIG::parse");
     }
     return ERR_XML_PARSE;
 }
@@ -69,9 +90,17 @@ int APP_CONFIGS::parse(XML_PARSER& xp, PROJECT* p) {
             }
             continue;
         }
+        if (xp.match_tag("app_version")) {
+            APP_VERSION_CONFIG avc;
+            int retval = avc.parse(xp, p);
+            if (!retval) {
+                app_version_configs.push_back(avc);
+            }
+            continue;
+        }
         if (log_flags.unparsed_xml) {
             msg_printf(p, MSG_INFO,
-                "Unparsed line in app_info.xml: %s",
+                "Unparsed line in app_config.xml: %s",
                 xp.parsed_tag
             );
         }
@@ -88,17 +117,20 @@ int APP_CONFIGS::parse_file(FILE* f, PROJECT* p) {
     return retval;
 }
 
+static void show_warning(PROJECT* p, char* name) {
+    msg_printf(p, MSG_USER_ALERT,
+        "Your app_config.xml file refers to an unknown application '%s'.  Known applications: %s",
+        name, app_list_string(p).c_str()
+    );
+}
+
 void APP_CONFIGS::config_app_versions(PROJECT* p, bool show_warnings) {
-    for (unsigned int i=0; i<app_configs.size(); i++) {
+    unsigned int i;
+    for (i=0; i<app_configs.size(); i++) {
         APP_CONFIG& ac = app_configs[i];
         APP* app = gstate.lookup_app(p, ac.name);
         if (!app) {
-            if (show_warnings) {
-                msg_printf(p, MSG_USER_ALERT,
-                    "Your app_config.xml file refers to an unknown application '%s'.  Known applications: %s",
-                    ac.name, app_list_string(p).c_str()
-                );
-            }
+            if (show_warnings) show_warning(p, ac.name);
             continue;
         }
         app->max_concurrent = ac.max_concurrent;
@@ -109,6 +141,35 @@ void APP_CONFIGS::config_app_versions(PROJECT* p, bool show_warnings) {
             if (!avp->gpu_usage.rsc_type) continue;
             avp->gpu_usage.usage = ac.gpu_gpu_usage;
             avp->avg_ncpus = ac.gpu_cpu_usage;
+        }
+    }
+    for (i=0; i<app_version_configs.size(); i++) {
+        APP_VERSION_CONFIG& avc = app_version_configs[i];
+        APP* app = gstate.lookup_app(p, avc.app_name);
+        if (!app) {
+            if (show_warnings) show_warning(p, avc.app_name);
+            continue;
+        }
+        bool found = false;
+        for (unsigned int j=0; j<gstate.app_versions.size(); j++) {
+            APP_VERSION* avp = gstate.app_versions[j];
+            if (avp->app != app) continue;
+            if (strcmp(avp->plan_class, avc.plan_class)) continue;
+            found = true;
+            if (strlen(avc.cmdline)) {
+                strcpy(avp->cmdline, avc.cmdline);
+            }
+            if (avc.avg_ncpus) {
+                avp->avg_ncpus = avc.avg_ncpus;
+            }
+            if (avc.ngpus) {
+                avp->gpu_usage.usage = avc.ngpus;
+            }
+        }
+        if (!found) {
+            msg_printf(p, MSG_USER_ALERT,
+                "Entry in app_config.xml for app '%s', plan class '%s' doesn't match any app versions", avc.app_name, avc.plan_class
+            );
         }
     }
 }

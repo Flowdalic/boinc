@@ -291,6 +291,12 @@ int ACTIVE_TASK::write_app_init_file(APP_INIT_DATA& aid) {
     FILE *f;
     char init_data_path[MAXPATHLEN];
 
+#if 0
+	msg_printf(wup->project, MSG_INFO,
+		"writing app_init.xml for %s; slot %d rt %s gpu_device_num %d", result->name, slot, aid.gpu_type, aid.gpu_device_num
+	);
+#endif
+
     sprintf(init_data_path, "%s/%s", slot_dir, INIT_DATA_FILE);
 
     // delete the file using the switcher (Unix)
@@ -514,9 +520,12 @@ int ACTIVE_TASK::start(bool test) {
         return 0;
     }
 
-    // if this job uses less than one CPU, run it at above idle priority
+    // run it at above idle priority if it uses less than one CPU
+    // or is a wrapper
     //
-    bool high_priority = (app_version->avg_ncpus < 1);
+    bool high_priority = false;
+    if (app_version->avg_ncpus < 1) high_priority = true;
+    if (app_version->is_wrapper) high_priority = true;
 
     if (wup->project->verify_files_on_app_start) {
         fip=0;
@@ -1134,14 +1143,19 @@ int ACTIVE_TASK::resume_or_start(bool first_time) {
         );
         return 0;
     }
-    if (log_flags.task) {
+    if (log_flags.task && first_time) {
+		msg_printf(result->project, MSG_INFO,
+			"Starting task %s", result->name
+		);
+	}
+	if (log_flags.cpu_sched) {
         char buf[256];
         strcpy(buf, "");
         if (strlen(app_version->plan_class)) {
             sprintf(buf, " (%s)", app_version->plan_class);
         }
         msg_printf(result->project, MSG_INFO,
-            "%s task %s using %s version %d%s in slot %d",
+            "[cpu_sched] %s task %s using %s version %d%s in slot %d",
             str,
             result->name,
             app_version->app->name,

@@ -63,13 +63,6 @@ public class BOINCActivity extends TabActivity {
 	
 	private TabHost tabHost;
 	private Resources res;
-	
-	// dummy jni to trigger PlayStore filter for CPU architecture
-	static{
-		System.loadLibrary("dummyjni");
-	}
-	private native String getDummyString();
-	// ---
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder service) {
@@ -99,7 +92,7 @@ public class BOINCActivity extends TabActivity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {  
-        if(Logging.DEBUG) Log.d(Logging.TAG, "BOINCActivity onCreate(), dummy jni: " + getDummyString()); 
+        if(Logging.DEBUG) Log.d(Logging.TAG, "BOINCActivity onCreate()"); 
 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -129,7 +122,7 @@ public class BOINCActivity extends TabActivity {
     	if(Logging.VERBOSE) Log.v(Logging.TAG, "BOINCActivity onResume()");
 	    super.onResume();
 	    registerReceiver(mClientStatusChangeRec, ifcsc);
-	    layout();
+	    determineStatus();
 	}
 
 	@Override
@@ -378,8 +371,8 @@ public class BOINCActivity extends TabActivity {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
 			// setting provided mode for both, CPU computation and network.
-			Boolean runMode = monitor.setRunMode(params[0]);
-			Boolean networkMode = monitor.setNetworkMode(params[0]);
+			Boolean runMode = monitor.clientInterface.setRunMode(params[0]);
+			Boolean networkMode = monitor.clientInterface.setNetworkMode(params[0]);
 			return runMode && networkMode;
 		}
 		

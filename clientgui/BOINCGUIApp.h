@@ -208,6 +208,7 @@ public:
 DECLARE_EVENT_TABLE()
 };
 
+extern wxString language;
 
 DECLARE_APP(CBOINCGUIApp)
 

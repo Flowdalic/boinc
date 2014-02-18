@@ -15,30 +15,46 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef _WIN32
-#else
-#include <pthread.h>
-#endif
+#include "thread.h"
 
-struct THREAD {
-    void* arg;
-    bool quit_flag;
 #ifdef _WIN32
-    int run(LPTHREAD_START_ROUTINE, void*);
+int THREAD::run(LPTHREAD_START_ROUTINE func, void* _arg) {
+    CreateThread(NULL, 0, func, this, 0, NULL);
 #else
-    int run(void*(*func)(void*), void*);
+int THREAD::run(void*(*func)(void*), void* _arg) {
+    pthread_t id;
+    pthread_attr_t thread_attrs;
+    pthread_attr_init(&thread_attrs);
+    pthread_create(&id, &thread_attrs, func, this);
 #endif
-    void quit();
-};
+    arg = _arg;
+    return 0;
+}
 
-struct THREAD_LOCK {
+void THREAD::quit() {
+    quit_flag = true;
+}
+
+THREAD_LOCK::THREAD_LOCK() {
 #ifdef _WIN32
-    CRITICAL_SECTION mutex;
+    InitializeCriticalSection(&mutex);
 #else
-    pthread_mutex_t mutex;
+    pthread_mutex_init(&mutex, NULL);
 #endif
-    void lock();
-    void unlock();
+}
 
-    THREAD_LOCK();
-};
+void THREAD_LOCK::lock() {
+#ifdef _WIN32
+    EnterCriticalSection(&mutex);
+#else
+    pthread_mutex_lock(&mutex);
+#endif
+}
+
+void THREAD_LOCK::unlock() {
+#ifdef _WIN32
+    LeaveCriticalSection(&mutex);
+#else
+    pthread_mutex_unlock(&mutex);
+#endif
+}

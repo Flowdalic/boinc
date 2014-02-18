@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: BOINC translation team <boinc_loc@ssl.berkeley.edu>\n"
-"POT-Creation-Date: 2013-10-29 11:10 PDT\n"
-"PO-Revision-Date: 2013-10-30 20:07+0000\n"
+"POT-Creation-Date: 2013-11-12 00:00 PST\n"
+"PO-Revision-Date: 2013-11-13 20:24+0000\n"
 "Last-Translator: Christian <djangofett@gmx.net>\n"
 "Language-Team: BOINC Development Team <boinc_loc@ssl.berkeley.edu>\n"
 "Language: de\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-POOTLE-MTIME: 1383163665.0\n"
+"X-POOTLE-MTIME: 1384374259.0\n"
 
 #: docutil.php:21
 msgid "Search"
@@ -29,36 +29,63 @@ msgstr "Zurück zur BOINC Hauptseite"
 msgid "This page is %stranslatable%s."
 msgstr "Diese Seite ist %sübersetzbar%s."
 
-#: download.php:44
-msgid "Download BOINC + Virtualbox"
+#: download.php:39
+msgid ""
+"We recommend that you also install VirtualBox, so your computer can work on "
+"science projects that require it."
+msgstr ""
+"Wir empfehlen die Installation von VirtualBox, damit kann Ihr Rechner auch "
+"an Projekten teilnehmen die dies erfordern."
+
+#: download.php:41
+msgid "Learn more about VirtualBox."
+msgstr "Mehr über VirtualBox erfahren."
+
+#: download.php:51
+msgid "Download BOINC + VirtualBox"
 msgstr "BOINC und VirtualBox herunterladen"
 
-#: download.php:46 download.php:56
+#: download.php:54 download.php:69
 #, php-format
-msgid "%s for %s (%s MB)"
-msgstr "%s für %s (%s MB)"
+msgid "for %s"
+msgstr "für %s"
+
+#: download.php:57 download.php:72
+#, php-format
+msgid "BOINC version %s"
+msgstr "BOINC Version %s"
+
+#: download.php:59
+#, php-format
+msgid "VirtualBox version %s"
+msgstr "VirtualBox Version %s"
 
 # #######################################<br />
 # download.php<br />
 # #######################################
-#: download.php:54
+#: download.php:67
 msgid "Download BOINC"
 msgstr "BOINC herunterladen"
 
-#: download.php:107
+#: download.php:123
 msgid ""
 "BOINC is a program that lets you donate your idle computer time to science "
 "projects like SETI@home, Climateprediction.net, Rosetta@home, World "
-"Community Grid, and many others. <p> After installing BOINC on your "
-"computer, you can connect it to as many of these projects as you like."
+"Community Grid, and many others."
 msgstr ""
-"BOINC ist ein Programm das Ihnen ermöglicht Computerzeit für "
-"wissenschaftliche Projekte - wie SETI@home, Climateprediction.net, "
-"Rosetta@home, World Community Grid und viele andere - zur Verfügung zu "
-"stellen. <p> Nach der Installation von BOINC auf Ihrem Computer, können Sie "
-"diesen mit so vielen Projekten verbinden wie sie wollen."
+"BOINC ist ein Programm womit die ungenutzte Rechenleistung Ihres Computers, "
+"für wissenschaftliche Projekte wie SETI@home, Climateprediction.net, "
+"Rosetta@home, World Community Grid oder viele andere eingesetzt werden kann."
 
-#: download.php:109
+#: download.php:125
+msgid ""
+"After installing BOINC on your computer, you can connect it to as many of "
+"these projects as you like."
+msgstr ""
+"Nachdem Sie BOINC auf Ihrem Computer installiert haben, können Sie es zu so "
+"vielen Projekten hinzufügen wie Sie wünschen."
+
+#: download.php:127
 msgid ""
 "You may run this software on a computer only if you own the computer or have "
 "the permission of its owner."
@@ -66,31 +93,39 @@ msgstr ""
 "Sie dürfen die Software nur auf einem Computer benutzen wenn Sie der "
 "Eigentümer sind oder das Einverständnis des Besitzers haben."
 
-#: download.php:151
+#: download.php:132
+msgid ""
+"We recommend that you download BOINC from the Google Play Store or Amazon "
+"Appstore, not from here."
+msgstr ""
+"Wir empfehlen BOINC über den Google Play Store oder Amazon Appstore zu "
+"installieren und nicht von hier."
+
+#: download.php:167
 msgid "System requirements"
 msgstr "Systemanforderungen"
 
-#: download.php:152
+#: download.php:168
 msgid "Release notes"
 msgstr "Versionshinweise"
 
-#: download.php:153 index.php:86
+#: download.php:169 index.php:86
 msgid "Help"
 msgstr "Hilfe"
 
-#: download.php:154
+#: download.php:170
 msgid "All versions"
 msgstr "Alle Versionen"
 
-#: download.php:155
+#: download.php:171
 msgid "Version history"
 msgstr "Versionshistorie"
 
-#: download.php:156
+#: download.php:172
 msgid "GPU computing"
 msgstr "Grafikkarten-gestützte Berechnung (GPUs)"
 
-#: download.php:174
+#: download.php:190
 msgid "BOINC: compute for science"
 msgstr "BOINC: Rechenkraft für die Wissenschaft"
 
@@ -256,7 +291,7 @@ msgstr "BOINC Software herunterladen"
 
 #: index.php:98
 msgid "Enter an email address and password."
-msgstr ""
+msgstr "Geben Sie eine E-Mail Adresse und Passwort ein."
 
 #: index.php:102
 #, php-format
@@ -1119,6 +1154,25 @@ msgstr "Kommentieren"
 #, php-format
 msgid "News is available as an %sRSS feed%s"
 msgstr "Nachrichten auch als %sRSS feed%s erhältlich"
+
+#~ msgid "Download BOINC + Virtualbox"
+#~ msgstr "BOINC und VirtualBox herunterladen"
+
+#, php-format
+#~ msgid "%s for %s (%s MB)"
+#~ msgstr "%s für %s (%s MB)"
+
+#~ msgid ""
+#~ "BOINC is a program that lets you donate your idle computer time to science "
+#~ "projects like SETI@home, Climateprediction.net, Rosetta@home, World "
+#~ "Community Grid, and many others. <p> After installing BOINC on your "
+#~ "computer, you can connect it to as many of these projects as you like."
+#~ msgstr ""
+#~ "BOINC ist ein Programm das Ihnen ermöglicht Computerzeit für "
+#~ "wissenschaftliche Projekte - wie SETI@home, Climateprediction.net, "
+#~ "Rosetta@home, World Community Grid und viele andere - zur Verfügung zu "
+#~ "stellen. <p> Nach der Installation von BOINC auf Ihrem Computer, können Sie "
+#~ "diesen mit so vielen Projekten verbinden wie sie wollen."
 
 #~ msgid "Browser default"
 #~ msgstr "Browserstandard"

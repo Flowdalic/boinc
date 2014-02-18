@@ -524,13 +524,11 @@ bool CBOINCInternetFSHandler::CanOpen(const wxString& location)
 {
     if (b_ShuttingDown) return false;
 
-    // Check to see if we support the download of the specified file type
+    // Disable downloading all embedded file types within a notice
     // TODO: We'll need to revisit this policy after the next public release.
     //   Either wait for the wxWidgets 3.0 migration, or fix the async file
-    //   download issue.  Until then disable image file downloads.
+    //   download issue.
     //
-
-    // Even handle cases where images do not have extensions.
     return false;
 
     // Regular check based on protocols
