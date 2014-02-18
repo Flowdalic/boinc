@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2013-10-18 00:00-0700\n"
-"PO-Revision-Date: 2013-10-19 05:39+0000\n"
+"PO-Revision-Date: 2013-11-08 23:56+0000\n"
 "Last-Translator: 宇謙 <df910105@yahoo.com.tw>\n"
 "Language-Team: zh_TW <LL@li.org>\n"
 "Language: zh_TW\n"
@@ -52,7 +52,7 @@ msgstr "請輸入專案網址"
 
 msgctxt "attachproject_list_acctmgr_button"
 msgid "Add account manager"
-msgstr "來自帳號管理員的請求"
+msgstr "新增帳號管理服務"
 
 msgctxt "attachproject_list_no_internet"
 msgid "No Internet connection"
@@ -127,7 +127,7 @@ msgstr "密碼:"
 
 msgctxt "attachproject_login_category_creation"
 msgid "New to"
-msgstr "新來"
+msgstr "第一次加入"
 
 msgctxt "attachproject_login_header_creation_enabled"
 msgid "Register an account to participate:"
@@ -197,7 +197,7 @@ msgstr "建立"
 #. account manager
 msgctxt "attachproject_acctmgr_header"
 msgid "Add account manager"
-msgstr "來自帳號管理員的請求"
+msgstr "新增帳號管理服務"
 
 msgctxt "attachproject_acctmgr_header_url"
 msgid "URL"
@@ -331,7 +331,7 @@ msgstr "登入"
 
 msgctxt "attachproject_working_acctmgr"
 msgid "Add account manager"
-msgstr "來自帳號管理員的請求"
+msgstr "新增帳號管理服務"
 
 msgctxt "attachproject_working_acctmgr_sync"
 msgid "Synchronize"
@@ -340,7 +340,7 @@ msgstr "同步"
 #. main activity
 msgctxt "main_noproject_warning"
 msgid "Tab here to choose a project."
-msgstr "點此選擇一個專案。"
+msgstr ""
 
 msgctxt "main_error"
 msgid "Whooops"
@@ -627,7 +627,7 @@ msgstr "(在這個裝置上)"
 
 msgctxt "projects_credits_user_header"
 msgid "(total)"
-msgstr "(總和)"
+msgstr "(總共)"
 
 #. project status strings
 msgctxt "projects_status_suspendedviagui"
@@ -636,7 +636,7 @@ msgstr "用戶已暫停"
 
 msgctxt "projects_status_dontrequestmorework"
 msgid "Won't get new tasks"
-msgstr "不要新任務"
+msgstr "拒絕新任務"
 
 msgctxt "projects_status_ended"
 msgid "Project ended - OK to remove"
@@ -689,7 +689,7 @@ msgstr "繼續"
 
 msgctxt "projects_control_nonewtasks"
 msgid "No new tasks"
-msgstr "沒有新任務"
+msgstr "拒絕新任務"
 
 msgctxt "projects_control_allownewtasks"
 msgid "Allow new tasks"
@@ -1114,5 +1114,15 @@ msgid ""
 "© 2003–2013 University of California, Berkeley.\n"
 "All Rights Reserved."
 msgstr ""
-"© 2003–2013 University of California, Berkeley.\n"
-"All Rights Reserved."
+"© 2003–2013 美國加州大學柏克萊分校\n"
+"保留所有權利。"
+
+#, fuzzy
+#~ msgctxt "main_noproject_warning"
+#~ msgid "Tap here to choose a project."
+#~ msgstr "點此選擇一個專案。"
+
+#, fuzzy
+#~ msgctxt "prefs_power_source_usb"
+#~ msgid "USB connection"
+#~ msgstr "沒有網路連線"

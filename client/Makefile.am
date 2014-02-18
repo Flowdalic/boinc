@@ -72,6 +72,7 @@ boinc_client_SOURCES = \
     hostinfo_unix.cpp \
     http_curl.cpp \
     log_flags.cpp \
+	mac_address.cpp \
     main.cpp \
     net_stats.cpp \
     pers_file_xfer.cpp \
@@ -80,6 +81,7 @@ boinc_client_SOURCES = \
     rr_sim.cpp \
     sandbox.cpp \
     scheduler_op.cpp \
+	thread.cpp \
     time_stats.cpp \
     whetstone.cpp \
     work_fetch.cpp

@@ -737,8 +737,8 @@ bool RSS_FEED_OP::poll() {
                     "[notice] start fetch from %s", rf.url
                 );
             }
-            char url[256];
-            safe_strcpy(url, rf.url);
+            char url[1024];
+            strcpy(url, rf.url);
             gstate.gui_http.do_rpc(this, url, filename, true);
             break;
         }

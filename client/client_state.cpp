@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
@@ -38,7 +42,6 @@
 #endif
 
 #include "cpp.h"
-#include "version.h"         // version numbers from autoconf
 #include "error_numbers.h"
 #include "filesys.h"
 #include "parse.h"
@@ -57,7 +60,6 @@
 #include "cs_trickle.h"
 #include "file_names.h"
 #include "hostinfo.h"
-#include "hostinfo_network.h"
 #include "http_curl.h"
 #include "network.h"
 #include "project.h"
@@ -71,6 +73,11 @@ using std::max;
 
 CLIENT_STATE gstate;
 COPROCS coprocs;
+
+#ifdef NEW_CPU_THROTTLE
+THREAD_LOCK client_mutex;
+THREAD throttle_thread;
+#endif
 
 CLIENT_STATE::CLIENT_STATE()
     : lookup_website_op(&gui_http),
@@ -92,6 +99,7 @@ CLIENT_STATE::CLIENT_STATE()
     file_xfer_giveup_period = PERS_GIVEUP;
     had_or_requested_work = false;
     tasks_suspended = false;
+    tasks_throttled = false;
     network_suspended = false;
     suspend_reason = 0;
     network_suspend_reason = 0;
@@ -103,6 +111,7 @@ CLIENT_STATE::CLIENT_STATE()
 #else
     core_client_version.prerelease = false;
 #endif
+	strcpy(language, "");
     exit_after_app_start_secs = 0;
     app_started = 0;
     exit_before_upload = false;
@@ -183,10 +192,25 @@ void CLIENT_STATE::show_host_info() {
         "Processor features: %s", host_info.p_features
     );
 #ifdef __APPLE__
+    SInt32 temp;
     int major, minor, rev;
-    sscanf(host_info.os_version, "%d.%d.%d", &major, &minor, &rev);
+    OSStatus err = noErr;
+    
+    err = Gestalt(gestaltSystemVersionMajor, &temp);
+    major = temp;
+    if (!err) {
+    err = Gestalt(gestaltSystemVersionMinor, &temp);
+    minor = temp;
+    }
+    if (!err) {
+    err = Gestalt(gestaltSystemVersionBugFix, &temp);
+    rev = temp;
+    }
+    if (err) {
+        sscanf(host_info.os_version, "%d.%d.%d", &major, &minor, &rev);
+    }
     msg_printf(NULL, MSG_INFO,
-        "OS: Mac OS X 10.%d.%d (%s %s)", major-4, minor,
+        "OS: Mac OS X %d.%d.%d (%s %s)", major, minor, rev, 
         host_info.os_name, host_info.os_version
     );
 #else
@@ -319,8 +343,10 @@ int CLIENT_STATE::init() {
     time_stats.start();
 
     msg_printf(
-        NULL, MSG_INFO, "Starting BOINC client version %s for %s%s",
-        BOINC_VERSION_STRING,
+        NULL, MSG_INFO, "Starting BOINC client version %d.%d.%d for %s%s",
+        core_client_version.major,
+        core_client_version.minor,
+        core_client_version.release,
         get_primary_platform(),
 #ifdef _DEBUG
         " (DEBUG)"
@@ -385,7 +411,7 @@ int CLIENT_STATE::init() {
         }
 #if 0
         msg_printf(NULL, MSG_INFO, "Faking an NVIDIA GPU");
-        coprocs.nvidia.fake(18000, 512*MEGA, 490*MEGA, 1);
+        coprocs.nvidia.fake(18000, 512*MEGA, 490*MEGA, 2);
 #endif
 #if 0
         msg_printf(NULL, MSG_INFO, "Faking an ATI GPU");
@@ -666,6 +692,10 @@ int CLIENT_STATE::init() {
     //
     project_priority_init(false);
 
+#ifdef NEW_CPU_THROTTLE
+    client_mutex.lock();
+    throttle_thread.run(throttler, NULL);
+#endif
     initialized = true;
     return 0;
 }
@@ -697,12 +727,18 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         all_fds = curl_fds;
         gui_rpcs.get_fdset(gui_rpc_fds, all_fds);
         double_to_timeval(action?0:x, tv);
+#ifdef NEW_CPU_THROTTLE
+        client_mutex.unlock();
+#endif
         n = select(
             all_fds.max_fd+1,
             &all_fds.read_fds, &all_fds.write_fds, &all_fds.exc_fds,
             &tv
         );
         //printf("select in %d out %d\n", all_fds.max_fd, n);
+#ifdef NEW_CPU_THROTTLE
+        client_mutex.lock();
+#endif
 
         // Note: curl apparently likes to have curl_multi_perform()
         // (called from net_xfers->got_select())
@@ -849,7 +885,7 @@ bool CLIENT_STATE::poll_slow_events() {
             }
             last_suspend_reason = suspend_reason;
         } else {
-            if (tasks_suspended) {
+            if (tasks_suspended && !tasks_throttled) {
                 resume_tasks(last_suspend_reason);
             }
         }
@@ -1924,14 +1960,6 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
         } else {
             fi_iter++;
         }
-    }
-
-    // if global prefs came from this project, delete file and reinit
-    //
-    p = lookup_project(global_prefs.source_project);
-    if (p == project) {
-        boinc_delete_file(GLOBAL_PREFS_FILE_NAME);
-        global_prefs.defaults();
     }
 
     // find project and remove it from the vector

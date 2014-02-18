@@ -275,6 +275,7 @@ int CLIENT_STATE::check_suspend_processing() {
     }
 #endif
 
+#ifndef NEW_CPU_THROTTLE
     // CPU throttling.
     // Do this check last; that way if suspend_reason is CPU_THROTTLE,
     // the GUI knows there's no other source of suspension
@@ -292,6 +293,7 @@ int CLIENT_STATE::check_suspend_processing() {
             }
         }
     }
+#endif
 
     // CPU is not suspended.  See if GPUs are
     //
@@ -334,11 +336,7 @@ int CLIENT_STATE::check_suspend_processing() {
 }
 
 void CLIENT_STATE::show_suspend_tasks_message(int reason) {
-    if (reason == SUSPEND_REASON_CPU_THROTTLE) {
-        if (log_flags.cpu_sched) {
-            msg_printf(NULL, MSG_INFO, "[cpu_sched] Suspending - CPU throttle");
-        }
-    } else {
+    if (reason != SUSPEND_REASON_CPU_THROTTLE) {
         if (log_flags.task) {
             msg_printf(NULL, MSG_INFO,
                 "Suspending computation - %s",
@@ -370,10 +368,7 @@ void CLIENT_STATE::show_suspend_tasks_message(int reason) {
 
 int CLIENT_STATE::resume_tasks(int reason) {
     if (reason == SUSPEND_REASON_CPU_THROTTLE) {
-        if (log_flags.cpu_sched) {
-            msg_printf(NULL, MSG_INFO, "[cpu_sched] Resuming - CPU throttle");
-        }
-        active_tasks.unsuspend_all();
+        active_tasks.unsuspend_all(SUSPEND_REASON_CPU_THROTTLE);
     } else {
         if (log_flags.task) {
             msg_printf(NULL, MSG_INFO, "Resuming computation");

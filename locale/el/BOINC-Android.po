@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2013-10-18 00:00-0700\n"
-"PO-Revision-Date: 2013-10-22 15:28-0700\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2013-10-21 15:32+0000\n"
+"Last-Translator: chris g <chr1407@hotmail.com>\n"
 "Language-Team: el <LL@li.org>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
@@ -213,11 +213,11 @@ msgstr ""
 
 msgctxt "attachproject_acctmgr_header_pwd"
 msgid "Password:"
-msgstr ""
+msgstr "Passwort:"
 
 msgctxt "attachproject_acctmgr_header_pwd_confirm"
 msgid "… Retype:"
-msgstr ""
+msgstr "… Bestätigung:"
 
 msgctxt "attachproject_acctmgr_button"
 msgid "Add"
@@ -347,7 +347,7 @@ msgstr ""
 #. main activity
 msgctxt "main_noproject_warning"
 msgid "Tab here to choose a project."
-msgstr "Hier tippen um ein Projekt auszuwählen."
+msgstr ""
 
 msgctxt "main_error"
 msgid "Whooops"
@@ -494,7 +494,6 @@ msgctxt "prefs_show_advanced_header"
 msgid "Show advanced preferences and controls…"
 msgstr "Zeige erweiterte Einstellungen und Steuerungen…"
 
-#, fuzzy
 msgctxt "prefs_run_on_battery_header"
 msgid "Compute on Battery"
 msgstr "Berechne im Batteriebetrieb"
@@ -1146,3 +1145,13 @@ msgid ""
 msgstr ""
 "© 2003–2013 Universität von Kalifornien, Berkeley.\n"
 "Alle Rechte vorbehalten."
+
+#, fuzzy
+#~ msgctxt "main_noproject_warning"
+#~ msgid "Tap here to choose a project."
+#~ msgstr "Hier tippen um ein Projekt auszuwählen."
+
+#, fuzzy
+#~ msgctxt "prefs_power_source_usb"
+#~ msgid "USB connection"
+#~ msgstr "Keine Internetverbindung"

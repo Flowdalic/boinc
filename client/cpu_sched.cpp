@@ -84,6 +84,13 @@ using std::list;
 
 static double rec_sum;
 
+// is the GPU task running or suspended (due to CPU throttling)
+//
+static inline bool is_gpu_task_running(ACTIVE_TASK* atp) {
+    int s = atp->task_state();
+    return s == PROCESS_EXECUTING || s == PROCESS_SUSPENDED;
+}
+
 // used in make_run_list() to keep track of resources used
 // by jobs tentatively scheduled so far
 //
@@ -127,6 +134,13 @@ struct PROC_RESOURCES {
         double wss;
         if (max_concurrent_exceeded(rp)) return false;
         if (atp) {
+			// don't schedule if something's pending
+			//
+			switch (atp->task_state()) {
+			case PROCESS_ABORT_PENDING:
+			case PROCESS_QUIT_PENDING:
+				return false;
+			}
             if (gstate.retry_shmem_time > gstate.now) {
                 if (atp->app_client_shm.shm == NULL) {
                     if (log_flags.cpu_sched_debug) {
@@ -181,7 +195,7 @@ struct PROC_RESOURCES {
             bool dont_reserve =
                 rsc_work_fetch[rt].has_exclusions
                 && atp != NULL
-                && atp->task_state() == PROCESS_EXECUTING;
+                && is_gpu_task_running(atp);
             if (!dont_reserve) {
                 reserve_coprocs(*rp);
             }
@@ -269,7 +283,7 @@ bool check_coprocs_usable() {
                 }
             }
             msg_printf(NULL, MSG_INFO,
-                "GPUs have become unusable; disabling tasks"
+                "Remote desktop in use; disabling GPU tasks"
             );
             return true;
         }
@@ -283,7 +297,7 @@ bool check_coprocs_usable() {
                 }
             }
             msg_printf(NULL, MSG_INFO,
-                "GPUs have become usable; enabling tasks"
+                "Remote desktop not in use; enabling GPU tasks"
             );
             return true;
         }
@@ -430,7 +444,10 @@ RESULT* first_coproc_result(int rsc_type) {
     for (i=0; i<gstate.results.size(); i++) {
         RESULT* rp = gstate.results[i];
         if (rp->resource_type() != rsc_type) continue;
-        if (!rp->runnable()) continue;
+        if (!rp->runnable()) {
+			//msg_printf(rp->project, MSG_INFO, "not runnable: %s", rp->name);
+			continue;
+		}
         if (rp->non_cpu_intensive()) continue;
         if (rp->already_selected) continue;
         prio = rp->project->sched_priority;
@@ -950,6 +967,7 @@ static inline bool in_run_list(vector<RESULT*>& run_list, ACTIVE_TASK* atp) {
     return false;
 }
 
+#if 0
 // scan the runnable list, keeping track of CPU usage X.
 // if find a MT job J, and X < ncpus, move J before all non-MT jobs
 // But don't promote a MT job ahead of a job in EDF
@@ -985,6 +1003,7 @@ static void promote_multi_thread_jobs(vector<RESULT*>& runnable_jobs) {
         cur++;
     }
 }
+#endif
 
 // return true if r0 is more important to run than r1
 //
@@ -1011,6 +1030,11 @@ static inline bool more_important(RESULT* r0, RESULT* r1) {
     bool unfin1 = r1->unfinished_time_slice;
     if (unfin0 && !unfin1) return true;
     if (!unfin0 && unfin1) return false;
+
+    // favor jobs that use more CPUs
+    //
+    if (r0->avp->avg_ncpus > r1->avp->avg_ncpus) return true;
+    if (r1->avp->avg_ncpus > r0->avp->avg_ncpus) return false;
 
     // favor jobs selected first by schedule_cpus()
     // (e.g., because their project has high sched priority)
@@ -1058,13 +1082,15 @@ void CLIENT_STATE::append_unfinished_time_slice(vector<RESULT*> &run_list) {
 
 ////////// Coprocessor scheduling ////////////////
 //
-// theory of operations:
+// theory of operation:
 //
 // Jobs can use one or more integral instances, or a fractional instance
 //
 // RESULT::coproc_indices
 //    for a running job, the coprocessor instances it's using
 // COPROC::pending_usage[]: for each instance, its usage by running jobs
+//    Note: "running" includes jobs suspended due to CPU throttling.
+//    That's the only kind of suspended GPU job.
 // CORPOC::usage[]: for each instance, its usage
 //
 // enforce_schedule() calls assign_coprocs(),
@@ -1074,7 +1100,7 @@ void CLIENT_STATE::append_unfinished_time_slice(vector<RESULT*> &run_list) {
 //
 // assign_coprocs():
 //     clear usage and pending_usage of all instances
-//     for each running job J
+//     for each running/suspended job J
 //         increment pending_usage for the instances assigned to J
 //     for each scheduled job J
 //         if J is running
@@ -1102,8 +1128,11 @@ static inline void increment_pending_usage(
     for (int i=0; i<usage; i++) {
         int j = rp->coproc_indices[i];
         cp->pending_usage[j] += x;
-        if (cp->pending_usage[j] > 1) {
-            if (log_flags.coproc_debug) {
+        if (log_flags.coproc_debug) {
+			msg_printf(rp->project, MSG_INFO,
+				"[coproc] %s instance %d; %f pending for %s", cp->type, i, x, rp->name
+			);
+			if (cp->pending_usage[j] > 1) {
                 msg_printf(rp->project, MSG_INFO,
                     "[coproc] huh? %s %d %s pending usage > 1",
                     cp->type, i, rp->name
@@ -1128,8 +1157,8 @@ static inline bool current_assignment_ok(
         if (cp->usage[j] + x > 1) {
             if (log_flags.coproc_debug) {
                 msg_printf(rp->project, MSG_INFO,
-                    "[coproc] %s device %d already assigned: task %s",
-                    cp->type, j, rp->name
+                    "[coproc] %s %f instance of device %d already assigned to task %s",
+                    cp->type, x, j, rp->name
                 );
             }
             return false;
@@ -1148,8 +1177,8 @@ static inline void confirm_current_assignment(
         cp->pending_usage[j] -=x;
         if (log_flags.coproc_debug) {
             msg_printf(rp->project, MSG_INFO,
-                "[coproc] %s instance %d: confirming for %s",
-                cp->type, j, rp->name
+                "[coproc] %s instance %d: confirming %f instance for %s",
+                cp->type, j, x, rp->name
             );
         }
 #if DEFER_ON_GPU_AVAIL_RAM
@@ -1386,8 +1415,9 @@ static inline void assign_coprocs(vector<RESULT*>& jobs) {
         }
         ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(rp);
         if (!atp) continue;
-        if (atp->task_state() != PROCESS_EXECUTING) continue;
-        increment_pending_usage(rp, usage, cp);
+        if (is_gpu_task_running(atp)) {
+			increment_pending_usage(rp, usage, cp);
+		}
     }
 
     vector<RESULT*>::iterator job_iter;
@@ -1406,7 +1436,7 @@ static inline void assign_coprocs(vector<RESULT*>& jobs) {
 
         ACTIVE_TASK* atp = gstate.lookup_active_task_by_result(rp);
         bool defer_sched;
-        if (atp && atp->task_state() == PROCESS_EXECUTING) {
+        if (atp && is_gpu_task_running(atp)) {
             if (current_assignment_ok(rp, usage, cp, defer_sched)) {
                 confirm_current_assignment(rp, usage, cp);
                 job_iter++;
@@ -1536,7 +1566,9 @@ bool CLIENT_STATE::enforce_run_list(vector<RESULT*>& run_list) {
         more_important
     );
 
+#if 0
     promote_multi_thread_jobs(run_list);
+#endif
 
     if (log_flags.cpu_sched_debug) {
         msg_printf(0, MSG_INFO, "[cpu_sched_debug] final job list:");
@@ -1644,6 +1676,7 @@ bool CLIENT_STATE::enforce_run_list(vector<RESULT*>& run_list) {
             }
         }
 
+#if 0
         // Don't overcommit CPUs by > 1 if a MT job is scheduled.
         // Skip this check for GPU jobs.
         //
@@ -1659,6 +1692,7 @@ bool CLIENT_STATE::enforce_run_list(vector<RESULT*>& run_list) {
             }
             continue;
         }
+#endif
 
         double wss = 0;
         if (atp) {
@@ -1759,6 +1793,15 @@ bool CLIENT_STATE::enforce_run_list(vector<RESULT*>& run_list) {
                 atp->preempt(preempt_type);
                 break;
             case PROCESS_SUSPENDED:
+				// remove from memory GPU jobs that were suspended by CPU throttling
+				// and are now unscheduled.
+				//
+				if (atp->result->uses_coprocs()) {
+					atp->preempt(REMOVE_ALWAYS);
+					request_schedule_cpus("removed suspended GPU task");
+					break;
+				}
+
                 // Handle the case where user changes prefs from
                 // "leave in memory" to "remove from memory";
                 // need to quit suspended tasks.
