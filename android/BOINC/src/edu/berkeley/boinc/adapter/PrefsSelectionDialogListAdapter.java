@@ -29,16 +29,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import edu.berkeley.boinc.PrefsActivity.SelectionDialogOption;
 import edu.berkeley.boinc.R;
-import edu.berkeley.boinc.PrefsActivity.ClientLogOption;
 import edu.berkeley.boinc.utils.Logging;
 
-public class PrefsLogOptionsListAdapter extends ArrayAdapter<ClientLogOption> implements OnClickListener {
+public class PrefsSelectionDialogListAdapter extends ArrayAdapter<SelectionDialogOption> implements OnClickListener {
 	
-	private ArrayList<ClientLogOption> entries;
+	private ArrayList<SelectionDialogOption> entries;
     private Activity activity;
     
-    public PrefsLogOptionsListAdapter(Activity activity, ListView listView, int textViewResourceId, ArrayList<ClientLogOption> entries) {
+    public PrefsSelectionDialogListAdapter(Activity activity, ListView listView, int textViewResourceId, ArrayList<SelectionDialogOption> entries) {
         super(activity, textViewResourceId, entries);
         this.entries = entries;
         this.activity = activity;
@@ -53,7 +53,7 @@ public class PrefsLogOptionsListAdapter extends ArrayAdapter<ClientLogOption> im
 	}
 
 	@Override
-	public ClientLogOption getItem(int position) {
+	public SelectionDialogOption getItem(int position) {
 		return entries.get(position);
 	}
 
@@ -66,23 +66,27 @@ public class PrefsLogOptionsListAdapter extends ArrayAdapter<ClientLogOption> im
     public View getView(int position, View convertView, ViewGroup parent) {
 
 		View v = convertView;
-		ClientLogOption listItem = entries.get(position);
+		SelectionDialogOption listItem = entries.get(position);
 
 		if(v == null) {
 	        LayoutInflater li = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     		v = li.inflate(R.layout.dialog_list_cbitem, null);
     		CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
     		cb.setChecked(listItem.selected);
-    		cb.setText(listItem.name);
     		cb.setOnClickListener(this);
     		cb.setTag(position);
+    		cb.setText(listItem.name);
+    		if(getItem(position).highlighted) {
+    			v.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.shape_light_red_background));
+    			cb.setBackgroundColor(activity.getResources().getColor(R.color.light_red));
+    		}
 		}
 	    return v;
 	}
 
 	@Override
 	public void onClick(View v) {
-		if(Logging.DEBUG) Log.d(Logging.TAG,"PrefsLogOptionsListAdapter onClick");
+		if(Logging.DEBUG) Log.d(Logging.TAG,"PrefsSelectionDialogListAdapter onClick");
 		CheckBox cb = (CheckBox) v;
 		Integer position = (Integer) cb.getTag();
 		Boolean checked = cb.isChecked();

@@ -330,9 +330,13 @@ void strip_whitespace(string& str) {
 
 char* time_to_string(double t) {
     static char buf[100];
-    time_t x = (time_t)t;
-    struct tm* tm = localtime(&x);
-    strftime(buf, sizeof(buf)-1, "%d-%b-%Y %H:%M:%S", tm);
+    if (!t) {
+        strcpy(buf, "---");
+    } else {
+        time_t x = (time_t)t;
+        struct tm* tm = localtime(&x);
+        strftime(buf, sizeof(buf)-1, "%d-%b-%Y %H:%M:%S", tm);
+    }
     return buf;
 }
 
