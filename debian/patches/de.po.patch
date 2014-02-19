@@ -1,5 +1,7 @@
---- a/html/languages/translations/de.po
-+++ b/html/languages/translations/de.po
+Index: boinc/html/languages/translations/de.po
+===================================================================
+--- boinc.orig/html/languages/translations/de.po
++++ boinc/html/languages/translations/de.po
 @@ -1073,8 +1073,8 @@
  
  #: ../inc/prefs.inc:158
@@ -33,7 +35,7 @@
  
  #: ../inc/prefs.inc:194
  msgid "Tasks checkpoint to disk at most every"
-@@ -5365,9 +5365,10 @@
+@@ -5336,9 +5336,10 @@
  "our message boards are moderated.\n"
  "Message board postings are subject to the following posting rules:\n"
  msgstr ""

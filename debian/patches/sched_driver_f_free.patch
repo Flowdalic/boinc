@@ -1,7 +1,9 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: Increased buffers and eliminated memory sink.
---- a/sched/sched_driver.cpp
-+++ b/sched/sched_driver.cpp
+Index: boinc/sched/sched_driver.cpp
+===================================================================
+--- boinc.orig/sched/sched_driver.cpp
++++ boinc/sched/sched_driver.cpp
 @@ -63,7 +63,7 @@
  double max_time = 1;
  

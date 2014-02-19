@@ -1,5 +1,7 @@
---- a/client/check_security.cpp
-+++ b/client/check_security.cpp
+Index: boinc/client/check_security.cpp
+===================================================================
+--- boinc.orig/client/check_security.cpp
++++ boinc/client/check_security.cpp
 @@ -40,9 +40,9 @@
  #endif
  
@@ -40,8 +42,10 @@
              return 0;
          } else {
              retval = -1200;
---- a/client/cs_platforms.cpp
-+++ b/client/cs_platforms.cpp
+Index: boinc/client/cs_platforms.cpp
+===================================================================
+--- boinc.orig/client/cs_platforms.cpp
++++ boinc/client/cs_platforms.cpp
 @@ -45,6 +45,7 @@
  #include <sys/sysctl.h>
  #endif

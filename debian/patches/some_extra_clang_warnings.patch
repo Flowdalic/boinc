@@ -1,5 +1,7 @@
---- a/clientgui/sg_ProjectPanel.cpp
-+++ b/clientgui/sg_ProjectPanel.cpp
+Index: boinc/clientgui/sg_ProjectPanel.cpp
+===================================================================
+--- boinc.orig/clientgui/sg_ProjectPanel.cpp
++++ boinc/clientgui/sg_ProjectPanel.cpp
 @@ -414,8 +414,7 @@
      CMainDocument* pDoc = wxGetApp().GetDocument();
      ProjectSelectionData* selData;

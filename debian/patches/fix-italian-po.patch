@@ -1,5 +1,7 @@
---- a/locale/Makefile.am
-+++ b/locale/Makefile.am
+Index: boinc/locale/Makefile.am
+===================================================================
+--- boinc.orig/locale/Makefile.am
++++ boinc/locale/Makefile.am
 @@ -21,7 +21,7 @@
  	gl \
  	hr \

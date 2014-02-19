@@ -1,5 +1,7 @@
---- a/client/rrsim_test.cpp
-+++ b/client/rrsim_test.cpp
+Index: boinc/client/rrsim_test.cpp
+===================================================================
+--- boinc.orig/client/rrsim_test.cpp
++++ boinc/client/rrsim_test.cpp
 @@ -184,7 +184,6 @@
      vector<RESULT*> active;
      unsigned int i;

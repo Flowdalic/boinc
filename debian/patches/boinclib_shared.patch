@@ -1,5 +1,7 @@
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
+Index: boinc/lib/Makefile.am
+===================================================================
+--- boinc.orig/lib/Makefile.am
++++ boinc/lib/Makefile.am
 @@ -150,13 +150,13 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -25,9 +27,11 @@
  parse_test_SOURCES = parse_test.cpp 
  parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  parse_test_LDADD = $(LIBBOINC)
---- a/client/Makefile.am
-+++ b/client/Makefile.am
-@@ -91,7 +91,7 @@
+Index: boinc/client/Makefile.am
+===================================================================
+--- boinc.orig/client/Makefile.am
++++ boinc/client/Makefile.am
+@@ -93,7 +93,7 @@
  if OS_DARWIN
  boinc_client_LDFLAGS += -Wl,-flat_namespace,-undefined,dynamic_lookup
  endif

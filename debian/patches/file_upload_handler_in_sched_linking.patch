@@ -1,5 +1,7 @@
---- a/sched/Makefile.am
-+++ b/sched/Makefile.am
+Index: boinc/sched/Makefile.am
+===================================================================
+--- boinc.orig/sched/Makefile.am
++++ boinc/sched/Makefile.am
 @@ -256,7 +256,7 @@
  update_stats_LDADD = $(SERVERLIBS)
  

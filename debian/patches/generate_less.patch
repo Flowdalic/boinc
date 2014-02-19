@@ -1,7 +1,9 @@
 Author: unknown
 
---- a/generate_svn_version.sh
-+++ b/generate_svn_version.sh
+Index: boinc/generate_svn_version.sh
+===================================================================
+--- boinc.orig/generate_svn_version.sh
++++ boinc/generate_svn_version.sh
 @@ -7,7 +7,9 @@
  echo "#define SVN_VERSION_H" >> $TMPFILE
  echo "" >> $TMPFILE

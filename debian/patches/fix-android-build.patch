@@ -1,7 +1,9 @@
 Author: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
 
---- a/samples/wrapper/build_android.sh
-+++ b/samples/wrapper/build_android.sh
+Index: boinc/samples/wrapper/build_android.sh
+===================================================================
+--- boinc.orig/samples/wrapper/build_android.sh
++++ boinc/samples/wrapper/build_android.sh
 @@ -1,4 +1,4 @@
 -#/bin/sh
 +#!/bin/sh

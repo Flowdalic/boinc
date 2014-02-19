@@ -1,5 +1,7 @@
---- a/tools/Makefile.am
-+++ b/tools/Makefile.am
+Index: boinc/tools/Makefile.am
+===================================================================
+--- boinc.orig/tools/Makefile.am
++++ boinc/tools/Makefile.am
 @@ -31,7 +31,9 @@
      manage_privileges \
      run_in_ops \

@@ -1,5 +1,7 @@
---- a/api/graphics2_util.cpp
-+++ b/api/graphics2_util.cpp
+Index: boinc/api/graphics2_util.cpp
+===================================================================
+--- boinc.orig/api/graphics2_util.cpp
++++ boinc/api/graphics2_util.cpp
 @@ -37,7 +37,7 @@
  static key_t get_shmem_name(const char* prog_name) {
      char cwd[MAXPATHLEN], path[MAXPATHLEN];
@@ -18,8 +20,10 @@
  }
  #endif
  
---- a/lib/filesys.cpp
-+++ b/lib/filesys.cpp
+Index: boinc/lib/filesys.cpp
+===================================================================
+--- boinc.orig/lib/filesys.cpp
++++ boinc/lib/filesys.cpp
 @@ -433,7 +433,7 @@
      while (1) {
          retval = dir_scan(filename, dirp, sizeof(filename));
@@ -49,8 +53,10 @@
          retval = boinc_mkdir(newpath);
          if (retval) return retval;
          safe_strcpy(oldpath, newpath);
---- a/lib/network.cpp
-+++ b/lib/network.cpp
+Index: boinc/lib/network.cpp
+===================================================================
+--- boinc.orig/lib/network.cpp
++++ boinc/lib/network.cpp
 @@ -71,7 +71,7 @@
      case WSAENOTSOCK:
          return "not a socket";

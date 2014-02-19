@@ -1,8 +1,10 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: int may not be enough (theoretically) for large files.
 
---- a/sched/file_upload_handler.cpp
-+++ b/sched/file_upload_handler.cpp
+Index: boinc/sched/file_upload_handler.cpp
+===================================================================
+--- boinc.orig/sched/file_upload_handler.cpp
++++ boinc/sched/file_upload_handler.cpp
 @@ -138,13 +138,13 @@
      bytes_left = nbytes - offset;
  

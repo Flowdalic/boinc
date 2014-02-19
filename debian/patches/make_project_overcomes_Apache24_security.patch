@@ -1,5 +1,7 @@
---- a/tools/make_project
-+++ b/tools/make_project
+Index: boinc/tools/make_project
+===================================================================
+--- boinc.orig/tools/make_project
++++ boinc/tools/make_project
 @@ -321,6 +321,7 @@
      <Directory "%(proot)s/html">
          Options Indexes FollowSymlinks MultiViews

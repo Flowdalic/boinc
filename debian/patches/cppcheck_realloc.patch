@@ -1,8 +1,10 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: Initialisation.
 
---- a/lib/crypt.cpp
-+++ b/lib/crypt.cpp
+Index: boinc/lib/crypt.cpp
+===================================================================
+--- boinc.orig/lib/crypt.cpp
++++ boinc/lib/crypt.cpp
 @@ -342,6 +342,7 @@
      char clear_buf[MD5_LEN];
      int n, retval;

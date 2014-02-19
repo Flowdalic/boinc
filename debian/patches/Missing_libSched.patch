@@ -1,5 +1,7 @@
---- a/tools/Makefile.am
-+++ b/tools/Makefile.am
+Index: boinc/tools/Makefile.am
+===================================================================
+--- boinc.orig/tools/Makefile.am
++++ boinc/tools/Makefile.am
 @@ -35,7 +35,7 @@
      project.xml
  
@@ -9,8 +11,10 @@
  
  cancel_jobs_SOURCES = cancel_jobs.cpp
  cancel_jobs_LDADD = $(SERVERLIBS)
---- a/vda/Makefile.am
-+++ b/vda/Makefile.am
+Index: boinc/vda/Makefile.am
+===================================================================
+--- boinc.orig/vda/Makefile.am
++++ boinc/vda/Makefile.am
 @@ -4,7 +4,7 @@
  vda_PROGRAMS = vda vdad ssim
  
@@ -20,8 +24,10 @@
  
  vda_SOURCES = vda.cpp vda_lib.cpp vda_lib2.cpp vda_policy.cpp stats.cpp
  vda_LDADD = $(SERVERLIBS)
---- a/sched/Makefile.am
-+++ b/sched/Makefile.am
+Index: boinc/sched/Makefile.am
+===================================================================
+--- boinc.orig/sched/Makefile.am
++++ boinc/sched/Makefile.am
 @@ -4,7 +4,7 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -31,8 +37,10 @@
  
  if ENABLE_LIBRARIES
  
---- a/apps/Makefile.am
-+++ b/apps/Makefile.am
+Index: boinc/apps/Makefile.am
+===================================================================
+--- boinc.orig/apps/Makefile.am
++++ boinc/apps/Makefile.am
 @@ -8,15 +8,15 @@
  
  upper_case_SOURCES = upper_case.cpp
@@ -52,8 +60,10 @@
 -1sec_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS)
 +1sec_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS) -L../api/.libs -L../lib/.libs
  1sec_LDADD = $(APPLIBS)
---- a/clientgui/Makefile.am
-+++ b/clientgui/Makefile.am
+Index: boinc/clientgui/Makefile.am
+===================================================================
+--- boinc.orig/clientgui/Makefile.am
++++ boinc/clientgui/Makefile.am
 @@ -3,6 +3,7 @@
  
  include $(top_srcdir)/Makefile.incl

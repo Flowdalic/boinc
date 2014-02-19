@@ -1,6 +1,8 @@
---- a/lib/unix_util.cpp
-+++ b/lib/unix_util.cpp
-@@ -61,7 +61,13 @@
+Index: boinc/lib/unix_util.cpp
+===================================================================
+--- boinc.orig/lib/unix_util.cpp
++++ boinc/lib/unix_util.cpp
+@@ -80,7 +80,13 @@
              }
              if (i!=envstrings.end()) {
                  // we allocated this string.  Reallocate it.

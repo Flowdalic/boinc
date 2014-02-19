@@ -8,8 +8,10 @@ Forwarded: <yes>
 Reviewed-By: <costamagnagianfranco@yahoo.it>
 Last-Update: <2013-08-22>
 
---- a/sched/make_work.cpp
-+++ b/sched/make_work.cpp
+Index: boinc/sched/make_work.cpp
+===================================================================
+--- boinc.orig/sched/make_work.cpp
++++ boinc/sched/make_work.cpp
 @@ -52,6 +52,7 @@
  #include "str_replace.h"
  #include "str_util.h"
@@ -18,8 +20,10 @@ Last-Update: <2013-08-22>
  
  #define LOCKFILE            "make_work.out"
  #define PIDFILE             "make_work.pid"
---- a/sched/get_file.cpp
-+++ b/sched/get_file.cpp
+Index: boinc/sched/get_file.cpp
+===================================================================
+--- boinc.orig/sched/get_file.cpp
++++ boinc/sched/get_file.cpp
 @@ -38,6 +38,7 @@
  
  #include "backend_lib.h"
@@ -28,8 +32,10 @@ Last-Update: <2013-08-22>
  
  #include "sched_config.h"
  #include "sched_util.h"
---- a/sched/sched_assign.cpp
-+++ b/sched/sched_assign.cpp
+Index: boinc/sched/sched_assign.cpp
+===================================================================
+--- boinc.orig/sched/sched_assign.cpp
++++ boinc/sched/sched_assign.cpp
 @@ -33,6 +33,7 @@
  #include "crypt.h"
  #include "backend_lib.h"
@@ -38,8 +44,10 @@ Last-Update: <2013-08-22>
  
  #include "sched_main.h"
  #include "sched_msgs.h"
---- a/sched/sample_work_generator.cpp
-+++ b/sched/sample_work_generator.cpp
+Index: boinc/sched/sample_work_generator.cpp
+===================================================================
+--- boinc.orig/sched/sample_work_generator.cpp
++++ boinc/sched/sample_work_generator.cpp
 @@ -47,6 +47,7 @@
  #include "str_replace.h"
  #include "util.h"
@@ -48,8 +56,10 @@ Last-Update: <2013-08-22>
  
  #include "sched_config.h"
  #include "sched_util.h"
---- a/sched/sched_timezone.cpp
-+++ b/sched/sched_timezone.cpp
+Index: boinc/sched/sched_timezone.cpp
+===================================================================
+--- boinc.orig/sched/sched_timezone.cpp
++++ boinc/sched/sched_timezone.cpp
 @@ -28,6 +28,7 @@
  
  #include "sched_types.h"
@@ -58,8 +68,10 @@ Last-Update: <2013-08-22>
  #include "sched_config.h"
  
  #ifdef _USING_FCGI_
---- a/sched/feeder.cpp
-+++ b/sched/feeder.cpp
+Index: boinc/sched/feeder.cpp
+===================================================================
+--- boinc.orig/sched/feeder.cpp
++++ boinc/sched/feeder.cpp
 @@ -115,6 +115,7 @@
  #include "util.h"
  #include "str_util.h"
@@ -68,8 +80,10 @@ Last-Update: <2013-08-22>
  
  #include "credit.h"
  #include "sched_config.h"
---- a/sched/wu_check.cpp
-+++ b/sched/wu_check.cpp
+Index: boinc/sched/wu_check.cpp
+===================================================================
+--- boinc.orig/sched/wu_check.cpp
++++ boinc/sched/wu_check.cpp
 @@ -35,6 +35,7 @@
  #include "error_numbers.h"
  #include "parse.h"
@@ -78,8 +92,10 @@ Last-Update: <2013-08-22>
  
  #include "sched_config.h"
  #include "sched_util.h"
---- a/sched/sched_shmem.cpp
-+++ b/sched/sched_shmem.cpp
+Index: boinc/sched/sched_shmem.cpp
+===================================================================
+--- boinc.orig/sched/sched_shmem.cpp
++++ boinc/sched/sched_shmem.cpp
 @@ -40,6 +40,7 @@
  #include "sched_msgs.h"
  #include "sched_types.h"
@@ -88,8 +104,10 @@ Last-Update: <2013-08-22>
  
  #include "sched_shmem.h"
  
---- a/sched/transitioner.cpp
-+++ b/sched/transitioner.cpp
+Index: boinc/sched/transitioner.cpp
+===================================================================
+--- boinc.orig/sched/transitioner.cpp
++++ boinc/sched/transitioner.cpp
 @@ -44,7 +44,7 @@
  #include "error_numbers.h"
  #include "str_util.h"
@@ -99,8 +117,10 @@ Last-Update: <2013-08-22>
  #include "sched_config.h"
  #include "credit.h"
  #include "sched_util.h"
---- a/tools/create_work.cpp
-+++ b/tools/create_work.cpp
+Index: boinc/tools/create_work.cpp
+===================================================================
+--- boinc.orig/tools/create_work.cpp
++++ boinc/tools/create_work.cpp
 @@ -37,6 +37,7 @@
  #include "sched_config.h"
  #include "str_replace.h"
@@ -109,8 +129,10 @@ Last-Update: <2013-08-22>
  
  void usage() {
      fprintf(stderr,
---- a/tools/dir_hier_path.cpp
-+++ b/tools/dir_hier_path.cpp
+Index: boinc/tools/dir_hier_path.cpp
+===================================================================
+--- boinc.orig/tools/dir_hier_path.cpp
++++ boinc/tools/dir_hier_path.cpp
 @@ -29,7 +29,7 @@
  #include "sched_config.h"
  #include "sched_util.h"

@@ -6,8 +6,10 @@ quoting from man
 "bool wxFileName::IsFileExecutable() 	
 Returns true if a file with this name exists and if this process has execute permissions on it."
 
---- a/clientgui/DlgAdvPreferences.cpp
-+++ b/clientgui/DlgAdvPreferences.cpp
+Index: boinc/clientgui/DlgAdvPreferences.cpp
+===================================================================
+--- boinc.orig/clientgui/DlgAdvPreferences.cpp
++++ boinc/clientgui/DlgAdvPreferences.cpp
 @@ -822,7 +822,7 @@
  #endif
              wxString directory = picker.GetDirectory();

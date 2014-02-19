@@ -1,5 +1,7 @@
---- a/tools/Makefile.am
-+++ b/tools/Makefile.am
+Index: boinc/tools/Makefile.am
+===================================================================
+--- boinc.orig/tools/Makefile.am
++++ boinc/tools/Makefile.am
 @@ -34,7 +34,8 @@
      watch_tcp
  

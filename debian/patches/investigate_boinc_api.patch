@@ -1,5 +1,7 @@
---- a/api/boinc_api.cpp
-+++ b/api/boinc_api.cpp
+Index: boinc/api/boinc_api.cpp
+===================================================================
+--- boinc.orig/api/boinc_api.cpp
++++ boinc/api/boinc_api.cpp
 @@ -356,7 +356,7 @@
  
      if (standalone) return true;

@@ -1,5 +1,7 @@
---- a/Makefile.incl
-+++ b/Makefile.incl
+Index: boinc/Makefile.incl
+===================================================================
+--- boinc.orig/Makefile.incl
++++ boinc/Makefile.incl
 @@ -38,22 +38,22 @@
  # dependencies to make sure libs gets compiled before
  # programs linking to them:
