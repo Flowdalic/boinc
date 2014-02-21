@@ -212,7 +212,8 @@ Package: boinc
 @
 @Package: libboinc7
 @Provides: libboinc
-@Breaks: libboinc (<= 7.0.34+dfsg-1)
+@Breaks: libboinc (<= 7.0.34+dfsg-1),
+@ boinc-dev (<= 7.0.39+dfsg-1)
 @Replaces: libboinc (<= 7.0.34+dfsg-1)
 @Architecture: any
 @Section: libs

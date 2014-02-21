@@ -2,6 +2,7 @@ boinc (7.2.39+dfsg-2) unstable; urgency=low
 
   * Probably fixed kfreebsd-* build failure with upstream patch
     0001-Client-Unix-attempt-to-fix-freebsd-build-error
+  * Added Breaks for boinc-dev -> libboinc7 (Closes: #739663)
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 21 Feb 2014 10:28:20 +0100
 
