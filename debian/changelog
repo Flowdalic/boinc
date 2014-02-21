@@ -1,3 +1,10 @@
+boinc (7.2.39+dfsg-2) unstable; urgency=low
+
+  * Probably fixed kfreebsd-* build failure with upstream patch
+    0001-Client-Unix-attempt-to-fix-freebsd-build-error
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 21 Feb 2014 10:28:20 +0100
+
 boinc (7.2.39+dfsg-1) unstable; urgency=low
 
   * New upstream stable release, patch refresh
