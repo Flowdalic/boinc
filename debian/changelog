@@ -1,4 +1,4 @@
-boinc (7.2.39+dfsg-2) UNRELEASED; urgency=low
+boinc (7.2.39+dfsg-2) unstable; urgency=low
 
   [ Gianfranco Costamagna ]
   * Probably fixed kfreebsd-* build failure with upstream patch
@@ -10,7 +10,7 @@ boinc (7.2.39+dfsg-2) UNRELEASED; urgency=low
     - libboinc7: added breaks + replaces boinc-dev << 7.0.28+dfsg-3.
   * Brought boinc-amd-opencl back to sid.
 
- -- Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>  Sun, 23 Feb 2014 03:27:46 -0500
+ -- Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>  Tue, 25 Feb 2014 01:21:44 -0500
 
 boinc (7.2.39+dfsg-1) unstable; urgency=low
 
