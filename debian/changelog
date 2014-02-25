@@ -8,6 +8,7 @@ boinc (7.2.39+dfsg-2) UNRELEASED; urgency=low
   * Updated my uid in debian/control.
   * Corrected dependencies for boinc-dev split (Closes: #739663):
     - libboinc7: added breaks + replaces boinc-dev << 7.0.28+dfsg-3.
+  * Brought boinc-amd-opencl back to sid.
 
  -- Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>  Sun, 23 Feb 2014 03:27:46 -0500
 
