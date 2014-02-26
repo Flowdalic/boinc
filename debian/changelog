@@ -25,22 +25,16 @@ boinc (7.2.33+dfsg-2) UNRELEASED; urgency=low
   * debian/rules
     - server always built
   * debian/control 
-    - moved BOINC server work from experimental into unstable.
     - Moved from libcuda1-ia32 to libcuda1-i386 (Closes: #730841)
     - Removed ia32-libs references (Closes: #736814)
     - Removed libcuda-5.0-1, provided by libcuda1
     - Re-enabled boinc-amd-opencl for unstable
     - Dropped nvidia-current in favour of nvidia-304 | nvidia-310 | nvidia-319
       (LP: #1268409)
-    - Added Jussi Lahtinen patch for fixing LP: #1274456
-    - moved all so library files into libboinc7
+    - Added Jussi Lahtinen's patch for fixing LP: #1274456
 
   [Steffen Moeller]
   * Removed Daniel Hahler and Rene Mayorga from uploaders list
-  * Moved boinc-server-maker and boinc-server-dbg into experimental
-    (again) to prevent them from appearing in testing.
-  * Moved libboinc_api and libboinc_graphics back from libboinc7
-    package to libboinc-api7.
   * More rigorous clean: target (.libs, config.status, libtool)
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 15 Feb 2014 14:33:45 +0100
