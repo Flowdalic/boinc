@@ -1,3 +1,9 @@
+boinc (7.2.42+dfsg-1) unstable; urgency=medium
+
+  * New upstream hotfix release.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 01 Mar 2014 11:34:55 +0100
+
 boinc (7.2.39+dfsg-2) unstable; urgency=low
 
   [ Gianfranco Costamagna ]

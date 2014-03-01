@@ -1,10 +1,8 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: Nothing in this patch should be functionally relevant, only compile time warnings as by the ambiguity of the result parameter are resolved.
-Index: boinc/clientgui/MainDocument.cpp
-===================================================================
---- boinc.orig/clientgui/MainDocument.cpp
-+++ boinc/clientgui/MainDocument.cpp
-@@ -1655,7 +1655,6 @@
+--- a/clientgui/MainDocument.cpp
++++ b/clientgui/MainDocument.cpp
+@@ -1658,7 +1658,6 @@
  }
  #else
  void CMainDocument::KillGraphicsApp(int pid) {
@@ -12,7 +10,7 @@ Index: boinc/clientgui/MainDocument.cpp
      char currentDir[1024];
      char thePIDbuf[20];
      int id, iRetVal;
-@@ -1663,12 +1662,13 @@
+@@ -1666,12 +1665,13 @@
  
      if (g_use_sandbox) {
          snprintf(thePIDbuf, sizeof(thePIDbuf), "%d", pid);
@@ -32,7 +30,7 @@ Index: boinc/clientgui/MainDocument.cpp
      
          iRetVal = run_program(
              getcwd(currentDir, sizeof(currentDir)),
-@@ -1678,6 +1678,10 @@
+@@ -1681,6 +1681,10 @@
              0,
              id
          );
