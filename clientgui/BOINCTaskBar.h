@@ -36,7 +36,7 @@ class CTaskbarEvent;
 
 class CTaskBarIcon : public wxTaskBarIconEx {
 public:
-    CTaskBarIcon(wxString title, wxIcon* icon, wxIcon* iconDisconnected, wxIcon* iconSnooze);
+    CTaskBarIcon(wxString title, wxIconBundle* icon, wxIconBundle* iconDisconnected, wxIconBundle* iconSnooze);
     ~CTaskBarIcon();
 
     void OnOpenWebsite(wxCommandEvent& event);
@@ -63,6 +63,8 @@ public:
 
     wxMenu *BuildContextMenu();
     void AdjustMenuItems(wxMenu* menu);
+
+    wxSize GetBestIconSize();
 
 #ifdef __WXMAC__
 private:
