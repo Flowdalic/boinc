@@ -1,3 +1,9 @@
+boinc (7.2.43+dfsg-1) UNRELEASED; urgency=medium
+
+  * New upstream release. (only bumped the version)
+
+ -- Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>  Sat, 05 Apr 2014 12:51:38 -0400
+
 boinc (7.2.42+dfsg-1) unstable; urgency=medium
 
   * New upstream hotfix release.
