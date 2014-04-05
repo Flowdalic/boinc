@@ -42,7 +42,9 @@
 #include "res/boinc.xpm"
 #include "res/boinc32.xpm"
 #include "res/boincdisconnect.xpm"
+#include "res/boincdisconnect32.xpm"
 #include "res/boincsnooze.xpm"
+#include "res/boincsnooze32.xpm"
 #include "res/boinc_logo.xpm"
 ////@end XPM images
 
@@ -189,9 +191,9 @@ CSkinIcon::~CSkinIcon() {
 
 
 void CSkinIcon::Clear() {
+    bInitialized = false;
     m_strDesiredIcon.Clear();
     m_strDesiredTransparencyMask.Clear();
-    m_icoIcon = wxNullIcon;
 }
 
 
@@ -221,40 +223,139 @@ int CSkinIcon::Parse(MIOFILE& in) {
 }
 
 
-wxIcon* CSkinIcon::GetIcon() {
+int CSkinIcon::Parse32(MIOFILE& in) {
+    char buf[256];
+    std::string strBuffer;
+
+    while (in.fgets(buf, 256)) {
+        if (match_tag(buf, "</image>")) break;
+        else if (parse_str(buf, "<imagesrc>", strBuffer)) {
+            if (strBuffer.length()) {
+                m_strDesiredIcon32 = wxString(
+                    wxGetApp().GetSkinManager()->ConstructSkinPath() +
+                    wxString(strBuffer.c_str(), wxConvUTF8)
+                );
+            }
+            continue;
+        } else if (parse_str(buf, "<transparency_mask>", strBuffer)) {
+            if (strBuffer.length()) {
+                m_strDesiredTransparencyMask32 = wxString(strBuffer.c_str(), wxConvUTF8);
+            }
+            continue;
+        }
+    }
+
+    return BOINC_SUCCESS;
+}
+
+
+wxIconBundle* CSkinIcon::GetIcon() {
     Validate();
     return &m_icoIcon;
 }
 
+#if defined(__WXMSW__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICO_RESOURCE
+#elif defined(__WXMOTIF__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
+#elif defined(__WXGTK20__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
+#elif defined(__WXGTK__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
+#elif defined(__WXX11__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
+#elif defined(__WXDFB__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
+#elif defined(__WXMAC__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICON_RESOURCE
+#elif defined(__WXCOCOA__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICON_RESOURCE
+#elif defined(__WXPM__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICO_RESOURCE
+#endif
 
-bool CSkinIcon::SetDefaults(wxString strComponentName, const char** ppDefaultIcon) {
+bool CSkinIcon::SetDefaults(wxString strComponentName, wxString strIcon) {
+    if (bInitialized) return true;
+
     m_strComponentName = strComponentName;
-    m_ppDefaultIcon = ppDefaultIcon;
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 16, 16));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 20, 20));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 24, 24));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 32, 32));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 40, 40));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 48, 48));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 64, 64));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 80, 80));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 96, 96));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 128, 128));
+    m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 256, 256));
+    bInitialized = true;
+
+    return true;
+}
+
+
+bool CSkinIcon::SetDefaults(wxString strComponentName, const char** m_ppIcon, const char** m_ppIcon32) {
+    if (bInitialized) return true;
+
+    m_strComponentName = strComponentName;
+    m_icoDefaultIcon.AddIcon(wxIcon(m_ppIcon));
+    m_icoDefaultIcon.AddIcon(wxIcon(m_ppIcon32));
+    bInitialized = true;
+
     return true;
 }
 
 
 bool CSkinIcon::Validate() {
-    if (!m_icoIcon.Ok()) {
-        if (!m_strDesiredIcon.IsEmpty()) {
-            // Configure bitmap object with optional transparency mask
-            wxImage img = wxImage(m_strDesiredIcon, wxBITMAP_TYPE_ANY);
-            wxBitmap bmp = wxBitmap(img);
-            // If PNG file has alpha channel use it as mask & ignore <transparency_mask> tag 
-            if (!(m_strDesiredTransparencyMask.IsEmpty() || img.HasAlpha())) {
-                bmp.SetMask(new wxMask(bmp, ParseColor(m_strDesiredTransparencyMask)));
-            }
-            // Now set the icon object using the newly created bitmap with optional transparency mask
-            m_icoIcon.CopyFromBitmap(bmp);
+    wxIcon ico;
+    wxIcon ico32;
+    bool set_ico = false;
+    bool set_ico32 = false;
+
+    // Setup baseline
+    m_icoIcon = m_icoDefaultIcon;
+
+    if (!m_strDesiredIcon.IsEmpty()) {
+        // Configure bitmap object with optional transparency mask
+        wxImage img = wxImage(m_strDesiredIcon, wxBITMAP_TYPE_ANY);
+        wxBitmap bmp = wxBitmap(img);
+        // If PNG file has alpha channel use it as mask & ignore <transparency_mask> tag 
+        if (!(m_strDesiredTransparencyMask.IsEmpty() || img.HasAlpha())) {
+            bmp.SetMask(new wxMask(bmp, ParseColor(m_strDesiredTransparencyMask)));
         }
-        if (!m_icoIcon.Ok()) {
+        // Now set the icon object using the newly created bitmap with optional transparency mask
+        set_ico = true;
+        ico.CopyFromBitmap(bmp);
+    }
+    if (!m_strDesiredIcon32.IsEmpty()) {
+        // Configure bitmap object with optional transparency mask
+        wxImage img32 = wxImage(m_strDesiredIcon32, wxBITMAP_TYPE_ANY);
+        wxBitmap bmp32 = wxBitmap(img32);
+        // If PNG file has alpha channel use it as mask & ignore <transparency_mask> tag 
+        if (!(m_strDesiredTransparencyMask32.IsEmpty() || img32.HasAlpha())) {
+            bmp32.SetMask(new wxMask(bmp32, ParseColor(m_strDesiredTransparencyMask32)));
+        }
+        // Now set the icon object using the newly created bitmap with optional transparency mask
+        set_ico32 = true;
+        ico32.CopyFromBitmap(bmp32);
+    }
+
+    if (set_ico || set_ico32) {
+        if ((set_ico && !ico.IsOk()) || (set_ico32 && !ico32.IsOk())) {
             if (show_error_msgs) {
                 fprintf(stderr, "Skin Manager: Failed to load '%s' icon. Using default.\n", (const char *)m_strComponentName.mb_str());
             }
-            m_icoIcon = wxIcon(m_ppDefaultIcon);
-            wxASSERT(m_icoIcon.Ok());
+        } else {
+            if (ico.IsOk()) {
+                m_icoIcon.AddIcon(ico);
+            }
+            if (ico32.IsOk()) {
+                m_icoIcon.AddIcon(ico32);
+            }
         }
     }
+
     return true;
 }
 
@@ -374,7 +475,6 @@ void CSkinAdvanced::Clear() {
     m_strApplicationName = wxEmptyString;
     m_strApplicationShortName = wxEmptyString;
     m_iconApplicationIcon.Clear();
-    m_iconApplicationIcon32.Clear();
     m_iconApplicationDisconnectedIcon.Clear();
     m_iconApplicationSnoozeIcon.Clear();
     m_bitmapApplicationLogo = wxNullBitmap;
@@ -404,7 +504,7 @@ int CSkinAdvanced::Parse(MIOFILE& in) {
             m_iconApplicationIcon.Parse(in);
             continue;
         } else if (match_tag(buf, "<application_icon32>")) {
-            m_iconApplicationIcon32.Parse(in);
+            m_iconApplicationIcon.Parse32(in);
             continue;
         } else if (match_tag(buf, "<application_disconnected_icon>")) {
             m_iconApplicationDisconnectedIcon.Parse(in);
@@ -448,7 +548,7 @@ int CSkinAdvanced::Parse(MIOFILE& in) {
 wxString CSkinAdvanced::GetApplicationName() {
     wxString strApplicationName = m_strApplicationName;
 #ifdef BOINC_PRERELEASE
-        strApplicationName += wxT(" (Pre-release)");
+    strApplicationName += wxT(" (Pre-release)");
 #endif
     return strApplicationName;
 }
@@ -459,20 +559,17 @@ wxString CSkinAdvanced::GetApplicationShortName() {
 }
 
 
-wxIcon* CSkinAdvanced::GetApplicationIcon() {
+wxIconBundle* CSkinAdvanced::GetApplicationIcon() {
     return m_iconApplicationIcon.GetIcon();
 }
 
-wxIcon* CSkinAdvanced::GetApplicationIcon32() {
-    return m_iconApplicationIcon32.GetIcon();
-}
 
-wxIcon* CSkinAdvanced::GetApplicationDisconnectedIcon() { 
+wxIconBundle* CSkinAdvanced::GetApplicationDisconnectedIcon() { 
     return m_iconApplicationDisconnectedIcon.GetIcon();
 }
 
 
-wxIcon* CSkinAdvanced::GetApplicationSnoozeIcon() {
+wxIconBundle* CSkinAdvanced::GetApplicationSnoozeIcon() {
     return m_iconApplicationSnoozeIcon.GetIcon();
 }
 
@@ -527,10 +624,15 @@ bool CSkinAdvanced::InitializeDelayedValidation() {
         m_strApplicationShortName = wxT("BOINC");
         wxASSERT(!m_strApplicationShortName.IsEmpty());
     }
-    m_iconApplicationIcon.SetDefaults(wxT("application"), (const char**)boinc_xpm);
-    m_iconApplicationIcon32.SetDefaults(wxT("application"), (const char**)boinc32_xpm);
-    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), (const char**)boincdisconnect_xpm);
-    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), (const char**)boincsnooze_xpm);
+#ifdef _WIN32
+    m_iconApplicationIcon.SetDefaults(wxT("application"), wxT("boinc"));
+    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), wxT("boincdisconnect"));
+    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), wxT("boincsnooze"));
+#else
+    m_iconApplicationIcon.SetDefaults(wxT("application"), boinc_xpm, boinc32_xpm);
+    m_iconApplicationDisconnectedIcon.SetDefaults(wxT("application disconnected"), boincdisconnect_xpm, boincdisconnect32_xpm);
+    m_iconApplicationSnoozeIcon.SetDefaults(wxT("application snooze"), boincsnooze_xpm, boincsnooze32_xpm);
+#endif
     if (!m_bitmapApplicationLogo.Ok()) {
         if (show_error_msgs) {
             fprintf(stderr, "Skin Manager: Failed to load application logo. Using default.\n");

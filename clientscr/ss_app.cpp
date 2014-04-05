@@ -21,6 +21,7 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
+#include "win_util.h"
 #else
 #include <cmath>
 #endif
@@ -486,6 +487,24 @@ int main(int argc, char** argv) {
             retry_connect = true;
         }
     }
+
+#ifdef _WIN32
+    chdir_to_data_dir();
+#endif
+
+    // Initialize the BOINC Diagnostics Framework
+    int dwDiagnosticsFlags =
+#ifdef _DEBUG
+        BOINC_DIAG_HEAPCHECKENABLED |
+        BOINC_DIAG_MEMORYLEAKCHECKENABLED |
+#endif
+        BOINC_DIAG_DUMPCALLSTACKENABLED | 
+        BOINC_DIAG_REDIRECTSTDERR |
+        BOINC_DIAG_REDIRECTSTDOUT |
+        BOINC_DIAG_TRACETOSTDOUT;
+
+    diagnostics_init(dwDiagnosticsFlags, "stdoutscrgfx", "stderrscrgfx");
+
 #ifdef _WIN32
     WinsockInitialize();
 #endif
