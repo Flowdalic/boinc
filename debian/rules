@@ -274,11 +274,11 @@ override_dh_auto_build: update-boinc-applinks.1
 	@echo
 	# disable optimization in api/, for SETI to work
 	#$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
-#ifeq (,$(ENABLE_SERVER_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
 	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
-#endif
+endif
 	$(MAKE)
 
 	# Generate binary message catalogs of the BOINC Manager.
@@ -291,12 +291,12 @@ override_dh_auto_build: update-boinc-applinks.1
 #	  done; \
 #	fi
 
-#ifeq (,$(ENABLE_SERVER_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 	$(MAKE) -C samples/sleeper
 	$(MAKE) -C samples/worker
 	$(MAKE) -C samples/example_app
 	$(MAKE) -C samples/wrapper
-#endif
+endif
 
 BINARIES= sched/census sched/cgi sched/db_dump sched/db_purge \
 	sched/delete_file sched/feeder sched/file_deleter \
@@ -378,11 +378,11 @@ SAMPLES=samples/sleeper/sleeper samples/worker/worker samples/example_app/uc2 sa
 
 override_dh_auto_install: update-boinc-applinks.1
 	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
-#ifeq (,$(ENABLE_SERVER_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
 	cp $(SAMPLES) $(CURDIR)/debian/tmp/samples || echo "W: Could not install samples ($(SAMPLES))"
-#endif
+endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
 	do \
 		egrep -l "^#!.*env..*python" $$i/* | xargs -r sed -i '1s%#!.*%#!/usr/bin/python%' ; \
