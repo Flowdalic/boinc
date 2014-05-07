@@ -3,6 +3,9 @@ boinc (7.2.47+dfsg-3) UNRELEASED; urgency=medium
   * Add return values to envargs function (Closes: #747964)
     Note: upstream didn't apply this patch because it seems to be
     unreachable code.
+  * Fix gcc-4.9 build failure (Closes: #746830)
+    - debian/patches/Missing_libSched.patch
+    - patches/correctly-set-OBJCXX.patch
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sun, 18 May 2014 20:58:51 +0200
 

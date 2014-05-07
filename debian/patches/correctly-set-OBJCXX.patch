@@ -1,0 +1,34 @@
+From: Eric J Korpela <korpela@ssl.berkeley.edu>
+Date: Sat, 10 May 2014 05:24:47 +0000 (-0700)
+Subject: Forced definition of OBJC and OBJCXX to prevent libtool error in configuration.
+X-Git-Url: http://boinc.berkeley.edu/gitweb/?p=boinc-v2.git;a=commitdiff_plain;h=0e94586e7eeceffac0d6ca57b9ca543d79c898a0
+
+Forced definition of OBJC and OBJCXX to prevent libtool error in configuration.
+Author: Eric J Korpela <korpela@ssl.berkeley.edu>
+Bug-Debian: http://bugs.debian.org/746830
+
+---
+Origin: upstream
+Forwarded: not-needed
+Reviewed-By: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+Last-Update: <2014-05-10>
+
+--- boinc-7.2.47+dfsg.orig/configure.ac
++++ boinc-7.2.47+dfsg/configure.ac
+@@ -323,9 +323,15 @@ dnl GUI
+ BOINC_CHECK_CYGWIN
+ 
+ dnl enable objective-C 
++if test x$OBJC = x ; then
++  OBJC="$CC"
++fi
++if test x$OBJCXX = x ; then
++  OBJCXX="$CXX"
++fi
+ _AM_DEPENDENCIES([OBJC])
+-OBJC="$CC"
+ AC_SUBST(OBJC)
++AC_SUBST(OBJCXX)
+ OBJCFLAGS="-ObjC"
+ AC_SUBST(OBJCFLAGS)
+ 

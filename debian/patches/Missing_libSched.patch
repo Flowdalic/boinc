@@ -7,7 +7,7 @@ Index: boinc/tools/Makefile.am
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
 -AM_LDFLAGS += -static
-+AM_LDFLAGS += -static -L../sched -L../lib/.libs
++AM_LDFLAGS += -L../sched -L../lib/.libs
  
  cancel_jobs_SOURCES = cancel_jobs.cpp
  cancel_jobs_LDADD = $(SERVERLIBS)
@@ -20,7 +20,7 @@ Index: boinc/vda/Makefile.am
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
 -AM_LDFLAGS += -static
-+AM_LDFLAGS += -static -L../lib/.libs -L../sched
++AM_LDFLAGS += -L../lib/.libs -L../sched
  
  vda_SOURCES = vda.cpp vda_lib.cpp vda_lib2.cpp vda_policy.cpp stats.cpp
  vda_LDADD = $(SERVERLIBS)
@@ -33,7 +33,7 @@ Index: boinc/sched/Makefile.am
  
  AM_CPPFLAGS += $(MYSQL_CFLAGS) $(PTHREAD_CFLAGS)
 -AM_LDFLAGS += -static
-+AM_LDFLAGS += -static -L../lib/.libs/
++AM_LDFLAGS += -L../lib/.libs/
  
  if ENABLE_LIBRARIES
  

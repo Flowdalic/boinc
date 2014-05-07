@@ -11,4 +11,4 @@ Index: boinc/tools/Makefile.am
 +    gui_urls.xml
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
- AM_LDFLAGS += -static -L../sched -L../lib/.libs
+ AM_LDFLAGS += -L../sched -L../lib/.libs
