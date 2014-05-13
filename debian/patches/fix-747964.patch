@@ -1,0 +1,24 @@
+Author: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+Bug-Debian: http://bugs.debian.org/747964
+Forwarded: <yes>
+Last-Update: <2014-05-13>
+
+--- boinc-7.2.47+dfsg.orig/zip/zip/util.c
++++ boinc-7.2.47+dfsg/zip/zip/util.c
+@@ -825,7 +825,7 @@ void envargs(Pargc, Pargv, envstr, envst
+             while (isspace((uch)*envptr))
+                 envptr++;
+     if (envptr == NULL || *envptr == '\0')
+-        return;
++        return 2;
+ 
+     /* count the args so we can allocate room for them */
+     argc = count_args(envptr);
+@@ -902,6 +902,7 @@ void envargs(Pargc, Pargv, envstr, envst
+     /* save the values and return */
+     *Pargv = argvect;
+     *Pargc = argc;
++    return 0;
+ }
+ 
+ local int count_args(s)
