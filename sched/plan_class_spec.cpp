@@ -186,6 +186,19 @@ bool PLAN_CLASS_SPEC::check(SCHEDULER_REQUEST& sreq, HOST_USAGE& hu) {
             return false;
         }
 
+        if (vm_accel_required) {
+            if ((!strstr(sreq.host.p_features, "vmx") && !strstr(sreq.host.p_features, "svm"))
+                || sreq.host.p_vm_extensions_disabled
+            ) {
+                if (config.debug_version_select) {
+                    log_messages.printf(MSG_NORMAL,
+                        "[version] plan_class_spec: missing VM HW acceleration\n"
+                    );
+                }
+                return false;
+            }
+        }
+
         // host must have VM acceleration in order to run multi-core jobs
         //
         if (max_threads > 1) {
@@ -717,6 +730,7 @@ int PLAN_CLASS_SPEC::parse(XML_PARSER& xp) {
 
         if (xp.parse_int("min_vbox_version", min_vbox_version)) continue;
         if (xp.parse_int("max_vbox_version", max_vbox_version)) continue;
+        if (xp.parse_bool("vm_accel_required", vm_accel_required)) continue;
     }
     return ERR_XML_PARSE;
 }
@@ -790,6 +804,7 @@ PLAN_CLASS_SPEC::PLAN_CLASS_SPEC() {
 
     min_vbox_version = 0;
     max_vbox_version = 0;
+    vm_accel_required = false;
 }
 
 #ifdef PLAN_CLASS_TEST
@@ -804,7 +819,7 @@ int main() {
     PLAN_CLASS_SPECS pcs;
     int retval = pcs.parse_file("plan_class_spec.xml.sample");
     if (retval) {
-        printf("parse_file: %d\n");
+        printf("parse_file: %d\n", retval);
         exit(1);
     }
 
@@ -812,7 +827,7 @@ int main() {
 
     HOST_USAGE hu;
 
-    strcpy(sreq.host.p_features, "sse3");
+    strcpy(sreq.host.p_features, "pni");
     sreq.host.p_fpops =5e9;
     g_wreq->effective_ncpus = 4;
     if (1) {

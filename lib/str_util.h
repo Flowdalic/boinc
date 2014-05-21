@@ -75,6 +75,11 @@ extern int string_substitute(
 //
 extern void mysql_timestamp(double, char*);
 
+// take a malloced string.
+// if \n is not last char, add it.
+//
+extern char* lf_terminate(char*);
+
 extern const char* network_status_string(int);
 extern const char* rpc_reason_string(int);
 extern const char* suspend_reason_string(int reason);
@@ -83,6 +88,7 @@ extern const char* battery_state_string(int state);
 extern const char* result_client_state_string(int state);
 extern const char* result_scheduler_state_string(int state);
 extern const char* active_task_state_string(int state);
+extern const char* batch_state_string(int state);
 
 extern void strip_translation(char* p);
 

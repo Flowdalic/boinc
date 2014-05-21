@@ -1,62 +1,17 @@
 #!/bin/sh
 
-# Automate the compilation of the various locale PO files by automatically
-# generating them at night.
+# Look for .po files modified later than .mo, and regenerate .mo file
+# Then commit and push changes.
+
+# This is run in the Pootle copy of the source tree (~/pootle/repos/boinctrunk)
+# It's run from pootle/update.sh, which is run from cron every 12 hours.
 #
 projname=boinctrunk
-projdir=/home/boincadm/pootle/po/$projname
+projdir=/home/boincadm/pootle/repos/$projname
 
 cd $projdir
 
 
-# Determine if we need to update the various languages using the templates.
-# This will be done by the use of a tag file which should have a matching 
-# timestamp as the template files. If the timestamps do not match update all
-# languages.
-for file in `find -name '*.pot'` ; do
-  template_rootname=`basename $file .pot`
-  template_name=${projdir}/templates/${template_rootname}
-
-  # Check to see if the file exists, if not create it
-  if test ! -e ${template_name}.flag
-  then
-    cp ${template_name}.pot ${template_name}.flag
-  fi
-  
-  # If the modification timestamps don't match then update all the languages
-  if test ${template_name}.pot -nt ${template_name}.flag
-  then
-    execute_update=true
-  fi  
-done
-
-if test "${execute_update}" = "true"
-then
-
-  for file in `find -name '*.po'` ; do
-    dir=`dirname $file`
-    locale=`basename $dir`
-    po_name=`basename $file .po`
-
-    msgmerge --no-fuzzy-matching --update ${locale}/${po_name}.po templates/${po_name}.pot
- 
-  done
-
-fi
-
-for file in `find -name '*.pot'` ; do
-  template_rootname=`basename $file .pot`
-  template_name=${projdir}/templates/${template_rootname}
-
-  # Touch each file to adjust timestamps
-  touch ${template_name}.pot
-  touch ${template_name}.flag
-
-done
-
-
-# Iterrate through the various PO files looking for those that need to be compiled.
-#
 for file in `find -name 'BOINC-Manager.po'` ; do
   dir=`dirname $file`
   locale=`basename $dir`
@@ -76,8 +31,6 @@ for file in `find -name 'BOINC-Manager.po'` ; do
 done
 
 
-# Iterrate through the various PO files looking for those that need to be compiled.
-#
 for file in `find -name 'BOINC-Client.po'` ; do
   dir=`dirname $file`
   locale=`basename $dir`
@@ -97,8 +50,6 @@ for file in `find -name 'BOINC-Client.po'` ; do
 done
 
 
-# Iterrate through the various PO files looking for those that need to be compiled.
-#
 for file in `find -name 'BOINC-Web.po'` ; do
   dir=`dirname $file`
   locale=`basename $dir`
@@ -118,8 +69,6 @@ for file in `find -name 'BOINC-Web.po'` ; do
 done
 
 
-# Iterrate through the various PO files looking for those that need to be compiled.
-#
 for file in `find -name 'BOINC-Setup.po'` ; do
   dir=`dirname $file`
   locale=`basename $dir`
@@ -138,5 +87,7 @@ for file in `find -name 'BOINC-Setup.po'` ; do
   fi  
 done
 
+git commit -a -m "locale: Update compiled localization files"
+git push origin
 
 exit 0

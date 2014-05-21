@@ -98,6 +98,7 @@ extern const char* proc_type_name(int);
     // user-readable name
 extern const char* proc_type_name_xml(int);
     // name used in XML and COPROC::type
+extern int coproc_type_name_to_num(const char* name);
 
 // deprecated, but keep for simplicity
 #define GPU_TYPE_NVIDIA proc_type_name_xml(PROC_TYPE_NVIDIA_GPU)
@@ -164,6 +165,7 @@ struct COPROC {
     //
     int device_nums[MAX_COPROC_INSTANCES];
     int device_num;     // temp used in scan process
+    bool have_opencls[MAX_COPROC_INSTANCES];
     cl_device_id opencl_device_ids[MAX_COPROC_INSTANCES];
     int opencl_device_count;
     int opencl_device_indexes[MAX_COPROC_INSTANCES];
@@ -204,6 +206,7 @@ struct COPROC {
         available_ram = 0;
         for (int i=0; i<MAX_COPROC_INSTANCES; i++) {
             device_nums[i] = 0;
+            have_opencls[i] = false;
             opencl_device_ids[i] = 0;
 			opencl_device_indexes[i] = 0;
             running_graphics_app[i] = true;

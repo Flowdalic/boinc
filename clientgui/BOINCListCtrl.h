@@ -22,7 +22,7 @@
 #pragma interface "BOINCListCtrl.cpp"
 #endif
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXGTK__)
 #define USE_NATIVE_LISTCONTROL 1
 #else
 #define USE_NATIVE_LISTCONTROL 0
@@ -40,10 +40,6 @@
 //  - causes major flicker of progress bars, (probably due to full redraws.)
 #define LISTCTRL_BASE wxGenericListCtrl
 #include "wx/generic/listctrl.h"
-#endif
-
-#ifdef __WXMAC__
-#include "macAccessiblity.h"
 #endif
 
 #include "BOINCBaseView.h"
@@ -71,11 +67,7 @@ public:
     void                    AddPendingProgressBar(int row);
     void                    RefreshCell(int row, int col);
     
-    bool                    m_bIsSingleSelection;
-
 private:
-    virtual void            OnClick(wxCommandEvent& event);
-
     virtual wxString        OnGetItemText(long item, long column) const;
     virtual int             OnGetItemImage(long item) const;
 #if BASEVIEW_STRIPES
@@ -93,23 +85,24 @@ private:
     void                    DrawProgressBars(void);
     
     bool                    m_bProgressBarEventPending;
-
-    DECLARE_EVENT_TABLE()
 #else
  public:
+    void                    SaveEventHandler(wxEvtHandler *stdHandler) { savedHandler = stdHandler; }
     void                    DrawProgressBars(void);
     wxScrolledWindow*       GetMainWin(void) { return (wxScrolledWindow*) m_mainWin; }
-    wxCoord                 GetHeaderHeight(void) { return m_headerHeight; }
+    wxCoord                 GetHeaderHeight(void) { return ((wxWindow *)m_headerWin)->GetSize().y; }
+    wxEvtHandler*           savedHandler;
 #ifdef __WXMAC__
     void                    SetupMacAccessibilitySupport();
     void                    RemoveMacAccessibilitySupport();
+    void                    OnSize( wxSizeEvent &event );
 
-    ListAccessData          accessibilityHandlerData;
-    
-    EventHandlerRef         m_pHeaderAccessibilityEventHandlerRef;
-    EventHandlerRef         m_pBodyAccessibilityEventHandlerRef;
+    void*                   m_fauxHeaderView;
+    void*                   m_fauxBodyView;
 #endif
 #endif
+
+    DECLARE_EVENT_TABLE()
 };
 
 class CDrawProgressBarEvent : public wxEvent

@@ -483,9 +483,13 @@ void COPROC_NVIDIA::set_peak_flops() {
             }
             break;
         case 3:
-        default:
             flops_per_clock = 2;
             cores_per_proc = 192;
+            break;
+        case 5:
+        default:
+            flops_per_clock = 2;
+            cores_per_proc = 128;
             break;
         }
         // clock rate is scaled down by 1000
@@ -905,4 +909,10 @@ const char* proc_type_name(int pt) {
     return "unknown";
 }
 
-
+int coproc_type_name_to_num(const char* name) {
+    if (!strcmp(name, "CUDA")) return PROC_TYPE_NVIDIA_GPU;
+    if (!strcmp(name, "NVIDIA")) return PROC_TYPE_NVIDIA_GPU;
+    if (!strcmp(name, "ATI")) return PROC_TYPE_AMD_GPU;
+    if (!strcmp(name, "intel_gpu")) return PROC_TYPE_INTEL_GPU;
+    return 0;
+}

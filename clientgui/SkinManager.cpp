@@ -25,6 +25,7 @@
 #include "util.h"
 #include "error_numbers.h"
 #include "miofile.h"
+#include "filesys.h"
 #include "BOINCGUIApp.h"
 #include "BOINCBaseFrame.h"
 #include "SkinManager.h"
@@ -191,9 +192,11 @@ CSkinIcon::~CSkinIcon() {
 
 
 void CSkinIcon::Clear() {
-    bInitialized = false;
     m_strDesiredIcon.Clear();
+    m_strDesiredIcon32.Clear();
     m_strDesiredTransparencyMask.Clear();
+    m_strDesiredTransparencyMask32.Clear();
+    m_icoIcon = m_icoDefaultIcon;
 }
 
 
@@ -254,29 +257,8 @@ wxIconBundle* CSkinIcon::GetIcon() {
     return &m_icoIcon;
 }
 
-#if defined(__WXMSW__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICO_RESOURCE
-#elif defined(__WXMOTIF__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
-#elif defined(__WXGTK20__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
-#elif defined(__WXGTK__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
-#elif defined(__WXX11__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
-#elif defined(__WXDFB__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
-#elif defined(__WXMAC__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICON_RESOURCE
-#elif defined(__WXCOCOA__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICON_RESOURCE
-#elif defined(__WXPM__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICO_RESOURCE
-#endif
 
 bool CSkinIcon::SetDefaults(wxString strComponentName, wxString strIcon) {
-    if (bInitialized) return true;
-
     m_strComponentName = strComponentName;
     m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 16, 16));
     m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 20, 20));
@@ -289,33 +271,19 @@ bool CSkinIcon::SetDefaults(wxString strComponentName, wxString strIcon) {
     m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 96, 96));
     m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 128, 128));
     m_icoDefaultIcon.AddIcon(wxIcon(strIcon, wxICON_DEFAULT_TYPE, 256, 256));
-    bInitialized = true;
-
     return true;
 }
 
 
 bool CSkinIcon::SetDefaults(wxString strComponentName, const char** m_ppIcon, const char** m_ppIcon32) {
-    if (bInitialized) return true;
-
     m_strComponentName = strComponentName;
     m_icoDefaultIcon.AddIcon(wxIcon(m_ppIcon));
     m_icoDefaultIcon.AddIcon(wxIcon(m_ppIcon32));
-    bInitialized = true;
-
     return true;
 }
 
 
 bool CSkinIcon::Validate() {
-    wxIcon ico;
-    wxIcon ico32;
-    bool set_ico = false;
-    bool set_ico32 = false;
-
-    // Setup baseline
-    m_icoIcon = m_icoDefaultIcon;
-
     if (!m_strDesiredIcon.IsEmpty()) {
         // Configure bitmap object with optional transparency mask
         wxImage img = wxImage(m_strDesiredIcon, wxBITMAP_TYPE_ANY);
@@ -325,8 +293,9 @@ bool CSkinIcon::Validate() {
             bmp.SetMask(new wxMask(bmp, ParseColor(m_strDesiredTransparencyMask)));
         }
         // Now set the icon object using the newly created bitmap with optional transparency mask
-        set_ico = true;
+        wxIcon ico;
         ico.CopyFromBitmap(bmp);
+        m_icoIcon.AddIcon(ico);
     }
     if (!m_strDesiredIcon32.IsEmpty()) {
         // Configure bitmap object with optional transparency mask
@@ -337,25 +306,17 @@ bool CSkinIcon::Validate() {
             bmp32.SetMask(new wxMask(bmp32, ParseColor(m_strDesiredTransparencyMask32)));
         }
         // Now set the icon object using the newly created bitmap with optional transparency mask
-        set_ico32 = true;
+        wxIcon ico32;
         ico32.CopyFromBitmap(bmp32);
+        m_icoIcon.AddIcon(ico32);
     }
-
-    if (set_ico || set_ico32) {
-        if ((set_ico && !ico.IsOk()) || (set_ico32 && !ico32.IsOk())) {
-            if (show_error_msgs) {
-                fprintf(stderr, "Skin Manager: Failed to load '%s' icon. Using default.\n", (const char *)m_strComponentName.mb_str());
-            }
-        } else {
-            if (ico.IsOk()) {
-                m_icoIcon.AddIcon(ico);
-            }
-            if (ico32.IsOk()) {
-                m_icoIcon.AddIcon(ico32);
-            }
+    if (!m_icoIcon.Ok()) {
+        if (show_error_msgs) {
+            fprintf(stderr, "Skin Manager: Failed to load '%s' icon. Using default.\n", (const char *)m_strComponentName.mb_str());
         }
+        m_icoIcon = m_icoDefaultIcon;
+        wxASSERT(m_icoIcon.Ok());
     }
-
     return true;
 }
 
@@ -518,7 +479,9 @@ int CSkinAdvanced::Parse(MIOFILE& in) {
                     wxGetApp().GetSkinManager()->ConstructSkinPath() +
                     wxString(strBuffer.c_str(), wxConvUTF8)
                 );
-                m_bitmapApplicationLogo = wxBitmap(wxImage(str.c_str(), wxBITMAP_TYPE_ANY));
+                if (boinc_file_exists(str.c_str())) {
+                    m_bitmapApplicationLogo = wxBitmap(wxImage(str.c_str(), wxBITMAP_TYPE_ANY));
+                }
             }
             continue;
         } else if (parse_str(buf, "<organization_name>", strBuffer)) {

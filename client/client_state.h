@@ -109,7 +109,7 @@ struct CLIENT_STATE {
     DEVICE_STATUS device_status;
     double device_status_time;
 
-	char language[16];				// ISO language code reported by GUI
+    char language[16];                // ISO language code reported by GUI
     VERSION_INFO core_client_version;
     string statefile_platform_name;
     int file_xfer_giveup_period;
@@ -220,10 +220,7 @@ struct CLIENT_STATE {
     int old_minor_version;
     int old_release;
     bool run_cpu_benchmarks;
-        // if set, run benchmarks on client startup
-    bool cpu_benchmarks_pending;
-        // set if a benchmark fails to start because of a job that doesn't exit
-        // Persists so that the next start of BOINC runs the benchmarks.
+        // if set, run benchmarks when possible
 
     int exit_after_app_start_secs;
         // if nonzero, exit this many seconds after starting an app
@@ -265,6 +262,8 @@ struct CLIENT_STATE {
     int report_result_error(RESULT&, const char *format, ...);
     int reset_project(PROJECT*, bool detaching);
     bool no_gui_rpc;
+    bool gui_rpc_unix_domain;
+        // do GUI RPC over Unix-domain sockets rather than TCP
     void start_abort_sequence();
     bool abort_sequence_done();
     int quit_activities();
@@ -369,7 +368,8 @@ struct CLIENT_STATE {
 // --------------- cs_benchmark.cpp:
     bool benchmarks_running;
 
-    bool should_run_cpu_benchmarks();
+    void check_if_need_benchmarks();
+    bool can_run_cpu_benchmarks();
     void start_cpu_benchmarks();
     bool cpu_benchmarks_poll();
     void abort_cpu_benchmarks();
@@ -567,7 +567,7 @@ extern THREAD throttle_thread;
     // so if the project develops a GPU app,
     // we'll find out about it within a day.
 
-#define WF_DEFER_INTERVAL   300
+#define WF_UPLOAD_DEFER_INTERVAL   300
     // if a project is uploading,
     // and the last upload started within this interval,
     // don't fetch work from it.
@@ -627,5 +627,8 @@ extern THREAD throttle_thread;
     // (i.e. through scheduler replies)
     // Don't do this on Android
 #endif
+
+#define NEED_NETWORK_MSG _("BOINC can't access Internet - check network connection or proxy configuration.")
+#define NO_WORK_MSG _("Your current settings do not allow tasks from this project.")
 
 #endif

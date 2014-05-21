@@ -29,6 +29,7 @@
 #include <string>
 #include <cmath>
 #include <string.h>
+#include <time.h>
 #include <stdlib.h>
 #include <ctype.h>
 #endif
@@ -431,6 +432,7 @@ const char* boincerror(int which_error) {
         case ERR_NO_SIGNATURE: return "no signature";
         case ERR_THREAD: return "thread failure";
         case ERR_SIGNAL_CATCH: return "caught signal";
+        case ERR_BAD_FORMAT: return "bad file format";
         case ERR_UPLOAD_TRANSIENT: return "transient upload error";
         case ERR_UPLOAD_PERMANENT: return "permanent upload error";
         case ERR_IDLE_PERIOD: return "user preferences say can't start work";
@@ -643,6 +645,17 @@ const char* active_task_state_string(int state) {
     return "Unknown";
 }
 
+const char* batch_state_string(int state) {
+    switch (state) {
+    case BATCH_STATE_INIT: return "uninitialized";
+    case BATCH_STATE_IN_PROGRESS: return "in progress";
+    case BATCH_STATE_COMPLETE: return "completed";
+    case BATCH_STATE_ABORTED: return "aborted";
+    case BATCH_STATE_RETIRED: return "retired";
+    }
+    return "unknown";
+}
+
 // string substitution:
 // haystack is the input string
 // out is the output buffer
@@ -690,4 +703,15 @@ inline void remove_str(char* p, const char* str) {
 void strip_translation(char* p) {
     remove_str(p, "_(\"");
     remove_str(p, "\")");
+}
+
+char* lf_terminate(char* p) {
+    int n = (int)strlen(p);
+    if (p[n-1] == '\n') {
+        return p;
+    }
+    p = (char*)realloc(p, n+2);
+    p[n] = '\n';
+    p[n+1] = 0;
+    return p;
 }

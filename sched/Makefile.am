@@ -113,12 +113,14 @@ schedshare_PROGRAMS = \
     sample_assimilator \
     sample_dummy_assimilator \
     sample_bitwise_validator \
+    sample_substr_validator \
     sample_trivial_validator \
     sample_work_generator \
     single_job_assimilator \
-	size_regulator \
+    size_regulator \
     transitioner \
     trickle_credit \
+    trickle_deadline \
     trickle_echo \
     update_stats
 
@@ -129,11 +131,10 @@ schedcgi_PROGRAMS= \
 schedshare_DATA = \
     db_dump_spec.xml \
     assimilator.py \
-    pymw_assimilator.py \
-    transitioner_catchup.php
+    pymw_assimilator.py
 
 # scripts that 'make install' should put in bindir
-schedshare_SCRIPTS = start stop status
+schedshare_SCRIPTS = start stop status transitioner_catchup.php
 
 noinst_HEADERS = \
     assimilate_handler.h \
@@ -218,6 +219,10 @@ sample_bitwise_validator_SOURCES = $(VALIDATOR_SOURCES) \
 	sample_bitwise_validator.cpp 
 sample_bitwise_validator_LDADD = $(SERVERLIBS)
 
+sample_substr_validator_SOURCES = $(VALIDATOR_SOURCES) \
+	sample_substr_validator.cpp
+sample_substr_validator_LDADD = $(SERVERLIBS)
+
 sample_trivial_validator_SOURCES = $(VALIDATOR_SOURCES) \
 	sample_trivial_validator.cpp
 sample_trivial_validator_LDADD = $(SERVERLIBS)
@@ -249,6 +254,9 @@ db_purge_LDADD = $(SERVERLIBS)
 
 trickle_credit_SOURCES = trickle_credit.cpp trickle_handler.cpp
 trickle_credit_LDADD = $(SERVERLIBS)
+
+trickle_deadline_SOURCES = trickle_deadline.cpp trickle_handler.cpp
+trickle_deadline_LDADD = $(SERVERLIBS)
 
 trickle_echo_SOURCES = trickle_echo.cpp trickle_handler.cpp
 trickle_echo_LDADD = $(SERVERLIBS)
