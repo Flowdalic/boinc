@@ -120,7 +120,7 @@ using std::vector;
     // CPPFLAGS=-DGETRUSAGE_IN_TIMER_THREAD
 #endif
 
-const char* api_version="API_VERSION_"PACKAGE_VERSION;
+const char* api_version = "API_VERSION_" PACKAGE_VERSION;
 static APP_INIT_DATA aid;
 static FILE_LOCK file_lock;
 APP_CLIENT_SHM* app_client_shm = 0;
@@ -189,6 +189,7 @@ static volatile bool worker_thread_exit_flag = false;
 static volatile int worker_thread_exit_status;
     // the above are used by the timer thread to tell
     // the worker thread to exit
+static pthread_t worker_thread_handle;
 static pthread_t timer_thread_handle;
 #ifndef GETRUSAGE_IN_TIMER_THREAD
 static struct rusage worker_thread_ru;
@@ -312,9 +313,21 @@ static inline void release_mutex() {
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 static void init_mutex() {}
 static inline void acquire_mutex() {
+#ifdef DEBUG_BOINC_API
+    char buf[256];
+    fprintf(stderr, "%s acquiring mutex\n",
+        boinc_msg_prefix(buf, sizeof(buf))
+    );
+#endif
     pthread_mutex_lock(&mutex);
 }
 static inline void release_mutex() {
+#ifdef DEBUG_BOINC_API
+    char buf[256];
+    fprintf(stderr, "%s releasing mutex\n",
+        boinc_msg_prefix(buf, sizeof(buf))
+    );
+#endif
     pthread_mutex_unlock(&mutex);
 }
 #endif
@@ -404,6 +417,7 @@ static void handle_heartbeat_msg() {
 }
 
 static bool client_dead() {
+    char buf[256];
     bool dead;
     if (aid.client_pid) {
         // check every 10 sec
@@ -411,10 +425,13 @@ static bool client_dead() {
         if (interrupt_count%(TIMERS_PER_SEC*10)) return false;
 #ifdef _WIN32
         HANDLE h = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, aid.client_pid);
-        if (h == NULL) {
+        // If the process exists but is running under a different user account (boinc_master)
+        // then the handle returned is NULL and GetLastError() returns ERROR_ACCESS_DENIED.
+        //
+        if ((h == NULL) && (GetLastError() != ERROR_ACCESS_DENIED)) {
             dead = true;
         } else {
-            CloseHandle(h);
+            if (h) CloseHandle(h);
             dead = false;
         }
 #else
@@ -425,7 +442,6 @@ static bool client_dead() {
         dead = (interrupt_count > heartbeat_giveup_count);
     }
     if (dead) {
-        char buf[256];
         boinc_msg_prefix(buf, sizeof(buf));
         fputs(buf, stderr);     // don't use fprintf() here
         if (aid.client_pid) {
@@ -670,8 +686,8 @@ int boinc_finish(int status) {
     char buf[256];
     fraction_done = 1;
     fprintf(stderr,
-        "%s called boinc_finish\n",
-        boinc_msg_prefix(buf, sizeof(buf))
+        "%s called boinc_finish(%d)\n",
+        boinc_msg_prefix(buf, sizeof(buf)), status
     );
     finishing = true;
     boinc_sleep(2.0);   // let the timer thread send final messages
@@ -833,6 +849,8 @@ int boinc_parse_init_data_file() {
     return 0;
 }
 
+// used by wrappers
+//
 int boinc_report_app_status_aux(
     double cpu_time,
     double checkpoint_cpu_time,
@@ -1098,9 +1116,11 @@ static void timer_handler() {
         return;
     }
     if (finishing) {
-        double cur_cpu = boinc_worker_thread_cpu_time();
-        last_wu_cpu_time = cur_cpu + initial_wu_cpu_time;
-        update_app_progress(last_wu_cpu_time, last_checkpoint_cpu_time);
+        if (options.send_status_msgs) {
+            double cur_cpu = boinc_worker_thread_cpu_time();
+            last_wu_cpu_time = cur_cpu + initial_wu_cpu_time;
+            update_app_progress(last_wu_cpu_time, last_checkpoint_cpu_time);
+        }
         boinc_disable_timer_thread = true;
         return;
     }
@@ -1228,6 +1248,17 @@ static void worker_signal_handler(int) {
     }
     if (options.direct_process_action) {
         while (boinc_status.suspended && in_critical_section==0) {
+#ifdef ANDROID
+            // per-thread signal masking doesn't work
+            // on old (pre-4.1) versions of Android.
+            // If we're handling this signal in the timer thread,
+            // send signal explicitly to worker thread.
+            //
+            if (pthread_self() == timer_thread_handle) {
+                pthread_kill(worker_thread_handle, SIGALRM);
+                return;
+            }
+#endif
             sleep(1);   // don't use boinc_sleep() because it does FP math
         }
     }
@@ -1271,6 +1302,7 @@ int start_timer_thread() {
         SetThreadPriority(worker_thread_handle, THREAD_PRIORITY_IDLE);
     }
 #else
+    worker_thread_handle = pthread_self();
     pthread_attr_t thread_attrs;
     pthread_attr_init(&thread_attrs);
     pthread_attr_setstacksize(&thread_attrs, 32768);

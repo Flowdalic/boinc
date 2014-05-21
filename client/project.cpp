@@ -14,6 +14,9 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
+#ifdef _WIN32
+#include <boinc_win.h>
+#endif
 
 #include <string.h>
 
@@ -837,7 +840,7 @@ bool PROJECT::waiting_until_min_rpc_time() {
 }
 
 void PROJECT::trim_statistics() {
-    double cutoff = dday() - config.save_stats_days*86400;
+    double cutoff = dday() - cc_config.save_stats_days*86400;
     // delete old stats; fill in the gaps if some days missing
     //
     while (!statistics.empty()) {
@@ -892,7 +895,7 @@ void PROJECT::check_no_rsc_apps() {
     }
 }
 
-// set no_X_apps for anonymous platform project
+// set no_rsc_apps[] for anonymous platform project
 //
 void PROJECT::check_no_apps() {
     for (int i=0; i<coprocs.n_rsc; i++) {
@@ -904,4 +907,56 @@ void PROJECT::check_no_apps() {
         if (avp->project != this) continue;
         no_rsc_apps[avp->gpu_usage.rsc_type] = false;
     }
+}
+
+// show a notice if we can't possibly get work from this project,
+// and there's something the user could do about it
+//
+void PROJECT::show_no_work_notice() {
+    bool show_ams = false, show_prefs=false, show_config = false;
+    bool user_action_possible = false;
+    for (int i=0; i<coprocs.n_rsc; i++) {
+        if (no_rsc_apps[i]) continue;
+        bool banned_by_user = no_rsc_pref[i] || no_rsc_config[i] || no_rsc_ams[i];
+        if (!banned_by_user) {
+            // work for this resource is possible; return
+            notices.remove_notices(this, REMOVE_NO_WORK_MSG);
+            return;
+        }
+        if (no_rsc_pref[i]) show_prefs = true;
+        if (no_rsc_config[i]) show_config = true;
+        if (no_rsc_ams[i]) show_ams = true;
+        user_action_possible = true;
+    }
+    if (!user_action_possible) {
+        // no work is possible because project has no apps for any resource
+        //
+        notices.remove_notices(this, REMOVE_NO_WORK_MSG);
+        return;
+    }
+
+    bool first = true;
+    string x;
+    x = NO_WORK_MSG;
+    x += "  ";
+    x += _("To fix this, you can ");
+    if (show_prefs) {
+        first = false;
+        x += _("change Project Preferences on the project's web site");
+    }
+    if (show_config) {
+        if (!first) {
+            x += ", or ";
+        }
+        x += _("remove GPU exclusions in your cc_config.xml file");
+        first = false;
+    }
+    if (show_ams) {
+        if (!first) {
+            x += ", or ";
+        }
+        x += _("change your settings at your account manager web site");
+    }
+    x += ".";
+    msg_printf(this, MSG_USER_ALERT, "%s", x.c_str());
 }

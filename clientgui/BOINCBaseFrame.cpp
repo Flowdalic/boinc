@@ -36,7 +36,6 @@
 #include "Events.h"
 #include "DlgEventLog.h"
 #include "DlgSelectComputer.h"
-#include "BOINCInternetFSHandler.h"
 
 
 DEFINE_EVENT_TYPE(wxEVT_FRAME_ALERT)
@@ -108,6 +107,8 @@ CBOINCBaseFrame::CBOINCBaseFrame(wxWindow* parent, const wxWindowID id, const wx
     //         CPU time
     wxUpdateUIEvent::SetUpdateInterval(500);
 
+    m_ptFramePos = wxPoint(0, 0);
+    
     // The second half of the initialization process picks up in the OnFrameRender()
     //   routine since the menus' and status bars' are drawn in the frameworks
     //   on idle routines, on idle events are sent in between the end of the
@@ -155,6 +156,16 @@ void CBOINCBaseFrame::OnPeriodicRPC(wxTimerEvent& WXUNUSED(event)) {
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+
+#ifdef __WXMAC__
+    static bool first = true;
+    if (first) {
+        first = false;
+        wxGetApp().OnFinishInit();
+    }
+    
+    wxGetApp().CheckPartialActivation();
+#endif
 
     if (!bAlreadyRunningLoop && m_pPeriodicRPCTimer->IsRunning()) {
         bAlreadyRunningLoop = true;
@@ -358,19 +369,8 @@ void CBOINCBaseFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
 
     if (wxGetApp().ConfirmExit()) {
 
-    wxFileSystemHandler *internetFSHandler = wxGetApp().GetInternetFSHandler();
-    if (internetFSHandler) {
-        ((CBOINCInternetFSHandler*)internetFSHandler)->SetAbortInternetIO();
-    }
-
         // Save state before exiting
         SaveState();
-
-        // Under wxWidgets 2.8.0, the task bar icons must be deleted for app to exit its main loop
-#ifdef __WXMAC__
-        wxGetApp().DeleteMacSystemMenu();
-#endif
-        wxGetApp().DeleteTaskBarIcon();
 
         CDlgEventLog*   eventLog = wxGetApp().GetEventLog();
         if (eventLog) {
@@ -760,8 +760,6 @@ bool CBOINCBaseFrame::SaveState() {
     int             iItemCount;
 
 
-    wxASSERT(pConfig);
-
     // An odd case happens every once and awhile where wxWidgets looses
     //   the pointer to the config object, or it is cleaned up before
     //   the window has finished it's cleanup duty.  If we detect a NULL
@@ -887,8 +885,15 @@ bool CBOINCBaseFrame::Show(bool bShow) {
 #endif
     }
 
+#ifdef __WXMAC__
+    retval = (wxGetApp().IsApplicationVisible() != bShow);
+    if (bShow) {
+        retval = wxFrame::Show(bShow);
+    }
+#else
     retval = wxFrame::Show(bShow);
-    wxFrame::Raise();
+#endif
+    if (bShow) wxFrame::Raise();
 
     wxLogTrace(wxT("Function Start/End"), wxT("CBOINCBaseFrame::Show - Function End"));
     return retval;

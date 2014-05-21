@@ -38,6 +38,7 @@
 #define EXIT_ABORTED_BY_PROJECT     202
 #define EXIT_ABORTED_VIA_GUI        203
 #define EXIT_UNKNOWN                204
+#define EXIT_OUT_OF_MEMORY          205
 
 // Function return values.
 // NOTE:  add new errors to the end of the list and don't change
@@ -81,6 +82,7 @@
 #define ERR_THREAD          -124
     // Error creating a thread
 #define ERR_SIGNAL_CATCH    -125
+#define ERR_BAD_FORMAT      -126
 #define ERR_UPLOAD_TRANSIENT    -127
 #define ERR_UPLOAD_PERMANENT    -128
 #define ERR_IDLE_PERIOD     -129

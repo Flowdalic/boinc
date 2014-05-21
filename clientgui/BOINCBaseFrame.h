@@ -22,6 +22,7 @@
 #pragma interface "BOINCBaseFrame.cpp"
 #endif
 
+
 class CFrameEvent;
 class CFrameAlertEvent;
 class CBOINCDialUpManager;
@@ -98,7 +99,7 @@ public:
                         );
 
     bool                Show( bool bShow = true );
-
+    
     virtual bool        RestoreState();
     virtual bool        SaveState();
 
@@ -121,6 +122,8 @@ protected:
     bool                m_bShowConnectionFailedAlert;
 
     virtual int         _GetCurrentViewPage();
+
+    wxPoint             m_ptFramePos;
 
 
     DECLARE_EVENT_TABLE()

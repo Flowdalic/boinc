@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once('../inc/boinc_db.inc');
 require_once('../inc/email.inc');
 require_once('../inc/profile.inc');
 
@@ -33,10 +34,12 @@ function uotd_thumbnail($profile, $user) {
 // show UOTD in a small box
 //
 function show_uotd($profile) {
-    $user = lookup_user_id($profile->userid);
+    $user = BoincUser::lookup_id($profile->userid);
     echo uotd_thumbnail($profile, $user);
     echo user_links($user, true)."<br>";
-    echo sub_sentence(output_transform(sanitize_tags($profile->response1)), ' ', 150, true);
+    $x = output_transform($profile->response1);
+    $x = sanitize_tags($x);
+    echo sub_sentence($x, ' ', 150, true);
 }
 
 // return the last UOTD profile, or null
@@ -58,7 +61,7 @@ function select_uotd() {
         $assigned = getdate($current_uotd->uotd_time);
         $now = getdate(time());
         if ($assigned['mday'] == $now['mday']) {
-            $user = lookup_user_id($current_uotd->userid);
+            $user = BoincUser::lookup_id($current_uotd->userid);
             echo "Already have UOTD for today\n";
             generate_uotd_gadget($current_uotd, $user);
             exit();
@@ -104,7 +107,7 @@ function select_uotd() {
         exit();
     }
     $profile = mysql_fetch_object($result);
-    $user = lookup_user_id($profile->userid);
+    $user = BoincUser::lookup_id($profile->userid);
 
     // if profile is "orphaned", delete it and try again
     //
@@ -171,9 +174,8 @@ function generate_uotd_gadget($profile, $user) {
         if($age <= 86400+3600) { // allow for slop
             $x .= uotd_thumbnail($profile, $user);
             $x .= user_links($user);
-            $x .= "&nbsp;&nbsp;".
-                sub_sentence(sanitize_tags(output_transform($profile->response1)), ' ',
-                             250, true);
+            $resp = sanitize_tags(output_transform($profile->response1));
+            $x .= "&nbsp;&nbsp;". sub_sentence($resp, ' ', 250, true);
         }
         else {
             $x .= "<font color='fuscia'>

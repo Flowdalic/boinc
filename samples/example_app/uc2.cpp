@@ -29,12 +29,14 @@
 // read "in", convert to upper case, write to "out"
 //
 // command line options
-// --run_slow: sleep 1 second after each character
 // --cpu_time N: use about N CPU seconds after copying files
+// --critical_section: run most of the time in a critical section
 // --early_exit: exit(10) after 30 chars
 // --early_crash: crash after 30 chars
+// --run_slow: sleep 1 second after each character
 // --trickle_up: sent a trickle-up message
 // --trickle_down: receive a trickle-up message
+// --network_usage: tell the client we used some network
 //
 
 #ifdef _WIN32
@@ -56,9 +58,9 @@
 #include "boinc_api.h"
 #include "mfile.h"
 #include "graphics2.h"
+#include "uc2.h"
 
 #ifdef APP_GRAPHICS
-#include "uc2.h"
 UC_SHMEM* shmem;
 #endif
 
@@ -75,6 +77,8 @@ bool early_sleep = false;
 bool trickle_up = false;
 bool trickle_down = false;
 bool critical_section = false;    // run most of the time in a critical section
+bool report_fraction_done = true;
+bool network_usage = false;
 double cpu_time = 20, comp_result;
 
 // do about .5 seconds of computing
@@ -149,12 +153,21 @@ int main(int argc, char **argv) {
         if (strstr(argv[i], "early_sleep")) early_sleep = true;
         if (strstr(argv[i], "run_slow")) run_slow = true;
         if (strstr(argv[i], "critical_section")) critical_section = true;
+        if (strstr(argv[i], "network_usage")) network_usage = true;
         if (strstr(argv[i], "cpu_time")) {
             cpu_time = atof(argv[++i]);
         }
         if (strstr(argv[i], "trickle_up")) trickle_up = true;
         if (strstr(argv[i], "trickle_down")) trickle_down = true;
     }
+    retval = boinc_init();
+    if (retval) {
+        fprintf(stderr, "%s boinc_init returned %d\n",
+            boinc_msg_prefix(buf, sizeof(buf)), retval
+        );
+        exit(retval);
+    }
+
     fprintf(stderr, "%s app started; CPU time %f, flags:%s%s%s%s%s%s%s\n",
         boinc_msg_prefix(buf, sizeof(buf)),
         cpu_time,
@@ -166,14 +179,6 @@ int main(int argc, char **argv) {
         trickle_up?" trickle_up":"",
         trickle_down?" trickle_down":""
     );
-
-    retval = boinc_init();
-    if (retval) {
-        fprintf(stderr, "%s boinc_init returned %d\n",
-            boinc_msg_prefix(buf, sizeof(buf)), retval
-        );
-        exit(retval);
-    }
 
     // open the input file (resolve logical name first)
     //
@@ -233,15 +238,20 @@ int main(int argc, char **argv) {
     boinc_register_timer_callback(update_shmem);
 #endif
 
+    if (network_usage) {
+        boinc_network_usage(5., 17.);
+    }
+
     // main loop - read characters, convert to UC, write
     //
     for (i=0; ; i++) {
         c = fgetc(infile);
-
         if (c == EOF) break;
+
         c = toupper(c);
         out._putchar(c);
         nchars++;
+
         if (run_slow) {
             boinc_sleep(1.);
         }
@@ -269,9 +279,11 @@ int main(int argc, char **argv) {
             boinc_checkpoint_completed();
         }
 
-        fd = nchars/fsize;
-        if (cpu_time) fd /= 2;
-        boinc_fraction_done(fd);
+		if (report_fraction_done) {
+			fd = nchars/fsize;
+			if (cpu_time) fd /= 2;
+			boinc_fraction_done(fd);
+		}
     }
 
     retval = out.flush();
@@ -304,8 +316,10 @@ int main(int argc, char **argv) {
         for (i=0; ; i++) {
             double e = dtime()-start;
             if (e > cpu_time) break;
-            fd = .5 + .5*(e/cpu_time);
-            boinc_fraction_done(fd);
+			if (report_fraction_done) {
+				fd = .5 + .5*(e/cpu_time);
+				boinc_fraction_done(fd);
+			}
 
             if (boinc_time_to_checkpoint()) {
                 retval = do_checkpoint(out, nchars);
@@ -346,6 +360,3 @@ int WINAPI WinMain(
     return main(argc, argv);
 }
 #endif
-
-const char *BOINC_RCSID_33ac47a071 = "$Id: upper_case.cpp 20315 2010-01-29 15:50:47Z davea $";
-

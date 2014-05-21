@@ -36,8 +36,12 @@
 #include "DlgEventLogListCtrl.h"
 #include "DlgEventLog.h"
 #include "AdvancedFrame.h"
+#include "DlgDiagnosticLogFlags.h"
 #include <wx/display.h>
 
+#ifdef __WXMAC__
+#include <time.h>
+#endif
 
 ////@begin includes
 ////@end includes
@@ -73,6 +77,7 @@ BEGIN_EVENT_TABLE( CDlgEventLog, wxDialog )
     EVT_BUTTON(ID_COPYSELECTED, CDlgEventLog::OnMessagesCopySelected)
     EVT_BUTTON(ID_TASK_MESSAGES_FILTERBYPROJECT, CDlgEventLog::OnMessagesFilter)
     EVT_BUTTON(ID_SIMPLE_HELP, CDlgEventLog::OnButtonHelp)
+	EVT_MENU(ID_SGDIAGNOSTICLOGFLAGS, CDlgEventLog::OnDiagnosticLogFlags)
 	EVT_SIZE(CDlgEventLog::OnSize)
     EVT_MOVE(CDlgEventLog::OnMove)
     EVT_CLOSE(CDlgEventLog::OnClose)
@@ -97,9 +102,6 @@ CDlgEventLog::CDlgEventLog( wxWindow* parent, wxWindowID id, const wxString& cap
 CDlgEventLog::~CDlgEventLog() {
     wxLogTrace(wxT("Function Start/End"), wxT("CDlgEventLog::CDlgEventLog - Destructor Function Begin"));
     
-    SaveState();
-    SetWindowDimensions();
-
     if (m_pMessageInfoAttr) {
         delete m_pMessageInfoAttr;
         m_pMessageInfoAttr = NULL;
@@ -257,6 +259,12 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
     OnRefresh();
     // Register that we had the Event Log open immediately
     SaveState();
+    
+    m_Shortcuts[0].Set(wxACCEL_CTRL|wxACCEL_SHIFT, (int)'F', ID_SGDIAGNOSTICLOGFLAGS);
+    m_pAccelTable = new wxAcceleratorTable(1, m_Shortcuts);
+
+    SetAcceleratorTable(*m_pAccelTable);
+
     return true;
 }
 
@@ -410,6 +418,9 @@ void CDlgEventLog::OnHelp(wxHelpEvent& event) {
  */
 
 void CDlgEventLog::OnOK( wxCommandEvent& WXUNUSED(event) ) {
+    SaveState();
+    SetWindowDimensions();
+
     Close();
 }
 
@@ -420,6 +431,10 @@ void CDlgEventLog::OnOK( wxCommandEvent& WXUNUSED(event) ) {
 
 void CDlgEventLog::OnClose(wxCloseEvent& WXUNUSED(event)) {
     m_bEventLogIsOpen = false;  // User specifically closed window
+
+    SaveState();
+    SetWindowDimensions();
+
     Destroy();
 }
 
@@ -896,6 +911,16 @@ void CDlgEventLog::OnButtonHelp( wxCommandEvent& event ) {
 }
 
 
+void CDlgEventLog::OnDiagnosticLogFlags(wxCommandEvent& WXUNUSED(event)) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CDlgEventLog::OnDiagnosticLogFlags - Function Begin"));
+
+    CDlgDiagnosticLogFlags dlg(this);
+	dlg.ShowModal();
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CDlgEventLog::OnDiagnosticLogFlags - Function End"));
+}
+
+
 void CDlgEventLog::OnColResize( wxListEvent& ) {
     // Register the new column widths immediately
     SaveState();
@@ -1004,12 +1029,20 @@ wxInt32 CDlgEventLog::FormatProjectName(wxInt32 item, wxString& strBuffer) const
 
 
 wxInt32 CDlgEventLog::FormatTime(wxInt32 item, wxString& strBuffer) const {
-    wxDateTime dtBuffer;
     MESSAGE*   message = wxGetApp().GetDocument()->message(item);
 
     if (message) {
+#ifdef __WXMAC__
+        // Work around a wxCocoa bug(?) in wxDateTime::Format()
+        char buf[80];
+        struct tm * timeinfo = localtime((time_t*)&message->timestamp);
+        strftime(buf, sizeof(buf), "%c", timeinfo);
+        strBuffer = buf;
+#else
+        wxDateTime dtBuffer;
         dtBuffer.Set((time_t)message->timestamp);
         strBuffer = dtBuffer.Format();
+#endif
     }
 
     return 0;

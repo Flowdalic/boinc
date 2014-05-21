@@ -26,11 +26,19 @@
 
 
 #if USE_NATIVE_LISTCONTROL
+
 DEFINE_EVENT_TYPE(wxEVT_DRAW_PROGRESSBAR)
 
 BEGIN_EVENT_TABLE(CBOINCListCtrl, LISTCTRL_BASE)
     EVT_DRAW_PROGRESSBAR(CBOINCListCtrl::OnDrawProgressBar)
 END_EVENT_TABLE()
+
+#else
+
+BEGIN_EVENT_TABLE(CBOINCListCtrl, LISTCTRL_BASE)
+	EVT_SIZE(CBOINCListCtrl::OnSize)
+END_EVENT_TABLE()
+
 #endif
 
 BEGIN_EVENT_TABLE(MyEvtHandler, wxEvtHandler)
@@ -51,8 +59,9 @@ CBOINCListCtrl::CBOINCListCtrl(
 ) {
     m_pParentView = pView;
 
-    m_bIsSingleSelection = (iListWindowFlags & wxLC_SINGLE_SEL) ? true : false ;
-    
+    // Enable Zebra Striping
+    EnableAlternateRowColours(true);
+
 #if USE_NATIVE_LISTCONTROL
     m_bProgressBarEventPending = false;
 #else
@@ -60,12 +69,6 @@ CBOINCListCtrl::CBOINCListCtrl(
     SetupMacAccessibilitySupport();
 #endif
 #endif
-
-    Connect(
-        iListWindowID, 
-        wxEVT_COMMAND_LEFT_CLICK, 
-        (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) &CBOINCListCtrl::OnClick
-    );
 }
 
 
@@ -206,39 +209,6 @@ void CBOINCListCtrl::AddPendingProgressBar(int row) {
 }
 
 
-void CBOINCListCtrl::OnClick(wxCommandEvent& event) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCListCtrl::OnClick - Function Begin"));
-
-    wxASSERT(m_pParentView);
-    wxASSERT(wxDynamicCast(m_pParentView, CBOINCBaseView));
-
-    wxListEvent leDeselectedEvent(wxEVT_COMMAND_LIST_ITEM_DESELECTED, m_windowId);
-    leDeselectedEvent.SetEventObject(this);
-
-    if (m_bIsSingleSelection) {
-        if (GetFocusedItem() != GetFirstSelected()) {
-            wxLogTrace(wxT("Function Status"), wxT("CBOINCListCtrl::OnClick - GetFocusedItem() '%d' != GetFirstSelected() '%d'"), GetFocusedItem(), GetFirstSelected());
-
-            if (-1 == GetFirstSelected()) {
-                wxLogTrace(wxT("Function Status"), wxT("CBOINCListCtrl::OnClick - Force Selected State"));
-
-                long desiredstate = wxLIST_STATE_FOCUSED | wxLIST_STATE_SELECTED;
-                SetItemState(GetFocusedItem(), desiredstate, desiredstate);
-            } else {
-                m_pParentView->FireOnListDeselected(leDeselectedEvent);
-            }
-        }
-    } else {
-        if (-1 == GetFirstSelected()) {
-            m_pParentView->FireOnListDeselected(leDeselectedEvent);
-        }
-    }
-
-    event.Skip();
-    wxLogTrace(wxT("Function Start/End"), wxT("CBOINCListCtrl::OnClick - Function End"));
-}
-
-
 wxString CBOINCListCtrl::OnGetItemText(long item, long column) const {
     wxASSERT(m_pParentView);
     wxASSERT(wxDynamicCast(m_pParentView, CBOINCBaseView));
@@ -253,16 +223,6 @@ int CBOINCListCtrl::OnGetItemImage(long item) const {
 
     return m_pParentView->FireOnListGetItemImage(item);
 }
-
-
-#if BASEVIEW_STRIPES
-wxListItemAttr* CBOINCListCtrl::OnGetItemAttr(long item) const {
-    wxASSERT(m_pParentView);
-    wxASSERT(wxDynamicCast(m_pParentView, CBOINCBaseView));
-
-    return m_pParentView->FireOnListGetItemAttr(item);
-}
-#endif
 
 
 void CBOINCListCtrl::DrawProgressBars()
@@ -308,7 +268,7 @@ void CBOINCListCtrl::DrawProgressBars()
 #if USE_NATIVE_LISTCONTROL
         x -= GetScrollPos(wxHORIZONTAL);
 #else
-        GetMainWin()->CalcScrolledPosition(x, 0, &x, &yy);
+        CalcScrolledPosition(x, 0, &x, &yy);
 #endif
         wxFont theFont = GetFont();
         dc.SetFont(theFont);
@@ -413,7 +373,7 @@ void CBOINCListCtrl::OnDrawProgressBar(CDrawProgressBarEvent& event) {
 void MyEvtHandler::OnPaint(wxPaintEvent & event)
 {
     if (m_listCtrl) {
-        (m_listCtrl->GetMainWin())->ProcessEvent(event);
+        m_listCtrl->savedHandler->ProcessEvent(event);
         m_listCtrl->DrawProgressBars();
     } else {
         event.Skip();

@@ -255,7 +255,7 @@ int update_av_scales(SCHED_SHMEM *ssp) {
                 return retval;
             }
             avr = av;       // update shared mem array
-            if (app_plan_uses_gpu(av.plan_class)) {
+            if (plan_class_to_proc_type(av.plan_class) != PROC_TYPE_CPU) {
                 if (config.debug_credit) {
                     log_messages.printf(MSG_NORMAL,
                         "add to gpu totals: (%d %s) %g %g\n",
@@ -394,13 +394,13 @@ int hav_lookup(DB_HOST_APP_VERSION &hav, int hostid, int gen_avid) {
     return 0;
 }
 
-DB_APP_VERSION *av_lookup(int id, vector<DB_APP_VERSION>& app_versions) {
+DB_APP_VERSION_VAL *av_lookup(int id, vector<DB_APP_VERSION_VAL>& app_versions) {
     for (unsigned int i=0; i<app_versions.size(); i++) {
         if (app_versions[i].id == id) {
             return &app_versions[i];
         }
     }
-    DB_APP_VERSION av;
+    DB_APP_VERSION_VAL av;
     int retval = av.lookup_id(id);
     if (retval) {
         return NULL;
@@ -440,13 +440,12 @@ inline bool is_pfc_sane(double x, WORKUNIT &wu, DB_APP &app) {
 //
 int get_pfc(
     RESULT &r, WORKUNIT &wu, DB_APP &app,       // in
-    vector<DB_APP_VERSION>&app_versions,        // in/out
+    vector<DB_APP_VERSION_VAL>&app_versions,    // in/out
     DB_HOST_APP_VERSION &hav,                   // in/out
     double &pfc,                                // out
     int &mode                                   // out
 ){
-    DB_APP_VERSION *avp=0;
-    int retval;
+    DB_APP_VERSION_VAL *avp=0;
 
     mode = PFC_MODE_APPROX;
 
@@ -489,7 +488,7 @@ int get_pfc(
         return 0;
     }
 
-    int gavid = generalized_app_version_id(r.app_version_id, r.appid);
+    //int gavid = generalized_app_version_id(r.app_version_id, r.appid);
 
     // transition case: there's no host_app_version record
     //
@@ -593,19 +592,25 @@ int get_pfc(
     double tmp_scale = (avp && (r.app_version_id>1) && avp->pfc_scale) ? (avp->pfc_scale) : 1.0;
 
     if (raw_pfc*tmp_scale > wu.rsc_fpops_bound) {
-        char query[256], clause[256];
+        // This sanity check should be unnecessary becuase we have a maximum
+        // credit grant limit.  With anonymous GPU apps the sanity check often fails
+        // because anonymous GPU scales are often of order 0.01.  That prevents
+        // PFC averages from being updated.  So I've removed the return
+        // statement.
+        //char query[256], clause[256];
         pfc = wu_estimated_pfc(wu, app);
         if (config.debug_credit) {
             log_messages.printf(MSG_NORMAL,
-                "[credit] [RESULT#%u] sanity check failed: %.2f>%.2f, return %.2f\n",
+                "[credit] [RESULT#%u] WARNING: sanity check failed: %.2f>%.2f, return %.2f\n",
                 r.id, raw_pfc*tmp_scale*COBBLESTONE_SCALE,
                 wu.rsc_fpops_bound*COBBLESTONE_SCALE, pfc*COBBLESTONE_SCALE
             );
         }
-        sprintf(query, "consecutive_valid=0");
-        sprintf(clause, "host_id=%d and app_version_id=%d", r.hostid, gavid);
-        retval = hav.update_fields_noid(query, clause);
-        return retval;
+//        This was a bad idea because it prevents HAV.pfc from being updated.
+//        sprintf(query, "consecutive_valid=0");
+//        sprintf(clause, "host_id=%d and app_version_id=%d", r.hostid, gavid);
+//        retval = hav.update_fields_noid(query, clause);
+//        return retval;
     }
 
     if (r.app_version_id < 0) {
@@ -873,7 +878,7 @@ int assign_credit_set(
     WORKUNIT &wu,
     vector<RESULT>& results,
     DB_APP &app,
-    vector<DB_APP_VERSION>& app_versions,
+    vector<DB_APP_VERSION_VAL>& app_versions,
     vector<DB_HOST_APP_VERSION>& host_app_versions,
     double max_granted_credit,
     double &credit
@@ -973,13 +978,13 @@ int assign_credit_set(
 // carefully write any app_version records that have changed;
 // done at the end of every validator scan.
 //
-int write_modified_app_versions(vector<DB_APP_VERSION>& app_versions) {
+int write_modified_app_versions(vector<DB_APP_VERSION_VAL>& app_versions) {
     unsigned int i, j;
     int retval = 0;
     double now = dtime();
 
     for (i=0; i<app_versions.size(); i++) {
-        DB_APP_VERSION &av = app_versions[i];
+        DB_APP_VERSION_VAL &av = app_versions[i];
         if (av.pfc_samples.empty() && av.credit_samples.empty()) {
             continue;
         }

@@ -271,7 +271,7 @@ void ACTIVE_TASK::init_app_init_data(APP_INIT_DATA& aid) {
         aid.gpu_usage = 0;
     }
     aid.ncpus = app_version->avg_ncpus;
-    aid.vbox_window = config.vbox_window;
+    aid.vbox_window = cc_config.vbox_window;
     aid.checkpoint_period = gstate.global_prefs.disk_interval;
     aid.fraction_done_start = 0;
     aid.fraction_done_end = 1;
@@ -292,9 +292,9 @@ int ACTIVE_TASK::write_app_init_file(APP_INIT_DATA& aid) {
     char init_data_path[MAXPATHLEN];
 
 #if 0
-	msg_printf(wup->project, MSG_INFO,
-		"writing app_init.xml for %s; slot %d rt %s gpu_device_num %d", result->name, slot, aid.gpu_type, aid.gpu_device_num
-	);
+    msg_printf(wup->project, MSG_INFO,
+        "writing app_init.xml for %s; slot %d rt %s gpu_device_num %d", result->name, slot, aid.gpu_type, aid.gpu_device_num
+    );
 #endif
 
     sprintf(init_data_path, "%s/%s", slot_dir, INIT_DATA_FILE);
@@ -510,6 +510,10 @@ int ACTIVE_TASK::start(bool test) {
     FILE_INFO* fip;
     int retval, rt;
     APP_INIT_DATA aid;
+#ifdef _WIN32
+    bool success = false;
+    LPVOID environment_block=NULL;
+#endif
 
     if (async_copy) {
         if (log_flags.task_debug) {
@@ -550,8 +554,8 @@ int ACTIVE_TASK::start(bool test) {
     graphics_request_queue.init(result->name);        // reset message queues
     process_control_queue.init(result->name);
 
-    bytes_sent = 0;
-    bytes_received = 0;
+    bytes_sent_episode = 0;
+    bytes_received_episode = 0;
 
     if (!app_client_shm.shm) {
         retval = get_shmem_seg_name();
@@ -650,7 +654,7 @@ int ACTIVE_TASK::start(bool test) {
     sprintf(file_path, "%s/%s", slot_dir, TEMPORARY_EXIT_FILE);
     delete_project_owned_file(file_path, true);
 
-    if (config.exit_before_start) {
+    if (cc_config.exit_before_start) {
         msg_printf(0, MSG_INFO, "about to start a job; exiting");
         exit(0);
     }
@@ -658,7 +662,6 @@ int ACTIVE_TASK::start(bool test) {
 #ifdef _WIN32
     PROCESS_INFORMATION process_info;
     STARTUPINFO startup_info;
-    LPVOID environment_block = NULL;
     char slotdirpath[MAXPATHLEN];
     char error_msg[1024];
     char error_msg2[1024];
@@ -673,7 +676,7 @@ int ACTIVE_TASK::start(bool test) {
 
     app_client_shm.reset_msgs();
 
-    if (config.run_apps_manually) {
+    if (cc_config.run_apps_manually) {
         // fill in client's PID so we won't think app has exited
         //
         pid = GetCurrentProcessId();
@@ -691,9 +694,8 @@ int ACTIVE_TASK::start(bool test) {
     }
 
     relative_to_absolute(slot_dir, slotdirpath);
-    bool success = false;
     int prio_mask;
-    if (config.no_priority_change) {
+    if (cc_config.no_priority_change) {
         prio_mask = 0;
     } else if (high_priority) {
         prio_mask = BELOW_NORMAL_PRIORITY_CLASS;
@@ -703,18 +705,8 @@ int ACTIVE_TASK::start(bool test) {
 
     for (i=0; i<5; i++) {
         if (sandbox_account_service_token != NULL) {
-            // Find CreateEnvironmentBlock/DestroyEnvironmentBlock pointers
-            tCEB    pCEB = NULL;
-            tDEB    pDEB = NULL;
-            HMODULE hUserEnvLib = NULL;
 
-            hUserEnvLib = LoadLibrary("userenv.dll");
-            if (hUserEnvLib) {
-                pCEB = (tCEB) GetProcAddress(hUserEnvLib, "CreateEnvironmentBlock");
-                pDEB = (tDEB) GetProcAddress(hUserEnvLib, "DestroyEnvironmentBlock");
-            }
-
-            if (!pCEB(&environment_block, sandbox_account_service_token, FALSE)) {
+            if (!CreateEnvironmentBlock(&environment_block, sandbox_account_service_token, FALSE)) {
                 if (log_flags.task) {
                     windows_format_error_string(GetLastError(), error_msg, sizeof(error_msg));
                     msg_printf(wup->project, MSG_INFO,
@@ -745,7 +737,7 @@ int ACTIVE_TASK::start(bool test) {
                 );
             }
 
-            if (!pDEB(environment_block)) {
+            if (!DestroyEnvironmentBlock(environment_block)) {
                 if (log_flags.task) {
                     windows_format_error_string(GetLastError(), error_msg, sizeof(error_msg2));
                     msg_printf(wup->project, MSG_INFO,
@@ -753,12 +745,6 @@ int ACTIVE_TASK::start(bool test) {
                         error_msg2
                     );
                 }
-            }
-
-            if (hUserEnvLib) {
-                pCEB = NULL;
-                pDEB = NULL;
-                FreeLibrary(hUserEnvLib);
             }
 
         } else {
@@ -855,7 +841,7 @@ int ACTIVE_TASK::start(bool test) {
         );
     }
 
-    if (!config.no_priority_change) {
+    if (!cc_config.no_priority_change) {
         if (setpriority(PRIO_PROCESS, pid,
             high_priority?PROCESS_MEDIUM_PRIORITY:PROCESS_IDLE_PRIORITY)
         ) {
@@ -935,7 +921,7 @@ int ACTIVE_TASK::start(bool test) {
     // PowerPC apps emulated on i386 Macs crash if running graphics
     powerpc_emulated_on_i386 = ! is_native_i386_app(exec_path);
 #endif
-    if (config.run_apps_manually) {
+    if (cc_config.run_apps_manually) {
         pid = getpid();     // use the client's PID
         set_task_state(PROCESS_EXECUTING, "start");
         return 0;
@@ -1021,12 +1007,26 @@ int ACTIVE_TASK::start(bool test) {
         //
         (void) freopen(STDERR_FILE, "a", stderr);
 
-        if (!config.no_priority_change) {
+        // lower our priority if needed
+        //
+        if (!cc_config.no_priority_change) {
 #if HAVE_SETPRIORITY
             if (setpriority(PRIO_PROCESS, 0,
                 high_priority?PROCESS_MEDIUM_PRIORITY:PROCESS_IDLE_PRIORITY)
             ) {
                 perror("setpriority");
+            }
+#endif
+#ifdef ANDROID
+            // Android has its own notion of background scheduling
+            if (!high_priority) {
+                FILE* f = fopen("/dev/cpuctl/apps/bg_non_interactive/tasks", "w");
+                if (!f) {
+                    msg_printf(NULL, MSG_INFO, "Can't open /dev/cpuctl/apps/bg_non_interactive/tasks");
+                } else {
+                    fprintf(f, "%d", getpid());
+                    fclose(f);
+                }
             }
 #endif
 #if HAVE_SCHED_SETSCHEDULER && defined(SCHED_BATCH) && defined (__linux__)
@@ -1039,6 +1039,11 @@ int ACTIVE_TASK::start(bool test) {
             }
 #endif
         }
+
+        // Run the application program.
+        // If using account-based sandboxing, use a helper app
+        // to do this, to set the right user ID
+        //
         if (test) {
             strcpy(buf, exec_path);
         } else {
@@ -1076,11 +1081,16 @@ int ACTIVE_TASK::start(bool test) {
         _exit(errno);
     }
 
+    // parent process (client) continues here
+    //
     if (log_flags.task_debug) {
         msg_printf(wup->project, MSG_INFO,
             "[task] ACTIVE_TASK::start(): forked process: pid %d\n", pid
         );
     }
+
+#ifdef ANDROID
+#endif
 
 #endif
     set_task_state(PROCESS_EXECUTING, "start");
@@ -1144,11 +1154,11 @@ int ACTIVE_TASK::resume_or_start(bool first_time) {
         return 0;
     }
     if (log_flags.task && first_time) {
-		msg_printf(result->project, MSG_INFO,
-			"Starting task %s", result->name
-		);
-	}
-	if (log_flags.cpu_sched) {
+        msg_printf(result->project, MSG_INFO,
+            "Starting task %s", result->name
+        );
+    }
+    if (log_flags.cpu_sched) {
         char buf[256];
         strcpy(buf, "");
         if (strlen(app_version->plan_class)) {
@@ -1181,7 +1191,7 @@ union headeru {
 //
 int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     FILE *f;
-    int result = 0;
+    int retval = 0;
     
     headeru myHeader;
     fat_arch fatHeader;
@@ -1192,7 +1202,7 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     
     f = boinc_fopen(exec_path, "rb");
     if (!f) {
-        return result;          // Should never happen
+        return retval;          // Should never happen
     }
     
     myHeader.fat.magic = 0;
@@ -1210,7 +1220,7 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
             theType = OSSwapInt32(theType);
         }
         if ((theType == CPU_TYPE_I386) || (theType == CPU_TYPE_X86_64)) {
-            result = 1;        // Single-architecture i386or x86_64 file
+            retval = 1;        // Single-architecture i386or x86_64 file
         }
         break;
     case FAT_MAGIC:
@@ -1230,7 +1240,7 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
                 theType = OSSwapInt32(theType);
             }
             if ((theType == CPU_TYPE_I386) || (theType == CPU_TYPE_X86_64)) {
-                result = 1;
+                retval = 1;
                 break;
             }
         }
@@ -1240,7 +1250,7 @@ int ACTIVE_TASK::is_native_i386_app(char* exec_path) {
     }
 
     fclose (f);
-    return result;
+    return retval;
 }
 #endif
 
@@ -1255,6 +1265,7 @@ void run_test_app() {
     ACTIVE_TASK at;
     ACTIVE_TASK_SET ats;
     RESULT result;
+    int retval;
 
     char buf[256];
     getcwd(buf, sizeof(buf));   // so we can see where we're running
@@ -1283,13 +1294,31 @@ void run_test_app() {
     at.max_mem_usage = 1e14;
     strcpy(at.slot_dir, ".");
 
+#if 1
+    // test file copy
+    //
+    ASYNC_COPY* ac = new ASYNC_COPY;
+    FILE_INFO fi;
+    retval = ac->init(&at, &fi, "big_file", "./big_file_copy");
+    if (retval) {
+        exit(1);
+    }
+    while (1) {
+        do_async_file_ops();
+        if (at.async_copy == NULL) {
+            break;
+        }
+    }
+    fprintf(stderr, "done\n");
+    exit(0);
+#endif
     ats.active_tasks.push_back(&at);
 
     unlink("boinc_finish_called");
     unlink("boinc_lockfile");
     unlink("boinc_temporary_exit");
     unlink("stderr.txt");
-    int retval = at.start(true);
+    retval = at.start(true);
     if (retval) {
         fprintf(stderr, "start() failed: %s\n", boincerror(retval));
     }

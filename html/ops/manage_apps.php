@@ -37,11 +37,14 @@ function do_updates() {
     $n = post_str("homogeneous_app_version", true)?1:0;
     $app->update("homogeneous_app_version=$n");
 
-    $n = post_str("cpu_intensive", true)?1:0;
+    $n = post_str("non_cpu_intensive", true)?1:0;
     $app->update("non_cpu_intensive=$n");
 
     $n = post_str("beta", true)?1:0;
     $app->update("beta=$n");
+
+    $n = post_str("fraction_done_exact", true)?1:0;
+    $app->update("fraction_done_exact=$n");
 
     echo "Application $id updated.
         <p>
@@ -82,11 +85,13 @@ function show_form() {
         "Created",
         "weight<br><a href=http://boinc.berkeley.edu/trac/wiki/BackendPrograms#feeder><span class=note>details</span></a>",
         "shmem items",
-        "homogeneous redundancy type<br><a href=http://boinc.berkeley.edu/trac/wiki/HomogeneousRedundancy><span class=note>details</span></a>",
+        "HR type<br><a href=http://boinc.berkeley.edu/trac/wiki/HomogeneousRedundancy><span class=note>details</span></a>",
         "homogeneous app version?<br><a href=http://boinc.berkeley.edu/trac/wiki/HomogeneousAppVersion><span class=note>details</span></a>",
         "deprecated?",
         "Non-CPU-intensive?",
-        "Beta?"
+        "Beta?",
+        "Exact fraction done?",
+        ""
     );
 
     $total_weight = BoincApp::sum("weight");
@@ -96,6 +101,7 @@ function show_form() {
     }
 
     $apps = BoincApp::enum("");
+    $i = 0;
     foreach ($apps as $app) {
         // grey-out deprecated versions
         $f1=$f2='';
@@ -103,7 +109,8 @@ function show_form() {
             $f1 = "<font color='GREY'>";
             $f2 = "</font>";
         }
-        echo "<tr><form action=manage_apps.php method=POST>";
+        echo "<tr class=row$i><form action=manage_apps.php method=POST>";
+        $i = 1-$i;
         echo "<input type=hidden name=id value=$app->id>";
         echo "  <TD align='center'>$f1 $app->id $f2</TD>\n";
 
@@ -148,6 +155,12 @@ function show_form() {
         if ($app->beta) $v = ' CHECKED ';
         echo "  <TD align='center'>
             <input name='beta' type='checkbox' $v></TD>
+        ";
+
+        $v = '';
+        if ($app->fraction_done_exact) $v = ' CHECKED ';
+        echo "  <TD align='center'>
+            <input name='fraction_done_exact' type='checkbox' $v></TD>
         ";
 
         echo "<td><input type=submit name=submit value=Update>";

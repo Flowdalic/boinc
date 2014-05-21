@@ -24,9 +24,10 @@ libfcgi_sources = \
     hostinfo.cpp \
     md5.c \
     md5_file.cpp \
+    mfile.cpp \
     miofile.cpp \
     msg_log.cpp \
-	opencl_boinc.cpp \
+    opencl_boinc.cpp \
     parse.cpp \
     shmem.cpp \
     str_util.cpp \
@@ -54,7 +55,7 @@ generic_sources = \
     msg_log.cpp \
     network.cpp \
     notice.cpp \
-	opencl_boinc.cpp \
+    opencl_boinc.cpp \
     parse.cpp \
     prefs.cpp \
     procinfo.cpp \
@@ -62,11 +63,26 @@ generic_sources = \
     proxy_info.cpp \
     shmem.cpp \
     str_util.cpp \
-    synch.cpp \
-    unix_util.cpp \
     url.cpp \
     util.cpp
 
+if OS_WIN32 
+win_sources = \
+    boinc_win.cpp \
+    daemonmgt_win.cpp \
+    diagnostics_win.cpp \
+    idlemon_win.cpp \
+    procinfo_win.cpp \
+    run_app_windows.cpp \
+    stackwalker_win.cpp \
+    win_util.cpp
+win_headers= \
+    boinc_win.h \
+    diagnostics_win.h \
+    run_app_windows.h \
+    stackwalker_win.h \
+    win_util.h
+else # !OS_WIN32
 if OS_DARWIN
 mac_sources = \
     procinfo_mac.cpp \
@@ -86,11 +102,20 @@ mac_headers = \
     mac/QMachOImageList.h \
     mac/QSymbols.h \
     mac/QTaskMemory.h
-else
-    generic_sources += procinfo_unix.cpp
+win_sources=
+win_headers=
+else # !(OS_WIN32 || OS_MAC)
 
-mac_sources = 
-mac_headers =
+generic_sources += \
+    procinfo_unix.cpp \
+    synch.cpp \
+    unix_util.cpp
+win_sources=
+win_headers=
+mac_sources= 
+mac_headers=
+
+endif
 endif
 
 
@@ -109,7 +134,6 @@ pkginclude_HEADERS = \
     coproc.h \
     crypt.h \
     diagnostics.h \
-    diagnostics_win.h \
     error_numbers.h \
     filesys.h \
     gui_rpc_client.h \
@@ -122,7 +146,7 @@ pkginclude_HEADERS = \
     msg_log.h \
     network.h \
     notice.h \
-	opencl_boinc.h \
+    opencl_boinc.h \
     parse.h \
     prefs.h \
     procinfo.h \
@@ -133,7 +157,8 @@ pkginclude_HEADERS = \
     url.h \
     util.h \
     win_util.h \
-    $(mac_headers)
+    $(mac_headers) \
+    $(win_headers)
 endif
 
 # These are used internally and are not meant to be installed
@@ -147,7 +172,7 @@ noinst_HEADERS = \
     unix_util.h
 
 lib_LTLIBRARIES = libboinc.la libboinc_crypt.la
-libboinc_la_SOURCES = $(generic_sources) $(mac_sources)
+libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
 libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
@@ -162,7 +187,7 @@ libboinc_crypt_la_LIBADD =
 
 if ENABLE_FCGI
 lib_LTLIBRARIES += libboinc_fcgi.la
-libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources)
+libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
 libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_fcgi_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)

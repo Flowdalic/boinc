@@ -169,7 +169,7 @@ CViewWork::CViewWork()
 
 
 CViewWork::CViewWork(wxNotebook* pNotebook) :
-    CBOINCBaseView(pNotebook, ID_TASK_WORKVIEW, DEFAULT_TASK_FLAGS, ID_LIST_WORKVIEW, DEFAULT_LIST_MULTI_SEL_FLAGS)
+    CBOINCBaseView(pNotebook, ID_TASK_WORKVIEW, DEFAULT_TASK_FLAGS, ID_LIST_WORKVIEW, DEFAULT_LIST_FLAGS)
 {
     CTaskItemGroup* pGroup = NULL;
     CTaskItem*      pItem = NULL;
@@ -857,10 +857,14 @@ void CViewWork::UpdateSelection() {
     pGroup->m_Tasks[BTN_GRAPHICS]->m_pButton->Enable(enableShowGraphics);
     if (enableShowVMConsole) {
         pGroup->m_Tasks[BTN_VMCONSOLE]->m_pButton->Enable();
-        pGroup->m_Tasks[BTN_VMCONSOLE]->m_pButton->Show();
+        if (pGroup->m_Tasks[BTN_VMCONSOLE]->m_pButton->Show()) {
+            m_pTaskPane->FitInside();
+        }
     } else {
         pGroup->m_Tasks[BTN_VMCONSOLE]->m_pButton->Disable();
-        pGroup->m_Tasks[BTN_VMCONSOLE]->m_pButton->Hide();
+        if (pGroup->m_Tasks[BTN_VMCONSOLE]->m_pButton->Hide()) {
+            m_pTaskPane->FitInside();
+        };
     }
     pGroup->m_Tasks[BTN_SUSPEND]->m_pButton->Enable(enableSuspendResume);
     pGroup->m_Tasks[BTN_ABORT]->m_pButton->Enable(enableAbort);
@@ -1163,10 +1167,18 @@ void CViewWork::GetDocReportDeadline(wxInt32 item, time_t& time) const {
 
 
 wxInt32 CViewWork::FormatReportDeadline(time_t deadline, wxString& strBuffer) const {
+#ifdef __WXMAC__
+    // Work around a wxCocoa bug(?) in wxDateTime::Format()
+    char buf[80];
+    struct tm * timeinfo = localtime(&deadline);
+    strftime(buf, sizeof(buf), "%c", timeinfo);
+    strBuffer = buf;
+#else
     wxDateTime     dtTemp;
 
     dtTemp.Set(deadline);
     strBuffer = dtTemp.Format();
+#endif
 
     return 0;
 }

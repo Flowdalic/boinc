@@ -93,14 +93,15 @@ int CLIENT_APP_VERSION::parse(XML_PARSER& xp) {
             COPROC_REQ coproc_req;
             int retval = coproc_req.parse(xp);
             if (!retval) {
-                host_usage.gpu_usage = coproc_req.count;
-                if (!strcmp(coproc_req.type, "CUDA") || !strcmp(coproc_req.type, "NVIDIA")) {
-                    host_usage.proc_type = PROC_TYPE_NVIDIA_GPU;
-                } else if (!strcmp(coproc_req.type, "ATI")) {
-                    host_usage.proc_type = PROC_TYPE_AMD_GPU;
-                } else if (!strcmp(coproc_req.type, "INTEL")) {
-                    host_usage.proc_type = PROC_TYPE_INTEL_GPU;
+                int rt = coproc_type_name_to_num(coproc_req.type);
+                if (!rt) {
+                    log_messages.printf(MSG_NORMAL,
+                        "UNKNOWN COPROC TYPE %s\n", coproc_req.type
+                    );
+                    continue;
                 }
+                host_usage.proc_type = rt;
+                host_usage.gpu_usage = coproc_req.count;
             }
             continue;
         }
@@ -598,7 +599,7 @@ int MSG_FROM_HOST_DESC::parse(XML_PARSER& xp) {
 }
 
 SCHEDULER_REPLY::SCHEDULER_REPLY() {
-    memset(&wreq, 0, sizeof(wreq));
+    wreq.clear();
     memset(&disk_limits, 0, sizeof(disk_limits));
     request_delay = 0;
     hostid = 0;
@@ -1025,9 +1026,11 @@ int APP::write(FILE* fout) {
         "    <name>%s</name>\n"
         "    <user_friendly_name>%s</user_friendly_name>\n"
         "    <non_cpu_intensive>%d</non_cpu_intensive>\n"
+        "    <fraction_done_exact>%d</fraction_done_exact>\n"
         "</app>\n",
         name, user_friendly_name,
-        non_cpu_intensive?1:0
+        non_cpu_intensive?1:0,
+        fraction_done_exact?1:0
     );
     return 0;
 }
@@ -1146,8 +1149,36 @@ int SCHED_DB_RESULT::parse_from_client(XML_PARSER& xp) {
         }
         if (xp.parse_str("name", name, sizeof(name))) continue;
         if (xp.parse_int("state", client_state)) continue;
-        if (xp.parse_double("final_cpu_time", cpu_time)) continue;
-        if (xp.parse_double("final_elapsed_time", elapsed_time)) continue;
+        if (xp.parse_double("final_cpu_time", cpu_time)) {
+            if (!boinc_is_finite(cpu_time)) {
+                cpu_time = 0;
+            }
+            continue;
+        }
+        if (xp.parse_double("final_elapsed_time", elapsed_time)) {
+            if (!boinc_is_finite(elapsed_time)) {
+                elapsed_time = 0;
+            }
+            continue;
+        }
+        if (xp.parse_double("final_peak_working_set_size", peak_working_set_size)) {
+            if (!boinc_is_finite(peak_working_set_size)) {
+                peak_working_set_size = 0;
+            }
+            continue;
+        }
+        if (xp.parse_double("final_peak_swap_size", peak_swap_size)) {
+            if (!boinc_is_finite(peak_swap_size)) {
+                peak_swap_size = 0;
+            }
+            continue;
+        }
+        if (xp.parse_double("final_peak_disk_usage", peak_disk_usage)) {
+            if (!boinc_is_finite(peak_disk_usage)) {
+                peak_disk_usage = 0;
+            }
+            continue;
+        }
         if (xp.parse_int("exit_status", exit_status)) continue;
         if (xp.parse_int("app_version_num", app_version_num)) continue;
         if (xp.match_tag("file_info")) {
@@ -1217,6 +1248,11 @@ int HOST::parse(XML_PARSER& xp) {
         if (xp.parse_str("p_features", p_features, sizeof(p_features))) continue;
         if (xp.parse_str("virtualbox_version", virtualbox_version, sizeof(virtualbox_version))) continue;
         if (xp.parse_bool("p_vm_extensions_disabled", p_vm_extensions_disabled)) continue;
+        if (xp.match_tag("opencl_cpu_prop")) {
+            int retval = opencl_cpu_prop[num_opencl_cpu_platforms].parse(xp);
+            if (!retval) num_opencl_cpu_platforms++;
+            continue;
+        }
 
         // parse deprecated fields to avoid error messages
         //
@@ -1231,7 +1267,7 @@ int HOST::parse(XML_PARSER& xp) {
         if (xp.parse_string("accelerators", stemp)) continue;
 
 #if 1
-        // not sure where these fields belong in the above categories
+        // deprecated items
         //
         if (xp.parse_string("cpu_caps", stemp)) continue;
         if (xp.parse_string("cache_l1", stemp)) continue;
@@ -1338,6 +1374,7 @@ void GLOBAL_PREFS::defaults() {
 void GUI_URLS::init() {
     text = 0;
     read_file_malloc(config.project_path("gui_urls.xml"), text);
+    if (text) text = lf_terminate(text);
 }
 
 void GUI_URLS::get_gui_urls(USER& user, HOST& host, TEAM& team, char* buf, int len) {
@@ -1379,6 +1416,7 @@ void GUI_URLS::get_gui_urls(USER& user, HOST& host, TEAM& team, char* buf, int l
 void PROJECT_FILES::init() {
     text = 0;
     read_file_malloc(config.project_path("project_files.xml"), text);
+    if (text) text = lf_terminate(text);
 }
 
 void get_weak_auth(USER& user, char* buf) {
@@ -1458,6 +1496,16 @@ double capped_host_fpops() {
         return ssp->perf_info.host_fpops_95_percentile*1.1;
     }
     return x;
+}
+
+bool HOST::get_opencl_cpu_prop(const char* platform, OPENCL_CPU_PROP& ocp) {
+    for (int i=0; i<num_opencl_cpu_platforms; i++) {
+        OPENCL_CPU_PROP& p = opencl_cpu_prop[i];
+        if (strcmp(p.platform_vendor, platform)) continue;
+        ocp = p;
+        return true;
+    }
+    return false;
 }
 
 const char *BOINC_RCSID_ea659117b3 = "$Id$";

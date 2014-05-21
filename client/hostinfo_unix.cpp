@@ -1104,7 +1104,7 @@ kern_return_t SMCReadKey(UInt32 key, SMCBytes_t val) {
     inputStructure.key = key;
     inputStructure.data8 = SMC_CMD_READ_KEYINFO;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if 1   // Requires OS 10.5
     result = IOConnectCallStructMethod(conn,
         KERNEL_INDEX_SMC,
         &inputStructure,
@@ -1112,7 +1112,7 @@ kern_return_t SMCReadKey(UInt32 key, SMCBytes_t val) {
         &outputStructure,
         &structureOutputSize
     );
-#else
+#else   // Deprecated in OS 10.5
     result = IOConnectMethodStructureIStructureO(conn,
         KERNEL_INDEX_SMC,
         sizeof(inputStructure),
@@ -1128,7 +1128,7 @@ kern_return_t SMCReadKey(UInt32 key, SMCBytes_t val) {
     inputStructure.keyInfo.dataSize = outputStructure.keyInfo.dataSize;
     inputStructure.data8 = SMC_CMD_READ_BYTES;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if 1   // Requires OS 10.5
     result = IOConnectCallStructMethod(conn,
         KERNEL_INDEX_SMC,
         &inputStructure,
@@ -1136,7 +1136,7 @@ kern_return_t SMCReadKey(UInt32 key, SMCBytes_t val) {
         &outputStructure,
         &structureOutputSize
     );
-#else
+#else   // Deprecated in OS 10.5
     result = IOConnectMethodStructureIStructureO(conn,
         KERNEL_INDEX_SMC,
         sizeof(inputStructure),
@@ -1155,13 +1155,14 @@ kern_return_t SMCReadKey(UInt32 key, SMCBytes_t val) {
 }
 
 
-// Check up to 10 die temperatures (TC0D, TC1D, etc.) and 
-// 10 heatsink temperatures (TCAH, TCBH, etc.)
+// Check die temperatures (TC0D, TC1D, etc.) and 
+// heatsink temperatures (TCAH, TCBH, etc.)
 // Returns the highest current CPU temperature as degrees Celsius.
 // Returns zero if it fails (or on a PowerPC Mac).
-int get_max_cpu_temperature() {
+double get_max_cpu_temperature() {
     kern_return_t       result;
-    int                 maxTemp = 0, thisTemp, i;
+    double              maxTemp = 0, thisTemp;
+    int                 i;
     union tempKey {
         UInt32          word;
         char            bytes[4];
@@ -1178,33 +1179,44 @@ int get_max_cpu_temperature() {
         }
     }
 
-    for (i=0; i<20; ++i) {
+    for (i=0; i<36; ++i) {
         if (skip[i]) continue;
         if (i < 10) {
-            key.word = 'TC0D';
-            key.bytes[1] += i;          // TC0D, TC1D, TC2D, etc.
+            key.word = 'TC0D';          // Standard sensors
+            key.bytes[1] += i;          // TC0D, TC1D ... TC9D
+        } else if (i < 20){
+            key.word = 'TC0H';          // iMac and perhaps others
+            key.bytes[1] += (i - 10);   // TC0H, TC1H ... TC9H
+        } else if (i < 26){
+            key.word = 'TCAH';          // MacPro
+            key.bytes[1] += (i - 20);   // TCAH, TCBH ... TCFH
         } else {
-            key.word = 'TCAH';
-            key.bytes[1] += (i - 10);   // TCAH, TCBH, TCCH, etc.
+            key.word = 'TC0F';          // MacBookPro
+            key.bytes[1] += (i - 26);   // TC0F, TC1F ... TC9F
         }
+        
         result = SMCReadKey(key.word, val);
         if (result != kIOReturnSuccess) {
+        //printf("%c%c%c%c returned result %d\n", key.bytes[3], key.bytes[2], key.bytes[1], key.bytes[0], result);
             skip[i] = true;
             continue;
         }
         
         if (val[0] < 1) {
+        //printf("%c%c%c%c returned val[0] = %d\n", key.bytes[3], key.bytes[2], key.bytes[1], key.bytes[0], (int)val[0]);
             skip[i] = true;
             continue;
         }
         
-        thisTemp = val[0];
-        if (val[1] & 0x80) ++thisTemp;
+        thisTemp = (double)val[0];
+        thisTemp += ((double)val[1]) / 256;
+        //printf("%c%c%c%c returned temperature = %f\n", key.bytes[3], key.bytes[2], key.bytes[1], key.bytes[0], thisTemp);
         if (thisTemp > maxTemp) {
             maxTemp = thisTemp;
         }
     }
-    
+
+    //printf("max temperature = %f\n", maxTemp);
     return maxTemp;
 }
 
@@ -1234,37 +1246,14 @@ int HOST_INFO::get_virtualbox_version() {
     char *newlinePtr;
     FILE* fd;
 
-#if LINUX_LIKE_SYSTEM
     safe_strcpy(path, "/usr/bin/VBoxManage");
-#elif defined( __APPLE__)
-    FSRef theFSRef;
-    OSStatus status = noErr;
-
-    // First try to locate the VirtualBox application by Bundle ID and Creator Code
-    status = LSFindApplicationForInfo(
-        'VBOX', CFSTR("org.virtualbox.app.VirtualBox"), NULL, &theFSRef, NULL
-    );
-    if (status == noErr) {
-        status = FSRefMakePath(&theFSRef, (unsigned char *)path, sizeof(path));
-    }
-    // If that failed, try its default location
-    if (status != noErr) {
-        strcpy(path, "/Applications/VirtualBox.app");
-    }
-#endif
 
     if (boinc_file_exists(path)) {
-#if LINUX_LIKE_SYSTEM
         if (access(path, X_OK)) {
             return 0;
         }
         safe_strcpy(cmd, path);
         safe_strcat(cmd, " --version");
-#elif defined( __APPLE__)
-        safe_strcpy(cmd, "defaults read ");
-        safe_strcat(cmd, path);
-        safe_strcat(cmd, "/Contents/Info CFBundleShortVersionString");
-#endif
         fd = popen(cmd, "r");
         if (fd) {
             if (fgets(virtualbox_version, sizeof(virtualbox_version), fd)) {
@@ -1509,7 +1498,7 @@ int HOST_INFO::get_host_info() {
     // http://developer.apple.com/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html says:
     //    Unlike most UNIX-based operating systems, Mac OS X does not use a 
     //    preallocated swap partition for virtual memory. Instead, it uses all
-    //    of the available space on the machineÕs boot partition.
+    //    of the available space on the machine's boot partition.
     struct statfs fs_info;
 
     statfs(".", &fs_info);
@@ -1756,8 +1745,6 @@ bool HOST_INFO::users_idle(
     bool check_all_logins, double idle_time_to_run, double *actual_idle_time
 ) {
     static bool     error_posted = false;
-    static long     OSVersionInfo = 0;
-    OSStatus        err = noErr;
     double          idleTime = 0;
     double          idleTimeFromCG = 0;
     io_service_t    service;
@@ -1772,9 +1759,7 @@ bool HOST_INFO::users_idle(
     
     if (!triedToLoadNXIdleTime) {
         triedToLoadNXIdleTime = true;
-        err = Gestalt(gestaltSystemVersion, &OSVersionInfo);
-        if (err) OSVersionInfo = 0;
-        
+
         IOKitlib = dlopen ("/System/Library/Frameworks/IOKit.framework/IOKit", RTLD_NOW );
         if (IOKitlib) {
             myNxIdleTimeProc = (nxIdleTimeProc)dlsym(IOKitlib, "NXIdleTime");
@@ -1883,73 +1868,86 @@ bool interrupts_idle(time_t t) {
 
 #if HAVE_XSS
 // Ask the X server for user idle time (using XScreenSaver API)
-// Returns true if the idle_treshold is smaller than the
-// idle time of the user (means: true = user is idle)
-bool xss_idle(long idle_treshold) {
+// Return true if the idle time exceeds idle_threshold.
+//
+bool xss_idle(long idle_threshold) {
     static XScreenSaverInfo* xssInfo = NULL;
     static Display* disp = NULL;
+    static bool error = false;
+        // some X call failed - always return not idle
     
+    if (error) return false;
+
     long idle_time = 0;
     
-    if(disp != NULL) {
-        XScreenSaverQueryInfo(disp, DefaultRootWindow(disp), xssInfo);
-
-        idle_time = xssInfo->idle;
-
-#if HAVE_DPMS
-        // XIdleTime Detection
-        // See header for location and copywrites.
-        //
-        int dummy;
-        CARD16 standby, suspend, off;
-        CARD16 state;
-        BOOL onoff;
-
-        if (DPMSQueryExtension(disp, &dummy, &dummy)) {
-            if (DPMSCapable(disp)) {
-                DPMSGetTimeouts(disp, &standby, &suspend, &off);
-                DPMSInfo(disp, &state, &onoff);
-
-                if (onoff) {
-                    switch (state) {
-                      case DPMSModeStandby:
-                          /* this check is a littlebit paranoid, but be sure */
-                          if (idle_time < (unsigned) (standby * 1000)) {
-                              idle_time += (standby * 1000);
-                          }
-                          break;
-                      case DPMSModeSuspend:
-                          if (idle_time < (unsigned) ((suspend + standby) * 1000)) {
-                              idle_time += ((suspend + standby) * 1000);
-                          }
-                          break;
-                      case DPMSModeOff:
-                          if (idle_time < (unsigned) ((off + suspend + standby) * 1000)) {
-                              idle_time += ((off + suspend + standby) * 1000);
-                          }
-                          break;
-                      case DPMSModeOn:
-                        default:
-                          break;
-                    }
-                }
-            } 
-        }
-#endif
-
-        // convert from milliseconds to seconds
-        idle_time = idle_time / 1000;
-
-    } else {
+    if (disp == NULL) {
         disp = XOpenDisplay(NULL);
         // XOpenDisplay may return NULL if there is no running X
         // or DISPLAY points to wrong/invalid display
-        if(disp != NULL) {
-            xssInfo = XScreenSaverAllocInfo();
+        //
+        if (disp == NULL) {
+            error = true;
+            return false;
+        }
+        int event_base_return, error_base_return;
+        xssInfo = XScreenSaverAllocInfo();
+        if (!XScreenSaverQueryExtension(
+            disp, &event_base_return, &error_base_return
+        )){
+            error = true;
+            return false;
         }
     }
 
-    return idle_treshold < idle_time;
+    XScreenSaverQueryInfo(disp, DefaultRootWindow(disp), xssInfo);
+    idle_time = xssInfo->idle;
+
+#if HAVE_DPMS
+    // XIdleTime Detection
+    // See header for location and copywrites.
+    //
+    int dummy;
+    CARD16 standby, suspend, off;
+    CARD16 state;
+    BOOL onoff;
+
+    if (DPMSQueryExtension(disp, &dummy, &dummy)) {
+        if (DPMSCapable(disp)) {
+            DPMSGetTimeouts(disp, &standby, &suspend, &off);
+            DPMSInfo(disp, &state, &onoff);
+
+            if (onoff) {
+                switch (state) {
+                case DPMSModeStandby:
+                    // this check is a littlebit paranoid, but be sure
+                    if (idle_time < (unsigned) (standby * 1000)) {
+                        idle_time += (standby * 1000);
+                    }
+                    break;
+                case DPMSModeSuspend:
+                    if (idle_time < (unsigned) ((suspend + standby) * 1000)) {
+                        idle_time += ((suspend + standby) * 1000);
+                    }
+                    break;
+                case DPMSModeOff:
+                    if (idle_time < (unsigned) ((off + suspend + standby) * 1000)) {
+                        idle_time += ((off + suspend + standby) * 1000);
+                    }
+                    break;
+                case DPMSModeOn:
+                default:
+                    break;
+                }
+            }
+        } 
+    }
+#endif
+
+    // convert from milliseconds to seconds
+    //
+    idle_time = idle_time / 1000;
+
+    return idle_threshold < idle_time;
 }
 #endif // HAVE_XSS
 #endif // LINUX_LIKE_SYSTEM

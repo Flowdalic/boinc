@@ -101,11 +101,12 @@ void log_message_error(const char* msg) {
     char evt_msg[2048];
     char* time_string = time_to_string(dtime());
 #ifdef _WIN32
+    char buf[1024];
     snprintf(evt_msg, sizeof(evt_msg),
         "%s %s\n"
         "GLE: %s\n",
         time_string, msg,
-        windows_format_error_string(GetLastError(), evt_msg, (sizeof(evt_msg)-((int)strlen(msg)+7)))
+        windows_format_error_string(GetLastError(), buf, sizeof(buf))
     );
 #else
     snprintf(evt_msg, sizeof(evt_msg),
@@ -178,12 +179,12 @@ static void init_core_client(int argc, char** argv) {
     setbuf(stdout, 0);
     setbuf(stderr, 0);
 
-    config.defaults();
+    cc_config.defaults();
     gstate.parse_cmdline(argc, argv);
     gstate.now = dtime();
 
 #ifdef _WIN32
-    if (!config.allow_multiple_clients) {
+    if (!cc_config.allow_multiple_clients) {
         chdir_to_data_dir();
     }
 #endif
@@ -282,7 +283,7 @@ static void do_gpu_detection(int argc, char** argv) {
 static int initialize() {
     int retval;
 
-    if (!config.allow_multiple_clients) {
+    if (!cc_config.allow_multiple_clients) {
         retval = wait_client_mutex(".", 10);
         if (retval) {
             log_message_error("Another instance of BOINC is running.");
@@ -371,7 +372,7 @@ int boinc_main_loop() {
             break;
         }
         if (gstate.requested_exit) {
-            if (config.abort_jobs_on_exit) {
+            if (cc_config.abort_jobs_on_exit) {
                 if (!gstate.in_abort_sequence) {
                     msg_printf(NULL, MSG_INFO,
                         "Exit requested; starting abort sequence"
@@ -379,7 +380,7 @@ int boinc_main_loop() {
                     gstate.start_abort_sequence();
                 }
             } else {
-                msg_printf(NULL, MSG_INFO, "Exit requested by user");
+                msg_printf(NULL, MSG_INFO, "Exiting");
                 break;
             }
         }
