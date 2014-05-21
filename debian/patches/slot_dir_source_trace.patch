@@ -1,8 +1,6 @@
-Index: boinc/client/app.cpp
-===================================================================
---- boinc.orig/client/app.cpp
-+++ boinc/client/app.cpp
-@@ -438,8 +438,8 @@
+--- a/client/app.cpp
++++ b/client/app.cpp
+@@ -471,8 +471,8 @@
      char new_path[MAXPATHLEN], old_path[MAXPATHLEN];
      int retval;
  
@@ -13,7 +11,7 @@ Index: boinc/client/app.cpp
          "%s/trickle_up_%s_%d.xml",
          result->project->project_dir(), result->name, (int)time(0)
      );
-@@ -474,7 +474,7 @@
+@@ -510,7 +510,7 @@
      return 0;
  }
  
@@ -22,7 +20,7 @@ Index: boinc/client/app.cpp
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
          if (active_tasks[i]->slot == slot) {
-@@ -484,7 +484,7 @@
+@@ -520,7 +520,7 @@
      return false;
  }
  
@@ -31,7 +29,7 @@ Index: boinc/client/app.cpp
      char path[MAXPATHLEN];
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
-@@ -535,7 +535,7 @@
+@@ -571,7 +571,7 @@
      return 0;
  }
  
@@ -40,7 +38,7 @@ Index: boinc/client/app.cpp
      unsigned int i;
      for (i=0; i<active_tasks.size(); i++) {
          if (active_tasks[i]->slot == slot) return true;
-@@ -656,7 +656,7 @@
+@@ -700,7 +700,7 @@
  #endif
  
  int ACTIVE_TASK::parse(XML_PARSER& xp) {
@@ -49,10 +47,8 @@ Index: boinc/client/app.cpp
      int n, dummy;
      unsigned int i;
      PROJECT* project=0;
-Index: boinc/client/app.h
-===================================================================
---- boinc.orig/client/app.h
-+++ boinc/client/app.h
+--- a/client/app.h
++++ b/client/app.h
 @@ -48,6 +48,7 @@
  typedef int PROCESS_ID;
  
@@ -61,16 +57,16 @@ Index: boinc/client/app.h
      // The stderr output of an application is truncated to this length
      // before sending to server,
      // to protect against apps that write unbounded amounts.
-@@ -112,7 +113,7 @@
+@@ -124,7 +125,7 @@
      double bytes_sent;
-         // reported by the app if it does network I/O
+         // bytes in all episodes
      double bytes_received;
 -    char slot_dir[256];
 +    char slot_dir[SLOT_DIR_LEN];
          // directory where process runs (relative)
      char slot_path[MAXPATHLEN];
          // same, absolute
-@@ -153,8 +154,8 @@
+@@ -165,8 +166,8 @@
          // but not descendants of the main process
          // (e.g. VMs created by vboxwrapper)
          // These are communicated via the app_status message channel
@@ -81,7 +77,7 @@ Index: boinc/client/app.h
      ASYNC_COPY* async_copy;
      double finish_file_time;
          // time when we saw finish file in slot dir.
-@@ -290,8 +291,8 @@
+@@ -310,8 +311,8 @@
      bool check_app_exited();
      bool check_rsc_limits_exceeded();
      bool check_quit_timeout_exceeded();
@@ -92,7 +88,7 @@ Index: boinc/client/app.h
      void send_heartbeats();
      void send_trickle_downs();
      void report_overdue();
-@@ -300,7 +301,7 @@
+@@ -320,7 +321,7 @@
      bool want_network();    // does any task want network?
      void network_available();   // notify tasks that network is available
      void free_mem();
@@ -101,10 +97,8 @@ Index: boinc/client/app.h
      void get_memory_usage();
  
      void process_control_poll();
-Index: boinc/lib/filesys.cpp
-===================================================================
---- boinc.orig/lib/filesys.cpp
-+++ boinc/lib/filesys.cpp
+--- a/lib/filesys.cpp
++++ b/lib/filesys.cpp
 @@ -86,7 +86,7 @@
  
  // routines for enumerating the entries in a directory
@@ -326,10 +320,8 @@ Index: boinc/lib/filesys.cpp
  #ifdef STATFS
      struct STATFS fs_info;
  
-Index: boinc/lib/filesys.h
-===================================================================
---- boinc.orig/lib/filesys.h
-+++ boinc/lib/filesys.h
+--- a/lib/filesys.h
++++ b/lib/filesys.h
 @@ -43,30 +43,30 @@
  #ifdef __cplusplus
  extern "C" {

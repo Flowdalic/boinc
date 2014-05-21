@@ -1,8 +1,6 @@
-Index: boinc/api/boinc_api.cpp
-===================================================================
---- boinc.orig/api/boinc_api.cpp
-+++ boinc/api/boinc_api.cpp
-@@ -356,7 +356,7 @@
+--- a/api/boinc_api.cpp
++++ b/api/boinc_api.cpp
+@@ -369,7 +369,7 @@
  
      if (standalone) return true;
  
@@ -11,7 +9,7 @@ Index: boinc/api/boinc_api.cpp
          "<current_cpu_time>%e</current_cpu_time>\n"
          "<checkpoint_cpu_time>%e</checkpoint_cpu_time>\n",
          cpu_t, cp_cpu_t
-@@ -629,6 +629,10 @@
+@@ -645,6 +645,10 @@
  }
  
  int boinc_get_status(BOINC_STATUS *s) {
@@ -22,7 +20,7 @@ Index: boinc/api/boinc_api.cpp
      s->no_heartbeat = boinc_status.no_heartbeat;
      s->suspended = boinc_status.suspended;
      s->quit_request = boinc_status.quit_request;
-@@ -804,7 +808,7 @@
+@@ -820,7 +824,7 @@
  int boinc_parse_init_data_file() {
      FILE* f;
      int retval;
@@ -31,7 +29,7 @@ Index: boinc/api/boinc_api.cpp
  
      if (aid.project_preferences) {
          free(aid.project_preferences);
-@@ -854,15 +858,15 @@
+@@ -872,15 +876,15 @@
      );
      if (other_pid) {
          sprintf(buf, "<other_pid>%d</other_pid>\n", other_pid);
@@ -50,7 +48,7 @@ Index: boinc/api/boinc_api.cpp
      }
      if (app_client_shm->shm->app_status.send_msg(msg_buf)) {
          return 0;
-@@ -957,7 +961,7 @@
+@@ -975,7 +979,7 @@
  }
  
  static void handle_upload_file_status() {
@@ -59,7 +57,7 @@ Index: boinc/api/boinc_api.cpp
      std::string filename;
      int status;
  
-@@ -1170,7 +1174,7 @@
+@@ -1190,7 +1194,7 @@
      // send graphics-related messages
      //
      if (send_web_graphics_url && !app_client_shm->shm->graphics_reply.has_msg()) {
@@ -68,7 +66,7 @@ Index: boinc/api/boinc_api.cpp
              "<web_graphics_url>%s</web_graphics_url>",
              web_graphics_url
          );
-@@ -1178,7 +1182,7 @@
+@@ -1198,7 +1202,7 @@
          send_web_graphics_url = false;
      }
      if (send_remote_desktop_addr && !app_client_shm->shm->graphics_reply.has_msg()) {
@@ -77,7 +75,7 @@ Index: boinc/api/boinc_api.cpp
              "<remote_desktop_addr>%s</remote_desktop_addr>",
              remote_desktop_addr
          );
-@@ -1410,7 +1414,7 @@
+@@ -1442,7 +1446,7 @@
          DirScanner dirscan(path);
          while (dirscan.scan(filename)) {
              if (strstr(filename.c_str(), "trickle_down")) {

@@ -1,8 +1,6 @@
-Index: boinc/client/check_security.cpp
-===================================================================
---- boinc.orig/client/check_security.cpp
-+++ boinc/client/check_security.cpp
-@@ -40,9 +40,9 @@
+--- a/client/check_security.cpp
++++ b/client/check_security.cpp
+@@ -35,9 +35,9 @@
  #endif
  
  static int CheckNestedDirectories(
@@ -14,7 +12,7 @@ Index: boinc/client/check_security.cpp
      int len
  );
  
-@@ -505,9 +505,9 @@
+@@ -491,9 +491,9 @@
  
  
  static int CheckNestedDirectories(
@@ -26,7 +24,7 @@ Index: boinc/client/check_security.cpp
  ) {
      int             isDirectory;
      char            full_path[MAXPATHLEN];
-@@ -517,6 +517,7 @@
+@@ -503,6 +503,7 @@
      dirent          *dp;
      static int      errShown = 0;
  
@@ -34,7 +32,7 @@ Index: boinc/client/check_security.cpp
      dirp = opendir(basepath);
      if (dirp == NULL) {
          // Ideally, all project-created subdirectories under project or slot 
-@@ -526,6 +527,7 @@
+@@ -512,6 +513,7 @@
          // the subdirectory to check them.
          strlcpy(full_path, basepath, sizeof(full_path));
          if ((depth > 1) && (errno == EACCES)) {
@@ -42,11 +40,9 @@ Index: boinc/client/check_security.cpp
              return 0;
          } else {
              retval = -1200;
-Index: boinc/client/cs_platforms.cpp
-===================================================================
---- boinc.orig/client/cs_platforms.cpp
-+++ boinc/client/cs_platforms.cpp
-@@ -45,6 +45,7 @@
+--- a/client/cs_platforms.cpp
++++ b/client/cs_platforms.cpp
+@@ -44,6 +44,7 @@
  #include <sys/sysctl.h>
  #endif
  
@@ -54,7 +50,7 @@ Index: boinc/client/cs_platforms.cpp
  #include "error_numbers.h"
  #include "filesys.h"
  #include "str_util.h"
-@@ -178,9 +179,17 @@
+@@ -174,9 +175,17 @@
                  int i;
                  for (i=0; i < nlibdirs; i++) {
                      struct dirent *entry;

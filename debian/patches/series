@@ -53,7 +53,6 @@ client_app_maxpathlen.patch
 boinclib_shared.patch
 dynamic_libboinc.patch
 Missing_libSched.patch
-fix-add-exclusive-app.patch
 #fix-for-debian-bug-646583.patch
 disable_new_version_check.patch
 lib_cppcheck.patch
@@ -64,18 +63,10 @@ de.po.patch
 more_clang_warnings.patch
 #mmap_mem_only.patch
 add-ldflags.patch
-hurd-ftbfs.patch
-fixed-tools-permissions.patch
-fix-android-build.patch
-fix-file-perms.patch
-fix-italian-po.patch
 addressing_addional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
 file_upload_handler_in_sched_linking.patch
 disable_silent_rules.patch
 server_status_php.patch
 #db_interface_use.patch
-fix-lp-1274456.patch
-0001-Client-Unix-attempt-to-fix-freebsd-build-error.patch
 fix-747964.patch
-correctly-set-OBJCXX.patch

@@ -1,7 +1,5 @@
-Index: boinc/client/app.h
-===================================================================
---- boinc.orig/client/app.h
-+++ boinc/client/app.h
+--- a/client/app.h
++++ b/client/app.h
 @@ -48,7 +48,7 @@
  typedef int PROCESS_ID;
  
@@ -11,10 +9,8 @@ Index: boinc/client/app.h
      // The stderr output of an application is truncated to this length
      // before sending to server,
      // to protect against apps that write unbounded amounts.
-Index: boinc/client/file_names.cpp
-===================================================================
---- boinc.orig/client/file_names.cpp
-+++ boinc/client/file_names.cpp
+--- a/client/file_names.cpp
++++ b/client/file_names.cpp
 @@ -69,7 +69,7 @@
  //
  void get_pathname(FILE_INFO* fip, char* path, int len) {

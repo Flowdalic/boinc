@@ -1,10 +1,8 @@
-Index: boinc/samples/wrapper/Makefile
-===================================================================
---- boinc.orig/samples/wrapper/Makefile
-+++ boinc/samples/wrapper/Makefile
-@@ -37,4 +37,4 @@
+--- a/samples/wrapper/Makefile
++++ b/samples/wrapper/Makefile
+@@ -38,4 +38,4 @@
  	regexp_report.o
  
  wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(REGEXP_OBJS)
--	g++ $(CXXFLAGS) $(CPPFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a -pthread -lboinc_api -lboinc -lboinc_zip
-+	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a -pthread -lboinc_api -lboinc -lboinc_zip $(LDFLAGS)
+-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip $(LDFLAGS)

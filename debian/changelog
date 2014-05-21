@@ -1,3 +1,21 @@
+boinc (7.3.19+dfsg-1) experimental; urgency=low
+
+  * New upstream release, wx3.0 compatible.
+    - add libwxgtk-webview3.0-dev as B-D
+  * Removed patches addressed upstream:
+    - 0001-Client-Unix-attempt-to-fix-freebsd-build-error.patch
+    - correctly-set-OBJCXX.patch
+    - hurd-ftbfs.patch
+    - fixed-tools-permissions.patch
+    - fix-android-build.patch
+    - fix-file-perms.patch
+    - fix-italian-po.patch
+    - fix-lp-1274456.patch
+  * Removed fix-add-exclusive-app.patch, addressed in wx3.0 switch
+  * Tweak envargs patch, changing prototype.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 21 May 2014 16:49:07 +0200
+
 boinc (7.2.47+dfsg-3) UNRELEASED; urgency=medium
 
   * Add return values to envargs function (Closes: #747964)

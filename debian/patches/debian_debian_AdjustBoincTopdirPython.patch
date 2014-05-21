@@ -1,9 +1,7 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: Adjusted path for BOINC to server for python code
-Index: boinc/py/boinc_path_config.py.in
-===================================================================
---- boinc.orig/py/boinc_path_config.py.in
-+++ boinc/py/boinc_path_config.py.in
+--- a/py/boinc_path_config.py.in
++++ b/py/boinc_path_config.py.in
 @@ -8,5 +8,5 @@
  
  import sys, os

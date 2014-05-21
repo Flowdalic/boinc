@@ -1,7 +1,5 @@
-Index: boinc/lib/filesys.cpp
-===================================================================
---- boinc.orig/lib/filesys.cpp
-+++ boinc/lib/filesys.cpp
+--- a/lib/filesys.cpp
++++ b/lib/filesys.cpp
 @@ -585,9 +585,9 @@
      fclose(src);
      fclose(dst);
@@ -15,11 +13,9 @@ Index: boinc/lib/filesys.cpp
      return retval;
  #endif
  }
-Index: boinc/lib/diagnostics.cpp
-===================================================================
---- boinc.orig/lib/diagnostics.cpp
-+++ boinc/lib/diagnostics.cpp
-@@ -344,7 +344,7 @@
+--- a/lib/diagnostics.cpp
++++ b/lib/diagnostics.cpp
+@@ -385,7 +385,7 @@
  
      // Store various pieces of inforation for future use.
      if (flags & BOINC_DIAG_BOINCAPPLICATION) {
@@ -28,10 +24,8 @@ Index: boinc/lib/diagnostics.cpp
          char    proxy_address[256];
          int     proxy_port;
          MIOFILE mf;
-Index: boinc/client/sandbox.cpp
-===================================================================
---- boinc.orig/client/sandbox.cpp
-+++ boinc/client/sandbox.cpp
+--- a/client/sandbox.cpp
++++ b/client/sandbox.cpp
 @@ -207,7 +207,7 @@
          strcpy(filename, "");
          retval = dir_scan(filename, dirp, sizeof(filename));

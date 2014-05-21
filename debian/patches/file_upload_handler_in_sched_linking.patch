@@ -1,8 +1,6 @@
-Index: boinc/sched/Makefile.am
-===================================================================
---- boinc.orig/sched/Makefile.am
-+++ boinc/sched/Makefile.am
-@@ -256,7 +256,7 @@
+--- a/sched/Makefile.am
++++ b/sched/Makefile.am
+@@ -265,7 +265,7 @@
  update_stats_LDADD = $(SERVERLIBS)
  
  file_upload_handler_SOURCES = file_upload_handler.cpp
@@ -11,7 +9,7 @@ Index: boinc/sched/Makefile.am
  
  make_work_SOURCES = make_work.cpp
  make_work_LDADD = $(SERVERLIBS)
-@@ -298,7 +298,7 @@
+@@ -307,7 +307,7 @@
      sched_config.cpp \
      sched_msgs.cpp 
  fcgi_file_upload_handler_CPPFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)

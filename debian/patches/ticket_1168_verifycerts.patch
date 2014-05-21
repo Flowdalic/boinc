@@ -1,7 +1,5 @@
-Index: boinc/client/cs_files.cpp
-===================================================================
---- boinc.orig/client/cs_files.cpp
-+++ boinc/client/cs_files.cpp
+--- a/client/cs_files.cpp
++++ b/client/cs_files.cpp
 @@ -177,7 +177,9 @@
      //
      if (download_gzipped && !boinc_file_exists(pathname)) {
