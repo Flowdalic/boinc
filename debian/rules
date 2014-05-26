@@ -279,7 +279,7 @@ ifeq (,$(ENABLE_SERVER_TEST))
 	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 endif
-	$(MAKE)
+	dh_auto_build
 
 	# Generate binary message catalogs of the BOINC Manager.
 #	if [ -d locale ]; then \
