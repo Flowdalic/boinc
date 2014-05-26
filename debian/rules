@@ -173,9 +173,14 @@ $(shell sed 's/^@//' -i debian/control)
 # For debugging, these options are useful:
 #   --enable-debug
 #   --enable-wx-debug (need to install libwxbase2.8-dbg and libwxgtk2.8-dbg)
+#
+# The --libdir and --libexecdir is added to turn off
+# the debhelper multiarch feature.
 CFGFLAGS_boinc-client = \
   $(TYPE_FLAGS) \
   --prefix=/usr \
+  --libdir=/usr/lib \
+  --libexecdir=/usr/lib \
   $(ENABLE_CLIENT) \
   $(ENABLE_SERVER) \
   --disable-fcgi \
@@ -252,7 +257,7 @@ override_dh_auto_configure:
 	@echo
 	cp -f /usr/share/misc/config.guess config.guess
 	cp -f /usr/share/misc/config.sub config.sub
-	./configure $(CFGFLAGS_boinc-client)
+	dh_auto_configure -- $(CFGFLAGS_boinc-client)
 
 update-boinc-applinks.1: debian/manpages/update-boinc-applinks.xml
 	docbook2x-man debian/manpages/update-boinc-applinks.xml
