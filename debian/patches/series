@@ -10,10 +10,6 @@ upstream_sztaki_configureEval.patch
 generate_less.patch
 possible_size_type_error.patch
 debian_debian_AdjustBoincTopdirPython.patch
-#AddSomeConstToMakeClearMemoryIsNotAllocated.patch
-#AddingMoreConst.patch
-#evenMoreConst03.patch
-#andYetMorePatches04.patch
 #convinceDavid#cwd_handling.patch
 # --- A
 #convinceDavid# bug672328  MoreInformativeAppStartFailure.patch
