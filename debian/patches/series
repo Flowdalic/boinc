@@ -21,7 +21,6 @@ debian_debian_AdjustBoincTopdirPython.patch
 #convinceDavid# client_path_char_array_length.patch
 # --- Z --- Currently not applicable
 #Z#no_std_string.patch
-#debian/patches/nvidia_detect_experiments.patch
 some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
