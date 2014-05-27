@@ -147,16 +147,16 @@ $(shell cp debian/control.in debian/control)
 $(shell sed '/^#/d' -i debian/control)
 
 # check if we need to enable server packages, based on "exp" string in changelog
-ENABLE_EXPERIMENTAL_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
+ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
 
-ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
+ifeq (,$(ENABLE_SERVER_TEST))
 $(shell sed 's/^%//' -i debian/control)
 else
 $(shell sed '/^%/d' -i debian/control)
 endif
 
-ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control debian/control.in | grep -v boinc-server-maker)
-ifeq (,$(ENABLE_EXPERIMENTAL_TEST))
+#ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control debian/control.in | grep -v boinc-server-maker)
+ifeq (,$(ENABLE_SERVER_TEST))
 ENABLE_SERVER := --enable-server
 endif
 
@@ -279,11 +279,13 @@ override_dh_auto_build: update-boinc-applinks.1
 	@echo
 	# disable optimization in api/, for SETI to work
 	#$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
-ifeq (,$(ENABLE_SERVER_TEST))
+
+# we need to build zip because of the libboinc7 reference, until we split the dev packages or we move it in a new package
+#ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
 	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
-endif
+#endif
 	dh_auto_build
 
 	# Generate binary message catalogs of the BOINC Manager.
