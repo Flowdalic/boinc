@@ -15,7 +15,6 @@ debian_debian_AdjustBoincTopdirPython.patch
 #evenMoreConst03.patch
 #andYetMorePatches04.patch
 #convinceDavid#cwd_handling.patch
-parse_issues.patch
 # --- A
 #convinceDavid# bug672328  MoreInformativeAppStartFailure.patch
 #send to David#
