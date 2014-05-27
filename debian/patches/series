@@ -22,7 +22,6 @@ debian_debian_AdjustBoincTopdirPython.patch
 # --- Z --- Currently not applicable
 #Z#no_std_string.patch
 #either these 3
-#convinceDavid# nvidia_detect_buffers.patch
 #convinceDavid# nvidia_detect_bugs.patch
 #convinceDavid# nvidia_detect_optinal.patch
 #or this one
