@@ -26,8 +26,6 @@ debian_debian_AdjustBoincTopdirPython.patch
 #or this one
 #debian/patches/nvidia_detect_experiments.patch
 some_extra_clang_warnings.patch
-#tmpA# nvidia_direct_invocation.patch
-#tmpA# nvidia_direct_invocation_2.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
 more_maxpathlen.patch
