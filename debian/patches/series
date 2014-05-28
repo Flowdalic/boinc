@@ -55,3 +55,4 @@ disable_silent_rules.patch
 server_status_php.patch
 #db_interface_use.patch
 fix-747964.patch
+boinc-server-dynamic-libs.patch
