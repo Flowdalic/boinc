@@ -3,9 +3,9 @@ Bug-Debian: http://bugs.debian.org/747964
 Forwarded: <yes>
 Last-Update: <2014-05-13>
 
---- boinc-7.2.47+dfsg.orig/zip/zip/util.c
-+++ boinc-7.2.47+dfsg/zip/zip/util.c
-@@ -802,7 +802,7 @@ unsigned char *zmbsrchr(str, c)
+--- a/zip/zip/util.c
++++ b/zip/zip/util.c
+@@ -802,7 +802,7 @@
   |     to make the action of the code less obscure.
   ****************************************************************/
  
@@ -14,7 +14,7 @@ Last-Update: <2014-05-13>
      int *Pargc;
      char ***Pargv;
      char *envstr;
-@@ -825,7 +825,7 @@ void envargs(Pargc, Pargv, envstr, envst
+@@ -825,7 +825,7 @@
              while (isspace((uch)*envptr))
                  envptr++;
      if (envptr == NULL || *envptr == '\0')
@@ -23,7 +23,7 @@ Last-Update: <2014-05-13>
  
      /* count the args so we can allocate room for them */
      argc = count_args(envptr);
-@@ -902,6 +902,7 @@ void envargs(Pargc, Pargv, envstr, envst
+@@ -902,6 +902,7 @@
      /* save the values and return */
      *Pargv = argvect;
      *Pargc = argc;
@@ -31,11 +31,9 @@ Last-Update: <2014-05-13>
  }
  
  local int count_args(s)
-diff --git a/zip/zip/zip.h b/zip/zip/zip.h
-index ba03160..cc01701 100644
 --- a/zip/zip/zip.h
 +++ b/zip/zip/zip.h
-@@ -811,7 +811,7 @@ int  namecmp       OF((ZCONST char *string1, ZCONST char *string2));
+@@ -811,7 +811,7 @@
  
  zvoid far **search OF((ZCONST zvoid *, ZCONST zvoid far **, extent,
                         int (*)(ZCONST zvoid *, ZCONST zvoid far *)));
@@ -44,4 +42,3 @@ index ba03160..cc01701 100644
  void expand_args   OF((int *, char ***));
  
  int  is_text_buf   OF((ZCONST char *buf_ptr, unsigned buf_size));
-
