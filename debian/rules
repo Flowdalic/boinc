@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+DEB_BUILD_OPTIONS=parallel=1
+
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
@@ -184,6 +186,7 @@ CFGFLAGS_boinc-client = \
   $(ENABLE_CLIENT) \
   $(ENABLE_SERVER) \
   --disable-fcgi \
+  --enable-dependency-tracking \
   --enable-libraries \
   --enable-unicode \
   --enable-shared \
