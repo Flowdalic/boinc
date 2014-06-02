@@ -1,3 +1,9 @@
+boinc (7.3.19+dfsg-3exp1) experimental; urgency=medium
+
+  * Upload to experimental
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 02 Jun 2014 22:53:22 +0200
+
 boinc (7.3.19+dfsg-3) unstable; urgency=medium
 
   * Upload to unstable, with disabled dependency tracking
