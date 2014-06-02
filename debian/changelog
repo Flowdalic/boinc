@@ -1,3 +1,10 @@
+boinc (7.3.19+dfsg-3) unstable; urgency=medium
+
+  * Upload to unstable, with disabled dependency tracking
+    again, and disabled parallel builds.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 02 Jun 2014 22:42:40 +0200
+
 boinc (7.3.19+dfsg-2exp2) experimental; urgency=low
 
   * Trying to fix FTBFS by disabling parallel builds.

@@ -1,7 +1,5 @@
 #!/usr/bin/make -f
 
-DEB_BUILD_OPTIONS=parallel=1
-
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
@@ -186,7 +184,6 @@ CFGFLAGS_boinc-client = \
   $(ENABLE_CLIENT) \
   $(ENABLE_SERVER) \
   --disable-fcgi \
-  --enable-dependency-tracking \
   --enable-libraries \
   --enable-unicode \
   --enable-shared \
@@ -201,7 +198,7 @@ CFGFLAGS_boinc-client = \
 # Default rule
 
 %:
-	dh $@ --parallel --with python2
+	dh $@ --with python2
 #	if [ ! -f debian/control -o debian/control.in -nt debian/control ]; then \
 		echo "Generating debian/control file from debian/control.in" ; \
 		( \
