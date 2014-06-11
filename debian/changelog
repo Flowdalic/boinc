@@ -1,3 +1,9 @@
+boinc (7.3.19+dfsg-3exp2) UNRELEASED; urgency=medium
+
+  * d/r: Removing some buildflags includes.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 11 Jun 2014 12:25:03 +0200
+
 boinc (7.3.19+dfsg-3exp1) experimental; urgency=medium
 
   * Upload to experimental
