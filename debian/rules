@@ -146,6 +146,7 @@ $(shell sed '/^#/d' -i debian/control)
 
 # check if we need to enable server packages, based on "exp" string in changelog
 ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
+#ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control debian/control.in | grep -v boinc-server-maker)
 
 ifeq (,$(ENABLE_SERVER_TEST))
 $(shell sed 's/^%//' -i debian/control)
@@ -153,7 +154,6 @@ else
 $(shell sed '/^%/d' -i debian/control)
 endif
 
-#ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control debian/control.in | grep -v boinc-server-maker)
 ifeq (,$(ENABLE_SERVER_TEST))
 ENABLE_SERVER := --enable-server
 endif
