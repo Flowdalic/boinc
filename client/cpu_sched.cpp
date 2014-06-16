@@ -167,26 +167,22 @@ struct PROC_RESOURCES {
 
     // we've decided to add this to the runnable list; update bookkeeping
     //
-    void schedule(RESULT* rp, ACTIVE_TASK* atp, const char* description) {
+    void schedule(RESULT* rp, const char* description) {
         if (log_flags.cpu_sched_debug) {
             msg_printf(rp->project, MSG_INFO,
-                "[cpu_sched_debug] scheduling %s (%s) (prio %f)",
+                "[cpu_sched_debug] add to run list: %s (%s) (prio %f)",
                 rp->name, description,
                 rp->project->sched_priority
             );
         }
         if (rp->uses_coprocs()) {
-            // if this job is currently running,
-            // and the resource type has exclusions,
-            // don't reserve instances;
-            // This allows more jobs in the run list
-            // and avoids a starvation case
+            // if the resource type has exclusions, don't reserve instances.
+            // It means that the run list will include all jobs
+            // for that resource type.
+            // Inefficient, but necessary to avoid starvation cases.
             //
             int rt = rp->avp->gpu_usage.rsc_type;
-            bool dont_reserve =
-                rsc_work_fetch[rt].has_exclusions
-                && atp != NULL
-                && atp->is_gpu_task_running();
+            bool dont_reserve = rsc_work_fetch[rt].has_exclusions;
             if (!dont_reserve) {
                 reserve_coprocs(*rp);
             }
@@ -820,7 +816,7 @@ void add_coproc_jobs(
         rp->already_selected = true;
         atp = gstate.lookup_active_task_by_result(rp);
         if (!proc_rsc.can_schedule(rp, atp)) continue;
-        proc_rsc.schedule(rp, atp, "coprocessor job, EDF");
+        proc_rsc.schedule(rp, "coprocessor job, EDF");
         rp->project->rsc_pwf[rsc_type].deadlines_missed_copy--;
         rp->edf_scheduled = true;
         run_list.push_back(rp);
@@ -837,7 +833,7 @@ void add_coproc_jobs(
         rp->already_selected = true;
         atp = gstate.lookup_active_task_by_result(rp);
         if (!proc_rsc.can_schedule(rp, atp)) continue;
-        proc_rsc.schedule(rp, atp, "coprocessor job, FIFO");
+        proc_rsc.schedule(rp, "coprocessor job, FIFO");
         run_list.push_back(rp);
     }
 }
@@ -921,7 +917,7 @@ void CLIENT_STATE::make_run_list(vector<RESULT*>& run_list) {
         rp->already_selected = true;
         atp = lookup_active_task_by_result(rp);
         if (!proc_rsc.can_schedule(rp, atp)) continue;
-        proc_rsc.schedule(rp, atp, "CPU job, EDF");
+        proc_rsc.schedule(rp, "CPU job, EDF");
         rp->project->rsc_pwf[0].deadlines_missed_copy--;
         rp->edf_scheduled = true;
         run_list.push_back(rp);
@@ -938,7 +934,7 @@ void CLIENT_STATE::make_run_list(vector<RESULT*>& run_list) {
         if (!rp) break;
         atp = lookup_active_task_by_result(rp);
         if (!proc_rsc.can_schedule(rp, atp)) continue;
-        proc_rsc.schedule(rp, atp, "CPU job, priority order");
+        proc_rsc.schedule(rp, "CPU job, priority order");
         run_list.push_back(rp);
     }
 

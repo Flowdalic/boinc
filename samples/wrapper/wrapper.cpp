@@ -21,7 +21,7 @@
 // Handles:
 // - suspend/resume/quit/abort
 // - reporting CPU time
-// - loss of heartbeat from core client
+// - loss of heartbeat from client
 // - checkpointing
 //      (at the level of task; or potentially within task)
 //
@@ -52,6 +52,7 @@
 #include <unistd.h>
 #endif
 
+#include "version.h"
 #include "boinc_api.h"
 #include "boinc_zip.h"
 #include "diagnostics.h"
@@ -83,6 +84,7 @@ inline void debug_msg(const char* x) {
 using std::vector;
 using std::string;
 int nthreads = 1;
+int gpu_device_num = -1;
 
 struct TASK {
     string application;
@@ -232,6 +234,7 @@ void str_replace_all(char* buf, const char* s1, const char* s2) {
 // macro-substitute strings from job.xml
 // $PROJECT_DIR -> project directory
 // $NTHREADS --> --nthreads arg if present, else 1
+// $GPU_DEVICE_NUM --> gpu_device_num from init_data.xml, or --device arg
 //
 void macro_substitute(char* buf) {
     const char* pd = strlen(aid.project_dir)?aid.project_dir:".";
@@ -239,6 +242,14 @@ void macro_substitute(char* buf) {
     char nt[256];
     sprintf(nt, "%d", nthreads);
     str_replace_all(buf, "$NTHREADS", nt);
+
+    if (aid.gpu_device_num >= 0) {
+        gpu_device_num = aid.gpu_device_num;
+    }
+    if (gpu_device_num >= 0) {
+        sprintf(nt, "%d", gpu_device_num);
+        str_replace_all(buf, "$GPU_DEVICE_NUM", nt);
+    }
 }
 
 // make a list of files in the slot directory,
@@ -958,6 +969,8 @@ int main(int argc, char** argv) {
     for (int j=1; j<argc; j++) {
         if (!strcmp(argv[j], "--nthreads")) {
             nthreads = atoi(argv[++j]);
+        } else if (!strcmp(argv[j], "--device")) {
+            gpu_device_num = atoi(argv[++j]);
         }
     }
 
@@ -993,8 +1006,11 @@ int main(int argc, char** argv) {
 
     boinc_init_options(&options);
     fprintf(stderr,
-        "%s wrapper: starting\n",
-        boinc_msg_prefix(buf, sizeof(buf))
+        "%s wrapper (%d.%d.%d): starting\n",
+        boinc_msg_prefix(buf, sizeof(buf)),
+        BOINC_MAJOR_VERSION,
+        BOINC_MINOR_VERSION,
+        WRAPPER_RELEASE
     );
 
     boinc_get_init_data(aid);

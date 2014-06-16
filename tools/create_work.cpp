@@ -158,6 +158,15 @@ void JOB_DESC::parse_cmdline(int argc, char** argv) {
     }
 }
 
+void check_assign_id(int x) {
+    if (x == 0) {
+        fprintf(stderr,
+            "you must specify a nonzero database ID for assigning jobs to users, teams, or hosts.\n"
+        );
+        exit(1);
+    }
+}
+
 int main(int argc, char** argv) {
     DB_APP app;
     int retval;
@@ -235,23 +244,28 @@ int main(int argc, char** argv) {
             jd.assign_type = ASSIGN_USER;
             jd.assign_multi = true;
             jd.assign_id = atoi(argv[++i]);
+            check_assign_id(jd.assign_id);
         } else if (arg(argv, i, "broadcast_team")) {
             jd.assign_flag = true;
             jd.assign_type = ASSIGN_TEAM;
             jd.assign_multi = true;
             jd.assign_id = atoi(argv[++i]);
+            check_assign_id(jd.assign_id);
         } else if (arg(argv, i, "target_host")) {
             jd.assign_flag = true;
             jd.assign_type = ASSIGN_HOST;
             jd.assign_id = atoi(argv[++i]);
+            check_assign_id(jd.assign_id);
         } else if (arg(argv, i, "target_user")) {
             jd.assign_flag = true;
             jd.assign_type = ASSIGN_USER;
             jd.assign_id = atoi(argv[++i]);
+            check_assign_id(jd.assign_id);
         } else if (arg(argv, i, "target_team")) {
             jd.assign_flag = true;
             jd.assign_type = ASSIGN_TEAM;
             jd.assign_id = atoi(argv[++i]);
+            check_assign_id(jd.assign_id);
         } else if (arg(argv, i, "help")) {
             usage();
             exit(0);
@@ -420,7 +434,9 @@ int main(int argc, char** argv) {
 }
 
 void JOB_DESC::create() {
-    char buf[256];
+    if (assign_flag) {
+        wu.transitioner_flags = assign_multi?TRANSITION_NONE:TRANSITION_NO_NEW_RESULTS;
+    }
     int retval = create_work2(
         wu,
         wu_template,
@@ -448,14 +464,6 @@ void JOB_DESC::create() {
             fprintf(stderr,
                 "assignment.insert() failed: %s\n", boincerror(retval)
             );
-            exit(1);
-        }
-        sprintf(buf, "transitioner_flags=%d",
-            assign_multi?TRANSITION_NONE:TRANSITION_NO_NEW_RESULTS
-        );
-        retval = wu.update_field(buf);
-        if (retval) {
-            fprintf(stderr, "wu.update() failed: %s\n", boincerror(retval));
             exit(1);
         }
     }

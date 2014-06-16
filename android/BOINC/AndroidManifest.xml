@@ -20,8 +20,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.berkeley.boinc"
     android:installLocation="internalOnly"
-    android:versionCode="72"
-    android:versionName="7.3.19" > <!-- installation on SD card would break boot receiver -->
+    android:versionCode="76"
+    android:versionName="7.4.1" > <!-- installation on SD card would break boot receiver -->
 
 
     <!-- Add Google Play store metadata informing the store we can run on tablets and other large screen devices -->
@@ -138,7 +138,7 @@
                 <data android:path="edu.berkeley.boinc" android:scheme="package" />
             </intent-filter>
         </receiver>
-        <activity android:name=".ForwardDialog" android:theme="@android:style/Theme.Dialog">
+        <activity android:name=".BoincNotExclusiveDialog" android:theme="@android:style/Theme.Dialog">
         </activity>
     </application>
 
