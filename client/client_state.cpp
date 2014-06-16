@@ -1956,6 +1956,7 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
 // - delete all file infos
 // - delete account file
 // - delete project directory
+// - delete various per-project files
 //
 int CLIENT_STATE::detach_project(PROJECT* project) {
     vector<PROJECT*>::iterator project_iter;
@@ -2029,6 +2030,12 @@ int CLIENT_STATE::detach_project(PROJECT* project) {
             "Can't delete project directory: %s", boincerror(retval)
         );
     }
+
+    // remove miscellaneous per-project files
+    //
+    //job_log_filename(*project, path, sizeof(path));
+    //boinc_delete_file(path);
+    delete_project_notice_files(project);
 
     rss_feeds.update_feed_list();
 

@@ -134,6 +134,7 @@ struct APP_VERSION {
         // relative to that of the most efficient version
     double expavg_credit;
     double expavg_time;
+    bool beta;
 
     // the following used by scheduler, not in DB
     //
@@ -759,6 +760,36 @@ struct VDA_CHUNK_HOST {
         return (transfer_in_progress && !present_on_host);
     }
     void print_status(int level);
+};
+
+struct BADGE {
+    int id;
+    double create_time;
+    int type;
+    char name[256];
+    char title[256];
+    char description[256];
+    char image_url[256];
+    char level[256];
+    char tags[256];
+    char sql_rule[256];
+    void clear();
+};
+
+struct BADGE_USER {
+    int badge_id;
+    int user_id;
+    double create_time;
+    double reassign_time;
+    void clear();
+};
+
+struct BADGE_TEAM {
+    int badge_id;
+    int team_id;
+    double create_time;
+    double reassign_time;
+    void clear();
 };
 
 #endif

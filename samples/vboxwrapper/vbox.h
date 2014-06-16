@@ -46,8 +46,18 @@
 // raw floppy drive device
 class FloppyIO;
 
+// represents a VirtualBox Guest Log Timestamp
+class VBOX_TIMESTAMP {
+public:
+    int hours;
+    int minutes;
+    int seconds;
+    int milliseconds;
+};
+
 // represents a VirtualBox VM
-struct VBOX_VM {
+class VBOX_VM {
+public:
     VBOX_VM();
     ~VBOX_VM();
 
@@ -63,6 +73,8 @@ struct VBOX_VM {
 
     // last polled copy of the log file
     std::string vm_log;
+    // last VM guest log entry detected
+    VBOX_TIMESTAMP vm_log_timestamp;
     // unique name for the VM
     std::string vm_master_name;
     // unique description for the VM
@@ -86,6 +98,10 @@ struct VBOX_VM {
     // maximum amount of wall-clock time this VM is allowed to run before
     // considering itself done.
     double job_duration;
+    // amount of CPU time consumed by the VM (note: use get_vm_cpu_time())
+    double current_cpu_time;
+    // minimum amount of time between checkpoints
+    double minimum_checkpoint_interval;
     // name of file where app will write its fraction done
     std::string fraction_done_filename;
     // is the VM suspended?
@@ -158,6 +174,7 @@ struct VBOX_VM {
     int restoresnapshot();
     void dumphypervisorlogs(bool include_error_logs);
     void dumphypervisorstatusreports();
+    void dumpvmguestlogentries();
 
     int is_registered();
     bool is_system_ready(std::string& message);
@@ -180,6 +197,7 @@ struct VBOX_VM {
     int get_vm_network_bytes_received(double& received);
     int get_vm_process_id();
     int get_vm_exit_code(unsigned long& exit_code);
+    double get_vm_cpu_time();
 
     int get_system_log(std::string& log, bool tail_only = true);
     int get_vm_log(std::string& log, bool tail_only = true);
