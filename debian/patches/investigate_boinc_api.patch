@@ -20,7 +20,7 @@
      s->no_heartbeat = boinc_status.no_heartbeat;
      s->suspended = boinc_status.suspended;
      s->quit_request = boinc_status.quit_request;
-@@ -820,7 +824,7 @@
+@@ -823,7 +827,7 @@
  int boinc_parse_init_data_file() {
      FILE* f;
      int retval;
@@ -29,7 +29,7 @@
  
      if (aid.project_preferences) {
          free(aid.project_preferences);
-@@ -872,15 +876,15 @@
+@@ -875,15 +879,15 @@
      );
      if (other_pid) {
          sprintf(buf, "<other_pid>%d</other_pid>\n", other_pid);
@@ -48,7 +48,7 @@
      }
      if (app_client_shm->shm->app_status.send_msg(msg_buf)) {
          return 0;
-@@ -975,7 +979,7 @@
+@@ -978,7 +982,7 @@
  }
  
  static void handle_upload_file_status() {
@@ -57,7 +57,7 @@
      std::string filename;
      int status;
  
-@@ -1190,7 +1194,7 @@
+@@ -1193,7 +1197,7 @@
      // send graphics-related messages
      //
      if (send_web_graphics_url && !app_client_shm->shm->graphics_reply.has_msg()) {
@@ -66,7 +66,7 @@
              "<web_graphics_url>%s</web_graphics_url>",
              web_graphics_url
          );
-@@ -1198,7 +1202,7 @@
+@@ -1201,7 +1205,7 @@
          send_web_graphics_url = false;
      }
      if (send_remote_desktop_addr && !app_client_shm->shm->graphics_reply.has_msg()) {
@@ -75,7 +75,7 @@
              "<remote_desktop_addr>%s</remote_desktop_addr>",
              remote_desktop_addr
          );
-@@ -1442,7 +1446,7 @@
+@@ -1445,7 +1449,7 @@
          DirScanner dirscan(path);
          while (dirscan.scan(filename)) {
              if (strstr(filename.c_str(), "trickle_down")) {

@@ -23,7 +23,7 @@ Disclaimer: For backports, this patch needs to be disabled.
  	grep '#define.*BOINC.*VERSION' $^ > $@
 --- a/configure.ac
 +++ b/configure.ac
-@@ -887,14 +887,12 @@
+@@ -893,14 +893,12 @@
  
  dnl ---------- libNotify --------------------------------------------------
  if test "${enable_manager}" = yes ; then
@@ -43,7 +43,7 @@ Disclaimer: For backports, this patch needs to be disabled.
  fi
  
  dnl ---------- Sqlite3 ----------------------------------------------------
-@@ -1051,7 +1049,7 @@
+@@ -1057,7 +1055,7 @@
     ],
    [enable_wx_debug="no"])
  
