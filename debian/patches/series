@@ -11,7 +11,6 @@ generate_less.patch
 possible_size_type_error.patch
 debian_debian_AdjustBoincTopdirPython.patch
 # --- A
-#convinceDavid# bug672328  MoreInformativeAppStartFailure.patch
 #send to David#
 #SETIprobCandidate#app_ipc_uninitialised_A_reorder.patch
 # --- B 
