@@ -14,7 +14,6 @@ some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
 more_maxpathlen.patch
-opendir_error_messages.patch
 sched_driver_char_buffers.patch
 csh2tcsh.patch
 slot_dir_source_trace.patch
