@@ -18,7 +18,6 @@ opendir_error_messages.patch
 sched_driver_char_buffers.patch
 csh2tcsh.patch
 slot_dir_source_trace.patch
-opendir_errno.patch
 client_app_maxpathlen.patch
 #debian specific patches
 #boinclib_shared.patch #needed in order to make boinc build correctly otherwise it will FTBFS
