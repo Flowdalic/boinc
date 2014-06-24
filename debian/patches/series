@@ -19,8 +19,6 @@ debian_debian_AdjustBoincTopdirPython.patch
 # --- B 
 #tmpA# add_init_to_client_state_constructor.patch
 #convinceDavid# client_path_char_array_length.patch
-# --- Z --- Currently not applicable
-#Z#no_std_string.patch
 some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
