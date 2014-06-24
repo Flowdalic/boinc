@@ -17,7 +17,6 @@ more_maxpathlen.patch
 opendir_error_messages.patch
 sched_driver_char_buffers.patch
 csh2tcsh.patch
-investigate_boinc_api.patch
 slot_dir_source_trace.patch
 opendir_errno.patch
 client_app_maxpathlen.patch
