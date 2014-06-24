@@ -1,17 +1,6 @@
---- a/client/app.h
-+++ b/client/app.h
-@@ -48,7 +48,7 @@
- typedef int PROCESS_ID;
- 
- #define MAX_STDERR_LEN  65536
--#define SLOT_DIR_LEN 256
-+#define SLOT_DIR_LEN MAXPATHLEN
-     // The stderr output of an application is truncated to this length
-     // before sending to server,
-     // to protect against apps that write unbounded amounts.
 --- a/client/file_names.cpp
 +++ b/client/file_names.cpp
-@@ -69,7 +69,7 @@
+@@ -69,7 +69,7 @@ int make_soft_link(PROJECT* project, cha
  //
  void get_pathname(FILE_INFO* fip, char* path, int len) {
      PROJECT* p = fip->project;
@@ -20,7 +9,7 @@
  
      // for testing purposes, it's handy to allow a FILE_INFO without
      // an associated PROJECT.
-@@ -91,28 +91,28 @@
+@@ -91,28 +91,28 @@ void get_pathname(FILE_INFO* fip, char*
  }
  
  void get_sched_request_filename(PROJECT& project, char* buf, int len) {
@@ -53,7 +42,7 @@
  
      escape_project_url(project.master_url, url);
      snprintf(buf, len, "%s%s.txt", JOB_LOG_BASE, url);
-@@ -220,7 +220,7 @@
+@@ -220,7 +220,7 @@ int make_slot_dir(int slot) {
  // delete unused stuff in the slots/ directory
  //
  void delete_old_slot_dirs() {

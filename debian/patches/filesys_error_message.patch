@@ -1,17 +1,20 @@
 --- a/lib/filesys.cpp
 +++ b/lib/filesys.cpp
-@@ -145,7 +145,9 @@ DIRREF dir_open(const char* const p) {
+@@ -144,7 +144,12 @@ DIRREF dir_open(const char* p) {
+     dirp->handle = INVALID_HANDLE_VALUE;
  #else
      dirp = opendir(p);
-     if (!dirp) {
--        fprintf(stderr,"dir_open: Could not open directory '%s'.\n",p);
+-    if (!dirp) return NULL;
++    if (!dirp) {
 +        char b[MAXPATHLEN+1];
-+	boinc_getcwd(b);
++        boinc_getcwd(b);
 +        fprintf(stderr,"dir_open: Could not open directory '%s' from '%s'.\n",p,b);
-         return NULL;
-     }
++        return NULL;
++    }
  #endif
-@@ -602,7 +604,7 @@ static int boinc_rename_aux(const char*
+     return dirp;
+ }
+@@ -599,7 +604,7 @@ static int boinc_rename_aux(const char*
      //
      int retval = rename(old, newf);
      if (retval) {
