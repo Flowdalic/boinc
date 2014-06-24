@@ -10,10 +10,6 @@ upstream_sztaki_configureEval.patch
 disable_svn_version.patch
 possible_size_type_error.patch
 debian_debian_AdjustBoincTopdirPython.patch
-# --- A
-#send to David#
-#SETIprobCandidate#app_ipc_uninitialised_A_reorder.patch
-# --- B 
 some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
