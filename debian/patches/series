@@ -31,7 +31,6 @@ csh2tcsh.patch
 investigate_boinc_api.patch
 slot_dir_source_trace.patch
 opendir_errno.patch
-ticket_1168_verifycerts.patch
 client_app_maxpathlen.patch
 #debian specific patches
 #boinclib_shared.patch #needed in order to make boinc build correctly otherwise it will FTBFS
