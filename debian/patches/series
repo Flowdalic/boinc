@@ -10,15 +10,11 @@ upstream_sztaki_configureEval.patch
 generate_less.patch
 possible_size_type_error.patch
 debian_debian_AdjustBoincTopdirPython.patch
-#convinceDavid#cwd_handling.patch
 # --- A
 #convinceDavid# bug672328  MoreInformativeAppStartFailure.patch
 #send to David#
 #SETIprobCandidate#app_ipc_uninitialised_A_reorder.patch
-#SETIprobCandidate#app_ipc_uninitialised_B_buffer.patch
 # --- B 
-#tmpA# add_init_to_client_state_constructor.patch
-#convinceDavid# client_path_char_array_length.patch
 some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
