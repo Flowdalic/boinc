@@ -1,6 +1,6 @@
 --- a/lib/crypt_prog.cpp
 +++ b/lib/crypt_prog.cpp
-@@ -152,6 +152,8 @@
+@@ -152,6 +152,8 @@ int main(int argc, char** argv) {
          if (!fpub) die("fopen");
          print_key_hex(fpriv, (KEY*)&private_key, sizeof(private_key));
          print_key_hex(fpub, (KEY*)&public_key, sizeof(public_key));
@@ -9,7 +9,7 @@
  
      } else if (!strcmp(argv[1], "-sign")) {
          if (argc < 4) {
-@@ -166,6 +168,7 @@
+@@ -166,6 +168,7 @@ int main(int argc, char** argv) {
          signature.len = 256;
          retval = sign_file(argv[2], private_key, signature);
          print_hex_data(stdout, signature);
@@ -17,7 +17,7 @@
      } else if (!strcmp(argv[1], "-sign_string")) {
          if (argc < 4) {
              usage();
-@@ -177,6 +180,7 @@
+@@ -177,6 +180,7 @@ int main(int argc, char** argv) {
          if (retval) die("scan_key_hex\n");
          generate_signature(argv[2], cbuf, private_key);
          puts(cbuf);
@@ -25,7 +25,7 @@
      } else if (!strcmp(argv[1], "-verify")) {
          if (argc < 5) {
              usage();
-@@ -190,6 +194,8 @@
+@@ -190,6 +194,8 @@ int main(int argc, char** argv) {
          signature.data = signature_buf;
          signature.len = 256;
          retval = scan_hex_data(f, signature);
@@ -34,7 +34,7 @@
          if (retval) die("scan_hex_data");
  
          char md5_buf[64];
-@@ -219,6 +225,8 @@
+@@ -219,6 +225,8 @@ int main(int argc, char** argv) {
          if (!fpub) die("fopen");
          retval = scan_key_hex(fpub, (KEY*)&public_key, sizeof(public_key));
          if (retval) die("read_public_key");
@@ -43,7 +43,7 @@
          strcpy((char*)buf2, "encryption test successful");
          in.data = buf2;
          in.len = strlen((char*)in.data);
-@@ -236,6 +244,7 @@
+@@ -236,6 +244,7 @@ int main(int argc, char** argv) {
          signature.data = signature_buf;
          signature.len = 256;
          retval = scan_hex_data(f, signature);
@@ -51,7 +51,7 @@
          if (retval) die("cannot scan_hex_data");
          certpath = check_validity(argv[4], argv[2], signature.data, argv[5]);
          if (certpath == NULL) {
-@@ -391,6 +400,7 @@
+@@ -391,6 +400,7 @@ int main(int argc, char** argv) {
                      die("fopen");
                  }
                  print_key_hex(fpub, (KEY*)&public_key, sizeof(public_key));
@@ -61,7 +61,7 @@
      } else {
 --- a/lib/mfile.cpp
 +++ b/lib/mfile.cpp
-@@ -38,13 +38,14 @@
+@@ -38,10 +38,11 @@
  MFILE::MFILE() {
      buf = (char*)malloc(64*1024);
      len = 0;
@@ -73,59 +73,10 @@
 +    close();
  }
  
--int MFILE::open(const char* path, const char* mode) {
-+int MFILE::open(const char* const path, const char* const mode) {
-     f = boinc_fopen(path, mode);
-     if (!f) return ERR_FOPEN;
-     if (!buf) buf = (char*)malloc(64*1024);
-@@ -67,7 +68,7 @@
- 
- #define BUFSIZE 100000
- 
--int MFILE::vprintf(const char* format, va_list ap) {
-+int MFILE::vprintf(const char* const format, va_list ap) {
-     char buf2[BUFSIZE];
-     int n, k;
- 
-@@ -93,7 +94,7 @@
-     return k;
- }
- 
--int MFILE::printf(const char* format, ...) {
-+int MFILE::printf(const char* const format, ...) {
-     int n;
-     va_list ap;
- 
-@@ -103,7 +104,7 @@
-     return n;
- }
- 
--size_t MFILE::write(const void *ptr, size_t size, size_t nitems) {
-+size_t MFILE::write(const void *ptr, const size_t size, const size_t nitems) {
-     buf = (char *)realloc_aux( buf, len+(size*nitems)+1 );
-     if (!buf) {
-         fprintf(stderr,
-@@ -118,7 +119,7 @@
-     return nitems;
- }
- 
--int MFILE::_putchar(char c) {
-+int MFILE::_putchar(const char c) {
-     buf = (char*)realloc_aux(buf, len+1+1);
-     if (!buf) {
-         fprintf(stderr,
-@@ -132,7 +133,7 @@
-     return c;
- }
- 
--int MFILE::puts(const char* p) {
-+int MFILE::puts(const char* const p) {
-     int n = (int)strlen(p);
-     buf = (char*)realloc_aux(buf, len+n+1);
-     if (!buf) {
+ int MFILE::open(const char* path, const char* mode) {
 --- a/lib/parse_test.cpp
 +++ b/lib/parse_test.cpp
-@@ -57,6 +57,7 @@
+@@ -57,6 +57,7 @@ int main() {
          exit(1);
      }
      parse(f);
@@ -133,24 +84,3 @@
  }
  
  /* try it with something like:
---- a/lib/mfile.h
-+++ b/lib/mfile.h
-@@ -37,12 +37,12 @@
- public:
-     MFILE();
-     ~MFILE();
--    int open(const char* path, const char* mode);
--    int _putchar(char);
--    int puts(const char*);
--    int vprintf(const char* format, va_list);
--    int printf(const char* format, ...);
--    size_t write(const void *, size_t size, size_t nitems);
-+    int open(const char* const path, const char* const mode);
-+    int _putchar(const char);
-+    int puts(const char* const s);
-+    int vprintf(const char* const format, va_list);
-+    int printf(const char* const format, ...);
-+    size_t write(const void *, const size_t size, const size_t nitems);
-     int close();
-     int flush();
-     long tell() const;
