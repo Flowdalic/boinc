@@ -7,7 +7,7 @@ improve_opendir_warning.patch
 termios_is_everywhere.patch
 stripchart_debian.patch
 upstream_sztaki_configureEval.patch
-generate_less.patch
+disable_svn_version.patch
 possible_size_type_error.patch
 debian_debian_AdjustBoincTopdirPython.patch
 # --- A
