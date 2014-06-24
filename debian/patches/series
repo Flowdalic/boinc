@@ -3,7 +3,6 @@ make_project_overcomes_Apache24_security.patch
 libnotify-0.7.patch
 # undisputed patches above
 sched_driver_f_free.patch
-improve_opendir_warning.patch
 termios_is_everywhere.patch
 stripchart_debian.patch
 upstream_sztaki_configureEval.patch
