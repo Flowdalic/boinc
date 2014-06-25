@@ -21,7 +21,7 @@
 // Handles:
 // - suspend/resume/quit/abort
 // - reporting CPU time
-// - loss of heartbeat from core client
+// - loss of heartbeat from client
 // - checkpointing
 //      (at the level of task; or potentially within task)
 //
@@ -52,6 +52,7 @@
 #include <unistd.h>
 #endif
 
+#include "version.h"
 #include "boinc_api.h"
 #include "boinc_zip.h"
 #include "diagnostics.h"
@@ -83,6 +84,7 @@ inline void debug_msg(const char* x) {
 using std::vector;
 using std::string;
 int nthreads = 1;
+int gpu_device_num = -1;
 
 struct TASK {
     string application;
@@ -232,6 +234,7 @@ void str_replace_all(char* buf, const char* s1, const char* s2) {
 // macro-substitute strings from job.xml
 // $PROJECT_DIR -> project directory
 // $NTHREADS --> --nthreads arg if present, else 1
+// $GPU_DEVICE_NUM --> gpu_device_num from init_data.xml, or --device arg
 //
 void macro_substitute(char* buf) {
     const char* pd = strlen(aid.project_dir)?aid.project_dir:".";
@@ -239,6 +242,14 @@ void macro_substitute(char* buf) {
     char nt[256];
     sprintf(nt, "%d", nthreads);
     str_replace_all(buf, "$NTHREADS", nt);
+
+    if (aid.gpu_device_num >= 0) {
+        gpu_device_num = aid.gpu_device_num;
+    }
+    if (gpu_device_num >= 0) {
+        sprintf(nt, "%d", gpu_device_num);
+        str_replace_all(buf, "$GPU_DEVICE_NUM", nt);
+    }
 }
 
 // make a list of files in the slot directory,
@@ -620,7 +631,12 @@ int TASK::run(int argct, char** argvt) {
     slash_to_backslash(app_path);
     memset(&process_info, 0, sizeof(process_info));
     memset(&startup_info, 0, sizeof(startup_info));
-    command = string("\"") + app_path + string("\" ") + command_line;
+
+    if (ends_with((string)app_path, ".bat") || ends_with((string)app_path, ".cmd")) {
+        command = string("cmd.exe /c \"") + app_path + string("\" ") + command_line;
+    } else {
+        command = string("\"") + app_path + string("\" ") + command_line;
+    }
 
     // pass std handles to app
     //
@@ -628,25 +644,28 @@ int TASK::run(int argct, char** argvt) {
     if (stdout_filename != "") {
         boinc_resolve_filename_s(stdout_filename.c_str(), stdout_path);
         startup_info.hStdOutput = win_fopen(stdout_path.c_str(), "a");
-        if (!startup_info.hStdOutput) {
-            fprintf(stderr, "Error: startup_info.hStdOutput is NULL\n");
-        }
+    } else {
+        startup_info.hStdOutput = (HANDLE)_get_osfhandle(_fileno(stderr));
     }
     if (stdin_filename != "") {
         boinc_resolve_filename_s(stdin_filename.c_str(), stdin_path);
         startup_info.hStdInput = win_fopen(stdin_path.c_str(), "r");
-        if (!startup_info.hStdInput) {
-            fprintf(stderr, "Error: startup_info.hStdInput is NULL\n");
-        }
     }
     if (stderr_filename != "") {
         boinc_resolve_filename_s(stderr_filename.c_str(), stderr_path);
         startup_info.hStdError = win_fopen(stderr_path.c_str(), "a");
-        if (!startup_info.hStdError) {
-            fprintf(stderr, "Error: startup_info.hStdError is NULL\n");
-        }
     } else {
-        startup_info.hStdError = win_fopen(STDERR_FILE, "a");
+        startup_info.hStdError = (HANDLE)_get_osfhandle(_fileno(stderr));
+    }
+
+    if (startup_info.hStdOutput == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Error: startup_info.hStdOutput is invalid\n");
+    }
+    if ((stdin_filename != "") && (startup_info.hStdInput == INVALID_HANDLE_VALUE)) {
+        fprintf(stderr, "Error: startup_info.hStdInput is invalid\n");
+    }
+    if (startup_info.hStdError == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Error: startup_info.hStdError is invalid\n");
     }
 
     // setup environment vars if needed
@@ -658,41 +677,23 @@ int TASK::run(int argct, char** argvt) {
     }
 
     BOOL success;
-    if (ends_with((string)app_path, ".bat")) {
-        char cmd[1024];
-        sprintf(cmd, "cmd.exe /c %s", command.c_str());
-        success = CreateProcess(
-            "cmd.exe",
-            (LPSTR)cmd,
-            NULL,
-            NULL,
-            TRUE,        // bInheritHandles
-            CREATE_NO_WINDOW|IDLE_PRIORITY_CLASS,
-            (LPVOID) env_vars,
-            exec_dir.empty()?NULL:exec_dir.c_str(),
-            &startup_info,
-            &process_info
-        );
-    } else {
-        success = CreateProcess(
-            app_path,
-            (LPSTR)command.c_str(),
-            NULL,
-            NULL,
-            TRUE,        // bInheritHandles
-            CREATE_NO_WINDOW|IDLE_PRIORITY_CLASS,
-            (LPVOID) env_vars,
-            exec_dir.empty()?NULL:exec_dir.c_str(),
-            &startup_info,
-            &process_info
-        );
-    }
+    success = CreateProcess(
+        NULL,
+        (LPSTR)command.c_str(),
+        NULL,
+        NULL,
+        TRUE,        // bInheritHandles
+        CREATE_NO_WINDOW|IDLE_PRIORITY_CLASS,
+        (LPVOID) env_vars,
+        exec_dir.empty()?NULL:exec_dir.c_str(),
+        &startup_info,
+        &process_info
+    );
     if (!success) {
         char error_msg[1024];
         windows_format_error_string(GetLastError(), error_msg, sizeof(error_msg));
         fprintf(stderr, "can't run app: %s\n", error_msg);
 
-        fprintf(stderr, "Error: app_path is '%s'\n", app_path);
         fprintf(stderr, "Error: command is '%s'\n", command.c_str());
         fprintf(stderr, "Error: exec_dir is '%s'\n", exec_dir.c_str());
 
@@ -811,12 +812,10 @@ bool TASK::poll(int& status) {
         if (exit_code != STILL_ACTIVE) {
             status = exit_code;
             final_cpu_time = current_cpu_time;
-#ifdef DEBUG
-            fprintf(stderr, "%s process exited; current CPU %f final CPU %f\n",
-                boinc_message_prefix(buf, sizeof(buf)),
-                current_cpu_time, final_cpu_time
+            fprintf(stderr, "%s %s exited; CPU time %f\n",
+                boinc_msg_prefix(buf, sizeof(buf)),
+                application.c_str(), final_cpu_time
             );
-#endif
             return true;
         }
     }
@@ -829,12 +828,10 @@ bool TASK::poll(int& status) {
         getrusage(RUSAGE_CHILDREN, &ru);
         final_cpu_time = (float)ru.ru_utime.tv_sec + ((float)ru.ru_utime.tv_usec)/1e+6;
         final_cpu_time -= start_rusage;
-#ifdef DEBUG
-        fprintf(stderr, "%s process exited; current CPU %f final CPU %f\n",
-            boinc_message_prefix(buf, sizeof(buf)),
-            current_cpu_time, final_cpu_time
+        fprintf(stderr, "%s %s exited; CPU time %f\n",
+            boinc_msg_prefix(buf, sizeof(buf)),
+            application.c_str(), final_cpu_time
         );
-#endif
         if (final_cpu_time < current_cpu_time) {
             final_cpu_time = current_cpu_time;
         }
@@ -877,6 +874,10 @@ void TASK::resume() {
 // so it shouldn't be called too frequently.
 //
 double TASK::cpu_time() {
+#ifndef ANDROID
+    // the Android GUI doesn't show CPU time,
+    // and process_tree_cpu_time() crashes sometimes
+    //
     double x = process_tree_cpu_time(pid);
     // if the process has exited, the above could return zero.
     // So update carefully.
@@ -884,6 +885,7 @@ double TASK::cpu_time() {
     if (x > current_cpu_time) {
         current_cpu_time = x;
     }
+#endif
     return current_cpu_time;
 }
 
@@ -967,6 +969,8 @@ int main(int argc, char** argv) {
     for (int j=1; j<argc; j++) {
         if (!strcmp(argv[j], "--nthreads")) {
             nthreads = atoi(argv[++j]);
+        } else if (!strcmp(argv[j], "--device")) {
+            gpu_device_num = atoi(argv[++j]);
         }
     }
 
@@ -1002,8 +1006,11 @@ int main(int argc, char** argv) {
 
     boinc_init_options(&options);
     fprintf(stderr,
-        "%s wrapper: starting\n",
-        boinc_msg_prefix(buf, sizeof(buf))
+        "%s wrapper (%d.%d.%d): starting\n",
+        boinc_msg_prefix(buf, sizeof(buf)),
+        BOINC_MAJOR_VERSION,
+        BOINC_MINOR_VERSION,
+        WRAPPER_RELEASE
     );
 
     boinc_get_init_data(aid);
@@ -1136,4 +1143,5 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR Args, int WinMode
     argc = parse_command_line(command_line, argv);
     return main(argc, argv);
 }
+
 #endif

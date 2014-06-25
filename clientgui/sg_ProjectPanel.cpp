@@ -34,12 +34,14 @@
 #include "test/einstein_icon.xpm"
 #endif
 
-
-
 IMPLEMENT_DYNAMIC_CLASS(CSimpleProjectPanel, CSimplePanelBase)
 
 BEGIN_EVENT_TABLE(CSimpleProjectPanel, CSimplePanelBase)
-    EVT_BOINCBITMAPCOMBOBOX(ID_SGPROJECTSELECTOR, CSimpleProjectPanel::OnProjectSelection)
+#ifdef __WXMAC__
+    EVT_CHOICE(ID_SGPROJECTSELECTOR, CSimpleProjectPanel::OnProjectSelection)
+#else
+    EVT_COMBOBOX(ID_SGPROJECTSELECTOR, CSimpleProjectPanel::OnProjectSelection)
+#endif
     EVT_BUTTON(ID_ADDROJECTBUTTON, CSimpleProjectPanel::OnAddProject)
 #if TESTBIGICONPOPUP
     EVT_BUTTON(ID_PROJECTWEBSITESBUTTON, CSimpleProjectPanel::OnProjectWebSiteButton)
@@ -264,7 +266,7 @@ void CSimpleProjectPanel::UpdateInterface() {
             m_TotalCreditValue->SetName(str);   // For accessibility on Windows
         }
         projName = m_ProjectSelectionCtrl->GetStringSelection();
-        str.Printf(_("Pop up a menu of websites for project %s"), projName.c_str());
+        str.Printf(_("Pop up a menu of web sites for project %s"), projName.c_str());
         m_ProjectWebSitesButton->SetToolTip(str);
         str.Printf(_("Pop up a menu of commands to apply to project %s"), projName.c_str());
         m_ProjectCommandsButton->SetToolTip(str);

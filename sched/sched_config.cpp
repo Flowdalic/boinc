@@ -25,11 +25,11 @@
 #include <string>
 #include <unistd.h>
 
-#include "parse.h"
 #include "error_numbers.h"
 #include "filesys.h"
-#include "str_util.h"
+#include "parse.h"
 #include "str_replace.h"
+#include "str_util.h"
 
 #include "sched_msgs.h"
 #include "sched_util.h"
@@ -231,13 +231,15 @@ int SCHED_CONFIG::parse(FILE* f) {
         if (xp.parse_bool("matchmaker", matchmaker)) continue;
         if (xp.parse_int("max_ncpus", max_ncpus)) continue;
         if (xp.parse_int("max_wus_in_progress", itemp)) {
-            max_jobs_in_progress.project_limits.cpu.base_limit = itemp;
-            max_jobs_in_progress.project_limits.cpu.per_proc = true;
+            max_jobs_in_progress.project_limits.proc_type_limits[PROC_TYPE_CPU].base_limit = itemp;
+            max_jobs_in_progress.project_limits.proc_type_limits[PROC_TYPE_CPU].per_proc = true;
             continue;
         }
         if (xp.parse_int("max_wus_in_progress_gpu", itemp)) {
-            max_jobs_in_progress.project_limits.gpu.base_limit = itemp;
-            max_jobs_in_progress.project_limits.gpu.per_proc = true;
+            for (int i=1; i<NPROC_TYPES; i++) {
+                max_jobs_in_progress.project_limits.proc_type_limits[i].base_limit = itemp;
+                max_jobs_in_progress.project_limits.proc_type_limits[i].per_proc = true;
+            }
             continue;
         }
         if (xp.parse_int("max_results_accepted", max_results_accepted)) continue;

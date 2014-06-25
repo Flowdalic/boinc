@@ -309,6 +309,7 @@ int archive_result(DB_RESULT& result) {
         "  <opaque>%f</opaque>\n"
         "  <random>%d</random>\n"
         "  <app_version_num>%d</app_version_num>\n"
+        "  <app_version_id>%d</app_version_id>\n"
         "  <appid>%d</appid>\n"
         "  <exit_status>%d</exit_status>\n"
         "  <teamid>%d</teamid>\n"
@@ -337,6 +338,7 @@ int archive_result(DB_RESULT& result) {
         result.opaque,
         result.random,
         result.app_version_num,
+        result.app_version_id,
         result.appid,
         result.exit_status,
         result.teamid,
@@ -566,6 +568,14 @@ bool do_pass() {
                     wu.id, retval
                 );
                 exit(6);
+            }
+            if (config.enable_assignment) {
+                DB_ASSIGNMENT asg;
+                sprintf(buf, "where workunitid=%d", wu.id);
+                retval = asg.lookup(buf);
+                if (!retval) {
+                    asg.delete_from_db();
+                }
             }
         }
         log_messages.printf(MSG_DEBUG,

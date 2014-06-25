@@ -482,43 +482,35 @@ void NOTICES::write_archive(RSS_FEED* rfp) {
     fclose(f);
 }
 
-// Remove "need network access" notices
+// Remove outdated notices
 //
-void NOTICES::remove_network_msg() {
+void NOTICES::remove_notices(PROJECT* p, int which) {
     deque<NOTICE>::iterator i = notices.begin();
     while (i != notices.end()) {
         NOTICE& n = *i;
-        if (!strcmp(n.description.c_str(), NEED_NETWORK_MSG)) {
-            i = notices.erase(i);
-#ifndef SIM
-            gstate.gui_rpcs.set_notice_refresh();
-#endif
-            if (log_flags.notice_debug) {
-                msg_printf(0, MSG_INFO, "REMOVING NETWORK MESSAGE");
-            }
-        } else {
+        if (p && strcmp(n.project_name, p->get_project_name())) {
             ++i;
+            continue;
         }
-    }
-}
-
-// Remove scheduler notices from the given project.
-// This is called if we did an RPC to the project requesting work,
-// and no notices were returned.
-//
-void NOTICES::remove_scheduler_notices(PROJECT* p) {
-    deque<NOTICE>::iterator i = notices.begin();
-    while (i != notices.end()) {
-        NOTICE& n = *i;
-        if (!strcmp(n.project_name, p->get_project_name())
-            && !strcmp(n.category, "scheduler")
-        ) {
+        bool remove = false;
+        switch (which) {
+        case REMOVE_NETWORK_MSG:
+            remove = !strcmp(n.description.c_str(), NEED_NETWORK_MSG);
+            break;
+        case REMOVE_SCHEDULER_MSG:
+            remove = !strcmp(n.category, "scheduler");
+            break;
+        case REMOVE_NO_WORK_MSG:
+            remove = !strcmp(n.description.c_str(), NO_WORK_MSG);
+            break;
+        }
+        if (remove) {
             i = notices.erase(i);
 #ifndef SIM
             gstate.gui_rpcs.set_notice_refresh();
 #endif
             if (log_flags.notice_debug) {
-                msg_printf(0, MSG_INFO, "REMOVING PROJECT MESSAGE");
+                msg_printf(p, MSG_INFO, "Removing notices of type %d", which);
             }
         } else {
             ++i;
@@ -534,7 +526,7 @@ void NOTICES::write(int seqno, GUI_RPC_CONN& grc, bool public_only) {
     MIOFILE mf;
 
     if (!net_status.need_physical_connection) {
-        remove_network_msg();
+        remove_notices(NULL, REMOVE_NETWORK_MSG);
     }
     if (log_flags.notice_debug) {
         msg_printf(0, MSG_INFO, "NOTICES::write: seqno %d, refresh %s, %d notices",
@@ -710,6 +702,14 @@ int RSS_FEED::parse_items(XML_PARSER& xp, int& nitems) {
     }
     notices.unkeep(url);
     return func_ret;
+}
+
+void RSS_FEED::delete_files() {
+    char path[MAXPATHLEN];
+    feed_file_name(path);
+    boinc_delete_file(path);
+    archive_file_name(path);
+    boinc_delete_file(path);
 }
 
 ///////////// RSS_FEED_OP ////////////////
@@ -922,6 +922,7 @@ void RSS_FEEDS::update_feed_list() {
                     rf.url
                 );
             }
+            rf.delete_files();
             iter = feeds.erase(iter);
         }
     }
@@ -935,4 +936,10 @@ void RSS_FEEDS::write_feed_list() {
     fout.init_file(f);
     write_rss_feed_descs(fout, feeds);
     fclose(f);
+}
+
+void delete_project_notice_files(PROJECT* p) {
+    char path[MAXPATHLEN];
+    project_feed_list_file_name(p, path);
+    boinc_delete_file(path);
 }

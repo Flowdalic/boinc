@@ -109,6 +109,12 @@ int TIME_STATS::parse(XML_PARSER& xp) {
         if (xp.parse_double("gpu_active_frac", gpu_active_frac)) continue;
         if (xp.parse_double("client_start_time", client_start_time)) continue;
         if (xp.parse_double("previous_uptime", previous_uptime)) continue;
+        if (xp.parse_double("session_active_duration", session_active_duration)) continue;
+        if (xp.parse_double("session_gpu_active_duration", session_gpu_active_duration)) continue;
+        if (xp.parse_double("total_start_time", total_start_time)) continue;
+        if (xp.parse_double("total_duration", total_duration)) continue;
+        if (xp.parse_double("total_active_duration", total_active_duration)) continue;
+        if (xp.parse_double("total_gpu_active_duration", total_gpu_active_duration)) continue;
     }
     return ERR_XML_PARSE;
 }
@@ -451,6 +457,8 @@ int PROJECT::parse(XML_PARSER& xp) {
         if (xp.parse_double("project_files_downloaded_time", project_files_downloaded_time)) continue;
         if (xp.parse_bool("no_ati_pref", rsc_desc_cpu.no_rsc_pref)) continue;
         if (xp.parse_str("venue", venue, sizeof(venue))) continue;
+        if (xp.parse_int("njobs_success", njobs_success)) continue;
+        if (xp.parse_int("njobs_error", njobs_error)) continue;
     }
     return ERR_XML_PARSE;
 }
@@ -502,6 +510,8 @@ void PROJECT::clear() {
     gui_urls.clear();
     statistics.clear();
     strcpy(venue, "");
+    njobs_success = 0;
+    njobs_error = 0;
 }
 
 APP::APP() {
@@ -671,6 +681,8 @@ int RESULT::parse(XML_PARSER& xp) {
         if (xp.parse_double("working_set_size_smoothed", working_set_size_smoothed)) continue;
         if (xp.parse_double("fraction_done", fraction_done)) continue;
         if (xp.parse_double("estimated_cpu_time_remaining", estimated_cpu_time_remaining)) continue;
+        if (xp.parse_double("bytes_sent", bytes_sent)) continue;
+        if (xp.parse_double("bytes_received", bytes_received)) continue;
         if (xp.parse_bool("too_large", too_large)) continue;
         if (xp.parse_bool("needs_shmem", needs_shmem)) continue;
         if (xp.parse_bool("edf_scheduled", edf_scheduled)) continue;
@@ -724,6 +736,8 @@ void RESULT::clear() {
     swap_size = 0;
     working_set_size_smoothed = 0;
     estimated_cpu_time_remaining = 0;
+    bytes_sent = 0;
+    bytes_received = 0;
     too_large = false;
     needs_shmem = false;
     edf_scheduled = false;
@@ -1307,6 +1321,7 @@ int PROJECT_CONFIG::parse(XML_PARSER& xp) {
         if (xp.parse_int("error_num", error_num)) continue;
         if (xp.parse_string("name", name)) continue;
         if (xp.parse_string("master_url", master_url)) continue;
+        if (xp.parse_string("web_rpc_url_base", web_rpc_url_base)) continue;
         if (xp.parse_int("local_revision", local_revision)) continue;
         if (xp.parse_int("min_passwd_length", min_passwd_length)) continue;
         if (xp.parse_bool("account_manager", account_manager)) continue;
@@ -1335,6 +1350,7 @@ void PROJECT_CONFIG::clear() {
     error_num = 0;
     name.clear();
     master_url.clear();
+    web_rpc_url_base.clear();
     error_msg.clear();
     terms_of_use.clear();
     min_passwd_length = 6;
@@ -1953,7 +1969,7 @@ int RPC_CLIENT::run_benchmarks() {
     return rpc.parse_reply();
 }
 
-int RPC_CLIENT::set_proxy_settings(GR_PROXY_INFO& pi) {
+int RPC_CLIENT::set_proxy_settings(GR_PROXY_INFO& procinfo) {
     int retval;
     SET_LOCALE sl;
     char buf[1792];
@@ -1974,18 +1990,18 @@ int RPC_CLIENT::set_proxy_settings(GR_PROXY_INFO& pi) {
 		"        <no_proxy>%s</no_proxy>\n"
         "    </proxy_info>\n"
         "</set_proxy_settings>\n",
-        pi.use_http_proxy?"        <use_http_proxy/>\n":"",
-        pi.use_socks_proxy?"        <use_socks_proxy/>\n":"",
-        pi.use_http_authentication?"        <use_http_auth/>\n":"",
-        pi.http_server_name.c_str(),
-        pi.http_server_port,
-        pi.http_user_name.c_str(),
-        pi.http_user_passwd.c_str(),
-        pi.socks_server_name.c_str(),
-        pi.socks_server_port,
-        pi.socks5_user_name.c_str(),
-        pi.socks5_user_passwd.c_str(),
-		pi.noproxy_hosts.c_str()
+        procinfo.use_http_proxy?"        <use_http_proxy/>\n":"",
+        procinfo.use_socks_proxy?"        <use_socks_proxy/>\n":"",
+        procinfo.use_http_authentication?"        <use_http_auth/>\n":"",
+        procinfo.http_server_name.c_str(),
+        procinfo.http_server_port,
+        procinfo.http_user_name.c_str(),
+        procinfo.http_user_passwd.c_str(),
+        procinfo.socks_server_name.c_str(),
+        procinfo.socks_server_port,
+        procinfo.socks5_user_name.c_str(),
+        procinfo.socks5_user_passwd.c_str(),
+		procinfo.noproxy_hosts.c_str()
     );
     buf[sizeof(buf)-1] = 0;
     retval = rpc.do_rpc(buf);
@@ -2547,7 +2563,7 @@ int RPC_CLIENT::read_cc_config() {
     return rpc.parse_reply();
 }
 
-int RPC_CLIENT::get_cc_config(CONFIG& config, LOG_FLAGS& log_flags) {
+int RPC_CLIENT::get_cc_config(CC_CONFIG& config, LOG_FLAGS& log_flags) {
     int retval;
     SET_LOCALE sl;
     RPC rpc(this);
@@ -2558,7 +2574,7 @@ int RPC_CLIENT::get_cc_config(CONFIG& config, LOG_FLAGS& log_flags) {
     return config.parse(rpc.xp, log_flags);
 }
 
-int RPC_CLIENT::set_cc_config(CONFIG& config, LOG_FLAGS& log_flags) {
+int RPC_CLIENT::set_cc_config(CC_CONFIG& config, LOG_FLAGS& log_flags) {
     SET_LOCALE sl;
     char buf[64000];
     MIOFILE mf;

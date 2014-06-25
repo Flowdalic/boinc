@@ -43,7 +43,7 @@ function xml_error($num, $msg=null) {
     if (!$msg) {
         switch($num) {
         case -112: $msg = "Invalid XML"; break;
-        case -136: $msg = "Invalid ID"; break;
+        case -136: $msg = "Not found"; break;
         case -137: $msg = "Name or email address is not unique"; break;
         case -138: $msg = "Can't access database"; break;
         case -183: $msg = "Project is temporarily offline"; break;
@@ -53,7 +53,7 @@ function xml_error($num, $msg=null) {
         case -208: $msg = "Account creation is disabled"; break;
         case -209: $msg = "Invalid invitation code"; break;
         case -210: $msg = "Invalid request method"; break;
-        default: "Unknown error"; break;
+        default: $msg = "Unknown error"; break;
         }
     }
     echo "<error>
@@ -129,6 +129,16 @@ function parse_config($config, $tag) {
 
 function drand() {
     return ((double)rand())/getrandmax();
+}
+
+// kludge
+//
+function is_gpu($plan_class) {
+    if (strstr($plan_class, "ati")) return true;
+    if (strstr($plan_class, "cuda")) return true;
+    if (strstr($plan_class, "nvidia")) return true;
+    if (strstr($plan_class, "intel_gpu")) return true;
+    return false;
 }
 
 ?>

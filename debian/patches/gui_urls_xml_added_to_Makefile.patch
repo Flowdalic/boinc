@@ -1,8 +1,6 @@
-Index: boinc/tools/Makefile.am
-===================================================================
---- boinc.orig/tools/Makefile.am
-+++ boinc/tools/Makefile.am
-@@ -34,7 +34,8 @@
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -40,7 +40,8 @@
      watch_tcp
  
  dist_tools_DATA = \

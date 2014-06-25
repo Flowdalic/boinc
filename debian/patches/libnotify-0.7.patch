@@ -2,13 +2,11 @@ Author: Steffen Moeller <moeller@debian.org>
 Description: Later versions of Debian come with libnotify 0.7.
 Disclaimer: For backports, this patch needs to be disabled.
 
-Index: boinc/clientgui/Makefile.am
-===================================================================
---- boinc.orig/clientgui/Makefile.am
-+++ boinc/clientgui/Makefile.am
-@@ -117,9 +117,13 @@
+--- a/clientgui/Makefile.am
++++ b/clientgui/Makefile.am
+@@ -100,9 +100,13 @@
      ../lib/error_numbers.h \
-     locale $(mac_headers)
+     locale
  
 -boincmgr_CPPFLAGS = $(AM_CPPFLAGS) $(WX_CPPFLAGS) $(SQLITE3_CPPFLAGS) $(LIBNOTIFY_CFLAGS) $(CLIENTGUIFLAGS) `pkg-config --cflags gtk+-2.0`
 -boincmgr_CXXFLAGS = $(AM_CXXFLAGS) $(WX_CXXFLAGS) $(SQLITE3_CPPFLAGS) $(LIBNOTIFY_CFLAGS) $(CLIENTGUIFLAGS) `pkg-config --cflags gtk+-2.0`
@@ -23,11 +21,9 @@ Index: boinc/clientgui/Makefile.am
  
  win_config.h: $(top_srcdir)/config.h
  	grep '#define.*BOINC.*VERSION' $^ > $@
-Index: boinc/configure.ac
-===================================================================
---- boinc.orig/configure.ac
-+++ boinc/configure.ac
-@@ -743,14 +743,12 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -893,14 +893,12 @@
  
  dnl ---------- libNotify --------------------------------------------------
  if test "${enable_manager}" = yes ; then
@@ -47,7 +43,7 @@ Index: boinc/configure.ac
  fi
  
  dnl ---------- Sqlite3 ----------------------------------------------------
-@@ -901,7 +899,7 @@
+@@ -1057,7 +1055,7 @@
     ],
    [enable_wx_debug="no"])
  

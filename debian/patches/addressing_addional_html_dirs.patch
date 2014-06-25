@@ -1,10 +1,8 @@
-Index: boinc/html/Makefile.am
-===================================================================
---- boinc.orig/html/Makefile.am
-+++ boinc/html/Makefile.am
+--- a/html/Makefile.am
++++ b/html/Makefile.am
 @@ -1,4 +1,4 @@
  htmldir=$(DESTDIR)/$(prefix)/share/boinc-server-maker/html
  install-data-local:
  	mkdir -p $(htmldir)
--	cp -r inc languages ops user $(htmldir)
-+	cp -r bt drupal inc languages ops project.sample queue user $(htmldir)
+-	cp -r $(srcdir)/inc $(srcdir)/languages $(srcdir)/ops $(srcdir)/user $(htmldir)
++	cp -r $(srcdir)/bt $(srcdir)/drupal $(srcdir)/inc $(srcdir)/languages $(srcdir)/ops $(srcdir)/project.sample $(srcdir)/queue $(srcdir)/user $(htmldir)

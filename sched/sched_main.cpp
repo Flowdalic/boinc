@@ -547,7 +547,7 @@ int main(int argc, char** argv) {
         sprintf(reply_path, "%s/%d_%u_sched_reply.xml", config.debug_req_reply_dir, g_pid, counter);
 
         // keep an own 'log' per PID in case general logging fails
-        // this allows to associate at leas the scheduler request with the client
+        // this allows to associate at least the scheduler request with the client
         // IP address (as shown in httpd error log) in case of a crash
         sprintf(log_path, "%s/%d_%u_sched.log", config.debug_req_reply_dir, g_pid, counter);
 #ifndef _USING_FCGI_
@@ -555,6 +555,12 @@ int main(int argc, char** argv) {
 #else
         fout = FCGI::fopen(log_path,"a");
 #endif
+        if (!fout) {
+            log_messages.printf(MSG_CRITICAL,
+                "can't write client  file\n"
+            );
+            exit(1);
+        }
         fprintf(fout, "PID: %d Client IP: %s\n", g_pid, get_remote_addr());
         fclose(fout);
 
@@ -681,8 +687,8 @@ void RSC_JOB_LIMIT::print_log(const char* rsc_name) {
 
 void JOB_LIMIT::print_log() {
     if (total.any_limit()) total.print_log("total");
-    if (cpu.any_limit()) cpu.print_log("CPU");
-    if (gpu.any_limit()) gpu.print_log("GPU");
+    if (proc_type_limits[0].any_limit()) proc_type_limits[0].print_log("CPU");
+    if (proc_type_limits[1].any_limit()) proc_type_limits[1].print_log("GPU");
 }
 
 void JOB_LIMITS::print_log() {

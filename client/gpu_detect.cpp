@@ -63,7 +63,10 @@ vector<OPENCL_DEVICE_PROP> intel_gpu_opencls;
 vector<OPENCL_CPU_PROP> cpu_opencls;
 
 static char* client_path;
+    // argv[0] from the command used to run client.
+    // May be absolute or relative.
 static char client_dir[MAXPATHLEN];
+    // current directory at start of client
 
 void COPROCS::get(
     bool use_all, vector<string>&descs, vector<string>&warnings,
@@ -170,7 +173,7 @@ void COPROCS::correlate_gpus(
 
     // NOTE: OpenCL can report a max of only 4GB.  
     for (i=0; i<cpu_opencls.size(); i++) {
-        gstate.host_info.cpu_opencl_prop[gstate.host_info.num_cpu_opencl_platforms++] = cpu_opencls[i];
+        gstate.host_info.opencl_cpu_prop[gstate.host_info.num_opencl_cpu_platforms++] = cpu_opencls[i];
     }
 
     for (i=0; i<nvidia_gpus.size(); i++) {
@@ -367,7 +370,7 @@ int COPROCS::read_coproc_info_file(vector<string> &warnings) {
             if (retval) {
                 my_ati_gpu.clear();
             } else {
-                my_ati_gpu.device_num = ati_gpus.size();
+                my_ati_gpu.device_num = (int)ati_gpus.size();
                 ati_gpus.push_back(my_ati_gpu);
             }
             continue;
@@ -377,7 +380,7 @@ int COPROCS::read_coproc_info_file(vector<string> &warnings) {
             if (retval) {
                 my_nvidia_gpu.clear();
             } else {
-                my_nvidia_gpu.device_num = nvidia_gpus.size();
+                my_nvidia_gpu.device_num = (int)nvidia_gpus.size();
                 my_nvidia_gpu.pci_info = my_nvidia_gpu.pci_infos[0];
                 memset(&my_nvidia_gpu.pci_infos[0], 0, sizeof(struct PCI_INFO));
                 nvidia_gpus.push_back(my_nvidia_gpu);
@@ -389,7 +392,7 @@ int COPROCS::read_coproc_info_file(vector<string> &warnings) {
             if (retval) {
                 my_intel_gpu.clear();
             } else {
-                my_intel_gpu.device_num = intel_gpus.size();
+                my_intel_gpu.device_num = (int)intel_gpus.size();
                 intel_gpus.push_back(my_intel_gpu);
             }
             continue;
@@ -448,11 +451,9 @@ int COPROCS::read_coproc_info_file(vector<string> &warnings) {
             continue;
         }
 
-
-
-    // TODO: parse OpenCL info for CPU when implemented:
-    //  gstate.host_info.have_cpu_opencl
-    //  gstate.host_info.cpu_opencl_prop
+        // TODO: parse OpenCL info for CPU when implemented:
+        //  gstate.host_info.have_cpu_opencl
+        //  gstate.host_info.cpu_opencl_prop
     }
     
     fclose(f);
@@ -465,8 +466,8 @@ int COPROCS::launch_child_process_to_detect_gpus() {
 #else
     int prog;
 #endif
-    char quotedDataDir[MAXPATHLEN+2];
-    char dataDir[MAXPATHLEN];
+    char quoted_data_dir[MAXPATHLEN+2];
+    char data_dir[MAXPATHLEN];
     int retval = 0;
     
     retval = boinc_delete_file(COPROC_INFO_FILENAME);
@@ -482,14 +483,14 @@ int COPROCS::launch_child_process_to_detect_gpus() {
         }
     }
     
-    boinc_getcwd(dataDir);
+    boinc_getcwd(data_dir);
 
 #ifdef _WIN32
-    strlcpy(quotedDataDir, "\"", sizeof(quotedDataDir));
-    strlcat(quotedDataDir, dataDir, sizeof(quotedDataDir));
-    strlcat(quotedDataDir, "\"", sizeof(quotedDataDir));
+    strlcpy(quoted_data_dir, "\"", sizeof(quoted_data_dir));
+    strlcat(quoted_data_dir, data_dir, sizeof(quoted_data_dir));
+    strlcat(quoted_data_dir, "\"", sizeof(quoted_data_dir));
 #else
-    strlcpy(quotedDataDir, dataDir, sizeof(quotedDataDir));
+    strlcpy(quoted_data_dir, data_dir, sizeof(quoted_data_dir));
 #endif
 
     if (log_flags.coproc_debug) {
@@ -503,16 +504,20 @@ int COPROCS::launch_child_process_to_detect_gpus() {
         );
         msg_printf(0, MSG_INFO,
             "[coproc] with data directory %s",
-            quotedDataDir
+            quoted_data_dir
         );
     }
             
     int argc = 4;
     char* const argv[5] = {
+#ifdef _WIN32
+         const_cast<char *>("boinc.exe"), 
+#else
          const_cast<char *>("boinc"), 
+#endif
          const_cast<char *>("--detect_gpus"), 
          const_cast<char *>("--dir"), 
-         const_cast<char *>(quotedDataDir),
+         const_cast<char *>(quoted_data_dir),
          NULL
     }; 
 
@@ -527,7 +532,7 @@ int COPROCS::launch_child_process_to_detect_gpus() {
         prog
     );
 
-    chdir(dataDir);
+    chdir(data_dir);
     
     if (retval) {
         if (log_flags.coproc_debug) {

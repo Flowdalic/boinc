@@ -1,9 +1,7 @@
-Index: boinc/lib/Makefile.am
-===================================================================
---- boinc.orig/lib/Makefile.am
-+++ boinc/lib/Makefile.am
-@@ -150,13 +150,13 @@
- libboinc_la_SOURCES = $(generic_sources) $(mac_sources)
+--- a/lib/Makefile.am
++++ b/lib/Makefile.am
+@@ -175,13 +175,13 @@
+ libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 -libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
@@ -18,7 +16,7 @@ Index: boinc/lib/Makefile.am
  libboinc_crypt_la_LIBADD =
  
  
-@@ -225,7 +225,7 @@
+@@ -250,7 +250,7 @@
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp 
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS)
@@ -27,13 +25,11 @@ Index: boinc/lib/Makefile.am
  parse_test_SOURCES = parse_test.cpp 
  parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  parse_test_LDADD = $(LIBBOINC)
-Index: boinc/client/Makefile.am
-===================================================================
---- boinc.orig/client/Makefile.am
-+++ boinc/client/Makefile.am
-@@ -93,7 +93,7 @@
- if OS_DARWIN
- boinc_client_LDFLAGS += -Wl,-flat_namespace,-undefined,dynamic_lookup
+--- a/client/Makefile.am
++++ b/client/Makefile.am
+@@ -106,7 +106,7 @@
+ boinc_client_SOURCES += hostinfo_unix.cpp
+ endif
  endif
 -boinc_client_LDADD = $(LIBBOINC) $(LIBBOINC_CRYPT) $(BOINC_EXTRA_LIBS) $(PTHREAD_LIBS)
 +boinc_client_LDADD = -L../lib/.libs $(LIBBOINC) $(LIBBOINC_CRYPT) $(BOINC_EXTRA_LIBS) $(PTHREAD_LIBS)

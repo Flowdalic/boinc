@@ -1,6 +1,6 @@
 // This file is part of BOINC.
 // http://boinc.berkeley.edu
-// Copyright (C) 2008 University of California
+// Copyright (C) 2013 University of California
 //
 // BOINC is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License
@@ -17,7 +17,7 @@
 //
 // This program serves as both
 // - An example BOINC-CUDA application, illustrating the use of the BOINC API
-//   and CUDA API.
+//   and CUDA API.  [ SEE NOTE BELOW ]
 // - A program for testing various features of BOINC.
 //
 // The program reads the input nxn matrix from the "input" file, inverts the
@@ -31,6 +31,17 @@
 //
 // See http://boinc.berkeley.edu/trac/wiki/GPUApp for any compiling issues
 // Contributor: Tuan Le (tuanle86@berkeley.edu)
+//
+// NOTE: As currently written, this sample is of limited usefulness, as it
+// is missing two important features:
+// * Code to determine the correct device assigned by BOINC.  It needs to get 
+//   the device number from the gpu_opencl_dev_index field of init_data.xml
+//   if it exists, else from the gpu_device_num field of init_data.xml if that
+//   exists, else from the --device or -device argument passed by the client.
+//   See api/boinc_opencl.cpp for code which does this.
+// * Code to select which NVIDIA GPU to use if there are more than one on the
+//   system; it needs to call cudaSetDevice().
+//
 
 #include "cuda.h"
 #include "cuda_config.h"
@@ -50,6 +61,7 @@ int main(int argc, char** argv) {
     REAL* h_idata;
     MFILE out;
     FILE* state, *infile;
+    double num=0;
     
     generate_random_input_file(MATRIX_SIZE); //call this if you don't want to
                                              //construct the input file manually
@@ -100,7 +112,8 @@ int main(int argc, char** argv) {
             fscanf(state,"%d",&dimension);
             cudaMallocHost((void **)&h_idata,dimension*dimension*sizeof(REAL));
             for (int i=0;i<dimension*dimension;++i) {
-                fscanf(state, "%f", &h_idata[i]);
+                fscanf(state, "%lf", &num);
+                h_idata[i] = num;
 			}
         }
         fclose(state);

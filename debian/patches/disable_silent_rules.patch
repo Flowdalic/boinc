@@ -1,12 +1,10 @@
 Description: Disabled silent rules, for buildlog check to work.
-Index: boinc/configure.ac
-===================================================================
---- boinc.orig/configure.ac
-+++ boinc/configure.ac
-@@ -16,7 +16,7 @@
- dnl generate .tar.gz, .tar.bz2, .zip
- dnl AM_INIT_AUTOMAKE(dist-bzip2 dist-zip)
+--- a/configure.ac
++++ b/configure.ac
+@@ -28,7 +28,7 @@
+ 
  AM_INIT_AUTOMAKE(dist-zip)
+ 
 -m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 +#m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
  

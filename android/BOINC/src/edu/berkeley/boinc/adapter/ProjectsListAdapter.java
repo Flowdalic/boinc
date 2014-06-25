@@ -33,14 +33,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import edu.berkeley.boinc.ProjectsActivity.ProjectsListData;
+import edu.berkeley.boinc.ProjectsFragment.ProjectsListData;
+import edu.berkeley.boinc.BOINCActivity;
 import edu.berkeley.boinc.R;
-import edu.berkeley.boinc.client.ClientStatus;
-import edu.berkeley.boinc.client.Monitor;
 import edu.berkeley.boinc.rpc.Notice;
-import edu.berkeley.boinc.rpc.Project;
 import edu.berkeley.boinc.rpc.Transfer;
-import edu.berkeley.boinc.utils.BOINCUtils;
 import edu.berkeley.boinc.utils.Logging;
 
 public class ProjectsListAdapter extends ArrayAdapter<ProjectsListData> {
@@ -94,64 +91,15 @@ public class ProjectsListAdapter extends ArrayAdapter<ProjectsListData> {
 	
 	public Bitmap getIcon(int position) {
 		// try to get current client status from monitor
-		ClientStatus status;
+		//ClientStatus status;
 		try{
-			status  = Monitor.getClientStatus();
+			//status  = Monitor.getClientStatus();
+			return BOINCActivity.monitor.getProjectIcon(entries.get(position).id);
 		} catch (Exception e){
 			if(Logging.WARNING) Log.w(Logging.TAG,"ProjectsListAdapter: Could not load data, clientStatus not initialized.");
 			return null;
 		}
-		return status.getProjectIcon(entries.get(position).id);
-	}
-
-	public String getStatus(int position) {
-		Project project = getItem(position).project;
-		StringBuffer sb = new StringBuffer();
-		
-        if (project.suspended_via_gui) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_suspendedviagui));
-        }
-        if (project.dont_request_more_work) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_dontrequestmorework));
-        }
-        if (project.ended) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_ended));
-        }
-        if (project.detach_when_done) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_detachwhendone));
-        }
-        if (project.sched_rpc_pending > 0) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_schedrpcpending));
-            appendToStatus(sb, BOINCUtils.translateRPCReason(activity, project.sched_rpc_pending));
-        }
-        if (project.scheduler_rpc_in_progress) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_schedrpcinprogress));
-        }
-        if (project.trickle_up_pending) {
-        	appendToStatus(sb, activity.getResources().getString(R.string.projects_status_trickleuppending));
-        }
-        
-        Calendar minRPCTime = Calendar.getInstance();
-        Calendar now = Calendar.getInstance();
-        minRPCTime.setTimeInMillis((long)project.min_rpc_time*1000);
-        if (minRPCTime.compareTo(now) > 0) {
-            appendToStatus(
-            	sb,
-            	activity.getResources().getString(R.string.projects_status_backoff) + " " +
-            	DateUtils.formatElapsedTime((minRPCTime.getTimeInMillis() - now.getTimeInMillis()) / 1000)
-            );
-        }
-		
-		return sb.toString();
-	}
-
-	private void appendToStatus(StringBuffer existing, String additional) {
-	    if (existing.length() == 0) {
-	        existing.append(additional);
-	    } else {
-	        existing.append(", ");
-	        existing.append(additional);
-	    }
+		//return status.getProjectIcon(entries.get(position).id);
 	}
 	
 	@Override
@@ -206,7 +154,8 @@ public class ProjectsListAdapter extends ArrayAdapter<ProjectsListData> {
 	        	tvUser.setText(userText);
 	        }
 	        
-		    String statusText = getStatus(position);
+		    String statusText = "";
+		    try{statusText = BOINCActivity.monitor.getProjectStatus(data.project.master_url);}catch(Exception e){}
 	        TextView tvStatus = (TextView)vi.findViewById(R.id.project_status);
 		    if(statusText.isEmpty()) tvStatus.setVisibility(View.GONE);
 		    else {

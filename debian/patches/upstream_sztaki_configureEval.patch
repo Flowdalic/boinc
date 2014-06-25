@@ -1,9 +1,7 @@
 Author: Unknown
-Index: boinc/configure.ac
-===================================================================
---- boinc.orig/configure.ac
-+++ boinc/configure.ac
-@@ -289,6 +289,20 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -311,6 +311,20 @@
  
  AC_SUBST([TOP_BUILD_DIR], [`pwd`])
  
@@ -24,13 +22,3 @@ Index: boinc/configure.ac
  ## commented this out to turn all maintainer-mode features ON by default,
  ## such as automatic reconfiguring on changes in Makefile.am's and configure.ac
  ## AM_MAINTAINER_MODE
-Index: boinc/tools/update_versions
-===================================================================
---- boinc.orig/tools/update_versions
-+++ boinc/tools/update_versions
-@@ -1,4 +1,4 @@
--#! /usr/bin/env php
-+#!/usr/bin/php
- 
- <?php
- // This file is part of BOINC.

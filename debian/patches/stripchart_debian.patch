@@ -1,10 +1,8 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: Adjusting paths.
 Disclaimer: This is mostly dead code in upstream.
-Index: boinc/stripchart/stripchart.cnf
-===================================================================
---- boinc.orig/stripchart/stripchart.cnf
-+++ boinc/stripchart/stripchart.cnf
+--- a/stripchart/stripchart.cnf
++++ b/stripchart/stripchart.cnf
 @@ -4,7 +4,7 @@
  $majorversion = 2; $minorversion = 1;
  
@@ -38,10 +36,8 @@ Index: boinc/stripchart/stripchart.cnf
  
  # What time is it right now?
  $rightnow = time;
-Index: boinc/stripchart/stripchart
-===================================================================
---- boinc.orig/stripchart/stripchart
-+++ boinc/stripchart/stripchart
+--- a/stripchart/stripchart
++++ b/stripchart/stripchart
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env perl
 +#!/usr/bin/perl
@@ -57,10 +53,8 @@ Index: boinc/stripchart/stripchart
  
  # Read it in:
  open (CNFFILE,$cnfpath) or die "cannot open configuration file: $cnfpath\nmake sure this variable is set properly";
-Index: boinc/stripchart/stripchart.cgi
-===================================================================
---- boinc.orig/stripchart/stripchart.cgi
-+++ boinc/stripchart/stripchart.cgi
+--- a/stripchart/stripchart.cgi
++++ b/stripchart/stripchart.cgi
 @@ -1,4 +1,4 @@
 -#! /usr/bin/env perl
 +#!/usr/bin/perl

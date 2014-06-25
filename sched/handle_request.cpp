@@ -38,14 +38,14 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include "boinc_db.h"
 #include "backend_lib.h"
+#include "boinc_db.h"
 #include "error_numbers.h"
-#include "parse.h"
-#include "str_util.h"
-#include "str_replace.h"
-#include "util.h"
 #include "filesys.h"
+#include "parse.h"
+#include "str_replace.h"
+#include "str_util.h"
+#include "util.h"
 
 #include "sched_vda.h"
 
@@ -393,8 +393,8 @@ lookup_user_and_make_new_host:
         //
         if (strlen(g_request->host.host_cpid)) {
             if (find_host_by_cpid(user, g_request->host.host_cpid, host)) {
-                log_messages.printf(MSG_CRITICAL,
-                    "[HOST#%d] [USER#%d] User has another host with same CPID.\n",
+                log_messages.printf(MSG_NORMAL,
+                    "[HOST#%d] [USER#%d] No host ID in request, but host with matching CPID found.\n",
                     host.id, host.userid
                 );
                 if ((g_request->allow_multiple_clients != 1)
@@ -1187,6 +1187,17 @@ void process_request(char* code_sign_key) {
 
     log_request();
 
+#if 0
+    // if you need to debug a problem w/ a particular host or user,
+    // edit the following
+    //
+    if (g_reply->user.id == XX || g_reply.host.id == YY) {
+        config.sched_debug_level = 3;
+        config.debug_send = true;
+        ...
+    }
+#endif
+
     // is host blacklisted?
     //
     if (g_reply->host._max_results_day == -1) {
@@ -1198,8 +1209,8 @@ void process_request(char* code_sign_key) {
         int pid_with_lock = lock_sched();
         if (pid_with_lock > 0) {
             log_messages.printf(MSG_CRITICAL,
-                "Another scheduler instance [PID=%d] is running for this host\n",
-                pid_with_lock
+                "Another scheduler instance [PID=%d] is running for [HOST#%d]\n",
+                pid_with_lock, g_reply->host.id
             );
         } else if (pid_with_lock) {
             log_messages.printf(MSG_CRITICAL,

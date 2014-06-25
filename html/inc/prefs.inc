@@ -301,7 +301,7 @@ if (isset($accelerate_gpu_apps_pref) && $accelerate_gpu_apps_pref) {
     );
 }
 
-if ($app_types->count > 1) {
+//if ($app_types->count > 1) {
     if ($app_types->cpu) {
         $project_pref_descs[] = new PREF_BOOL (
             tra(
@@ -341,7 +341,7 @@ if ($app_types->count > 1) {
     if ($app_types->intel_gpu) {
         $project_pref_descs[] = new PREF_BOOL (
             tra(
-                "Use Intel GPU %1 Enforced by version 7.0+ %2",
+                "Use Intel GPU %1 Enforced by version 7.2+ %2",
                 "<br><span class=note>",
                 "</span>"
             ),
@@ -350,7 +350,7 @@ if ($app_types->count > 1) {
             true
         );
     }
-}
+//}
 
 if (isset($project_has_beta) && $project_has_beta) {
     $project_pref_descs[] = new PREF_BOOL(
@@ -638,7 +638,8 @@ function row_top($x, $ncols=6, $class="heading") {
     echo "<td class=$class width=10%><b>".tra("Default")."</b></td>
         <td class=$class width=10%><b>".tra("Home")."</b></td>
         <td class=$class width=10%><b>".tra("School")."</b></td>
-        <td class=$class width=10%><b>".tra("Work")."</b></td>";
+        <td class=$class width=10%><b>".tra("Work")."</b></td>
+    ";
     echo "<td width=15%><br></td></tr>\n";
 }
 
@@ -797,7 +798,7 @@ function prefs_show_privacy($user, $columns) {
 
 function prefs_show_project_specific($prefs, $columns=false) {
     if ($columns) {
-    $project_specific_prefs = project_specific_prefs_parse($prefs->project_specific);
+        $project_specific_prefs = project_specific_prefs_parse($prefs->project_specific);
         $project_specific_prefs->home = isset($prefs->home) ? project_specific_prefs_parse($prefs->home->project_specific) : "";
         $project_specific_prefs->work = isset($prefs->work) ? project_specific_prefs_parse($prefs->work->project_specific) : "";
         $project_specific_prefs->school = isset($prefs->school) ? project_specific_prefs_parse($prefs->school->project_specific) : "";
@@ -880,10 +881,13 @@ function print_prefs_display_project($user, $columns=false) {
 function print_prefs_display_global($user, $columns=false) {
     $global_prefs = prefs_parse_global($user->global_prefs);
 
-    echo "<span class=note>".
-         tra("These apply to all BOINC projects in which you participate.<br>
-             On computers participating in multiple projects, the most recently modified preferences will be used.").
-         "</span><br><br>";
+    echo "<span class=note>"
+         .tra("These apply to all BOINC projects in which you participate.")
+         ."<br>"
+         .tra("On computers participating in multiple projects, the most recently modified preferences will be used.")
+         ."<br>"
+         .tra("These preferences do not apply to Android devices.")
+         ."</span><br><br>";
     if (isset($global_prefs->mod_time)) {
         echo tra("Preferences last modified:")." ".pretty_time_str($global_prefs->mod_time);
     }
@@ -1033,7 +1037,7 @@ function venue_show($user) {
 }
 
 function venue_form($user) {
-    $n=$h=$w=$s='';
+    $n=$h=$w=$s=$m='';
     if ($user->venue == '') $n = 'selected';
     if ($user->venue == 'home') $h = 'selected';
     if ($user->venue == 'work') $w = 'selected';
@@ -1050,10 +1054,6 @@ function venue_form($user) {
 
 function venue_parse_form(&$user) {
     $user->venue = $_GET['default_venue'];
-}
-
-function venue_update($user) {
-    mysql_query("update user set venue='$user->venue' where id=$user->id");
 }
 
 ////////////////////////////////////////////
@@ -1185,9 +1185,8 @@ function project_prefs_make_xml($prefs, $primary=true) {
 // Update user's prefs in database, from a given structure
 //
 function global_prefs_update(&$user, $prefs) {
-    $prefs_xml = mysql_real_escape_string(global_prefs_make_xml($prefs));
-    $query = "update user set global_prefs='$prefs_xml' where id=$user->id";
-    $retval = mysql_query($query);
+    $prefs_xml = BoincDb::escape_string(global_prefs_make_xml($prefs));
+    $retval = $user->update("global_prefs='$prefs_xml'");
     if (!$retval) {
         return 1;
     }
@@ -1196,11 +1195,10 @@ function global_prefs_update(&$user, $prefs) {
 }
 
 function project_prefs_update(&$user, $prefs) {
-    $prefs_xml = mysql_real_escape_string(project_prefs_make_xml($prefs));
+    $prefs_xml = BoincDb::escape_string(project_prefs_make_xml($prefs));
     $send_email = $user->send_email?1:0;
     $show_hosts = $user->show_hosts?1:0;
-    $query = "update user set project_prefs='$prefs_xml', send_email=$send_email, show_hosts=$show_hosts where id=$user->id";
-    $retval = mysql_query($query);
+    $retval = $user->update("project_prefs='$prefs_xml', send_email=$send_email, show_hosts=$show_hosts");
     if (!$retval) {
         return 1;
     }

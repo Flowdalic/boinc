@@ -21,7 +21,6 @@
 
 #ifdef _WIN32
 #include "boinc_win.h"
-#include "win_util.h"
 #else
 #include <cmath>
 #endif
@@ -475,18 +474,8 @@ void boinc_app_key_release(int, int){}
 
 void app_graphics_init() {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-#ifdef _WIN32
-    chdir_to_install_dir();
-#endif
-
     ttf_load_fonts(".");
     logo.load_image_file(logo_file);
-
-#ifdef _WIN32
-    chdir_to_data_dir();
-#endif
-
     init_lights();
 }
 
@@ -503,10 +492,6 @@ int main(int argc, char** argv) {
         }
     }
 
-#ifdef _WIN32
-    chdir_to_data_dir();
-#endif
-
     // Initialize the BOINC Diagnostics Framework
     int dwDiagnosticsFlags =
 #ifdef _DEBUG
@@ -514,6 +499,7 @@ int main(int argc, char** argv) {
         BOINC_DIAG_MEMORYLEAKCHECKENABLED |
 #endif
         BOINC_DIAG_DUMPCALLSTACKENABLED | 
+        BOINC_DIAG_PERUSERLOGFILES |
         BOINC_DIAG_REDIRECTSTDERR |
         BOINC_DIAG_REDIRECTSTDOUT |
         BOINC_DIAG_TRACETOSTDOUT;

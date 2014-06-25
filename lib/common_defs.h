@@ -24,7 +24,10 @@
 // #defines or enums that are shared by more than one BOINC component
 // (e.g. client, server, Manager, etc.)
 
-#define GUI_RPC_PORT                                31416
+#define GUI_RPC_PORT 31416
+    // for TCP connection
+#define GUI_RPC_FILE "boinc_socket"
+    // for Unix-domain connection
 
 #define COBBLESTONE_SCALE 200/86400e9
     // multiply normalized PFC by this to get Cobblestones
@@ -197,10 +200,24 @@ enum BATTERY_STATE {
 #define RPC_REASON_INIT             6
 #define RPC_REASON_PROJECT_REQ      7
 
+// values of batch.state
+// see html/inc/common_defs.inc
+//
+#define BATCH_STATE_INIT            0
+#define BATCH_STATE_IN_PROGRESS     1
+#define BATCH_STATE_COMPLETE        2
+    // "complete" means all workunits have either
+    // a canonical result or an error
+#define BATCH_STATE_ABORTED         3
+#define BATCH_STATE_RETIRED         4
+    // input/output files can be deleted,
+    // result and workunit records can be purged.
+
 struct TIME_STATS {
-// we maintain an exponentially weighted average of these quantities:
     double now;
-        // the client's time of day
+        // the client's current time of day
+
+    // we maintain an exponentially weighted average of these quantities:
     double on_frac;
         // the fraction of total time this host runs the client
     double connected_frac;
@@ -218,9 +235,27 @@ struct TIME_STATS {
         // (as determined by preferences, manual suspend/resume, etc.)
     double gpu_active_frac;
         // same, GPU
+
+    // info for the current session (i.e. run of the client)
+    //
     double client_start_time;
+        // start of current session
     double previous_uptime;
         // duration of previous session
+    double session_active_duration;
+        // time computation enabled
+    double session_gpu_active_duration;
+        // time GPU computation enabled
+
+    // info since the client was first run
+    //
+    double total_start_time;
+    double total_duration;
+        // time BOINC client has run
+    double total_active_duration;
+        // time computation allowed
+    double total_gpu_active_duration;
+        // time GPU computation allowed
 
     void write(MIOFILE&);
     int parse(XML_PARSER&);
