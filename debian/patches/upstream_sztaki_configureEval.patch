@@ -22,11 +22,3 @@ Author: Unknown
  ## commented this out to turn all maintainer-mode features ON by default,
  ## such as automatic reconfiguring on changes in Makefile.am's and configure.ac
  ## AM_MAINTAINER_MODE
---- a/tools/update_versions
-+++ b/tools/update_versions
-@@ -1,4 +1,4 @@
--#! /usr/bin/env php
-+#!/usr/bin/php
- 
- <?php
- // This file is part of BOINC.
