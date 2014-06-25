@@ -1,22 +1,32 @@
 #!/bin/bash
 
-# This script shall support the initial setup 
-# of a BOINC server by assisting in the download
-# of example applications from Debian.
-#
-# This script is released under the same license
-# as BOINC, created and copyright by
-# Steffen Moeller <moeller@debian.org>
-# with contributions by
-# Christian Beer <djangofett@gmx.net>
-# Natalia Nikitina <nevecie@yandex.ru>
-
 set -e
+
+version=0.0.0
+if [ "-version" = "$1" -o "--version" = "$1" ]; then
+   echo "$version"
+   exit 1
+fi
 
 if [ "-h" = "$1" -o "-help" = "$1" -o "--help" = "$1" ]; then
 	cat <<EOHELP
+$(basename $0|tr "a-z" "A-Z")                   BOINC-SERVER-AUTODOCK                   $(basename $0|tr "a-z" "A-Z")
 
-Usage: $0 [<boinc project root dir>|--help]
+NAME
+
+  $(basename $0) - retrieve binaries from Debian for example applications
+
+SYNOPSIS
+
+  $(basename $0) [<boinc project root dir>|--help]
+
+DESCRIPTION
+
+  This script shall support the initial setup 
+  of a BOINC server by assisting in the download
+  of example applications from Debian.
+
+ENVIRONMENT
 
   This script collects the binaries for multiple platforms of a Debian
   package.  All parameters are specified by environment variables.
@@ -36,6 +46,24 @@ Usage: $0 [<boinc project root dir>|--help]
 
   If the packagename is not specified, then it defaults to
   boinc-app-examples.
+
+SEE ALSO
+
+	http://wiki.debian.org/BOINC
+	http://mgltools.scripps.edu
+	http://autodock.scripps.edu
+
+COPYRIGHT
+
+  This script is released under the same license as BOINC.
+
+AUTHORS
+
+  Steffen Moeller <moeller@debian.org>
+    with contributions from
+  Christian Beer <djangofett@gmx.net>
+  Natalia Nikitina <nevecie@yandex.ru>
+
 
 EOHELP
 	exit 1
@@ -61,11 +89,12 @@ if [ -z "$mirror" ]; then
 	mirror="http://ftp.de.debian.org/debian"
 fi
 
-version=$(apt-cache show $packagename | grep ^Version | tail -1 | cut -f2 -d\  )
-if [ -z "$version" ]; then
+debianversion=$(apt-cache show $packagename | grep ^Version | tail -1 | cut -f2 -d\  )
+if [ -z "$debianversion" ]; then
 	echo "E: apt-cache does not know any version for package '$packagename'."
 	exit 1
 fi
+#version='7.0.27+dfsg-5' #TODO: do it in a proper way
 
 if [ -z "$sourcepackagename" ]; then
 	sourcepackagename=$(apt-cache show $packagename|grep ^Source:|sort -u|cut -f2 -d\ |head -n 1)
@@ -92,20 +121,20 @@ fi
 
 sign="$projectroot/bin/sign_executable"
 key="$projectroot/keys/code_sign_private"
-
-shortver=$(echo $version|cut -d . -f-2)
+shortver=$(echo $debianversion|cut -d . -f-2)
 
 if [ -z "$appsdir" ]; then
-    appsdir="apps"
+	if [ -d "$projectroot/apps" ]; then
+		echo "W: 'appsdir' not specified, chose '\$projectroot/apps'."
+		appsdir="$projectroot/apps"
+	else
+		echo "W: 'appsdir' not specified, and no apps directory in \$projectroot, decided for 'apps'.".
+		appsdir="apps"
+	fi
 fi
 
 if [ -z "$downloaddir" ]; then
-    downloaddir="collection"
-fi
-
-if [ -d "$appsdir" ]; then
-	echo "E: Directory '$appsdir' is already existing. Please clean this up first."
-	exit
+	downloaddir="collection"
 fi
 
 echo "I: Retrieving application for all of Debian's architectures."
@@ -118,24 +147,43 @@ do
   fi
 
   if [ ! -r $arch.deb ]; then 
-    url="$mirror/pool/main/${spn}/${sourcepackagename}/${packagename}_${version}_${arch}.deb"
-    if ! wget --quiet -O - $url > ${arch}.deb ; then
+    url="$mirror/pool/main/${spn}/${sourcepackagename}/${packagename}_${debianversion}_${arch}.deb"
+    if ! wget -N --quiet $url ; then
        echo "E: Platform '$arch' failed to download .... skipping."
-       rm -f ${arch}.deb
+       rm -f ${arch}.deb ${packagename}_${debianversion}_${arch}.deb
        continue
+    else
+       ln -sf ${packagename}_${debianversion}_${arch}.deb ${arch}.deb
     fi
   fi
 
-  ar xvf ${arch}.deb data.tar.xz               
   echo "I: Untaring for architecture ${arch}"
-  tar xfJ data.tar.xz ./usr/lib/boinc-server-maker/apps/  
-  echo -n "I: Contents:"
-  ls ./usr/lib/boinc-server-maker/apps/
+  mkdir -p ./apps
+
+  if ar t ${arch}.deb | grep -q "data.tar.xz"; then
+    ar xvf ${arch}.deb data.tar.xz
+    tar xfJ data.tar.xz -C ./apps
+  elif ar t ${arch}.deb | grep -q "data.tar.gz"; then
+    ar xvf ${arch}.deb data.tar.gz
+    tar xfz data.tar.gz -C ./apps
+  else
+    echo "E: No valid data.tar.* entry in archive!"
+  fi
+
+  echo "I: Contents:"
+  ls ./apps/usr/lib/boinc-server/apps/ #./apps/ #./usr/lib/boinc-server-maker/apps/
   mkdir -p $downloaddir
-  mv ./usr/lib/boinc-server-maker/apps $downloaddir/$arch
-  mv usr deleteThisDir
-  rm -rf deleteThisDir data.tar.xz ${arch}.deb     
+  cp -r ./apps/usr/lib/boinc-server/apps $downloaddir/$arch  ##./usr/lib/boinc-server-maker/apps $downloaddir/$arch
+  mv apps deleteThisDir #usr
+  rm -rf deleteThisDir data.tar.* ${arch}.deb 
 done
+
+if [ -d "$appsdir" ]
+then
+    rm -r $appsdir
+#   echo "E: App directory '$appsdir' already exists, exiting!"
+#   exit
+fi
 
 echo "I: Creating directories for all applications in folder '$downloaddir' now in folder '$appsdir'."
 for f in `find collection -type f | xargs -r -l basename| sort -u`
@@ -156,9 +204,7 @@ do
     do 
 	archname=$(echo $folder|cut -d / -f2)
         echo -n " $archname"
-	#echo Creating new apps directory structure
 	mkdir -p $appsdir/$appname/${shortver}/${deb2boinc[$archname]}
-	#echo Copying $folder/$appname $appsdir/$appname/${shortver}/${deb2boinc[$archname]}/${appname}_${shortver}_${deb2boinc[$archname]}
 	cp $folder/$appname $appsdir/$appname/${shortver}/${deb2boinc[$archname]}/${appname}_${shortver}_${deb2boinc[$archname]}
     done
     echo
