@@ -1,4 +1,9 @@
-boinc (7.4.1+dfsg-1exp2) UNRELEASED; urgency=medium
+boinc (7.4.7+dfsg-1exp1) experimental; urgency=medium
+
+  * New upstream release.
+
+  [ Steffen Moeller ]
+  * Automatic download of Linux BOINC server apps.
 
   [ Guo Yixuan (郭溢譞) ]
   * Dropped ticket_1168_verifycerts.patch: the bug was already fixed.
@@ -14,6 +19,7 @@ boinc (7.4.1+dfsg-1exp2) UNRELEASED; urgency=medium
   [ Gianfranco Costamagna ]
   * Dropped fix-747964.patch (Reopen: #747964)
     Upstream says this is unreachable code, no need to fix.
+  * Update cc_config.xml link, thanks to Danilo for the report.
 
  -- Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>  Mon, 23 Jun 2014 22:00:17 -0400
 
