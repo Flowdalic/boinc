@@ -1,3 +1,9 @@
+boinc (7.4.8+dfsg-1) unstable; urgency=medium
+
+  * New upstream release. (LP: #1332955)
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sat, 28 Jun 2014 12:35:21 +0200
+
 boinc (7.4.7+dfsg-1exp1) experimental; urgency=medium
 
   * New upstream release.
