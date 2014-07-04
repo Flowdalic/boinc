@@ -27,7 +27,7 @@ endif
 # core client (with the --with-boinc-platform configure option) to match the
 # official BOINC platform, otherwise it would not download any applications,
 # because projects mostly provide applications for official BOINC platforms
-# only. See http://boinc.berkeley.edu/trac/wiki/BoincPlatforms for the list
+# only. See https://boinc.berkeley.edu/trac/wiki/BoincPlatforms for the list
 # of official BOINC platforms.
 #
 # The table of architectures known to dpkg-architecture are listed on
@@ -170,7 +170,7 @@ $(shell sed 's/^@//' -i debian/control)
 # --disable-static
 # For debugging, these options are useful:
 #   --enable-debug
-#   --enable-wx-debug (need to install libwxbase2.8-dbg and libwxgtk2.8-dbg)
+#   --enable-wx-debug (need to install libwxbase3.0-0-dbg and libwxgtk3.0-0-dbg)
 #
 # The --libdir and --libexecdir is added to turn off
 # the debhelper multiarch feature.
