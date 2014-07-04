@@ -37,7 +37,6 @@ Package: boinc
 @ BOINC Manager, a graphical monitor and control utility for the
 @ BOINC core client.
 @
-@# Not compatible with Wheezy with direct notion of libcuda1:i386 [amd64] - Maybe fixed in version nvidia-graphics-drivers (331.20-2), see changelog.
 @Package: boinc-nvidia-cuda
 @Architecture: amd64 i386
 @Section: contrib/net
