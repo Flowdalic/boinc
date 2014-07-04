@@ -37,13 +37,13 @@ Package: boinc
 @ BOINC Manager, a graphical monitor and control utility for the
 @ BOINC core client.
 @
-@# Not compatible with Wheezy with direct notion of libcuda1:i386 [amd64]
+@# Not compatible with Wheezy with direct notion of libcuda1:i386 [amd64] - Maybe fixed in version nvidia-graphics-drivers (331.20-2), see changelog.
 @Package: boinc-nvidia-cuda
 @Architecture: amd64 i386
 @Section: contrib/net
 @Priority: extra
-@Depends: ${misc:Depends}, boinc, libcuda1 | libcuda-5.0-1 | nvidia-304 | nvidia-310 | nvidia-319,
-@Recommends: libcuda1-i386 [amd64] | libcuda-5.0-1-i386 [amd64]
+@Depends: ${misc:Depends}, boinc, libcuda1 | libcuda-5.0-1 | libcuda-5.5-1 | libcuda1-304 | libcuda1-304-updates | libcuda1-331 | libcuda1-331-updates
+@Recommends: libcuda1-i386  | libcuda-5.0-1-i386 | libcuda-5.5-1-i386 
 @Description: metapackage for CUDA-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -62,7 +62,7 @@ Package: boinc
 @Architecture: amd64 i386
 @Section: contrib/net
 @Priority: extra
-@Depends: ${misc:Depends}, boinc, fglrx-driver, amd-libopencl1|fglrx|fglrx-updates
+@Depends: ${misc:Depends}, boinc, fglrx-driver, amd-libopencl1 | fglrx | fglrx-updates
 @Description: metapackage for AMD/ATI OpenCL-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -89,7 +89,7 @@ Package: boinc
 @ ${python:Depends},
 @ adduser,
 @ ca-certificates
-@Suggests: boinc-manager, x11-xserver-utils, libcuda1-i386 [amd64] | libcuda-5.0-1-i386 [amd64]
+@Suggests: boinc-manager, x11-xserver-utils, libcuda1-i386 | libcuda-5.0-1-i386 | libcuda-5.5-1-i386
 @Description: core client for the BOINC distributed computing infrastructure
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -311,7 +311,7 @@ Package: boinc
 %Priority: extra
 %Architecture: all
 %Depends: ${misc:Depends}, gnuplot-nox, ${perl:Depends},
-%Recommends: apache2|httpd-cgi
+%Recommends: apache2 | httpd-cgi
 %Description: CGI script for plotting basic statistical graphs
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 % software platform for distributed computing using volunteered computer
