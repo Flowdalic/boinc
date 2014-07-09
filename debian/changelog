@@ -1,6 +1,6 @@
 boinc (7.4.8+dfsg-1exp2) UNRELEASED; urgency=medium
 
-  * Change libwxgtk2.8-dbg to libwxgtk3.0-dbg.
+  * Change libwxgtk2.8-dbg to libwxgtk3.0-0-dbg.
   * Add some cuda suggestions, to help both ubuntu and debian users
     Thanks Danilo for the patch.
 
