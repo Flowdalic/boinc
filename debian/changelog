@@ -1,5 +1,10 @@
-boinc (7.4.8+dfsg-1exp2) UNRELEASED; urgency=medium
+boinc (7.4.8+dfsg-2) unstable; urgency=medium
 
+  [ Steffen Moeller ]
+  * Move ati and nvidia libraries from depends to suggests,
+    avoiding the removals from testing at each xorg transition.
+
+  [ Gianfranco Costamagna ]
   * Change libwxgtk2.8-dbg to libwxgtk3.0-0-dbg.
   * Add some cuda suggestions, to help both ubuntu and debian users
     Thanks Danilo for the patch.
