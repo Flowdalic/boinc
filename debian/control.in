@@ -41,7 +41,8 @@ Package: boinc
 @Architecture: amd64 i386
 @Section: contrib/net
 @Priority: extra
-@Depends: ${misc:Depends}, boinc, libcuda1 | libcuda-5.0-1 | libcuda-5.5-1 | nvidia-173 | nvidia-current | nvidia-current-updates | nvidia-304 | nvidia-304-updates | nvidia-310 | nvidia-310-updates | nvidia-313-updates | nvidia-319 | nvidia-319-updates | nvidia-331 | nvidia-331-updates | libcuda1-304 | libcuda1-304-updates | libcuda1-331 | libcuda1-331-updates, libcudart4 | libcudart5.0 | libcudart5.5
+@Depends: ${misc:Depends}
+@Recommends: libcuda1 | libcuda-5.0-1 | libcuda-5.5-1 | nvidia-173 | nvidia-current | nvidia-current-updates | nvidia-304 | nvidia-304-updates | nvidia-310 | nvidia-310-updates | nvidia-313-updates | nvidia-319 | nvidia-319-updates | nvidia-331 | nvidia-331-updates | libcuda1-304 | libcuda1-304-updates | libcuda1-331 | libcuda1-331-updates, libcudart4 | libcudart5.0 | libcudart5.5
 @Description: metapackage for CUDA-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -60,7 +61,8 @@ Package: boinc
 @Architecture: amd64 i386
 @Section: contrib/net
 @Priority: extra
-@Depends: ${misc:Depends}, boinc, fglrx-driver, amd-libopencl1 | fglrx | fglrx-updates
+@Depends: ${misc:Depends}
+@Recommends: fglrx-driver, amd-libopencl1 | fglrx | fglrx-updates
 @Description: metapackage for AMD/ATI OpenCL-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
