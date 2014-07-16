@@ -1,3 +1,9 @@
+boinc (7.4.8+dfsg-2exp1) experimental; urgency=medium
+
+  * Upload to experimental.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 16 Jul 2014 16:50:27 +0200
+
 boinc (7.4.8+dfsg-2) unstable; urgency=medium
 
   [ Steffen Moeller ]
