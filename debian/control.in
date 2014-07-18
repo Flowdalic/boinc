@@ -23,7 +23,7 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-boinc/boinc.git
 Package: boinc
 @Architecture: all
 @Depends: ${misc:Depends},
-@ boinc-client (= ${source:Version}), boinc-manager (= ${source:Version})
+@ boinc-client (>= ${source:Version}), boinc-manager (>= ${source:Version})
 @Description: metapackage for the BOINC client and the manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -85,7 +85,7 @@ Package: boinc
 @Package: boinc-client
 @Architecture: any
 @Depends: ${shlibs:Depends}, ${misc:Depends},
-@ libboinc7 (= ${source:Version}),
+@ libboinc7 (>= ${source:Version}),
 @ ${python:Depends},
 @ adduser,
 @ ca-certificates
@@ -194,10 +194,10 @@ Package: boinc
 @
 @Package: libboinc-app7
 @Provides: libboinc-app
-@Breaks: libboinc-app (<< ${source:Version}),
-@ boinc-dev (<< ${source:Version})
-@Replaces: libboinc-app (<< ${source:Version}),
-@ boinc-dev (<< ${source:Version})
+@Breaks: libboinc-app (<= 7.0.34+dfsg-1),
+@ boinc-dev (<< 7.0.28+dfsg-3)
+@Replaces: libboinc-app (<= 7.0.34+dfsg-1),
+@ boinc-dev (<< 7.0.28+dfsg-3)
 @Section: libs
 @Architecture: any
 @Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -211,10 +211,10 @@ Package: boinc
 @
 @Package: libboinc7
 @Provides: libboinc
-@Breaks: libboinc (<< ${source:Version}),
-@ boinc-dev (<< ${source:Version})
-@Replaces: libboinc (<< ${source:Version}),
-@ boinc-dev (<< ${source:Version})
+@Breaks: libboinc (<= 7.0.34+dfsg-1),
+@ boinc-dev (<< 7.0.28+dfsg-3)
+@Replaces: libboinc (<= 7.0.34+dfsg-1),
+@ boinc-dev (<< 7.0.28+dfsg-3)
 @Architecture: any
 @Section: libs
 @Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -275,7 +275,7 @@ Package: boinc
 @Section: debug
 @Priority: extra
 @Architecture: any
-@Depends: boinc-client (= ${source:Version}) | boinc-manager (= ${source:Version}) | libboinc7 (= ${source:Version}) | libboinc-app7 (= ${source:Version}),
+@Depends: boinc-client (>= ${source:Version}) | boinc-manager (>= ${source:Version}) | libboinc7 (= ${source:Version}) | libboinc-app7 (= ${source:Version}),
 @ ${misc:Depends}
 @Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk3.0-0-dbg,
 % boinc-server-dbg
@@ -294,7 +294,7 @@ Package: boinc
 %Section: debug
 %Priority: extra
 %Architecture: any
-%Depends: boinc-client (= ${source:Version}) | boinc-manager (= ${source:Version}) | libboinc7 (= ${source:Version}) | libboinc-app7 (= ${source:Version}),
+%Depends: boinc-client (>= ${source:Version}) | boinc-manager (>= ${source:Version}) | libboinc7 (>= ${source:Version}) | libboinc-app7 (>= ${source:Version}),
 % ${misc:Depends}
 %Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk3.0-0-dbg
 %Description: debugging symbols for BOINC server binaries

@@ -387,6 +387,7 @@ ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
 	cp $(SAMPLES) $(CURDIR)/debian/tmp/samples || echo "W: Could not install samples ($(SAMPLES))"
+	rm -f debian/tmp/usr/share/doc/boinc-server-maker/examples/wrapper/regexp_memory.o
 endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
 	do \

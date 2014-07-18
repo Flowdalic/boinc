@@ -1,3 +1,12 @@
+boinc (7.4.8+dfsg-3) unstable; urgency=medium
+
+  * Upload to unstable.
+  * Reverting some control.in changes to let the package
+    be NMUable.
+  * Remove a .o file from server-maker package
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 18 Jul 2014 10:54:49 +0200
+
 boinc (7.4.8+dfsg-2exp1) experimental; urgency=medium
 
   * Upload to experimental.
