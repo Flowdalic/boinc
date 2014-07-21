@@ -196,7 +196,11 @@ CFGFLAGS_boinc-client = \
 # Default rule
 
 %:
+ifeq (,$(ENABLE_SERVER_TEST))
+	dh $@ --with python2 --parallel
+else
 	dh $@ --with python2
+endif
 #	if [ ! -f debian/control -o debian/control.in -nt debian/control ]; then \
 		echo "Generating debian/control file from debian/control.in" ; \
 		( \
@@ -387,7 +391,6 @@ ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
 	cp $(SAMPLES) $(CURDIR)/debian/tmp/samples || echo "W: Could not install samples ($(SAMPLES))"
-	rm -f debian/tmp/usr/share/doc/boinc-server-maker/examples/wrapper/regexp_memory.o
 endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
 	do \
@@ -434,4 +437,4 @@ override_dh_compress:
 	dh_compress -Xsamples -X.cpp -X.py -XMakefile
 
 override_dh_installexamples:
-	dh_installexamples -X.gz -Xjpeglib 
+	dh_installexamples -X.gz -Xjpeglib -X.o
