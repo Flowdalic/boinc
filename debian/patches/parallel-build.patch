@@ -1,0 +1,32 @@
+Description: this should ensure that parallel builds work on debian (since the dependencies are changed with dynamic libraries)
+--- boinc-7.4.8+dfsg.orig/Makefile.incl
++++ boinc-7.4.8+dfsg/Makefile.incl
+@@ -42,22 +42,22 @@ AM_LDFLAGS =
+ # programs linking to them:
+ 
+ LIBSCHED = -lsched
+-$(LIBSCHED):
++$(LIBSCHED_STATIC):
+ 	cd $(top_builddir)/sched; ${MAKE} libsched.la
+ LIBSCHED_FCGI = -lsched_fcgi
+-$(LIBSCHED_FCGI):
++$(LIBSCHED_FCGI_STATIC):
+ 	cd $(top_builddir)/sched; ${MAKE} libsched_fcgi.la
+ LIBBOINC = -lboinc
+-$(LIBBOINC):
++$(LIBBOINC_STATIC):
+ 	cd $(top_builddir)/lib; ${MAKE} libboinc.la
+ LIBBOINC_CRYPT = -lboinc_crypt
+-$(LIBBOINC_CRYPT):
++$(LIBBOINC_CRYPT_STATIC):
+ 	cd $(top_builddir)/lib; ${MAKE} libboinc.la
+ LIBBOINC_FCGI = -lboinc_fcgi
+-$(LIBBOINC_FCGI):
++$(LIBBOINC_FCGI_STATIC):
+ 	cd $(top_builddir)/lib; ${MAKE} libboinc_fcgi.la
+ LIBAPI = -lboinc_api
+-$(LIBAPI):
++$(LIBAPI_STATIC):
+ 	cd $(top_builddir)/api; ${MAKE} libboinc_api.la
+ 
+ SERVERLIBS = $(LIBSCHED) $(LIBBOINC_CRYPT) $(LIBBOINC) $(MYSQL_LIBS) $(PTHREAD_LIBS) $(RSA_LIBS) $(SSL_LIBS)

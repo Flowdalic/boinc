@@ -1,3 +1,11 @@
+boinc (7.4.8+dfsg-3exp3) experimental; urgency=medium
+
+  * d/p/parallel-build.patch d/r
+    enabled parallel build for all builds, now the package
+    should build properly.
+
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Tue, 05 Aug 2014 13:22:53 +0200
+
 boinc (7.4.8+dfsg-3exp2) experimental; urgency=medium
 
   * Build with --parallel for experimental builds

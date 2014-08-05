@@ -196,11 +196,7 @@ CFGFLAGS_boinc-client = \
 # Default rule
 
 %:
-ifeq (,$(ENABLE_SERVER_TEST))
 	dh $@ --with python2 --parallel
-else
-	dh $@ --with python2
-endif
 #	if [ ! -f debian/control -o debian/control.in -nt debian/control ]; then \
 		echo "Generating debian/control file from debian/control.in" ; \
 		( \
