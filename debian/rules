@@ -100,19 +100,13 @@ ifeq ($(DEB_HOST_GNU_TYPE), i486-gnu)
   #TYPE_FLAGS += --with-boinc-platform=i686-pc-hurd-gnu
 endif
 
-ifneq (clang++,$(CXX))
+ifneq (,$(findstring clang,$(DEB_BUILD_OPTIONS)))
+  export CXX=clang
+endif
 
-GCCVERSION=$(shell gcc --version | tr " " "\n" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$$' | cut -f1,2 -d.)
-# gcc 4.6 on precise has issues while gcc 4.7 on sid is just fine
-ifneq (4.6,$(GCCVERSION))
-ifneq (4.5,$(GCCVERSION))
-ifneq (4.4,$(GCCVERSION))
+ifneq (clang++,$(CXX))
  CFLAGS += -flto
  LDFLAGS += -flto
-endif
-endif
-endif
-
 endif
 
 CFLAGS += -Wall
@@ -120,11 +114,6 @@ CXXFLAGS += -Wall
 #LDFLAGS += -Wl,--as-needed
 # hurd needs the following
 LDFLAGS += -Wl,--no-add-needed
-
-
-ifneq (,$(findstring clang,$(DEB_BUILD_OPTIONS)))
-  export CXX=clang
-endif
 
 ifeq (,$(DEB_OPT_FLAGS))
    DEB_OPT_FLAGS = -O3 -funroll-loops -fforce-addr -ffast-math
