@@ -100,6 +100,29 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
     ReadPreferenceSettings();
     //
     RestoreState();
+
+#ifdef __WXMSW__
+    int margin = 0, tabwidth = 0;
+    RECT r;
+    BOOL success = TabCtrl_GetItemRect(m_Notebook->GetHWND(), 0, &r);
+    if (success) {
+        margin = r.left;
+    }
+
+    success = TabCtrl_GetItemRect(m_Notebook->GetHWND(), m_Notebook->GetPageCount()-1, &r);
+    if (success) {
+        tabwidth += r.right;
+    }
+    tabwidth += margin;
+    wxSize sz = m_Notebook->GetBestSize();
+    if (sz.x < tabwidth) {
+        sz.x = tabwidth;
+        m_Notebook->SetMinSize(sz);
+    }
+#endif
+
+    this->Layout();
+    Fit();
 }
 
 /* destructor */
@@ -779,7 +802,10 @@ bool CDlgAdvPreferences::EnsureTabPageVisible(wxTextCtrl* txtCtrl) {
 
 /* show an error message and set the focus to the control that caused the error */
 void CDlgAdvPreferences::ShowErrorMessage(wxString& message,wxTextCtrl* errorCtrl) {
-    bool visibleOK = this->EnsureTabPageVisible(errorCtrl);
+#if wxDEBUG_LEVEL   // Prevent compiler warning (unused variable)
+    bool visibleOK =
+#endif
+    this->EnsureTabPageVisible(errorCtrl);
     wxASSERT(visibleOK);
     //
     if(message.IsEmpty()){
