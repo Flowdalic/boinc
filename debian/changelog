@@ -7,6 +7,7 @@ boinc (7.4.14+dfsg-1) unstable; urgency=medium
     it causes the dependency chain to be deleted
   * Remove parallel-build.patch, not needed anymore.
   * Simplify debian/rules, many workarounds are not needed.
+  * Use dh-autoreconf.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Tue, 12 Aug 2014 11:10:29 +0200
 
