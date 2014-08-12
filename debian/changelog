@@ -2,9 +2,10 @@ boinc (7.4.14+dfsg-1) unstable; urgency=medium
 
   * New upstream bugfix release.
   * Remove X-interactive from init script, not used.
-  * Remove parallel-builds.patch, the proble was a bad debian
-    patch.
   * Fix a typo in lib/Makefile.am (typo-fix.patch)
+  * Disable dynamic_libboinc.patch, it was not needed and moreover
+    it causes the dependency chain to be deleted
+  * Remove parallel-build.patch, not needed anymore.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Tue, 12 Aug 2014 11:10:29 +0200
 

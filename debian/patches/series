@@ -18,7 +18,7 @@ client_app_maxpathlen.patch
 #debian specific patches
 #boinclib_shared.patch #needed in order to make boinc build correctly otherwise it will FTBFS
 boinclib_shared.patch
-dynamic_libboinc.patch
+#dynamic_libboinc.patch
 Missing_libSched.patch
 #fix-for-debian-bug-646583.patch
 disable_new_version_check.patch
