@@ -360,12 +360,12 @@ endif
 
 override_dh_install:
 	# boinc apps are built only together with the server
-	dh_install
 	rm -rf debian/boinc-manager/usr/share/locale/en_US/
 	# delete empty dirs
 	if [ -d debian/boinc-manager/usr/share/locale ] ; then find debian/boinc-manager/usr/share/locale -type d -empty -delete; fi
 	# delete .la files (Closes: #621197)
 	find $(CURDIR)/debian -name "*.la" | xargs -r rm -f
+	dh_install
 
 override_dh_strip:
 	[ -d debian/boinc-dbg ] && dh_strip -a --no-package=-boinc-server-dbg --no-package=boinc-server-maker --no-package=boinc-app-examples --dbg-package=boinc-dbg || true
