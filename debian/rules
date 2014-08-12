@@ -129,9 +129,7 @@ CXXFLAGS_boinc-client := $(CXXFLAGS)
 $(shell cp debian/control.in debian/control)
 $(shell sed '/^#/d' -i debian/control)
 
-# check if we need to enable server packages, based on "exp" string in changelog
 ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
-#ENABLE_SERVER_TEST := $(shell egrep '^Package:.*boinc-server-maker' debian/control debian/control.in | grep -v boinc-server-maker)
 
 ifeq (,$(ENABLE_SERVER_TEST))
 $(shell sed 's/^%//' -i debian/control)
@@ -178,26 +176,8 @@ CFGFLAGS_boinc-client = \
   LDFLAGS="$(LDFLAGS)"
 
 
-# Default rule
-
 %:
 	dh $@ --with python2 --parallel
-#	if [ ! -f debian/control -o debian/control.in -nt debian/control ]; then \
-		echo "Generating debian/control file from debian/control.in" ; \
-		( \
-		if egrep -q '^Package:.*boinc-server-maker' debian/control.in; then \
-			sed -e 's/^%//' debian/control.in ; \
-		else \
-			egrep -v '^%' debian/control.in ; \
-		fi \
-		) | ( \
-		if egrep -q '^Package:.*boinc$$' debian/control.in; then \
-			sed -e 's/^@//' ; \
-		else \
-			sed -e '/^@/d' ; \
-		fi \
-		) > debian/control; \
-	fi
 
 override_dh_clean:
 	dh_clean
