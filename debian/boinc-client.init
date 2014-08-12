@@ -7,7 +7,6 @@
 # Should-Stop:       x11-common
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# X-Interactive:     true
 # Short-Description: BOINC core client
 # Description:       core client for the BOINC distributed computing
 #                    infrastructure

@@ -37,4 +37,4 @@ disable_silent_rules.patch
 server_status_php.patch
 #db_interface_use.patch
 boinc-server-dynamic-libs.patch
-parallel-build.patch
+fix-typo.patch

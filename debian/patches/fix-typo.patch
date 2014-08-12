@@ -1,0 +1,12 @@
+Description: this should ensure that parallel builds work on debian (since the dependencies are changed with dynamic libraries)
+--- a/lib/Makefile.am
++++ b/lib/Makefile.am
+@@ -209,7 +209,7 @@
+ 
+ 
+ if BUILD_STATIC_LIBS
+-all_local = $(LIBBOINC_STATIC) $(LIBBOINC_CRTYPT_STATIC)
++all_local = $(LIBBOINC_STATIC) $(LIBBOINC_CRYPT_STATIC)
+ if ENABLE_FCGI
+ all_local += $(LIBBOINC_FCGI_STATIC) 
+ endif
