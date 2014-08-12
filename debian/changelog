@@ -6,6 +6,7 @@ boinc (7.4.14+dfsg-1) unstable; urgency=medium
   * Disable dynamic_libboinc.patch, it was not needed and moreover
     it causes the dependency chain to be deleted
   * Remove parallel-build.patch, not needed anymore.
+  * Simplify debian/rules, many workarounds are not needed.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Tue, 12 Aug 2014 11:10:29 +0200
 

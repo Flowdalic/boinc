@@ -177,7 +177,7 @@ CFGFLAGS_boinc-client = \
 
 
 %:
-	dh $@ --with python2 --parallel
+	dh $@ --with python2,autoreconf --parallel
 
 override_dh_clean:
 	dh_clean
@@ -210,7 +210,7 @@ override_dh_auto_test:
 #	touch $@
 
 override_dh_auto_configure:
-	./_autosetup
+	#./_autosetup
 	#if [ ! -r ltmain.sh ]; then libtoolize; fi
 	#aclocal -I m4 && autoheader && automake --add-missing && autoconf
 	@echo
