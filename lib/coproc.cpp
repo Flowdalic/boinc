@@ -102,14 +102,23 @@ void PCI_INFO::write(MIOFILE& f) {
     );
 }
 
-void COPROC::write_xml(MIOFILE& f) {
+void COPROC::write_xml(MIOFILE& f, bool scheduler_rpc) {
     f.printf(
         "<coproc>\n"
         "   <type>%s</type>\n"
-        "   <count>%d</count>\n"
-        "</coproc>\n",
+        "   <count>%d</count>\n",
         type, count
     );
+    
+    if (scheduler_rpc) {
+        write_request(f);
+    }
+
+    if (have_opencl) {
+        opencl_prop.write_xml(f, "coproc_opencl");
+    }
+    
+    f.printf("</coproc>\n");
 }
 
 void COPROC::write_request(MIOFILE& f) {
@@ -232,17 +241,24 @@ int COPROCS::parse(XML_PARSER& xp) {
 
 void COPROCS::write_xml(MIOFILE& mf, bool scheduler_rpc) {
 #ifndef _USING_FCGI_
-//TODO: Write coprocs[0] through coprocs[n_rsc]
     mf.printf("    <coprocs>\n");
-    if (nvidia.count) {
-        nvidia.write_xml(mf, scheduler_rpc);
+    
+    for (int i=1; i<n_rsc; i++) {
+        switch (coproc_type_name_to_num(coprocs[i].type)) {
+        case PROC_TYPE_NVIDIA_GPU:
+            nvidia.write_xml(mf, scheduler_rpc);
+            break;
+        case PROC_TYPE_AMD_GPU:
+            ati.write_xml(mf, scheduler_rpc);
+            break;
+        case PROC_TYPE_INTEL_GPU:
+            intel_gpu.write_xml(mf, scheduler_rpc);
+            break;
+        default:
+            coprocs[i].write_xml(mf, scheduler_rpc);
+        }
     }
-    if (ati.count) {
-        ati.write_xml(mf, scheduler_rpc);
-    }
-    if (intel_gpu.count) {
-        intel_gpu.write_xml(mf, scheduler_rpc);
-    }
+    
     mf.printf("    </coprocs>\n");
 #endif
 }
@@ -883,7 +899,7 @@ void COPROC_INTEL::fake(double ram, double avail_ram, int n) {
 // <coproc>
 //    <type>xxx</type>
 //
-// Don't confused this with the element names used for GPUS within <coprocs>,
+// Don't confuse this with the element names used for GPUS within <coprocs>,
 // namely:
 // coproc_cuda
 // coproc_ati
@@ -914,5 +930,5 @@ int coproc_type_name_to_num(const char* name) {
     if (!strcmp(name, "NVIDIA")) return PROC_TYPE_NVIDIA_GPU;
     if (!strcmp(name, "ATI")) return PROC_TYPE_AMD_GPU;
     if (!strcmp(name, "intel_gpu")) return PROC_TYPE_INTEL_GPU;
-    return 0;
+    return -1;      // Some other type
 }

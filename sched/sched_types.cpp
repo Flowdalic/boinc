@@ -772,9 +772,15 @@ int SCHEDULER_REPLY::write(FILE* fout, SCHEDULER_REQUEST& sreq) {
             );
         }
         if (strlen(user.cross_project_id)) {
+            char external_cpid[MD5_LEN];
+            safe_strcpy(buf, user.cross_project_id);
+            safe_strcat(buf, user.email_addr);
+            md5_block((unsigned char*)buf, strlen(buf), external_cpid);
             fprintf(fout,
-                "<cross_project_id>%s</cross_project_id>\n",
-                user.cross_project_id
+                "<cross_project_id>%s</cross_project_id>\n"
+                "<external_cpid>%s</external_cpid>\n",
+                user.cross_project_id,
+                external_cpid
             );
         }
 
@@ -1247,6 +1253,7 @@ int HOST::parse(XML_PARSER& xp) {
         if (xp.parse_double("n_bwdown", n_bwdown)) continue;
         if (xp.parse_str("p_features", p_features, sizeof(p_features))) continue;
         if (xp.parse_str("virtualbox_version", virtualbox_version, sizeof(virtualbox_version))) continue;
+        if (xp.parse_str("client_brand", client_brand, sizeof(client_brand))) continue;
         if (xp.parse_bool("p_vm_extensions_disabled", p_vm_extensions_disabled)) continue;
         if (xp.match_tag("opencl_cpu_prop")) {
             int retval = opencl_cpu_prop[num_opencl_cpu_platforms].parse(xp);

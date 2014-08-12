@@ -57,6 +57,15 @@
 //  that are incapable of handling them, and it involves no server changes.
 //  Its drawback is that, on systems with multiple and differing GPUs,
 //  it may not use some GPUs that actually could be used.
+//
+//  Modified (as of 23 July 14) to allow coprocessors (OpenCL GPUs and OpenCL
+//  accelerators) from vendors other than original 3: NVIDIA, AMD and Intel.  
+//  For these original 3 GPU vendors, we still use the above approach, and the
+//  COPROC::type field contains a standardized vendor name "NVIDIA", "ATI" or
+//  "intel_gpu".  But for other, "new" vendors, we treat each device as a
+//  separate resource, creating an entry for each instance in the
+//  COPROCS::coprocs[] array and copying the device name COPROC::opencl_prop.name 
+//  into the COPROC::type field (instead of the vendor name.)
 
 #ifndef _COPROC_
 #define _COPROC_
@@ -88,11 +97,23 @@
 
 // arguments to proc_type_name() and proc_type_name_xml().
 //
-#define PROC_TYPE_CPU        0
-#define PROC_TYPE_NVIDIA_GPU 1
-#define PROC_TYPE_AMD_GPU    2
-#define PROC_TYPE_INTEL_GPU  3
-#define NPROC_TYPES          4
+enum {
+    PROC_TYPE_CPU=0,
+    PROC_TYPE_NVIDIA_GPU,
+    PROC_TYPE_AMD_GPU,
+    PROC_TYPE_INTEL_GPU,
+    PROC_TYPE_A,
+    PROC_TYPE_B,
+    PROC_TYPE_C,
+    PROC_TYPE_D,
+    PROC_TYPE_E,
+    PROC_TYPE_F,
+    PROC_TYPE_G,
+    NPROC_TYPES
+};
+
+extern const char* proc_type_names_xml[NPROC_TYPES];
+extern const char* proc_type_names[NPROC_TYPES];
 
 extern const char* proc_type_name(int);
     // user-readable name
@@ -104,6 +125,13 @@ extern int coproc_type_name_to_num(const char* name);
 #define GPU_TYPE_NVIDIA proc_type_name_xml(PROC_TYPE_NVIDIA_GPU)
 #define GPU_TYPE_ATI proc_type_name_xml(PROC_TYPE_AMD_GPU)
 #define GPU_TYPE_INTEL proc_type_name_xml(PROC_TYPE_INTEL_GPU)
+#define COPROC_TYPE_A proc_type_name_xml(PROC_TYPE_A)
+#define COPROC_TYPE_B proc_type_name_xml(PROC_TYPE_B)
+#define COPROC_TYPE_C proc_type_name_xml(PROC_TYPE_C)
+#define COPROC_TYPE_D proc_type_name_xml(PROC_TYPE_D)
+#define COPROC_TYPE_E proc_type_name_xml(PROC_TYPE_E)
+#define COPROC_TYPE_F proc_type_name_xml(PROC_TYPE_F)
+#define COPROC_TYPE_G proc_type_name_xml(PROC_TYPE_G)
 
 // represents a requirement for a coproc.
 // This is a parsed version of the <coproc> elements in an <app_version>
@@ -184,7 +212,7 @@ struct COPROC {
     OPENCL_DEVICE_PROP opencl_prop;
 
 #ifndef _USING_FCGI_
-    void write_xml(MIOFILE&);
+    void write_xml(MIOFILE&, bool scheduler_rpc=false);
     void write_request(MIOFILE&);
 #endif
     int parse(XML_PARSER&);
@@ -399,6 +427,7 @@ struct COPROCS {
     void set_path_to_client(char *path);
     int write_coproc_info_file(std::vector<std::string> &warnings);
     int read_coproc_info_file(std::vector<std::string> &warnings);
+    int add_other_coproc_types();
     
 #ifdef __APPLE__
     void opencl_get_ati_mem_size_from_opengl(std::vector<std::string> &warnings);
