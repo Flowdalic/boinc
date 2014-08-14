@@ -10,3 +10,14 @@ Description: this should ensure that parallel builds work on debian (since the d
  if ENABLE_FCGI
  all_local += $(LIBBOINC_FCGI_STATIC) 
  endif
+--- a/Makefile.incl
++++ b/Makefile.incl
+@@ -52,7 +52,7 @@
+ 	cd $(top_builddir)/lib; ${MAKE} libboinc.la
+ LIBBOINC_CRYPT = $(top_builddir)/lib/libboinc_crypt.la
+ $(LIBBOINC_CRYPT):
+-	cd $(top_builddir)/lib; ${MAKE} libboinc.la
++	cd $(top_builddir)/lib; ${MAKE} libboinc_crypt.la
+ LIBBOINC_FCGI = $(top_builddir)/lib/libboinc_fcgi.la
+ $(LIBBOINC_FCGI):
+ 	cd $(top_builddir)/lib; ${MAKE} libboinc_fcgi.la
