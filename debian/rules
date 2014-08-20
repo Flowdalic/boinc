@@ -13,6 +13,8 @@
 DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
+# Set default flags with dpkg-buildflags
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
   TYPE_FLAGS = --build $(DEB_HOST_GNU_TYPE)
 else
@@ -177,7 +179,11 @@ CFGFLAGS_boinc-client = \
 
 
 %:
+ifeq (,$(ENABLE_SERVER_TEST))
 	dh $@ --with python2,autoreconf --parallel
+else
+	dh $@ --with python2,autoreconf
+endif
 
 override_dh_clean:
 	dh_clean
