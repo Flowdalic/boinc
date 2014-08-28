@@ -188,7 +188,7 @@ endif
 override_dh_clean:
 	dh_clean
 	rm -rf config.log
-	rm -rf clientscr/.libs override_dh_auto_install
+	rm -rf clientscr/.libs
 	rm -rf debian/boinc-app-examples   debian/boinc-app-examples.substvars
 	rm -rf debian/boinc-server-maker   debian/boinc-server-maker.substvars
 	rm -rf debian/boinc-server-dbg     debian/boinc-server-dbg.substvars
