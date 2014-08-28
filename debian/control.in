@@ -166,7 +166,7 @@ Package: boinc
 @Architecture: all
 @Priority: extra
 @Depends: ${misc:Depends}, libboinc-app-dev (= ${source:Version})
-@Description: development files to build applications for BOINC projects
+@Description: development files to build applications for BOINC projects (transitional package)
 @ Dummy transitional package helping the transition of a split of
 @ architecture-independent development files and the architecture-dependent
 @ dynamic libraries.  Static libraries are no longer redistributed.

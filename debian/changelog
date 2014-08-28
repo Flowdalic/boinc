@@ -6,6 +6,7 @@ boinc (7.4.14+dfsg-2) unstable; urgency=medium
   * Fix typo in rules file (override_dh_auto_install called
     as rm argument).
   * Enable parallel builds only for experimental (Closes: #758184).
+  * Fix lintian duplicate short description on boinc-dev.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Thu, 14 Aug 2014 10:38:10 +0200
 
