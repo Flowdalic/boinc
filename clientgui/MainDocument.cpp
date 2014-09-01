@@ -2626,12 +2626,65 @@ static void hsv2rgb(
 void color_cycle(int i, int n, wxColour& color) {
     double h = (double)i/(double)n;
     double r, g, b;
-    double v = .6;
-    if (n > 6) v = .5 + (i % 3)*.125;
+    double v = .75;
+    if (n > 6) v = .6 + (i % 3)*.1;
         // cycle through 3 different brightnesses
     hsv2rgb(h*6, .5, v, r, g, b);
     unsigned char cr = (unsigned char) (r*256);
     unsigned char cg = (unsigned char) (g*256);
     unsigned char cb = (unsigned char) (b*256);
     color = wxColour(cr, cg, cb);
+}
+
+#ifdef __WXMSW__
+static float XDPIScaleFactor = 0.0;
+static float YDPIScaleFactor = 0.0;
+
+void GetDPIScaling() {
+	XDPIScaleFactor = 1.0;
+	YDPIScaleFactor = 1.0;
+	// SetProcessDPIAware() requires Windows Vista or later
+	HMODULE hUser32 = LoadLibrary(_T("user32.dll"));
+	typedef BOOL (*SetProcessDPIAwareFunc)();
+	SetProcessDPIAwareFunc setDPIAware = (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
+	if (setDPIAware) {
+		setDPIAware();
+		HWND hWnd = GetForegroundWindow();
+		HDC hdc = GetDC(hWnd);
+		XDPIScaleFactor = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
+		YDPIScaleFactor = GetDeviceCaps(hdc, LOGPIXELSY) / 96.0f;
+		ReleaseDC(hWnd, hdc);
+	}
+	FreeLibrary(hUser32);
+}
+
+float GetXDPIScaling() {
+	if (XDPIScaleFactor == 0.0) {
+		GetDPIScaling();
+	}
+	return XDPIScaleFactor;
+}
+
+float GetYDPIScaling() {
+	if (YDPIScaleFactor == 0.0) {
+		GetDPIScaling();
+	}
+	return YDPIScaleFactor;
+}
+#endif
+
+// TODO: Choose from multiple size images if provided, else resize the closest one
+wxBitmap GetScaledBitmapFromXPMData(const char** XPMData) {
+#ifdef __WXMSW__
+    if ((GetXDPIScaling() > 1.05) || (GetYDPIScaling() > 1.05)) {
+        wxImage img = wxImage(XPMData);
+        img.Rescale((int) (img.GetWidth()*GetXDPIScaling()), 
+                    (int) (img.GetHeight()*GetYDPIScaling()), 
+                    wxIMAGE_QUALITY_BILINEAR
+                );
+        wxBitmap *bm = new wxBitmap(img);
+        return *bm;
+    }
+#endif
+    return wxBitmap(XPMData);
 }
