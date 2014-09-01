@@ -5,7 +5,7 @@
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
 -AM_LDFLAGS += -static
-+AM_LDFLAGS += -static -L../sched -L../lib/.libs
++AM_LDFLAGS += -static -L../lib/.libs -L../sched
  
  cancel_jobs_SOURCES = cancel_jobs.cpp
  cancel_jobs_LDADD = $(SERVERLIBS)

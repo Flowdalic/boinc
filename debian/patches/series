@@ -1,9 +1,9 @@
 # patches to get Debian going
 make_project_overcomes_Apache24_security.patch
 # undisputed patches above
-termios_is_everywhere.patch
+#termios_is_everywhere.patch
 stripchart_debian.patch
-upstream_sztaki_configureEval.patch
+#upstream_sztaki_configureEval.patch
 disable_svn_version.patch
 possible_size_type_error.patch
 debian_debian_AdjustBoincTopdirPython.patch

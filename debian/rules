@@ -118,9 +118,7 @@ endif
 
 CFLAGS += -Wall
 CXXFLAGS += -Wall
-#LDFLAGS += -Wl,--as-needed
-# hurd needs the following
-LDFLAGS += -Wl,--no-add-needed
+LDFLAGS += -Wl,--as-needed
 
 ifeq (,$(DEB_OPT_FLAGS))
    DEB_OPT_FLAGS = -O3 -funroll-loops -fforce-addr -ffast-math

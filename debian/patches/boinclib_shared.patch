@@ -21,7 +21,7 @@
  crypt_prog_SOURCES = crypt_prog.cpp 
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS)
 -crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS) 
-+crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) -L../lib/.libs $(LIBBOINC) $(SSL_LIBS)
++crypt_prog_LDADD = -L../lib/.libs $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS)
  parse_test_SOURCES = parse_test.cpp 
  parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  parse_test_LDADD = $(LIBBOINC)
