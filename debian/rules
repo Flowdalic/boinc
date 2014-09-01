@@ -8,6 +8,11 @@
 #export CXX=/usr/lib/gcc-snapshot/bin/g++
 #export CPP=/usr/lib/gcc-snapshot/bin/cpp
 
+export CPPFLAGS := $(shell dpkg-buildflags --get CPPFLAGS)
+export CFLAGS   := $(shell dpkg-buildflags --get CFLAGS)
+export CXXFLAGS := $(shell dpkg-buildflags --get CXXFLAGS)
+export LDFLAGS  := $(shell dpkg-buildflags --get LDFLAGS)
+
 #export CXX=clang++
 
 DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)

@@ -39,3 +39,4 @@ server_status_php.patch
 boinc-server-dynamic-libs.patch
 fix-typo.patch
 mv-md5.patch
+fix-dependencies.patch

@@ -5,4 +5,4 @@
  
  wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(REGEXP_OBJS)
 -	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip
-+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip $(LDFLAGS)
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip $(LDFLAGS)
