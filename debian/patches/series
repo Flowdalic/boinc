@@ -1,6 +1,5 @@
 # patches to get Debian going
 make_project_overcomes_Apache24_security.patch
-libnotify-0.7.patch
 # undisputed patches above
 termios_is_everywhere.patch
 stripchart_debian.patch
@@ -38,5 +37,4 @@ server_status_php.patch
 #db_interface_use.patch
 boinc-server-dynamic-libs.patch
 fix-typo.patch
-mv-md5.patch
 fix-dependencies.patch

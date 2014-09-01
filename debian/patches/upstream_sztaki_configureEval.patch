@@ -1,7 +1,7 @@
 Author: Unknown
 --- a/configure.ac
 +++ b/configure.ac
-@@ -311,6 +311,20 @@
+@@ -305,6 +305,20 @@
  
  AC_SUBST([TOP_BUILD_DIR], [`pwd`])
  
