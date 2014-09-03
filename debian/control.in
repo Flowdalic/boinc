@@ -11,11 +11,10 @@ Build-Depends: debhelper (>= 9), dh-autoreconf, po-debconf, pkg-config,
  libtool, autoconf, autotools-dev, automake, gettext,
  docbook2x, docbook-xml, libxml2-utils,
  zlib1g-dev, libssl-dev, libcurl4-openssl-dev,
- libsm-dev, libice-dev, libxmu-dev, libxi-dev, libx11-dev, libnotify-dev (>= 0.7.0),
+ libsm-dev, libice-dev, libxmu-dev, libxi-dev, libnotify-dev (>= 0.7.0),
  freeglut3-dev, libwxgtk3.0-dev, libwxgtk-webview3.0-dev, libgtk2.0-dev,
  libsqlite3-dev, libmysqlclient-dev, python, libfcgi-dev, libjpeg-dev,
- libxcb-util0-dev, libxcb-dpms0-dev,
- libxss-dev, libxext-dev
+ libxcb-util0-dev
 Homepage: http://boinc.berkeley.edu/
 Vcs-Git: git://anonscm.debian.org/pkg-boinc/boinc.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-boinc/boinc.git
