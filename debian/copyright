@@ -632,14 +632,8 @@ License: MPL-1.0
 
 Files: debian/*
 Copyright:
- © 2004-2012 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
+ © 2004-2014 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 License: GPL-2+
- On Debian systems, the complete text of the GNU Lesser General Public License
- can be found in `/usr/share/common-licenses/LGPL-2', the complete text of the
- GNU General Public License can be found in `/usr/share/common-licenses/GPL-2'
- and the complete text of the GNU Free Documentation License can be found in
- `/usr/share/common-licenses/GFDL-1.2'.
-
 
 License: LGPL-3+
  BOINC is free software; you can redistribute it and/or modify it
@@ -686,8 +680,22 @@ License: GFDL-NIV-1.2+
  be found in `/usr/share/common-licenses/GFDL-1.2'.
 
 License: GPL-2+
- On Debian systems, the complete text of the GNU General Public License can be
- found in `/usr/share/common-licenses/GPL-2'.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-2 file.
 
 License: wxWindows-3
                wxWindows Library Licence, Version 3
