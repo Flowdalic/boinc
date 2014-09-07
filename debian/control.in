@@ -2,27 +2,50 @@ Source: boinc
 Section: net
 Priority: optional
 Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
-Uploaders: Steffen Moeller <moeller@debian.org>, 
- Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+Uploaders: Steffen Moeller <moeller@debian.org>,
+           Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
+           Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
 Standards-Version: 3.9.5
-Build-Depends: debhelper (>= 9), dh-autoreconf, po-debconf, pkg-config,
- dpkg-dev (>= 1.16.1.1),
- libtool, autoconf, autotools-dev, automake, gettext,
- docbook2x, docbook-xml, libxml2-utils,
- zlib1g-dev, libssl-dev, libcurl4-openssl-dev,
- libsm-dev, libice-dev, libxmu-dev, libxi-dev, libnotify-dev (>= 0.7.0),
- freeglut3-dev, libwxgtk3.0-dev, libwxgtk-webview3.0-dev, libgtk2.0-dev,
- libsqlite3-dev, libmysqlclient-dev, python, libfcgi-dev, libjpeg-dev,
- libxcb-util0-dev
+Build-Depends: autoconf,
+               automake,
+               autotools-dev,
+               debhelper (>= 9),
+               dh-autoreconf,
+               docbook-xml,
+               docbook2x,
+               dpkg-dev (>= 1.16.1.1),
+               freeglut3-dev,
+               gettext,
+               libcurl4-openssl-dev,
+               libfcgi-dev,
+               libgtk2.0-dev,
+               libice-dev,
+               libjpeg-dev,
+               libmysqlclient-dev,
+               libnotify-dev (>= 0.7.0),
+               libsm-dev,
+               libsqlite3-dev,
+               libssl-dev,
+               libtool,
+               libwxgtk-webview3.0-dev,
+               libwxgtk3.0-dev,
+               libxcb-util0-dev,
+               libxi-dev,
+               libxml2-utils,
+               libxmu-dev,
+               pkg-config,
+               po-debconf,
+               python,
+               zlib1g-dev
 Homepage: http://boinc.berkeley.edu/
 Vcs-Git: git://anonscm.debian.org/pkg-boinc/boinc.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-boinc/boinc.git
 
 Package: boinc
 @Architecture: all
-@Depends: ${misc:Depends},
-@ boinc-client (>= ${source:Version}), boinc-manager (>= ${source:Version})
+@Depends: boinc-client (>= ${source:Version}),
+@         boinc-manager (>= ${source:Version}),
+@         ${misc:Depends}
 @Description: metapackage for the BOINC client and the manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -41,7 +64,8 @@ Package: boinc
 @Section: contrib/net
 @Priority: extra
 @Depends: ${misc:Depends}
-@Recommends: libcuda1 | libcuda-5.0-1 | libcuda-5.5-1 | nvidia-173 | nvidia-current | nvidia-current-updates | nvidia-304 | nvidia-304-updates | nvidia-310 | nvidia-310-updates | nvidia-313-updates | nvidia-319 | nvidia-319-updates | nvidia-331 | nvidia-331-updates | libcuda1-304 | libcuda1-304-updates | libcuda1-331 | libcuda1-331-updates, libcudart4 | libcudart5.0 | libcudart5.5
+@Recommends: libcuda1 | libcuda-5.0-1 | libcuda-5.5-1 | nvidia-173 | nvidia-current | nvidia-current-updates | nvidia-304 | nvidia-304-updates | nvidia-310 | nvidia-310-updates | nvidia-313-updates | nvidia-319 | nvidia-319-updates | nvidia-331 | nvidia-331-updates | libcuda1-304 | libcuda1-304-updates | libcuda1-331 | libcuda1-331-updates,
+@            libcudart4 | libcudart5.0 | libcudart5.5
 @Description: metapackage for CUDA-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -61,7 +85,7 @@ Package: boinc
 @Section: contrib/net
 @Priority: extra
 @Depends: ${misc:Depends}
-@Recommends: fglrx-driver, amd-libopencl1 | fglrx | fglrx-updates
+@Recommends: amd-libopencl1 | fglrx | fglrx-updates, fglrx-driver
 @Description: metapackage for AMD/ATI OpenCL-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -83,12 +107,13 @@ Package: boinc
 @
 @Package: boinc-client
 @Architecture: any
-@Depends: ${shlibs:Depends}, ${misc:Depends},
-@ libboinc7 (>= ${source:Version}),
-@ ${python:Depends},
-@ adduser,
-@ ca-certificates
-@Suggests: boinc-manager, boinc-amd-opencl, boinc-nvidia-cuda, x11-xserver-utils
+@Depends: adduser,
+@         ca-certificates,
+@         libboinc7 (>= ${source:Version}),
+@         ${misc:Depends},
+@         ${python:Depends},
+@         ${shlibs:Depends}
+@Suggests: boinc-amd-opencl, boinc-manager, boinc-nvidia-cuda, x11-xserver-utils
 @Description: core client for the BOINC distributed computing infrastructure
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
@@ -107,7 +132,7 @@ Package: boinc
 #Package: boinc-screensaver
 #Section: x11
 #Architecture: any
-#Depends:  ${shlibs:Depends}, ${misc:Depends}, boinc-client
+#Depends: boinc-client, ${misc:Depends}, ${shlibs:Depends}
 #Suggests: boinc-manager
 #Description: screen saver auto-controlling volunteer computing
 # The Berkeley Open Infrastructure for Network Computing (BOINC) is a
@@ -137,7 +162,7 @@ Package: boinc
 @Package: boinc-manager
 @Section: x11
 @Architecture: any
-@Depends: ${shlibs:Depends}, ${misc:Depends}, boinc-client
+@Depends: boinc-client, ${misc:Depends}, ${shlibs:Depends}
 @Suggests: libgl1-mesa-glx, libxt6
 @Description: GUI to control and monitor the BOINC core client
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
@@ -164,7 +189,7 @@ Package: boinc
 @Section: oldlibs
 @Architecture: all
 @Priority: extra
-@Depends: ${misc:Depends}, libboinc-app-dev (= ${source:Version})
+@Depends: libboinc-app-dev (= ${source:Version}), ${misc:Depends}
 @Description: development files to build applications for BOINC projects (transitional)
 @ Dummy transitional package helping the transition of a split of
 @ architecture-independent development files and the architecture-dependent
@@ -173,13 +198,15 @@ Package: boinc
 @Package: libboinc-app-dev
 @Section: libdevel
 @Architecture: all
-@Depends: ${misc:Depends},
-@ libboinc7 (>= ${source:Version}),
-@ libboinc7 (<< ${source:Version}+1~),
-@ libboinc-app7 (>= ${source:Version}),
-@ libboinc-app7 (<< ${source:Version}+1~),
-@ libc6-dev | libc-dev,
-@ libstdc++6-4.7-dev | libstdc++-4.8-dev | libstdc++-4.9-dev, libssl-dev, libmysqlclient-dev
+@Depends: libboinc-app7 (<< ${source:Version}+1~),
+@         libboinc-app7 (>= ${source:Version}),
+@         libboinc7 (<< ${source:Version}+1~),
+@         libboinc7 (>= ${source:Version}),
+@         libc6-dev | libc-dev,
+@         libmysqlclient-dev,
+@         libssl-dev,
+@         libstdc++6-4.7-dev | libstdc++-4.8-dev | libstdc++-4.9-dev,
+@         ${misc:Depends}
 @Breaks: boinc-dev (<< ${source:Version})
 @Replaces: boinc-dev (<< ${source:Version})
 @Description: development files to build applications for BOINC projects
@@ -192,13 +219,11 @@ Package: boinc
 @
 @Package: libboinc-app7
 @Provides: libboinc-app
-@Breaks: libboinc-app (<= 7.0.34+dfsg-1),
-@ boinc-dev (<< 7.0.28+dfsg-3)
-@Replaces: libboinc-app (<= 7.0.34+dfsg-1),
-@ boinc-dev (<< 7.0.28+dfsg-3)
+@Breaks: boinc-dev (<< 7.0.28+dfsg-3), libboinc-app (<= 7.0.34+dfsg-1)
+@Replaces: boinc-dev (<< 7.0.28+dfsg-3), libboinc-app (<= 7.0.34+dfsg-1)
 @Section: libs
 @Architecture: any
-@Depends: ${shlibs:Depends}, ${misc:Depends}
+@Depends: ${misc:Depends}, ${shlibs:Depends}
 @Description: libraries for BOINC's scientific applications
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing using volunteered computer
@@ -209,13 +234,11 @@ Package: boinc
 @
 @Package: libboinc7
 @Provides: libboinc
-@Breaks: libboinc (<= 7.0.34+dfsg-1),
-@ boinc-dev (<< 7.0.28+dfsg-3)
-@Replaces: libboinc (<= 7.0.34+dfsg-1),
-@ boinc-dev (<< 7.0.28+dfsg-3)
+@Breaks: boinc-dev (<< 7.0.28+dfsg-3), libboinc (<= 7.0.34+dfsg-1)
+@Replaces: boinc-dev (<< 7.0.28+dfsg-3), libboinc (<= 7.0.34+dfsg-1)
 @Architecture: any
 @Section: libs
-@Depends: ${shlibs:Depends}, ${misc:Depends}
+@Depends: ${misc:Depends}, ${shlibs:Depends}
 @Description: libraries of BOINC the client depends on
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing using volunteered computer
@@ -230,12 +253,22 @@ Package: boinc
 %Package: boinc-server-maker
 %Architecture: any
 %Provides: boinc-server
-%Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, ${perl:Depends},
-% python, python-mysqldb,
-% mysql-server-5.5 | virtual-mysql-server, apache2 | httpd-cgi,
-% php5, php5-cli, php5-mysql,
-% tcsh, openssl, adduser, libfcgi0ldbl
-%Recommends: libapache2-mod-php5, php5-gd, uuid-runtime, apache2-utils
+%Depends: adduser,
+%         apache2 | httpd-cgi,
+%         libfcgi0ldbl,
+%         mysql-server-5.5 | virtual-mysql-server,
+%         openssl,
+%         php5,
+%         php5-cli,
+%         php5-mysql,
+%         python,
+%         python-mysqldb,
+%         tcsh,
+%         ${misc:Depends},
+%         ${perl:Depends},
+%         ${python:Depends},
+%         ${shlibs:Depends}
+%Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime
 %Suggests: boinc-app-examples, boinc-cgi-stripchart
 %Description: BOINC server applications and data files
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a
@@ -250,7 +283,7 @@ Package: boinc
 %
 %Package: boinc-app-examples
 %Architecture: any
-%Depends: ${shlibs:Depends}, ${misc:Depends}
+%Depends: ${misc:Depends}, ${shlibs:Depends}
 %Recommends: boinc-server-maker
 %Description: example binaries for BOINC servers
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a
@@ -274,9 +307,9 @@ Package: boinc
 @Priority: extra
 @Architecture: any
 @Depends: boinc-client (>= ${source:Version}) | boinc-manager (>= ${source:Version}) | libboinc7 (= ${source:Version}) | libboinc-app7 (= ${source:Version}),
-@ ${misc:Depends}
+@         ${misc:Depends}
 @Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk3.0-0-dbg,
-% boinc-server-dbg
+%         boinc-server-dbg
 @Description: debugging symbols for BOINC binaries
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing using volunteered computer
@@ -293,7 +326,7 @@ Package: boinc
 %Priority: extra
 %Architecture: any
 %Depends: boinc-client (>= ${source:Version}) | boinc-manager (>= ${source:Version}) | libboinc7 (>= ${source:Version}) | libboinc-app7 (>= ${source:Version}),
-% ${misc:Depends}
+%         ${misc:Depends}
 %Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk3.0-0-dbg
 %Description: debugging symbols for BOINC server binaries
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a
@@ -309,7 +342,7 @@ Package: boinc
 %Section: libs
 %Priority: extra
 %Architecture: all
-%Depends: ${misc:Depends}, gnuplot-nox, ${perl:Depends},
+%Depends: gnuplot-nox, ${misc:Depends}, ${perl:Depends}
 %Recommends: apache2 | httpd-cgi
 %Description: CGI script for plotting basic statistical graphs
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a
