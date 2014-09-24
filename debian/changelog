@@ -1,5 +1,7 @@
-boinc (7.4.18+dfsg-2) UNRELEASED; urgency=medium
+boinc (7.4.22+dfsg-1) unstable; urgency=low
 
+  * New upstream release.
+  * Remove termios_is_everywhere.patch, fixed upstream.
   * Remove libx11-dev, libxcb-dpms0-dev, libxss-dev, libxext-dev
     from build dependencies, upstream now uses /dev to
     get devices information.
