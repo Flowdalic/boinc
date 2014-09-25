@@ -11,6 +11,7 @@ Build-Depends: autoconf,
                autotools-dev,
                debhelper (>= 9),
                dh-autoreconf,
+               dh-python,
                docbook-xml,
                docbook2x,
                dpkg-dev (>= 1.16.1.1),
@@ -35,7 +36,8 @@ Build-Depends: autoconf,
                libxmu-dev,
                pkg-config,
                po-debconf,
-               python,
+               python-all,
+               python-setuptools,
                zlib1g-dev
 Homepage: http://boinc.berkeley.edu/
 Vcs-Git: git://anonscm.debian.org/pkg-boinc/boinc.git
