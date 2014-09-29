@@ -1,7 +1,7 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          boinc boinc-client
-# Required-Start:    $all
+# Required-Start:    $local_fs $remote_fs
 # Required-Stop:     $local_fs $remote_fs
 # Should-Start:      x11-common network-manager x-display-manager gdm kdm xdm wdm ldm sdm nodm dbus lightdm
 # Should-Stop:       x11-common

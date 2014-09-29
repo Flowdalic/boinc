@@ -28,7 +28,7 @@ de.po.patch
 more_clang_warnings.patch
 #mmap_mem_only.patch
 add-ldflags.patch
-addressing_addional_html_dirs.patch
+addressing_additional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
 file_upload_handler_in_sched_linking.patch
 disable_silent_rules.patch

@@ -20,6 +20,11 @@ DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 # Set default flags with dpkg-buildflags
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# Disable WXDEBUG assertions (avoiding e.g. https://bugs.debian.org/763113) -
+# with -DNDEBUG these are quietly dealt with like they were with wx2.8.
+export DEB_CPPFLAGS_MAINT_APPEND := -DNDEBUG
+
 ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
   TYPE_FLAGS = --build $(DEB_HOST_GNU_TYPE)
 else
@@ -354,7 +359,7 @@ override_dh_auto_clean:
 SAMPLES=samples/sleeper/sleeper samples/worker/worker samples/example_app/uc2 samples/wrapper/wrapper
 
 override_dh_auto_install: update-boinc-applinks.1
-	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
+	dh_auto_install
 ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
@@ -375,8 +380,8 @@ override_dh_install:
 	dh_install
 
 override_dh_strip:
-	[ -d debian/boinc-dbg ] && dh_strip -a --no-package=-boinc-server-dbg --no-package=boinc-server-maker --no-package=boinc-app-examples --dbg-package=boinc-dbg || true
-	[ -d debian/boinc-server-dbg ] && dh_strip -a -Nboinc -Nlibboinc7 -Nboinc-nvidia-cuda -Nboinc-amd-opencl -Nboinc-client -Nboinc-manager -Nboinc-dev -Nlibboinc-app-dev -Nlib --dbg-package=boinc-server-dbg || true
+	dh_strip -pboinc-server-maker -pboinc-app-examples -pboinc-cgi-stripchart --dbg-package=boinc-server-dbg || true
+	dh_strip --dbg-package=boinc-dbg
 
 override_dh_fixperms:
 	dh_fixperms
