@@ -5,9 +5,10 @@ boinc (7.4.22+dfsg-2) unstable; urgency=medium
   * Fix some entries in copyright file for lintian happyness.
   * Don't require all facilities in boinc-client start,
     making lintian happy again.
+  * Update copyright file.
   [ mdt ]
-  * Add dh-python as B-D
-  * Add libcudart6.0 compatibility
+  * Add dh-python as B-D.
+  * Add new libcuda{,rt} compatibility.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sun, 28 Sep 2014 18:19:17 +0200
 

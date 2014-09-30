@@ -13,14 +13,279 @@ Upstream-Contact:
  available at: http://boinc.berkeley.edu/trac/wiki/ProjectPeople
 
 Files: *
-Copyright: © 2005-2008 University of California
+Copyright: 2005-2014 University of California
 License: LGPL-3+
+
+Files: rboinc/server/etc/rboinc_httpd_conf
+       rboinc/client/boinc_retrieve.pl
+       rboinc/client/boinc_submit.pl
+       rboinc/client/boinc_lib.pl
+       rboinc/server/boinc_authentication.pl
+       rboinc/server/boinc_submit_server.pl
+       rboinc/server/boinc_configuration.pl
+       rboinc/server/boinc_retrieve_server.pl
+       rboinc/server/boinc_configuration_template.pl
+Copyright: 2009-2010 Toni Giorgino
+           2010 Universitat Pompeu Fabra
+License: LGPL-3+
+
+Files: rboinc/monitoring/Text/Table.pm
+       rboinc/monitoring/Text/Aligner.pm
+Copyright: 2002 Anno Siegel.
+Comment: License says:
+ This program is free software; you can redistribute
+ it and/or modify it under the same terms as Perl itself.
+License: GPL-1+ or Artistic
+
+License: GPL-1+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 1
+ of the License, or (at your option) any later version.
+ .
+ On Debian GNU/Linux systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-1'.
+
+License: Artistic
+ On Debian GNU/Linux systems, the complete text of the
+ Artistic Licence can be found in `/usr/share/common-licenses/Artistic'.
+
+Files: rboinc/server/etc/default_COPYRIGHT
+Copyright: 2007 G. De Fabritiis, G. Giupponi
+License:
+  The CellMD base software (the "Software" herein) contains proprietary
+ information with restrictions on use and disclosure and is also protected by
+ copyright  and other intellectual and industrial property laws. Reverse
+ engineering, disassembly, or decompilation of the Programs is prohibited. No
+ part of the Software may be reproduced or transmitted in any form or by any
+ means, electronic or mechanical, for any purpose.
+ .
+ For MDX libraries:
+ Copyright (C) 2003-2005, David J. Hardy.
+ * Redistributions of source code must retain the above copyright notice,
+ this list of conditions and the following disclaimers.
+ .
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimers in the
+ documentation and/or other materials provided with the distribution.
+ .
+ * Neither the names of David J. Hardy, Theoretical and Computational
+ Biophysics Group, Beckman Institute, University of Illinois, nor the
+ names of its contributors may be used to endorse or promote products
+ derived from this Software without specific prior written permission.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS WITH THE SOFTWARE.
+
+Files: m4/ax_pthread.m4
+Copyright: 2008 Steven G. Johnson <stevenj@alum.mit.edu>
+           2011 Daniel Richard G. <skunk@iSKUNK.ORG>
+License: GPL-3+
+
+Files: samples/vboxwrapper/floppyio.h
+       samples/vboxwrapper/floppyio.cpp
+Copyright: 2011 Ioannis Charalampidis
+License: LGPL-3+
+
+Files: samples/wrapper/regexp.h
+       samples/wrapper/regexp_report.c
+       samples/wrapper/regexp_memory.c
+       samples/wrapper/regmagic.h
+       samples/wrapper/regexp_int.h
+       samples/wrapper/regexp.c
+       samples/wrapper/regexp_custom.h
+       samples/wrapper/regerror.c
+       samples/wrapper/regsub.c
+Copyright: 1986-1995 by University of Toronto. Written by Henry Spencer.  Not derived from licensed software.
+License:
+  Permission is granted to anyone to use this software for any
+ purpose on any computer system, and to redistribute it in any way,
+ subject to the following restrictions:
+ .
+ 1. The author is not responsible for the consequences of use of
+ this software, no matter how awful, even if they arise
+ from defects in it.
+ .
+ 2. The origin of this software must not be misrepresented, either
+ by explicit claim or by omission.
+ .
+ 3. Altered versions must be plainly marked as such, and must not
+ be misrepresented (by explicit claim or omission) as being
+ the original software.
+ *** THIS IS AN ALTERED VERSION.  It was altered by Benoit
+ *** Goudreault-Emond, bge@videotron.ca, on 2002/01/03, to add \< and
+ *** \> for word matching, as well as pseudo character classes.  It
+ *** also handles wide characters quite well now. Also, the API was
+ *** changed so an arbitrary number of parenthesized expressions can
+ *** be used (and so were the internals of the regexp engine).
+ ***
+ *** In general, the new API should be more re-entrant.
+ .
+ 4. This notice must not be removed or altered.
+
+Files: html/inc/recaptchalib.php
+Copyright: 2007 reCAPTCHA
+License: BSD-3-clause
+
+Files: lib/cal_boinc.h
+Copyright: 2007 Advanced Micro Devices, Inc.
+License:
+ Redistribution and use of this material is permitted under the following
+ conditions:
+ .
+ Redistributions must retain the above copyright notice and all terms of this
+ license.
+ .
+ In no event shall anyone redistributing or accessing or using this material
+ commence or participate in any arbitration or legal action relating to this
+ material against Advanced Micro Devices, Inc. or any copyright holders or
+ contributors. The foregoing shall survive any expiration or termination of
+ this license or any agreement or access or use related to this material.
+ .
+ ANY BREACH OF ANY TERM OF THIS LICENSE SHALL RESULT IN THE IMMEDIATE REVOCATION
+ OF ALL RIGHTS TO REDISTRIBUTE, ACCESS OR USE THIS MATERIAL.
+ .
+ THIS MATERIAL IS PROVIDED BY ADVANCED MICRO DEVICES, INC. AND ANY COPYRIGHT
+ HOLDERS AND CONTRIBUTORS "AS IS" IN ITS CURRENT CONDITION AND WITHOUT ANY
+ REPRESENTATIONS, GUARANTEE, OR WARRANTY OF ANY KIND OR IN ANY WAY RELATED TO
+ SUPPORT, INDEMNITY, ERROR FREE OR UNINTERRUPTED OPERATION, OR THAT IT IS FREE
+ FROM DEFECTS OR VIRUSES.  ALL OBLIGATIONS ARE HEREBY DISCLAIMED - WHETHER
+ EXPRESS, IMPLIED, OR STATUTORY - INCLUDING, BUT NOT LIMITED TO, ANY IMPLIED
+ WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ ACCURACY, COMPLETENESS, OPERABILITY, QUALITY OF SERVICE, OR NON-INFRINGEMENT.
+ IN NO EVENT SHALL ADVANCED MICRO DEVICES, INC. OR ANY COPYRIGHT HOLDERS OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, REVENUE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED OR BASED ON ANY THEORY OF LIABILITY
+ ARISING IN ANY WAY RELATED TO THIS MATERIAL, EVEN IF ADVISED OF THE POSSIBILITY
+ OF SUCH DAMAGE. THE ENTIRE AND AGGREGATE LIABILITY OF ADVANCED MICRO DEVICES,
+ INC. AND ANY COPYRIGHT HOLDERS AND CONTRIBUTORS SHALL NOT EXCEED TEN DOLLARS
+ (US $10.00). ANYONE REDISTRIBUTING OR ACCESSING OR USING THIS MATERIAL ACCEPTS
+ THIS ALLOCATION OF RISK AND AGREES TO RELEASE ADVANCED MICRO DEVICES, INC. AND
+ ANY COPYRIGHT HOLDERS AND CONTRIBUTORS FROM ANY AND ALL LIABILITIES,
+ OBLIGATIONS, CLAIMS, OR DEMANDS IN EXCESS OF TEN DOLLARS (US $10.00). THE
+ FOREGOING ARE ESSENTIAL TERMS OF THIS LICENSE AND, IF ANY OF THESE TERMS ARE
+ CONSTRUED AS UNENFORCEABLE, FAIL IN ESSENTIAL PURPOSE, OR BECOME VOID OR
+ DETRIMENTAL TO ADVANCED MICRO DEVICES, INC. OR ANY COPYRIGHT HOLDERS OR
+ CONTRIBUTORS FOR ANY REASON, THEN ALL RIGHTS TO REDISTRIBUTE, ACCESS OR USE
+ THIS MATERIAL SHALL TERMINATE IMMEDIATELY. MOREOVER, THE FOREGOING SHALL
+ SURVIVE ANY EXPIRATION OR TERMINATION OF THIS LICENSE OR ANY AGREEMENT OR
+ ACCESS OR USE RELATED TO THIS MATERIAL.
+ .
+ NOTICE IS HEREBY PROVIDED, AND BY REDISTRIBUTING OR ACCESSING OR USING THIS
+ MATERIAL SUCH NOTICE IS ACKNOWLEDGED, THAT THIS MATERIAL MAY BE SUBJECT TO
+ RESTRICTIONS UNDER THE LAWS AND REGULATIONS OF THE UNITED STATES OR OTHER
+ COUNTRIES, WHICH INCLUDE BUT ARE NOT LIMITED TO, U.S. EXPORT CONTROL LAWS SUCH
+ AS THE EXPORT ADMINISTRATION REGULATIONS AND NATIONAL SECURITY CONTROLS AS
+ DEFINED THEREUNDER, AS WELL AS STATE DEPARTMENT CONTROLS UNDER THE U.S.
+ MUNITIONS LIST. THIS MATERIAL MAY NOT BE USED, RELEASED, TRANSFERRED, IMPORTED,
+ EXPORTED AND/OR RE-EXPORTED IN ANY MANNER PROHIBITED UNDER ANY APPLICABLE LAWS,
+ INCLUDING U.S. EXPORT CONTROL LAWS REGARDING SPECIFICALLY DESIGNATED PERSONS,
+ COUNTRIES AND NATIONALS OF COUNTRIES SUBJECT TO NATIONAL SECURITY CONTROLS.
+ MOREOVER, THE FOREGOING SHALL SURVIVE ANY EXPIRATION OR TERMINATION OF ANY
+ LICENSE OR AGREEMENT OR ACCESS OR USE RELATED TO THIS MATERIAL.
+ .
+ NOTICE REGARDING THE U.S. GOVERNMENT AND DOD AGENCIES: This material is
+ provided with "RESTRICTED RIGHTS" and/or "LIMITED RIGHTS" as applicable to
+ computer software and technical data, respectively. Use, duplication,
+ distribution or disclosure by the U.S. Government and/or DOD agencies is
+ subject to the full extent of restrictions in all applicable regulations,
+ including those found at FAR52.227 and DFARS252.227 et seq. and any successor
+ regulations thereof. Use of this material by the U.S. Government and/or DOD
+ agencies is acknowledgment of the proprietary rights of any copyright holders
+ and contributors, including those of Advanced Micro Devices, Inc., as well as
+ the provisions of FAR52.227-14 through 23 regarding privately developed and/or
+ commercial computer software.
+ .
+ This license forms the entire agreement regarding the subject matter hereof and
+ supersedes all proposals and prior discussions and writings between the parties
+ with respect thereto. This license does not affect any ownership, rights, title,
+ or interest in, or relating to, this material. No terms of this license can be
+ modified or waived, and no breach of this license can be excused, unless done
+ so in a writing signed by all affected parties. Each term of this license is
+ separately enforceable. If any term of this license is determined to be or
+ becomes unenforceable or illegal, such term shall be reformed to the minimum
+ extent necessary in order for this license to remain in effect in accordance
+ with its terms as modified by such reformation. This license shall be governed
+ by and construed in accordance with the laws of the State of Texas without
+ regard to rules on conflicts of law of any state or jurisdiction or the United
+ Nations Convention on the International Sale of Goods. All disputes arising out
+ of this license shall be subject to the jurisdiction of the federal and state
+ courts in Austin, Texas, and all defenses are hereby waived concerning personal
+ jurisdiction and venue of these courts.
+
+Files: zip/
+Copyright: 1990-2009 Info-ZIP
+           1995 Mark Adler
+           1996 Scott Field
+           1989 S. H. Smith
+           E. Gordon
+           R. Nausedat
+License:
+ For the purposes of this copyright and license, "Info-ZIP" is defined as
+ the following set of individuals:
+ .
+ Mark Adler, John Bush, Karl Davis, Harald Denker, Jean-Michel Dubois,
+ Jean-loup Gailly, Hunter Goatley, Ed Gordon, Ian Gorman, Chris Herborth,
+ Dirk Haase, Greg Hartwig, Robert Heath, Jonathan Hudson, Paul Kienitz,
+ David Kirschbaum, Johnny Lee, Onno van der Linden, Igor Mandrichenko,
+ Steve P. Miller, Sergio Monesi, Keith Owens, George Petrov, Greg Roelofs,
+ Kai Uwe Rommel, Steve Salisbury, Dave Smith, Steven M. Schweda,
+ Christian Spieler, Cosmin Truta, Antoine Verheijen, Paul von Behren,
+ Rich Wales, Mike White.
+ .
+ This software is provided "as is," without warranty of any kind, express
+ or implied.  In no event shall Info-ZIP or its contributors be held liable
+ for any direct, indirect, incidental, special or consequential damages
+ arising out of the use of or inability to use this software.
+ .
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it
+ freely, subject to the above disclaimer and the following restrictions:
+ .
+ 1. Redistributions of source code (in whole or in part) must retain
+ the above copyright notice, definition, disclaimer, and this list
+ of conditions.
+ .
+ 2. Redistributions in binary form (compiled executables and libraries)
+ must reproduce the above copyright notice, definition, disclaimer,
+ and this list of conditions in documentation and/or other materials
+ provided with the distribution.  The sole exception to this condition
+ is redistribution of a standard UnZipSFX binary (including SFXWiz) as
+ part of a self-extracting archive; that is permitted without inclusion
+ of this license, as long as the normal SFX banner has not been removed
+ from the binary or disabled.
+ .
+ 3. Altered versions--including, but not limited to, ports to new operating
+ systems, existing ports with new graphical interfaces, versions with
+ modified or added functionality, and dynamic, shared, or static library
+ versions not from Info-ZIP--must be plainly marked as such and must not
+ be misrepresented as being the original source or, if binaries,
+ compiled from the original source.  Such altered versions also must not
+ be misrepresented as being Info-ZIP releases--including, but not
+ limited to, labeling of the altered versions with the names "Info-ZIP"
+ (or any variation thereof, including, but not limited to, different
+ capitalizations), "Pocket UnZip," "WiZ" or "MacZip" without the
+ explicit permission of Info-ZIP.  Such altered versions are further
+ prohibited from misrepresentative use of the Zip-Bugs or Info-ZIP
+ e-mail addresses or the Info-ZIP URL(s), such as to imply Info-ZIP
+ will provide support for the altered versions.
+ .
+ 4. Info-ZIP retains the right to use the names "Info-ZIP," "Zip," "UnZip,"
+ "UnZipSFX," "WiZ," "Pocket UnZip," "Pocket Zip," and "MacZip" for its
+ own source and binary releases.
 
 Files: api/ttf/liberation-fonts-ttf-2.00.0/*
 Copyright:
- Digitized data copyright © 2010 Google Corporation
+ Digitized data copyright 2010 Google Corporation
          with Reserved Font Arimo, Tinos and Cousine.
- Copyright © 2012 Red Hat, Inc.
+ Copyright 2012 Red Hat, Inc.
          with Reserved Font Name Liberation.
 License: SIL-OFL-1.1
  SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
@@ -108,52 +373,67 @@ License: SIL-OFL-1.1
  DEALINGS IN THE FONT SOFTWARE.
 
 Files: client/install-sh
-Copyright: © 1991 by the Massachusetts Institute of Technology
-License: other
-  Permission to use, copy, modify, distribute, and sell this software and its
-  documentation for any purpose is hereby granted without fee, provided that
-  the above copyright notice appear in all copies and that both that
-  copyright notice and this permission notice appear in supporting
-  documentation, and that the name of M.I.T. not be used in advertising or
-  publicity pertaining to distribution of the software without specific,
-  written prior permission.  M.I.T. makes no representations about the
-  suitability of this software for any purpose.  It is provided "as is"
-  without express or implied warranty.
+Copyright: 1991 by the Massachusetts Institute of Technology
+License: MIT
+
+Files: packages/generic/sea/insecure.sh
+Copyright: 2006 University of California
+License: LGPL-2.1+
+
+Files: m4/sah_namespace.m4
+       m4/sah_header_stdcxx.m4
+       api/macglutfix.m
+Copyright: 2005 University of California
+License: LGPL-2.1+
+
+Files: samples/example_app/slide_show.cpp
+Copyright: 2012 David Coss, PhD
+           2012 University of California
+License: LGPL-3+
 
 Files: client/os2/boinc_attach.cmd
-Copyright: © 2005 Yuri Dario
+Copyright: 2005 Yuri Dario
 License: LGPL-3+
 
 Files: clientgui/wizardex.*
-Copyright: © 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
+       lib/translate.cpp
+       lib/translate.h
+Copyright: 1998-1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 License: wxWindows-3
 
 Files: clientgui/common/wxFlatNotebook* clientgui/common/wxFNBDropTarget.h
-Copyright: © 2005 Eran Ifrah
+Copyright: 2005 Eran Ifrah
 License: wxWindows-3
 
 Files: clientgui/common/wxPieCtrl.*
-Copyright: © 2005 Volodymir (T-Rex) Tryapichko
+Copyright: 2005 Volodymir (T-Rex) Tryapichko
 License: wxWindows-3
 
 Files: clientgui/msw/taskbarex.*
-Copyright: © 1998 Julian Smart
+Copyright: 1998 Julian Smart
 License: wxWindows-3
 
 Files: doc/manpages/*.xml
-Copyright: © 2007-2008 University of California
+Copyright: 2007-2008 University of California
 License: GFDL-NIV-1.2+
 
 Files: html/inc/geoip.inc
-Copyright: © 2004 MaxMind LLC
+Copyright: 2004 MaxMind LLC
 License: LGPL-2.1+
 
+Files: html/user/openid_login.php
+       samples/vboxwrapper/vboxwrapper.cpp
+       samples/vboxwrapper/cernvm/cernvmwrapper.cpp
+Copyright: 2014 University of California
+           2011 Daniel Lombraña González <teleyinex AT gmail DOT com>
+License: LGPL-3+
+
 Files: html/inc/kses.php
-Copyright: © 2002, 2003 Ulf Harnhammar
+Copyright: 2002, 2003 Ulf Harnhammar
 License: GPL-2+
 
 Files: html/inc/recaptchalib.php
-Copyright: © 2007 reCAPTCHA -- http://recaptcha.net
+Copyright: 2007 reCAPTCHA -- http://recaptcha.net
 License: other
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -173,30 +453,15 @@ License: other
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 
-Files: lib/md5.[ch]
-Copyright: © 1999 Aladdin Enterprises
-License: other
- This software is provided 'as-is', without any express or implied
- warranty.  In no event will the authors be held liable for any damages
- arising from the use of this software.
- .
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute it
- freely, subject to the following restrictions:
- .
- 1. The origin of this software must not be misrepresented; you must not
-    claim that you wrote the original software. If you use this software
-    in a product, an acknowledgment in the product documentation would be
-    appreciated but is not required.
- 2. Altered source versions must be plainly marked as such, and must not be
-    misrepresented as being the original software.
- 3. This notice may not be removed or altered from any source distribution.
- .
- L. Peter Deutsch
- ghost@aladdin.com
+Files: lib/md5.c
+       lib/md5.h
+Copyright: 1999 Aladdin Enterprises
+License: Zlib
 
 Files: lib/stackwalker_win.*
-Copyright: © 2002, 2003 Jochen Kalmbach
+Copyright: 2002, 2003 Jochen Kalmbach
+License: Zlib
+
 License: Zlib
  This software is provided 'as-is', without any express or implied warranty.
  In no event will the authors be held liable for any damages arising from the
@@ -217,23 +482,7 @@ License: Zlib
  3. This notice may not be removed or altered from any source distribution.
 
 Files: stripchart/*
-Copyright: © 2002 University of California at Berkeley
-Comment:
- The contents of this file are subject to the Mozilla Public License
- Version 1.0 (the "License"); you may not use this file except in
- compliance with the License. You may obtain a copy of the License at
- http://www.mozilla.org/MPL/
- .
- Software distributed under the License is distributed on an "AS IS"
- basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- License for the specific language governing rights and limitations
- under the License.
- .
- The Original Code is the Berkeley Open Infrastructure for Network Computing.
- .
- The Initial Developer of the Original Code is the SETI@home project.
- Portions created by the SETI@home project are Copyright (C) 2002
- University of California at Berkeley. All Rights Reserved.
+Copyright: 2002 University of California at Berkeley
 License: MPL-1.0
                             MOZILLA PUBLIC LICENSE
                                  Version 1.0
@@ -599,7 +848,7 @@ License: MPL-1.0
 
 Files: debian/*
 Copyright:
- © 2004-2014 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
+ 2004-2014 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 License: GPL-2+
 
 License: LGPL-3+
@@ -663,6 +912,68 @@ License: GPL-2+
  .
  On Debian systems, the complete text of the GNU General Public License
  can be found in /usr/share/common-licenses/GPL-2 file.
+
+License: GPL-3+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-3 file.
+
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the University nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
+
+License: MIT
+ The MIT License
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ of the Software, and to permit persons to whom the Software is furnished to do
+ so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
 
 License: wxWindows-3
                wxWindows Library Licence, Version 3
