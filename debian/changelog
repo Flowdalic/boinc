@@ -1,16 +1,19 @@
 boinc (7.4.22+dfsg-2) unstable; urgency=medium
 
+  * Upload to unstable.
   * Build with NDEBUG to disable massive debug output
     in ~/.BOINC/stderrgui.txt file (Closes: #763113)
   * Fix some entries in copyright file for lintian happyness.
   * Don't require all facilities in boinc-client start,
     making lintian happy again.
   * Update copyright file.
+  * Bump std-version to 3.9.6, no changes required.
+  * Fix dh_install and dh_strip targets.
   [ mdt ]
   * Add dh-python as B-D.
   * Add new libcuda{,rt} compatibility.
 
- -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Sun, 28 Sep 2014 18:19:17 +0200
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 01 Oct 2014 17:57:03 +0200
 
 boinc (7.4.22+dfsg-1exp1) experimental; urgency=low
 
