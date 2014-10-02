@@ -52,7 +52,7 @@ License: Artistic
 
 Files: rboinc/server/etc/default_COPYRIGHT
 Copyright: 2007 G. De Fabritiis, G. Giupponi
-License:
+License: custom
   The CellMD base software (the "Software" herein) contains proprietary
  information with restrictions on use and disclosure and is also protected by
  copyright  and other intellectual and industrial property laws. Reverse
@@ -102,8 +102,8 @@ Files: samples/wrapper/regexp.h
        samples/wrapper/regerror.c
        samples/wrapper/regsub.c
 Copyright: 1986-1995 by University of Toronto. Written by Henry Spencer.  Not derived from licensed software.
-License:
-  Permission is granted to anyone to use this software for any
+License: custom
+ Permission is granted to anyone to use this software for any
  purpose on any computer system, and to redistribute it in any way,
  subject to the following restrictions:
  .
@@ -134,7 +134,7 @@ License: BSD-3-clause
 
 Files: lib/cal_boinc.h
 Copyright: 2007 Advanced Micro Devices, Inc.
-License:
+License: custom
  Redistribution and use of this material is permitted under the following
  conditions:
  .
@@ -227,7 +227,7 @@ Copyright: 1990-2009 Info-ZIP
            1989 S. H. Smith
            E. Gordon
            R. Nausedat
-License:
+License: custom
  For the purposes of this copyright and license, "Info-ZIP" is defined as
  the following set of individuals:
  .
