@@ -67,7 +67,7 @@ Package: boinc
 @Priority: extra
 @Depends: ${misc:Depends}
 @Recommends: libcuda1 | libcuda-5.0-1 | libcuda-5.5-1 | libcuda-6.0-1 | libcuda-6.5-1 | nvidia-173 | nvidia-current | nvidia-current-updates | nvidia-304 | nvidia-304-updates | nvidia-310 | nvidia-310-updates | nvidia-313-updates | nvidia-319 | nvidia-319-updates | nvidia-331 | nvidia-331-updates | libcuda1-304 | libcuda1-304-updates | libcuda1-331 | libcuda1-331-updates,
-@            libcudart4 | libcudart5.0 | libcudart5.5 | libcudart6.0
+@            libcudart4 | libcudart5.0 | libcudart5.5 | libcudart6.0 | libcudart6.5
 @Description: metapackage for CUDA-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
