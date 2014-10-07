@@ -188,9 +188,9 @@ CFGFLAGS_boinc-client = \
 
 %:
 ifeq (,$(ENABLE_SERVER_TEST))
-	dh $@ --with python2,autoreconf # --parallel # this still doesn't work
+	dh $@ --with python2,autoreconf,systemd # --parallel # this still doesn't work
 else
-	dh $@ --with python2,autoreconf
+	dh $@ --with python2,autoreconf,systemd
 endif
 
 override_dh_clean:
