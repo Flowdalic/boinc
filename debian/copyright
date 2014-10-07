@@ -53,7 +53,7 @@ License: Artistic
 Files: rboinc/server/etc/default_COPYRIGHT
 Copyright: 2007 G. De Fabritiis, G. Giupponi
 License: custom
-  The CellMD base software (the "Software" herein) contains proprietary
+ The CellMD base software (the "Software" herein) contains proprietary
  information with restrictions on use and disclosure and is also protected by
  copyright  and other intellectual and industrial property laws. Reverse
  engineering, disassembly, or decompilation of the Programs is prohibited. No
@@ -434,24 +434,7 @@ License: GPL-2+
 
 Files: html/inc/recaptchalib.php
 Copyright: 2007 reCAPTCHA -- http://recaptcha.net
-License: other
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- .
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- .
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
+License: MIT
 
 Files: lib/md5.c
        lib/md5.h
@@ -956,7 +939,6 @@ License: BSD-3-clause
  SUCH DAMAGE.
 
 License: MIT
- The MIT License
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights to
