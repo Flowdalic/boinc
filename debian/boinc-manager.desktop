@@ -5,6 +5,7 @@ Exec=boincmgr
 Path=/var/lib/boinc-client
 Icon=boincmgr
 Categories=System;Monitor;GTK;
+Keywords=computation;science;
 Name=BOINC Manager
 GenericName=BOINC monitor and control utility
 GenericName[cs]=Monitorovací a ovládací nástroj pro BOINC
