@@ -16,6 +16,22 @@ Files: *
 Copyright: 2005-2014 University of California
 License: LGPL-3+
 
+Files: debian/*
+Copyright:
+ 2004-2014 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
+License: GPL-2+
+
+Files: dcapi/*
+Copyright:
+ 2006-2007 Daniel Drotos
+ 2005-2006 Gabor Vida
+ 20069 MTA SZTAKI
+License: LGPL-3+
+
+Files: doc/manpages/*.xml
+Copyright: 2007-2008 University of California
+License: GFDL-NIV-1.2+
+
 Files: rboinc/server/etc/rboinc_httpd_conf
        rboinc/client/boinc_retrieve.pl
        rboinc/client/boinc_submit.pl
@@ -37,22 +53,9 @@ Comment: License says:
  it and/or modify it under the same terms as Perl itself.
 License: GPL-1+ or Artistic
 
-License: GPL-1+
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 1
- of the License, or (at your option) any later version.
- .
- On Debian GNU/Linux systems, the complete text of the GNU General
- Public License can be found in `/usr/share/common-licenses/GPL-1'.
-
-License: Artistic
- On Debian GNU/Linux systems, the complete text of the
- Artistic Licence can be found in `/usr/share/common-licenses/Artistic'.
-
 Files: rboinc/server/etc/default_COPYRIGHT
 Copyright: 2007 G. De Fabritiis, G. Giupponi
-License: custom
+License: custom-rboinc
  The CellMD base software (the "Software" herein) contains proprietary
  information with restrictions on use and disclosure and is also protected by
  copyright  and other intellectual and industrial property laws. Reverse
@@ -87,6 +90,12 @@ Copyright: 2008 Steven G. Johnson <stevenj@alum.mit.edu>
            2011 Daniel Richard G. <skunk@iSKUNK.ORG>
 License: GPL-3+
 
+Files: m4/sah_namespace.m4
+       m4/sah_header_stdcxx.m4
+       api/macglutfix.m
+Copyright: 2005 University of California
+License: LGPL-2.1+
+
 Files: samples/vboxwrapper/floppyio.h
        samples/vboxwrapper/floppyio.cpp
 Copyright: 2011 Ioannis Charalampidis
@@ -101,8 +110,9 @@ Files: samples/wrapper/regexp.h
        samples/wrapper/regexp_custom.h
        samples/wrapper/regerror.c
        samples/wrapper/regsub.c
-Copyright: 1986-1995 by University of Toronto. Written by Henry Spencer.  Not derived from licensed software.
-License: custom
+Copyright: 1986-1995 by University of Toronto.
+ Written by Henry Spencer.
+License: custom-wrapper
  Permission is granted to anyone to use this software for any
  purpose on any computer system, and to redistribute it in any way,
  subject to the following restrictions:
@@ -128,13 +138,18 @@ License: custom
  .
  4. This notice must not be removed or altered.
 
-Files: html/inc/recaptchalib.php
-Copyright: 2007 reCAPTCHA
-License: BSD-3-clause
+Files: samples/wrappture/wrappture_example.cpp
+Copyright: 2004-2008  Purdue Research Foundation
+License: LGPL-3+
+
+Files: samples/example_app/slide_show.cpp
+Copyright: 2012 David Coss, PhD
+           2012 University of California
+License: LGPL-3+
 
 Files: lib/cal_boinc.h
 Copyright: 2007 Advanced Micro Devices, Inc.
-License: custom
+License: custom-cal
  Redistribution and use of this material is permitted under the following
  conditions:
  .
@@ -220,14 +235,14 @@ License: custom
  courts in Austin, Texas, and all defenses are hereby waived concerning personal
  jurisdiction and venue of these courts.
 
-Files: zip/
+Files: zip/*
 Copyright: 1990-2009 Info-ZIP
            1995 Mark Adler
            1996 Scott Field
            1989 S. H. Smith
            E. Gordon
            R. Nausedat
-License: custom
+License: custom-zip
  For the purposes of this copyright and license, "Info-ZIP" is defined as
  the following set of individuals:
  .
@@ -281,96 +296,9 @@ License: custom
  "UnZipSFX," "WiZ," "Pocket UnZip," "Pocket Zip," and "MacZip" for its
  own source and binary releases.
 
-Files: api/ttf/liberation-fonts-ttf-2.00.0/*
-Copyright:
- Digitized data copyright 2010 Google Corporation
-         with Reserved Font Arimo, Tinos and Cousine.
- Copyright 2012 Red Hat, Inc.
-         with Reserved Font Name Liberation.
-License: SIL-OFL-1.1
- SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
- .
- PREAMBLE The goals of the Open Font License (OFL) are to stimulate
- worldwide development of collaborative font projects, to support the font
- creation efforts of academic and linguistic communities, and to provide
- a free and open framework in which fonts may be shared and improved in
- partnership with others.
- .
- The OFL allows the licensed fonts to be used, studied, modified and
- redistributed freely as long as they are not sold by themselves.
- The fonts, including any derivative works, can be bundled, embedded,
- redistributed and/or sold with any software provided that any reserved
- names are not used by derivative works.  The fonts and derivatives,
- however, cannot be released under any other type of license.  The
- requirement for fonts to remain under this license does not apply to
- any document created using the fonts or their derivatives.
- .
- DEFINITIONS
- "Font Software" refers to the set of files released by the Copyright
- Holder(s) under this license and clearly marked as such.
- This may include source files, build scripts and documentation.
- .
- "Reserved Font Name" refers to any names specified as such after the
- copyright statement(s).
- .
- "Original Version" refers to the collection of Font Software components
- as distributed by the Copyright Holder(s).
- .
- "Modified Version" refers to any derivative made by adding to, deleting,
- or substituting ? in part or in whole ?
- any of the components of the Original Version, by changing formats or
- by porting the Font Software to a new environment.
- .
- "Author" refers to any designer, engineer, programmer, technical writer
- or other person who contributed to the Font Software.
- .
- PERMISSION & CONDITIONS
- .
- Permission is hereby granted, free of charge, to any person obtaining a
- copy of the Font Software, to use, study, copy, merge, embed, modify,
- redistribute, and sell modified and unmodified copies of the Font
- Software, subject to the following conditions:
- .
- 1) Neither the Font Software nor any of its individual components,in
-    Original or Modified Versions, may be sold by itself.
- .
- 2) Original or Modified Versions of the Font Software may be bundled,
-    redistributed and/or sold with any software, provided that each copy
-    contains the above copyright notice and this license. These can be
-    included either as stand-alone text files, human-readable headers or
-    in the appropriate machine-readable metadata fields within text or
-    binary files as long as those fields can be easily viewed by the user.
- .
- 3) No Modified Version of the Font Software may use the Reserved Font
-    Name(s) unless explicit written permission is granted by the
-    corresponding Copyright Holder. This restriction only applies to the
-    primary font name as presented to the users.
- .
- 4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
-    Software shall not be used to promote, endorse or advertise any
-    Modified Version, except to acknowledge the contribution(s) of the
-    Copyright Holder(s) and the Author(s) or with their explicit written
-    permission.
- .
- 5) The Font Software, modified or unmodified, in part or in whole, must
-    be distributed entirely under this license, and must not be distributed
-    under any other license. The requirement for fonts to remain under
-    this license does not apply to any document created using the Font
-    Software.
- .
- TERMINATION
- This license becomes null and void if any of the above conditions are not met.
- .
- DISCLAIMER
- THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
- OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT.  IN NO EVENT SHALL THE
- COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
- DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER
- DEALINGS IN THE FONT SOFTWARE.
+Files: zip/boinc_zip.*
+Copyright: 2012 University of California
+License: LGPL-3+
 
 Files: client/install-sh
 Copyright: 1991 by the Massachusetts Institute of Technology
@@ -380,29 +308,13 @@ Files: packages/generic/sea/insecure.sh
 Copyright: 2006 University of California
 License: LGPL-2.1+
 
-Files: m4/sah_namespace.m4
-       m4/sah_header_stdcxx.m4
-       api/macglutfix.m
-Copyright: 2005 University of California
-License: LGPL-2.1+
-
-Files: samples/example_app/slide_show.cpp
-Copyright: 2012 David Coss, PhD
-           2012 University of California
-License: LGPL-3+
-
 Files: client/os2/boinc_attach.cmd
 Copyright: 2005 Yuri Dario
 License: LGPL-3+
 
 Files: clientgui/wizardex.*
-       lib/translate.cpp
-       lib/translate.h
+       lib/translate.*
 Copyright: 1998-1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
-License: wxWindows-3
-
-Files: clientgui/common/wxFlatNotebook* clientgui/common/wxFNBDropTarget.h
-Copyright: 2005 Eran Ifrah
 License: wxWindows-3
 
 Files: clientgui/common/wxPieCtrl.*
@@ -413,18 +325,22 @@ Files: clientgui/msw/taskbarex.*
 Copyright: 1998 Julian Smart
 License: wxWindows-3
 
-Files: doc/manpages/*.xml
-Copyright: 2007-2008 University of California
-License: GFDL-NIV-1.2+
+Files: clientgui/gtk/taskbarex.*
+Copyright: Vaclav Slavik
+License: wxWindows-3
 
 Files: html/inc/geoip.inc
 Copyright: 2004 MaxMind LLC
 License: LGPL-2.1+
 
+Files: html/user/openid.php
+Copyright: 2010 Mewp
+License: MIT
+
 Files: html/user/openid_login.php
        samples/vboxwrapper/vboxwrapper.cpp
        samples/vboxwrapper/cernvm/cernvmwrapper.cpp
-Copyright: 2014 University of California
+Copyright: 2008-2014 University of California
            2011 Daniel Lombraña González <teleyinex AT gmail DOT com>
 License: LGPL-3+
 
@@ -436,7 +352,7 @@ Files: html/inc/recaptchalib.php
 Copyright: 2007 reCAPTCHA -- http://recaptcha.net
 License: MIT
 
-Files: lib/md5.c
+Files: lib/md5.cpp
        lib/md5.h
 Copyright: 1999 Aladdin Enterprises
 License: Zlib
@@ -828,12 +744,6 @@ License: MPL-1.0
  .
       Contributor(s): ______________________________________.''
 
-
-Files: debian/*
-Copyright:
- 2004-2014 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
-License: GPL-2+
-
 License: LGPL-3+
  BOINC is free software; you can redistribute it and/or modify it
  under the terms of the GNU Lesser General Public License
@@ -913,31 +823,6 @@ License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License
  can be found in /usr/share/common-licenses/GPL-3 file.
 
-License: BSD-3-clause
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions
- are met:
- 1. Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
- 3. Neither the name of the University nor the names of its contributors
-    may be used to endorse or promote products derived from this software
-    without specific prior written permission.
- .
- THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- SUCH DAMAGE.
-
 License: MIT
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -1009,3 +894,16 @@ License: wxWindows-3
  choice whether to permit this exception to apply to your modifications.
  If you do not wish that, you must delete the exception notice from such
  code and/or adjust the licensing conditions notice accordingly.
+
+License: GPL-1+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 1
+ of the License, or (at your option) any later version.
+ .
+ On Debian GNU/Linux systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-1'.
+
+License: Artistic
+ On Debian GNU/Linux systems, the complete text of the
+ Artistic Licence can be found in `/usr/share/common-licenses/Artistic'.
