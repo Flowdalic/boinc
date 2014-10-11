@@ -1,3 +1,6 @@
+Description: this should avoid a race condition in parallel builds when the ".a" file
+ is accessed prior to the correspondant "$(LN)" call from Makefile.
+
 --- boinc-7.4.14+dfsg.orig/Makefile.incl
 +++ boinc-7.4.14+dfsg/Makefile.incl
 @@ -43,22 +43,22 @@ AM_LDFLAGS =

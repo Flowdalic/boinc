@@ -1,3 +1,4 @@
+Description: this patch adds an useful error message in case of dir open failure.
 --- a/lib/filesys.cpp
 +++ b/lib/filesys.cpp
 @@ -144,7 +144,12 @@ DIRREF dir_open(const char* p) {

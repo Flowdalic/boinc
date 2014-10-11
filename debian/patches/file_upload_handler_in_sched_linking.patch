@@ -1,3 +1,4 @@
+Description: Link LIBBOINC to some binary needing it.
 --- a/sched/Makefile.am
 +++ b/sched/Makefile.am
 @@ -268,7 +268,7 @@

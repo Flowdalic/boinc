@@ -1,3 +1,6 @@
+Description: this patch makes the build system create a dynamic shared library.
+ Upstream didn't accept this patch because of the unstable api, so this is a
+ significative debian delta.
 --- a/lib/Makefile.am
 +++ b/lib/Makefile.am
 @@ -175,13 +175,13 @@

@@ -1,3 +1,4 @@
+Description: this patch adds a checks for enough free memory, and exits in case of not enough.
 --- a/lib/unix_util.cpp
 +++ b/lib/unix_util.cpp
 @@ -80,7 +80,13 @@

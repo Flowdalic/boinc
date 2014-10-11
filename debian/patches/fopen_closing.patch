@@ -1,3 +1,5 @@
+Description: this patch makes boinc correctly close the open files.
+ This patch allows also MFILE to correctly deallocate its pointers by calling close().
 --- a/lib/crypt_prog.cpp
 +++ b/lib/crypt_prog.cpp
 @@ -152,6 +152,8 @@ int main(int argc, char** argv) {

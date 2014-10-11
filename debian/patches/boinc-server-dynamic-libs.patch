@@ -1,3 +1,4 @@
+Description: Making the server packages ship dynamic shared libraries aswell.
 --- a/sched/Makefile.am
 +++ b/sched/Makefile.am
 @@ -4,7 +4,7 @@

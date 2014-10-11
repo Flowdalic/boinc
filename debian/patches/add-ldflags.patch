@@ -1,3 +1,4 @@
+Description: Adding LDFLAGS to the wrapper build
 --- a/samples/wrapper/Makefile
 +++ b/samples/wrapper/Makefile
 @@ -38,4 +38,4 @@

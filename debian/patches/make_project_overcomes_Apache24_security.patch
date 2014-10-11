@@ -1,3 +1,6 @@
+Description: Installations outside /var/www are disabled by default
+ This friendly report helped me out
+ http://dabase.com/blog/AH01630:_client_denied_by_server_configuration/
 --- a/tools/make_project
 +++ b/tools/make_project
 @@ -327,6 +327,7 @@

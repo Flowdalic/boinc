@@ -1,3 +1,6 @@
+Description: fixing some clang warning.
+ Probably this patch can be safely dropped since upstream seems to have already
+ addressed this.
 --- a/clientgui/sg_ProjectPanel.cpp
 +++ b/clientgui/sg_ProjectPanel.cpp
 @@ -423,8 +423,7 @@

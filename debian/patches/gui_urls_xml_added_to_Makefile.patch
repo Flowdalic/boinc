@@ -1,3 +1,4 @@
+Description: Adding a missing file to the install script
 --- a/tools/Makefile.am
 +++ b/tools/Makefile.am
 @@ -40,7 +40,8 @@

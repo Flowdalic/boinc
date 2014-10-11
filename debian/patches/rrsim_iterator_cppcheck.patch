@@ -1,3 +1,4 @@
+Description: this patch avoid the iterator reuse, fixing cppcheck warnings
 --- a/client/rrsim_test.cpp
 +++ b/client/rrsim_test.cpp
 @@ -184,7 +184,6 @@

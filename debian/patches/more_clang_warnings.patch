@@ -1,3 +1,4 @@
+Description: adding another error check.
 --- a/lib/shmem.cpp
 +++ b/lib/shmem.cpp
 @@ -337,7 +337,10 @@

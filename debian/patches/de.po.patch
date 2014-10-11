@@ -1,3 +1,4 @@
+Description: fixing some "de" typos, this should be addressed on other languages aswell.
 --- a/html/languages/translations/de.po
 +++ b/html/languages/translations/de.po
 @@ -1073,8 +1073,8 @@

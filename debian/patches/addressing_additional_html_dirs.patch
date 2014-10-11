@@ -1,3 +1,4 @@
+Description: Adding some missing html dirs to the install script
 --- a/html/Makefile.am
 +++ b/html/Makefile.am
 @@ -1,4 +1,4 @@

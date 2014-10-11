@@ -1,3 +1,4 @@
+Description: help autotools to find the correct sched dynamic shared library.
 --- a/tools/Makefile.am
 +++ b/tools/Makefile.am
 @@ -43,7 +43,7 @@

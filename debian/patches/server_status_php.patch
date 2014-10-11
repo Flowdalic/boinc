@@ -1,3 +1,4 @@
+Description: Adjusting Apache PID file location
 --- a/html/user/server_status.php
 +++ b/html/user/server_status.php
 @@ -192,7 +192,12 @@
