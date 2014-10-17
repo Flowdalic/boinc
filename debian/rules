@@ -267,14 +267,13 @@ override_dh_auto_build: update-boinc-applinks.1
 #	    fi; \
 #	  done; \
 #	fi
-
+	dh_auto_build
 ifeq (,$(ENABLE_SERVER_TEST))
 	$(MAKE) -C samples/sleeper
 	$(MAKE) -C samples/worker
 	$(MAKE) -C samples/example_app
 	$(MAKE) -C samples/wrapper
 endif
-	dh_auto_build
 
 BINARIES= sched/census sched/cgi sched/db_dump sched/db_purge \
 	sched/delete_file sched/feeder sched/file_deleter \

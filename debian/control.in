@@ -326,7 +326,7 @@ Package: boinc
 %Section: debug
 %Priority: extra
 %Architecture: any
-%Depends: boinc-server-maker (>= ${binary:Version}) | | boinc-app-examples (>= ${binary:Version}) | boinc-cgi-stripchart (>= ${binary:Version}),
+%Depends: boinc-server-maker (>= ${binary:Version}) | boinc-app-examples (>= ${binary:Version}) | boinc-cgi-stripchart (>= ${binary:Version}),
 %         ${misc:Depends}
 %Suggests: libcurl3-dbg, libssl1.0.0-dbg, libwxgtk3.0-0-dbg
 %Description: debugging symbols for BOINC server binaries
