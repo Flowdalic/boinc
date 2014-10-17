@@ -165,13 +165,9 @@ $(shell sed 's/^@//' -i debian/control)
 #   --enable-debug
 #   --enable-wx-debug (need to install libwxbase3.0-0-dbg and libwxgtk3.0-0-dbg)
 #
-# The --libdir and --libexecdir is added to turn off
-# the debhelper multiarch feature.
 CFGFLAGS_boinc-client = \
   $(TYPE_FLAGS) \
   --prefix=/usr \
-  --libdir=/usr/lib \
-  --libexecdir=/usr/lib \
   $(ENABLE_CLIENT) \
   $(ENABLE_SERVER) \
   --disable-fcgi \
@@ -261,7 +257,6 @@ override_dh_auto_build: update-boinc-applinks.1
 	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 #endif
-	dh_auto_build
 
 	# Generate binary message catalogs of the BOINC Manager.
 #	if [ -d locale ]; then \
@@ -279,6 +274,7 @@ ifeq (,$(ENABLE_SERVER_TEST))
 	$(MAKE) -C samples/example_app
 	$(MAKE) -C samples/wrapper
 endif
+	dh_auto_build
 
 BINARIES= sched/census sched/cgi sched/db_dump sched/db_purge \
 	sched/delete_file sched/feeder sched/file_deleter \

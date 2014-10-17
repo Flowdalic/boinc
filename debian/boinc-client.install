@@ -3,7 +3,7 @@ debian/conffiles/*                  etc/boinc-client
 debian/extra/bash/*                 etc/bash_completion.d
 debian/extra/udev-cpu_share         usr/share/boinc-client
 debian/extra/update-boinc-applinks  usr/bin
-usr/bin/boinc                       usr/bin
-usr/bin/boinccmd                    usr/bin
+usr/bin/boinc
+usr/bin/boinccmd
 usr/bin/switcher                    usr/lib/boinc-client
 usr/share/locale/*/BOINC-Client.mo
