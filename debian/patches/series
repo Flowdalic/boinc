@@ -1,11 +1,6 @@
-# patches to get Debian going
-make_project_overcomes_Apache24_security.patch
 # undisputed patches above
 stripchart_debian.patch
-#upstream_sztaki_configureEval.patch
-disable_svn_version.patch
 possible_size_type_error.patch
-debian_debian_AdjustBoincTopdirPython.patch
 some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
@@ -13,13 +8,6 @@ more_maxpathlen.patch
 sched_driver_char_buffers.patch
 csh2tcsh.patch
 client_app_maxpathlen.patch
-#debian specific patches
-#boinclib_shared.patch #needed in order to make boinc build correctly otherwise it will FTBFS
-boinclib_shared.patch
-#dynamic_libboinc.patch
-Missing_libSched.patch
-#fix-for-debian-bug-646583.patch
-disable_new_version_check.patch
 lib_cppcheck.patch
 fopen_closing.patch
 rrsim_iterator_cppcheck.patch
@@ -30,10 +18,17 @@ more_clang_warnings.patch
 add-ldflags.patch
 addressing_additional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
-file_upload_handler_in_sched_linking.patch
-disable_silent_rules.patch
 server_status_php.patch
 #db_interface_use.patch
-boinc-server-dynamic-libs.patch
 fix-typo.patch
-fix-dependencies.patch
+# patches to get Debian going
+make_project_overcomes_Apache24_security.patch
+#debian specific patches
+boinclib_shared.patch
+Missing_libSched.patch
+boinc-server-dynamic-libs.patch
+disable_new_version_check.patch
+disable_svn_version.patch
+AdjustBoincTopdirPython.patch
+file_upload_handler_in_sched_linking.patch
+disable_silent_rules.patch

@@ -10,4 +10,4 @@ Description: Adding a missing file to the install script
 +    gui_urls.xml
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
- AM_LDFLAGS += -static -L../lib/.libs -L../sched
+ AM_LDFLAGS += -static
