@@ -220,6 +220,7 @@ Package: boinc
 @
 @Package: libboinc-app7
 @Provides: libboinc-app
+@Pre-Depends: ${misc:Pre-Depends}
 @Breaks: boinc-dev (<< 7.0.28+dfsg-3), libboinc-app (<= 7.0.34+dfsg-1)
 @Replaces: boinc-dev (<< 7.0.28+dfsg-3), libboinc-app (<= 7.0.34+dfsg-1)
 @Section: libs
@@ -235,6 +236,7 @@ Package: boinc
 @
 @Package: libboinc7
 @Provides: libboinc
+@Pre-Depends: ${misc:Pre-Depends}
 @Breaks: boinc-dev (<< 7.0.28+dfsg-3), libboinc (<= 7.0.34+dfsg-1)
 @Replaces: boinc-dev (<< 7.0.28+dfsg-3), libboinc (<= 7.0.34+dfsg-1)
 @Architecture: any
