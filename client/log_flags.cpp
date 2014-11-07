@@ -159,6 +159,9 @@ void CC_CONFIG::show() {
     if (no_gpus) {
         msg_printf(NULL, MSG_INFO, "Config: don't use coprocessors");
     }
+    if (dont_use_vbox) {
+        msg_printf(NULL, MSG_INFO, "Config: don't use VirtualBox");
+    }
     if (no_info_fetch) {
         msg_printf(NULL, MSG_INFO, "Config: don't fetch project list or client version info");
     }
@@ -245,7 +248,6 @@ void CC_CONFIG::show() {
 // (It's separate so that we can write messages in it)
 
 int CC_CONFIG::parse_options_client(XML_PARSER& xp) {
-    char path[MAXPATHLEN];
     string s;
     int n, retval;
 
@@ -308,16 +310,10 @@ int CC_CONFIG::parse_options_client(XML_PARSER& xp) {
             }
             continue;
         }
-        if (xp.parse_str("data_dir", path, sizeof(path))) {
-            if (chdir(path)) {
-                perror("chdir");
-                exit(1);
-            }
-            continue;
-        }
         if (xp.parse_bool("disallow_attach", disallow_attach)) continue;
         if (xp.parse_bool("dont_check_file_sizes", dont_check_file_sizes)) continue;
         if (xp.parse_bool("dont_contact_ref_site", dont_contact_ref_site)) continue;
+        if (xp.parse_bool("dont_use_vbox", dont_use_vbox)) continue;
         if (xp.match_tag("exclude_gpu")) {
             EXCLUDE_GPU eg;
             retval = eg.parse(xp);
@@ -521,19 +517,6 @@ int read_config_file(bool init, const char* fname) {
 
     if (init) {
         coprocs = cc_config.config_coprocs;
-        if (strlen(cc_config.data_dir)) {
-#ifdef _WIN32
-            _chdir(cc_config.data_dir);
-#else
-            if (chdir(cc_config.data_dir)) {
-                msg_printf(NULL, MSG_INFO,
-                    "Couldn't change to directory specified in cc_config.xml: %s",
-                    cc_config.data_dir
-                );
-                return ERR_OPENDIR;
-            }
-#endif
-        }
     } else {
         select_proxy_info();        // in case added or removed proxy info
     }
@@ -722,4 +705,39 @@ bool gpu_excluded(APP* app, COPROC& cp, int ind) {
         return true;
     }
     return false;
+}
+
+// if the configuration file disallows the use of a GPU type
+// for a project, set a flag to that effect
+//
+void set_no_rsc_config() {
+    for (unsigned int i=0; i<gstate.projects.size(); i++) {
+        PROJECT& p = *gstate.projects[i];
+        for (int j=1; j<coprocs.n_rsc; j++) {
+            bool allowed[MAX_COPROC_INSTANCES];
+            memset(allowed, 0, sizeof(allowed));
+            COPROC& c = coprocs.coprocs[j];
+            for (int k=0; k<c.count; k++) {
+                allowed[c.device_nums[k]] = true;
+            }
+            for (unsigned int k=0; k<cc_config.exclude_gpus.size(); k++) {
+                EXCLUDE_GPU& e = cc_config.exclude_gpus[k];
+                if (strcmp(e.url.c_str(), p.master_url)) continue;
+                if (!e.type.empty() && strcmp(e.type.c_str(), c.type)) continue;
+                if (!e.appname.empty()) continue;
+                if (e.device_num < 0) {
+                    memset(allowed, 0, sizeof(allowed));
+                    break;
+                }
+                allowed[e.device_num] = false;
+            }
+            p.no_rsc_config[j] = true;
+            for (int k=0; k<c.count; k++) {
+                if (allowed[c.device_nums[k]]) {
+                    p.no_rsc_config[j] = false;
+                    break;
+                }
+            }
+        }
+    }
 }

@@ -219,6 +219,15 @@ int get_os_information(
     switch (osvi.dwPlatformId) {
         case VER_PLATFORM_WIN32_NT:
 
+			if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 4 ) {
+                if( osvi.wProductType == VER_NT_WORKSTATION ) {
+                    strcat(os_name, "Windows 10");
+                } else {
+                    strcat(os_name, "Windows Server 2015");
+                }
+                pGPI( 6, 4, 0, 0, &dwType);
+            }
+
 			if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3 ) {
                 if( osvi.wProductType == VER_NT_WORKSTATION ) {
                     strcat(os_name, "Windows 8.1");
@@ -1135,7 +1144,9 @@ int HOST_INFO::get_host_info() {
     get_os_information(
         os_name, sizeof(os_name), os_version, sizeof(os_version)
     );
-    get_virtualbox_version();
+    if (!cc_config.dont_use_vbox) {
+        get_virtualbox_version();
+    }
     get_processor_info(
         p_vendor, sizeof(p_vendor),
         p_model, sizeof(p_model),
