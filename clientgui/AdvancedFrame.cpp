@@ -616,7 +616,6 @@ bool CAdvancedFrame::CreateMenu() {
         _("Enable or disable various diagnostic messages")
     );
 
-
     // Help menu
     wxMenu *menuHelp = new wxMenu;
 
@@ -1539,6 +1538,37 @@ void CAdvancedFrame::OnLaunchNewInstance(wxCommandEvent& WXUNUSED(event)) {
 #endif
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnLaunchNewInstance - Function End"));
+}
+
+
+void CAdvancedFrame::OnTest1ClickAttach(wxCommandEvent& WXUNUSED(event)) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnTest1ClickAttach - Function Begin"));
+
+    CMainDocument* pDoc = wxGetApp().GetDocument();
+
+    wxASSERT(pDoc);
+    wxASSERT(wxDynamicCast(pDoc, CMainDocument));
+
+    // Stop all timers so that the wizard is the only thing doing anything
+    StopTimers();
+
+    CWizardAttach* pWizard = new CWizardAttach(this);
+
+    pWizard->RunSimpleProjectAttach();
+
+    if (pWizard)
+        pWizard->Destroy();
+
+    DeleteMenu();
+    CreateMenu();
+    pDoc->ForceCacheUpdate();
+    FireRefreshView();
+    ResetReminderTimers();
+
+    // Restart timers to continue normal operations.
+    StartTimers();
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnTest1ClickAttach - Function End"));
 }
 
 
