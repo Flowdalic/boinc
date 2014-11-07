@@ -1,6 +1,8 @@
 boinc (7.4.27+dfsg-1exp1) experimental; urgency=medium
 
   * New upstream release.
+  [ Vincent Danjean ]
+  * fix gpu stuff (Closes: #763655)
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 07 Nov 2014 11:00:37 +0100
 
