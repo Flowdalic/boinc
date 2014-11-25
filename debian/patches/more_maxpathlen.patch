@@ -52,7 +52,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
          safe_strcpy(oldpath, newpath);
 --- a/lib/network.cpp
 +++ b/lib/network.cpp
-@@ -71,7 +71,7 @@
+@@ -73,7 +73,7 @@
      case WSAENOTSOCK:
          return "not a socket";
      }
@@ -61,7 +61,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
      return buf;
  #else
      switch (h_errno) {
-@@ -85,11 +85,11 @@
+@@ -87,11 +87,11 @@
          return "host not found or server failure";
  #ifdef NETDB_INTERNAL
      case NETDB_INTERNAL:
