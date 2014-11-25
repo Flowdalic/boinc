@@ -419,9 +419,9 @@ int CLIENT_STATE::init() {
     // check for GPUs.
     //
     for (int j=1; j<coprocs.n_rsc; j++) {
-        msg_printf(NULL, MSG_INFO, "GPU specified in cc_config.xml: %d %s",
-            coprocs.coprocs[j].count,
-            coprocs.coprocs[j].type
+        msg_printf(NULL, MSG_INFO, "Coprocessor specified in cc_config.xml: type %s count %d",
+            coprocs.coprocs[j].type,
+            coprocs.coprocs[j].count
         );
     }
     if (!cc_config.no_gpus
@@ -971,6 +971,7 @@ bool CLIENT_STATE::poll_slow_events() {
             } else {
                 msg_printf(NULL, MSG_INFO, "Resuming file transfers");
             }
+            request_schedule_cpus("network resumed");
         }
 
         // if we're emerging from a bandwidth quota suspension,
@@ -1964,7 +1965,7 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
     // app_config.xml, but this isn't likely to exist on Android.
     //
     if (!project->anonymous_platform) {
-        client_clean_out_dir(project.project_dir(), "reset project");
+        client_clean_out_dir(project->project_dir(), "reset project");
     }
 #endif
 
