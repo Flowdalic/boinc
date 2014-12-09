@@ -1,6 +1,8 @@
 boinc (7.4.30+dfsg-1exp1) experimental; urgency=medium
 
+  [ Gianfranco Costamagna ]
   * New upstream release, patch refresh.
+  * Add nvidia-modprobe as dependency (LP: #1400021)
   [ Vincent Danjean ]
   * fix gpu stuff (Closes: #763655)
 
