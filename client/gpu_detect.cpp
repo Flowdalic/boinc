@@ -304,9 +304,11 @@ void COPROCS::correlate_gpus(
     cpu_opencls.clear();
 }
 
-// This is called from CLIENT_STATE::init() after adding NVIDIA, ATI and Intel GPUs
+// This is called from CLIENT_STATE::init()
+// after adding NVIDIA, ATI and Intel GPUs
 // If we don't care about the order of GPUs in COPROCS::coprocs[], 
 // this code could be included at the end of COPROCS::correlate_gpus().
+//
 int COPROCS::add_other_coproc_types() {
     int retval = 0;
     
@@ -318,8 +320,10 @@ int COPROCS::add_other_coproc_types() {
         }
         
         COPROC c;
-        // For other device types other than NVIDIA, ATI or Intel GPU coprocessor.
-        // we put each instance into a separate other_opencls element, so count=1.
+        // For device types other than NVIDIA, ATI or Intel GPU.
+        // we put each instance into a separate other_opencls element,
+        // so count=1.
+        //
         c.count = 1;
         c.opencl_device_count = 1;
         c.opencl_prop = other_opencls[i];
@@ -657,4 +661,25 @@ int COPROCS::launch_child_process_to_detect_gpus() {
     }
 
     return 0;
+}
+
+// print descriptions of coprocs specified in cc_config.xml,
+// and make sure counts are <= 64
+//
+void COPROCS::bound_counts() {
+    for (int j=1; j<n_rsc; j++) {
+        msg_printf(NULL, MSG_INFO, "Coprocessor specified in cc_config.xml: type %s count %d",
+            coprocs[j].type,
+            coprocs[j].count
+        );
+        if (coprocs[j].count > MAX_COPROC_INSTANCES) {
+            msg_printf(NULL, MSG_USER_ALERT,
+                "%d instances of %s specified in cc_config.xml; max is %d",
+                coprocs[j].count,
+                coprocs[j].type,
+                MAX_COPROC_INSTANCES
+            );
+            coprocs[j].count = MAX_COPROC_INSTANCES;
+        }
+    }
 }
