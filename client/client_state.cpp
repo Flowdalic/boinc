@@ -418,12 +418,7 @@ int CLIENT_STATE::init() {
 
     // check for GPUs.
     //
-    for (int j=1; j<coprocs.n_rsc; j++) {
-        msg_printf(NULL, MSG_INFO, "Coprocessor specified in cc_config.xml: type %s count %d",
-            coprocs.coprocs[j].type,
-            coprocs.coprocs[j].count
-        );
-    }
+    coprocs.bound_counts();     // show GPUs described in cc_config.xml
     if (!cc_config.no_gpus
 #ifdef _WIN32
         && !executing_as_daemon
@@ -508,7 +503,7 @@ int CLIENT_STATE::init() {
     // this follows parse_state_file() since we need to have read
     // domain_name for Android
     //
-    host_info.get_host_info();
+    host_info.get_host_info(true);
     set_ncpus();
     show_host_info();
 
@@ -1156,8 +1151,6 @@ int CLIENT_STATE::link_file_info(PROJECT* p, FILE_INFO* fip) {
 
 int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
     APP* app;
-    FILE_INFO* fip;
-    unsigned int i;
 
     avp->project = p;
     app = lookup_app(p, avp->app_name);
@@ -1185,9 +1178,9 @@ int CLIENT_STATE::link_app_version(PROJECT* p, APP_VERSION* avp) {
     strcpy(avp->graphics_exec_path, "");
     strcpy(avp->graphics_exec_file, "");
 
-    for (i=0; i<avp->app_files.size(); i++) {
+    for (unsigned int i=0; i<avp->app_files.size(); i++) {
         FILE_REF& file_ref = avp->app_files[i];
-        fip = lookup_file_info(p, file_ref.file_name);
+        FILE_INFO* fip = lookup_file_info(p, file_ref.file_name);
         if (!fip) {
             msg_printf(p, MSG_INTERNAL_ERROR,
                 "State file error: missing application file %s",

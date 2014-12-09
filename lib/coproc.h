@@ -142,7 +142,7 @@ struct PCI_INFO {
 struct COPROC {
     char type[256];     // must be unique
     int count;          // how many are present
-    bool is_gpu;
+    bool non_gpu;       // coproc is not a GPU
     double peak_flops;
     double used;        // how many are in use (used by client)
     bool have_cuda;     // True if this GPU supports CUDA on this computer
@@ -198,7 +198,7 @@ struct COPROC {
         // can't just memcpy() - trashes vtable
         type[0] = 0;
         count = 0;
-        is_gpu = false;
+        non_gpu = false;
         peak_flops = 0;
         used = 0;
         have_cuda = false;
@@ -286,7 +286,6 @@ struct COPROC_NVIDIA : public COPROC {
 #endif
     COPROC_NVIDIA(): COPROC() {
         clear();
-        is_gpu = true;
     }
     void get(std::vector<std::string>& warnings);
     void correlate(
@@ -324,7 +323,6 @@ struct COPROC_ATI : public COPROC {
 #endif
     COPROC_ATI(): COPROC() {
         clear();
-        is_gpu = true;
     }
     void get(std::vector<std::string>& warnings);
     void correlate(
@@ -349,7 +347,6 @@ struct COPROC_INTEL : public COPROC {
 #endif
     COPROC_INTEL(): COPROC() {
         clear();
-        is_gpu = true;
     }
     void get(std::vector<std::string>& warnings);
     void correlate(
@@ -474,11 +471,23 @@ struct COPROCS {
         coprocs[n_rsc++] = c;
         return 0;
     }
-    COPROC* type_to_coproc(int t) {
+    void bound_counts();
+        // make sure instance counts are within legal range
+
+    COPROC* lookup_type(const char* t) {
+        for (int i=1; i<n_rsc; i++) {
+            if (!strcmp(t, coprocs[i].type)) {
+                return &coprocs[i];
+            }
+        }
+        return NULL;
+    }
+    COPROC* proc_type_to_coproc(int t) {
         switch(t) {
         case PROC_TYPE_NVIDIA_GPU: return &nvidia;
         case PROC_TYPE_AMD_GPU: return &ati;
         case PROC_TYPE_INTEL_GPU: return &intel_gpu;
+        case PROC_TYPE_MINER_ASIC: return lookup_type("miner_asic");
         }
         return NULL;
     }
