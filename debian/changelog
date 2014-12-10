@@ -6,7 +6,7 @@ boinc (7.4.35+dfsg-1exp1) experimental; urgency=medium
   [ Vincent Danjean ]
   * fix gpu stuff (Closes: #763655)
 
- -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 07 Nov 2014 11:00:37 +0100
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 10 Dec 2014 14:00:28 +0100
 
 boinc (7.4.23+dfsg-2exp1) experimental; urgency=medium
 
