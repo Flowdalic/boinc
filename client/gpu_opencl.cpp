@@ -385,7 +385,6 @@ void COPROCS::get_opencl(
 
             //////////// NVIDIA //////////////
             if (is_NVIDIA(prop.vendor)) {
-                bool cuda_match_found = false;
                 if (nvidia.have_cuda) {
                     // Mac OpenCL does not recognize all NVIDIA GPUs returned by
                     // CUDA but we assume that OpenCL and CUDA return devices 
@@ -395,8 +394,6 @@ void COPROCS::get_opencl(
                     // On other systems, assume OpenCL and CUDA return devices 
                     // in the same order.
                     //
-                    int saved_CUDA_index = current_CUDA_index;
-                    
                     while (1) {
                         if (current_CUDA_index >= (int)(nvidia_gpus.size())) {
                             snprintf(buf, sizeof(buf),
@@ -404,22 +401,11 @@ void COPROCS::get_opencl(
                                 device_index
                             );
                             warnings.push_back(buf);
-                            // Newer versions of CUDA driver don't support older NVIDIA GPUs
-                            if (nvidia.cuda_version >= 6050) {
-                                prop.device_num = (int)(nvidia_opencls.size());
-                                current_CUDA_index = saved_CUDA_index;
-                                prop.warn_bad_cuda = true;
-                                break;
-                            } else {
-                                // Older CUDA drivers should report all NVIDIA GPUs reported by OpenCL
-                                return; // Should never happen
-                            }
+                            return; // Should never happen
                         }
                         if (!strcmp(prop.name,
                             nvidia_gpus[devnums_pci_slot_sort[current_CUDA_index]].prop.name)
                             ) {
-                            cuda_match_found = true;
-                            prop.device_num = devnums_pci_slot_sort[current_CUDA_index];
                             break;  // We have a match
                         }
                         // This CUDA GPU is not recognized by OpenCL,
@@ -427,12 +413,13 @@ void COPROCS::get_opencl(
                         //
                         ++current_CUDA_index;
                     }
+                    prop.device_num = devnums_pci_slot_sort[current_CUDA_index];
                 } else {
                     prop.device_num = (int)(nvidia_opencls.size());
                 }
                 prop.opencl_device_index = device_index;
 
-                if (cuda_match_found) {
+                if (nvidia.have_cuda) {
                     prop.peak_flops = nvidia_gpus[prop.device_num].peak_flops;
                 } else {
                     COPROC_NVIDIA c;
@@ -440,7 +427,7 @@ void COPROCS::get_opencl(
                     c.set_peak_flops();
                     prop.peak_flops = c.peak_flops;
                 }
-                if (cuda_match_found) {
+                if (nvidia_gpus.size()) {
                     // Assumes OpenCL device_num and CUDA device_num now match
                     //
                     prop.opencl_available_ram = nvidia_gpus[prop.device_num].available_ram;
@@ -454,7 +441,7 @@ void COPROCS::get_opencl(
                 }
                 nvidia_opencls.insert(it, prop);
                 
-                if (cuda_match_found) ++current_CUDA_index;
+                ++current_CUDA_index;
             }
             
             //////////// AMD / ATI //////////////
@@ -866,8 +853,6 @@ void COPROC::merge_opencl(
     unsigned int i, j;
 
     for (i=0; i<opencls.size(); i++) {
-        opencls[i].is_used = COPROC_UNUSED;
-        
         if (in_vector(opencls[i].device_num, ignore_dev)) {
             opencls[i].is_used = COPROC_IGNORED;
             continue;

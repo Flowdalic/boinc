@@ -285,7 +285,7 @@ void CCompletionPage::OnPageChanged( wxWizardExEvent& event ) {
     
     // Is this supposed to be completely automated?
     // If so, then go ahead and close the wizard down now.
-    if (pWAP->m_bCloseWhenCompleted) {
+    if (pWAP->close_when_completed) {
         pWAP->SimulateNextButton();
     }
 }

@@ -166,7 +166,7 @@ int ACTIVE_TASK::preempt(int preempt_type, int reason) {
     case REMOVE_MAYBE_SCHED:
         // GPU jobs: always remove from mem, since it's tying up GPU RAM
         //
-        if (result->uses_gpu()) {
+        if (result->uses_coprocs()) {
             remove = true;
             break;
         }

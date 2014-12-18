@@ -441,7 +441,6 @@ const char* boincerror(int which_error) {
         case ERR_GETRUSAGE: return "getrusage() failed";
         case ERR_BENCHMARK_FAILED: return "benchmark failed";
         case ERR_BAD_HEX_FORMAT: return "hex format key data bad";
-        case ERR_GETADDRINFO: return "getaddrinfo() failed";
         case ERR_DB_NOT_FOUND: return "no database rows found in lookup/enumerate";
         case ERR_DB_NOT_UNIQUE: return "database lookup not unique";
         case ERR_DB_CANT_CONNECT: return "can't connect to database";
@@ -529,7 +528,6 @@ const char* boincerror(int which_error) {
         case ERR_ABORTED_ON_EXIT: return "job was aborted on client exit";
         case ERR_PROC_PARSE: return "a /proc entry was not parsed correctly";
         case ERR_PIPE: return "pipe() failed";
-        case ERR_NEED_HTTPS: return "HTTPS needed";
         case 404: return "HTTP file not found";
         case 407: return "HTTP proxy authentication failure";
         case 416: return "HTTP range request error";

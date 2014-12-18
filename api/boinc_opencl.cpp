@@ -41,8 +41,6 @@
 
 #include "boinc_opencl.h"
 
-static int compareBOINCVersionTo(int toMajor, int toMinor, int toRelease);
-
 // A few complicating factors:
 // Windows & Linux have a separate OpenCL platform for each vendor
 //  (NVIDIA, AMD, Intel).
@@ -97,7 +95,7 @@ int boinc_get_opencl_ids_aux(
     int device_num_for_type = -1;
     int device_index;
 
-    if ((!type) || (!strlen(type))) return CL_INVALID_DEVICE_TYPE;
+    if ((!type) || (!strlen(type))) return CL_DEVICE_NOT_FOUND;
 
     retval = clGetPlatformIDs(MAX_OPENCL_PLATFORMS, platforms, &num_platforms);
     if (num_platforms == 0) return CL_DEVICE_NOT_FOUND;
@@ -112,23 +110,25 @@ int boinc_get_opencl_ids_aux(
 
         // Use gpu_opencl_dev_index if available
         if (opencl_device_index >= 0) {
-            if (opencl_device_index < (int)num_devices) {
-                device_id = devices[opencl_device_index];
-                retval = get_vendor(device_id, vendor, sizeof(vendor));
-                if (retval != CL_SUCCESS) continue;
-            
-                if (!strcmp(vendor, type)) {
-                    *device = device_id;
-                    *platform = platforms[platform_index];
-                    return 0;
-                }
+            if (opencl_device_index >= (int)num_devices) {
+                fprintf(stderr, "Invalid OpenCL GPU index: %d \n", opencl_device_index);
+                return CL_INVALID_DEVICE;
             }
-
+            
+            device_id = devices[opencl_device_index];
+            retval = get_vendor(device_id, vendor, sizeof(vendor));
+            if (retval != CL_SUCCESS) continue;
+        
+            if (!strcmp(vendor, type)) {
+                *device = device_id;
+                *platform = platforms[platform_index];
+                return 0;
+            }
+            
             continue;
         }
         
-        // Older versions of init_data.xml don't have the gpu_opencl_dev_index
-        // field so use the value of gpu_device_num.
+        // Older versions of init_data.xml don't have gpu_opencl_dev_index field
         // NOTE: This may return the wrong device on older versions of BOINC if
         // OpenCL does not recognize all GPU models detected by CUDA or CAL
         for (device_index=0; device_index<(int)num_devices; ++device_index) {
@@ -147,9 +147,6 @@ int boinc_get_opencl_ids_aux(
         }
     }
 
-    fprintf(stderr, "GPU not found: type=%s, opencl_device_index=%d, device_num=%d\n",
-                        type, opencl_device_index, device_num);
-
     return CL_DEVICE_NOT_FOUND;
 }
 
@@ -160,15 +157,14 @@ int boinc_get_opencl_ids_aux(
 // type: may be PROC_TYPE_NVIDIA_GPU, PROC_TYPE_AMD_GPU or PROC_TYPE_INTEL_GPU
 //       (it may also be 0, but then it will fail on older clients.)
 //
-// The argc, argv and type arguments are ignored for 6.13.3 or later clients.
+// The argc, argv and type arguments are ignored for 7.0.12 or later clients.
 //
 // returns
 // - 0 if success
 // - ERR_FOPEN if init_data.xml missing
 // - ERR_XML_PARSE if can't parse init_data.xml
 // - CL_INVALID_DEVICE_TYPE if unable to get gpu_type information
-// - CL_INVALID_DEVICE if unable to get opencl_device_index or gpu device_num
-// - CL_DEVICE_NOT_FOUND if the requested device was not found
+// - ERR_NOT_FOUND if unable to get opencl_device_index or gpu device_num
 // - an OpenCL error number if OpenCL error
 //
 int boinc_get_opencl_ids(
@@ -207,39 +203,24 @@ int boinc_get_opencl_ids(
     }
     
     if (aid.gpu_opencl_dev_index < 0) {
-         if (compareBOINCVersionTo(7,0,12) >= 0) {
-            // gpu_opencl_dev_index was added in BOINC version 7.0.12.
-            // A gpu_opencl_dev_index value of -1 in version 7.0.12 or later
-            // means BOINC client did not assign an OpenCL GPU to this task.
-            fprintf(stderr, "Illegal value for gpu_opencl_dev_index: %d in BOINC Client %d.%d.%d\n",
-                        aid.gpu_opencl_dev_index, aid.major_version, aid.minor_version, aid.release);
-            return CL_INVALID_DEVICE;
-        }
-        
-        // Older versions of init_data.xml don't have the gpu_opencl_dev_index
-        // field so use the value of gpu_device_num if available.
+        // Older versions of init_data.xml don't have gpu_opencl_dev_index field
+        //
         gpu_device_num = aid.gpu_device_num;
         if (gpu_device_num < 0) {
-             if (compareBOINCVersionTo(6,13,3) < 0) {
-                // gpu_device_num and gpu_type fields were added in BOINC version 6.13.3.
-                // Very old versions of init_data.xml don't have gpu_device_num field
-                // but instead pass the device number as a command-line argument.
-                for (i=0; i<argc-1; i++) {
-                    if ((!strcmp(argv[i], "--device")) || (!strcmp(argv[i], "-device"))) {
-                        gpu_device_num = atoi(argv[i+1]);
-                        break;
-                    }
+            // Even older versions of init_data.xml don't have gpu_device_num field
+            for (i=0; i<argc-1; i++) {
+                if ((!strcmp(argv[i], "--device")) || (!strcmp(argv[i], "-device"))) {
+                    gpu_device_num = atoi(argv[i+1]);
+                    break;
                 }
             }
-            
-            if (gpu_device_num < 0) {
-                // BOINC client apparently did not assign a GPU to this task.
-                fprintf(stderr, "Illegal value for gpu_device_num: %d in BOINC Client %d.%d.%d\n",
-                        aid.gpu_device_num, aid.major_version, aid.minor_version, aid.release);
-                return CL_INVALID_DEVICE;
-            }
         }
-    }   // End if (aid.gpu_opencl_dev_index < 0)
+    }
+
+    if ((aid.gpu_opencl_dev_index < 0) && (gpu_device_num < 0)) {
+        fprintf(stderr, "GPU device # not found in %s\n", INIT_DATA_FILE);
+        return ERR_NOT_FOUND;
+    }
 
     retval = boinc_get_opencl_ids_aux(
         gpu_type, aid.gpu_opencl_dev_index, gpu_device_num, device, platform
@@ -255,9 +236,7 @@ int boinc_get_opencl_ids(
 // - 0 if success
 // - ERR_FOPEN if init_data.xml missing
 // - ERR_XML_PARSE if can't parse init_data.xml
-// - CL_INVALID_DEVICE_TYPE if unable to get gpu_type information
-// - CL_INVALID_DEVICE if unable to get opencl_device_index or gpu device_num
-// - CL_DEVICE_NOT_FOUND if the requested device was not found
+// - ERR_NOT_FOUND if missing <gpu_type> or <gpu_device_num> fields
 // - an OpenCL error number if OpenCL error
 //
 int boinc_get_opencl_ids(cl_device_id* device, cl_platform_id* platform) {
@@ -270,29 +249,12 @@ int boinc_get_opencl_ids(cl_device_id* device, cl_platform_id* platform) {
     
     if (!strlen(aid.gpu_type)) {
         fprintf(stderr, "GPU type not found in %s\n", INIT_DATA_FILE);
-        return CL_INVALID_DEVICE_TYPE;
+        return ERR_NOT_FOUND;
     }
     
-    if (aid.gpu_opencl_dev_index < 0) {
-        if (compareBOINCVersionTo(7,0,12) >= 0) {
-            // gpu_opencl_dev_index was added in BOINC version 7.0.12.
-            // A gpu_opencl_dev_index value of -1 in version 7.0.12 or
-            // later means BOINC did not assign an OpenCL GPU to this task.
-            fprintf(stderr, "Illegal value for gpu_opencl_dev_index: %d in BOINC Client %d.%d.%d\n",
-                        aid.gpu_opencl_dev_index, aid.major_version, aid.minor_version, aid.release);
-            return CL_INVALID_DEVICE;
-        }
-    
-        if (aid.gpu_device_num < 0) {
-             if (compareBOINCVersionTo(6,13,3) >= 0) {
-                // gpu_device_num and gpu_type fields were added in BOINC version 6.13.3.
-                // A gpu_device_num value of -1 in version 6.13.3 or later means
-                // BOINC did not assign a GPU to this task.
-            fprintf(stderr, "Illegal value for gpu_device_num: %d in BOINC Client %d.%d.%d\n",
-                        aid.gpu_device_num, aid.major_version, aid.minor_version, aid.release);
-                return CL_INVALID_DEVICE;
-            }
-        }
+    if ((aid.gpu_opencl_dev_index < 0) && (aid.gpu_device_num < 0)) {
+        fprintf(stderr, "GPU device # not found in %s\n", INIT_DATA_FILE);
+        return ERR_NOT_FOUND;
     }
 
     retval = boinc_get_opencl_ids_aux(
@@ -301,20 +263,3 @@ int boinc_get_opencl_ids(cl_device_id* device, cl_platform_id* platform) {
 
     return retval;
 }
-
-static int compareBOINCVersionTo(int toMajor, int toMinor, int toRelease) {
-    APP_INIT_DATA aid;
-    
-    boinc_get_init_data(aid);
-
-    if (aid.major_version < toMajor) return -1;
-    if (aid.major_version > toMajor) return 1;
-    if (aid.minor_version < toMinor) return -1;
-    if (aid.minor_version > toMinor) return 1;
-    if (aid.release < toRelease) return -1;
-    if (aid.release > toRelease) return 1;
-    return 0;
-}
-
-
-

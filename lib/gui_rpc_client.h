@@ -170,7 +170,6 @@ struct PROJECT {
     char venue[256];
     int njobs_success;
     int njobs_error;
-    double elapsed_time;
     char external_cpid[64];
 
     // NOTE: if you add any data items above,
@@ -559,8 +558,6 @@ struct PROJECT_CONFIG {
         // before allowing attachment to continue.
     std::vector<std::string> platforms;
         // platforms supported by project, or empty
-    bool ldap_auth;
-        // project supports LDAP authentication
 
     PROJECT_CONFIG();
     ~PROJECT_CONFIG();
@@ -574,11 +571,10 @@ struct ACCOUNT_IN {
     std::string url;
         // URL prefix for web RPCs
     std::string email_addr;
-        // the account identifier (email address, user name, or LDAP uid)
+        // the account identifier (email address or user name)
     std::string user_name;
     std::string passwd;
     std::string team_name;
-    bool ldap_auth;
 
     ACCOUNT_IN();
     ~ACCOUNT_IN();
