@@ -66,7 +66,7 @@ void OPENCL_DEVICE_PROP::write_xml(MIOFILE& f, const char* tag, bool temp_file) 
         tag,
         name,
         vendor,
-        (unsigned long)vendor_id,
+        vendor_id,
         available ? 1 : 0,
         half_fp_config,
         single_fp_config,
@@ -76,24 +76,24 @@ void OPENCL_DEVICE_PROP::write_xml(MIOFILE& f, const char* tag, bool temp_file) 
         extensions,
         global_mem_size,
         local_mem_size,
-        (unsigned long)max_clock_frequency,
-        (unsigned long)max_compute_units,
+        max_clock_frequency,
+        max_compute_units,
         opencl_platform_version,
         opencl_device_version,
         opencl_driver_version
     );
     if (temp_file) {
         f.printf(
+            "      <is_used>%d</is_used>\n"
             "      <device_num>%d</device_num>\n"
             "      <peak_flops>%f</peak_flops>\n"
             "      <opencl_available_ram>%f</opencl_available_ram>\n"
-            "      <opencl_device_index>%d</opencl_device_index>\n"
-            "      <warn_bad_cuda>%d</warn_bad_cuda>\n",
+            "      <opencl_device_index>%d</opencl_device_index>\n",
+            is_used,
             device_num,
             peak_flops,
             opencl_available_ram,
-            opencl_device_index,
-            warn_bad_cuda
+            opencl_device_index
         );
     }
     f.printf("   </%s>\n", tag);
@@ -182,6 +182,10 @@ int OPENCL_DEVICE_PROP::parse(XML_PARSER& xp, const char* end_tag) {
         
         // The following are used only in the
         // COPROC_INFO_FILENAME temporary file
+        if (xp.parse_int("is_used", n)) {
+            is_used = (COPROC_USAGE)n;
+            continue;
+        }
         if (xp.parse_int("device_num", n)) {
             device_num = n;
             continue;
@@ -192,7 +196,6 @@ int OPENCL_DEVICE_PROP::parse(XML_PARSER& xp, const char* end_tag) {
             opencl_device_index = n;
             continue;
         }
-        if (xp.parse_bool("warn_bad_cuda", warn_bad_cuda)) continue;
     }
     return ERR_XML_PARSE;
 }

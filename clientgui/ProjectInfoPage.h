@@ -136,7 +136,6 @@ public:
     wxTextCtrl* m_pProjectURLCtrl;
 ////@end CProjectInfoPage member variables
 private:
-    ALL_PROJECTS_LIST* m_apl;
     wxString m_strProjectURL;
     wxString m_strProjectDetailsDescription;
     wxString m_strProjectDetailsResearchArea;

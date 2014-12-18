@@ -37,6 +37,7 @@
 #include "DlgEventLog.h"
 #include "AdvancedFrame.h"
 #include "DlgDiagnosticLogFlags.h"
+#include <wx/display.h>
 
 #ifdef __WXMAC__
 #include <time.h>
@@ -48,10 +49,6 @@
 ////@begin XPM images
 ////@end XPM images
 
-#define DLGEVENTLOG_INITIAL_WIDTH ADJUSTFORXDPI(640)
-#define DLGEVENTLOG_INITIAL_HEIGHT ADJUSTFORYDPI(480)
-#define DLGEVENTLOG_MIN_WIDTH ADJUSTFORXDPI(600)
-#define DLGEVENTLOG_MIN_HEIGHT ADJUSTFORYDPI(250)
 
 #define COLUMN_PROJECT              0
 #define COLUMN_TIME                 1
@@ -175,10 +172,8 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 #ifdef __WXMSW__
         // Get the current display space for the current window
 		int iDisplay = wxNOT_FOUND;
-		if ( wxGetApp().GetFrame() != NULL )
-            iDisplay = wxDisplay::GetFromWindow(wxGetApp().GetFrame());
-		if ( iDisplay == wxNOT_FOUND )
-            iDisplay = 0;
+		if ( wxGetApp().GetFrame() != NULL ) iDisplay = wxDisplay::GetFromWindow(wxGetApp().GetFrame());
+		if ( iDisplay == wxNOT_FOUND ) iDisplay = 0;
         wxDisplay *display = new wxDisplay(iDisplay);
         wxRect rDisplay = display->GetClientArea();
 
@@ -203,6 +198,7 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 
         delete display;
 #endif
+
 #ifdef __WXMAC__
         // If the user has changed the arrangement of multiple 
         // displays, make sure the window title bar is still on-screen.
@@ -217,7 +213,6 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 
     wxDialog::Create( parent, id, caption, oTempPoint, oTempSize, style );
 
-    SetSizeHints(DLGEVENTLOG_MIN_WIDTH, DLGEVENTLOG_MIN_HEIGHT);
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
 
     // Initialize Application Title
@@ -783,16 +778,16 @@ void CDlgEventLog::GetWindowDimensions( wxPoint& position, wxSize& size ) {
 
     pConfig->Read(wxT("YPos"), &iTop, 30);
     pConfig->Read(wxT("XPos"), &iLeft, 30);
-    pConfig->Read(wxT("Width"), &iWidth, DLGEVENTLOG_INITIAL_WIDTH);
-    pConfig->Read(wxT("Height"), &iHeight, DLGEVENTLOG_INITIAL_HEIGHT);
+    pConfig->Read(wxT("Width"), &iWidth, 640);
+    pConfig->Read(wxT("Height"), &iHeight, 480);
 
     // Guard against a rare situation where registry values are zero
-    if (iWidth < 50) iWidth = DLGEVENTLOG_INITIAL_WIDTH;
-    if (iHeight < 50) iHeight = DLGEVENTLOG_INITIAL_HEIGHT;
+    if (iWidth < 50) iWidth = 640;
+    if (iHeight < 50) iHeight = 480;
     position.y = iTop;
     position.x = iLeft;
-    size.x = std::max(iWidth, DLGEVENTLOG_MIN_WIDTH);
-    size.y = std::max(iHeight, DLGEVENTLOG_MIN_HEIGHT);
+    size.x = iWidth;
+    size.y = iHeight;
 }
 
 

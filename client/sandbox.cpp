@@ -226,7 +226,7 @@ int set_to_project_group(const char* path) {
 int get_project_gid() {
     return 0;
 }
-int set_to_project_group(const char*) {
+int set_to_project_group(const char* path) {
     return 0;
 }
 #endif // ! _WIN32

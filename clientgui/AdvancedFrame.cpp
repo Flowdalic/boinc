@@ -53,7 +53,6 @@
 #include "DlgDiagnosticLogFlags.h"
 #include "DlgGenericMessage.h"
 #include "DlgEventLog.h"
-#include "browser.h"
 #include "wizardex.h"
 #include "BOINCBaseWizard.h"
 #include "WizardAttach.h"
@@ -61,6 +60,7 @@
 
 #include "res/connect.xpm"
 #include "res/disconnect.xpm"
+
 
 enum STATUSBARFIELDS {
     STATUS_TEXT,
@@ -355,8 +355,7 @@ bool CAdvancedFrame::CreateMenu() {
 
 #ifdef __WXMAC__
     menuFile->Append(
-        wxID_PREFERENCES,
-        _("Preferences…")
+        wxID_PREFERENCES
     );
 #endif
 
@@ -617,6 +616,7 @@ bool CAdvancedFrame::CreateMenu() {
         _("Enable or disable various diagnostic messages")
     );
 
+
     // Help menu
     wxMenu *menuHelp = new wxMenu;
 
@@ -719,6 +719,10 @@ bool CAdvancedFrame::CreateMenu() {
     // Force a redraw of the menu under Ubuntu's new interface
     SendSizeEvent();
 #endif
+#ifdef __WXMAC__
+    m_pMenubar->MacInstallMenuBar();
+    MacLocalizeBOINCMenu();
+#endif
     if (m_pOldMenubar) {
         delete m_pOldMenubar;
     }
@@ -801,12 +805,12 @@ bool CAdvancedFrame::CreateNotebookPage( CBOINCBaseView* pwndNewNotebookPage) {
 
     pImageList = m_pNotebook->GetImageList();
     if (!pImageList) {
-        pImageList = new wxImageList(ADJUSTFORXDPI(16), ADJUSTFORYDPI(16), true, 0);
+        pImageList = new wxImageList(16, 16, true, 0);
         wxASSERT(pImageList != NULL);
         m_pNotebook->SetImageList(pImageList);
     }
     
-    iImageIndex = pImageList->Add(GetScaledBitmapFromXPMData(pwndNewNotebookPage->GetViewIcon()));
+    iImageIndex = pImageList->Add(wxBitmap(pwndNewNotebookPage->GetViewIcon()));
     m_pNotebook->AddPage(pwndNewNotebookPage, pwndNewNotebookPage->GetViewDisplayName(), TRUE, iImageIndex);
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CreateNotebookPage - Function End"));
@@ -1665,12 +1669,6 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     wxString strTeamName = wxEmptyString;
     wxString strDialogTitle = wxEmptyString;
     wxString strDialogDescription = wxEmptyString;
-    std::string strProjectName;
-    std::string strProjectURL;
-    std::string strProjectAuthenticator;
-    std::string strProjectInstitution;
-    std::string strProjectDescription;
-    std::string strProjectKnown;
     bool bCachedCredentials = false;
     ACCT_MGR_INFO ami;
     PROJECT_INIT_STATUS pis;
@@ -1728,35 +1726,7 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     pDoc->rpc.get_project_init_status(pis);
     pDoc->rpc.acct_mgr_info(ami);
 
-    if (detect_simple_account_credentials(
-            strProjectName, strProjectURL, strProjectAuthenticator, strProjectInstitution, strProjectDescription, strProjectKnown
-        )
-    ){
-        wasShown = IsShown();
-        Show();
-        wasVisible = wxGetApp().IsApplicationVisible();
-        if (!wasVisible) {
-            wxGetApp().ShowApplication(true);
-        }
-        
-        pWizard = new CWizardAttach(this);
-
-        if (pWizard->RunSimpleProjectAttach(
-                wxURI::Unescape(strProjectName),
-                wxURI::Unescape(strProjectURL),
-                wxURI::Unescape(strProjectAuthenticator),
-                wxURI::Unescape(strProjectInstitution),
-                wxURI::Unescape(strProjectDescription),
-                wxURI::Unescape(strProjectKnown)
-            )
-        ) {
-            // If successful, display the projects tab
-            m_pNotebook->SetSelection(ID_ADVTASKSVIEW - ID_ADVVIEWBASE);
-        } else {
-            // If failure, display the notices tab
-            m_pNotebook->SetSelection(ID_ADVNOTICESVIEW - ID_ADVVIEWBASE);
-        }
-    } else if (ami.acct_mgr_url.size() && ami.have_credentials) {
+    if (ami.acct_mgr_url.size() && ami.have_credentials) {
         // Fall through
         //
         // There isn't a need to bring up the attach wizard, the account manager will

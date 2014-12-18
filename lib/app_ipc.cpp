@@ -32,11 +32,10 @@
 #include "str_replace.h"
 #include "str_util.h"
 #include "url.h"
-#include "util.h"
 
 #include "app_ipc.h"
 
-#if (!defined(HAVE_STRDUP) && defined(HAVE__STRDUP)) || defined(_MSC_VER)
+#ifdef _MSC_VER
 #define strdup _strdup
 #endif
 
@@ -282,14 +281,9 @@ void APP_INIT_DATA::clear() {
     fraction_done_start = 0;
     fraction_done_end = 0;
     checkpoint_period = 0;
-    // gpu_type is an empty string for client versions before 6.13.3 without this
-    // field or (on newer clients) if BOINC did not assign an OpenCL GPU to task.
     strcpy(gpu_type, "");
-    // gpu_device_num < 0 for client versions before 6.13.3 without this field
-    // or (on newer clients) if BOINC did not assign an OpenCL GPU to task.
     gpu_device_num = -1;
-    // gpu_opencl_dev_index < 0 for client versions before 7.0.12 without this
-    // field or (on newer clients) if BOINC did not assign any GPU to task.
+    // -1 means an older version without gpu_opencl_dev_index field
     gpu_opencl_dev_index = -1;
     gpu_usage = 0;
     ncpus = 0;
@@ -307,9 +301,7 @@ int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {
     XML_PARSER xp(&mf);
 
     if (!xp.parse_start("app_init_data")) {
-        fprintf(stderr, "%s: no start tag in app init data\n",
-            time_to_string(dtime())
-        );
+        fprintf(stderr, "no start tag in app init data\n");
         return ERR_XML_PARSE;
     }
 
@@ -324,8 +316,7 @@ int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {
     while (!xp.get_tag()) {
         if (!xp.is_tag) {
             fprintf(stderr,
-                "%s: unexpected text in init_data.xml: %s\n",
-                time_to_string(dtime()), xp.parsed_tag
+                "unexpected text in init_data.xml: %s\n", xp.parsed_tag
             );
             continue;
         }
@@ -404,9 +395,7 @@ int parse_init_data_file(FILE* f, APP_INIT_DATA& ai) {
         if (xp.parse_bool("vbox_window", ai.vbox_window)) continue;
         xp.skip_unexpected(false, "parse_init_data_file");
     }
-    fprintf(stderr, "%s: parse_init_data_file: no end tag\n",
-        time_to_string(dtime())
-    );
+    fprintf(stderr, "parse_init_data_file: no end tag\n");
     return ERR_XML_PARSE;
 }
 
