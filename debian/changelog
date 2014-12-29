@@ -3,6 +3,8 @@ boinc (7.4.37+dfsg-1exp1) experimental; urgency=medium
   [ Gianfranco Costamagna ]
   * New upstream release, patch refresh.
   * Add nvidia-modprobe as dependency (LP: #1400021)
+  * d/control.in according to gcc, virtual package libstdc++-dev
+    is enough to provide libstdc++.a.
   [ Vincent Danjean ]
   * fix gpu stuff (Closes: #763655)
 
