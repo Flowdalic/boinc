@@ -89,31 +89,18 @@
 #include "cl_boinc.h"
 #include "opencl_boinc.h"
 
-#define DEFER_ON_GPU_AVAIL_RAM  0
-
 #define MAX_COPROC_INSTANCES 64
 #define MAX_RSC 8
     // max # of processing resources types
 
 // arguments to proc_type_name() and proc_type_name_xml().
 //
-enum {
-    PROC_TYPE_CPU=0,
-    PROC_TYPE_NVIDIA_GPU,
-    PROC_TYPE_AMD_GPU,
-    PROC_TYPE_INTEL_GPU,
-    PROC_TYPE_A,
-    PROC_TYPE_B,
-    PROC_TYPE_C,
-    PROC_TYPE_D,
-    PROC_TYPE_E,
-    PROC_TYPE_F,
-    PROC_TYPE_G,
-    NPROC_TYPES
-};
-
-extern const char* proc_type_names_xml[NPROC_TYPES];
-extern const char* proc_type_names[NPROC_TYPES];
+#define PROC_TYPE_CPU        0
+#define PROC_TYPE_NVIDIA_GPU 1
+#define PROC_TYPE_AMD_GPU    2
+#define PROC_TYPE_INTEL_GPU  3
+#define PROC_TYPE_MINER_ASIC 4
+#define NPROC_TYPES          5
 
 extern const char* proc_type_name(int);
     // user-readable name
@@ -125,13 +112,6 @@ extern int coproc_type_name_to_num(const char* name);
 #define GPU_TYPE_NVIDIA proc_type_name_xml(PROC_TYPE_NVIDIA_GPU)
 #define GPU_TYPE_ATI proc_type_name_xml(PROC_TYPE_AMD_GPU)
 #define GPU_TYPE_INTEL proc_type_name_xml(PROC_TYPE_INTEL_GPU)
-#define COPROC_TYPE_A proc_type_name_xml(PROC_TYPE_A)
-#define COPROC_TYPE_B proc_type_name_xml(PROC_TYPE_B)
-#define COPROC_TYPE_C proc_type_name_xml(PROC_TYPE_C)
-#define COPROC_TYPE_D proc_type_name_xml(PROC_TYPE_D)
-#define COPROC_TYPE_E proc_type_name_xml(PROC_TYPE_E)
-#define COPROC_TYPE_F proc_type_name_xml(PROC_TYPE_F)
-#define COPROC_TYPE_G proc_type_name_xml(PROC_TYPE_G)
 
 // represents a requirement for a coproc.
 // This is a parsed version of the <coproc> elements in an <app_version>
@@ -162,6 +142,7 @@ struct PCI_INFO {
 struct COPROC {
     char type[256];     // must be unique
     int count;          // how many are present
+    bool non_gpu;       // coproc is not a GPU
     double peak_flops;
     double used;        // how many are in use (used by client)
     bool have_cuda;     // True if this GPU supports CUDA on this computer
@@ -202,10 +183,6 @@ struct COPROC {
 
     bool running_graphics_app[MAX_COPROC_INSTANCES];
         // is this GPU running a graphics app (NVIDIA only)
-#if DEFER_ON_GPU_AVAIL_RAM
-    double available_ram_temp[MAX_COPROC_INSTANCES];
-        // used during job scheduling
-#endif
 
     double last_print_time;
 
@@ -221,6 +198,7 @@ struct COPROC {
         // can't just memcpy() - trashes vtable
         type[0] = 0;
         count = 0;
+        non_gpu = false;
         peak_flops = 0;
         used = 0;
         have_cuda = false;
@@ -493,11 +471,23 @@ struct COPROCS {
         coprocs[n_rsc++] = c;
         return 0;
     }
-    COPROC* type_to_coproc(int t) {
+    void bound_counts();
+        // make sure instance counts are within legal range
+
+    COPROC* lookup_type(const char* t) {
+        for (int i=1; i<n_rsc; i++) {
+            if (!strcmp(t, coprocs[i].type)) {
+                return &coprocs[i];
+            }
+        }
+        return NULL;
+    }
+    COPROC* proc_type_to_coproc(int t) {
         switch(t) {
         case PROC_TYPE_NVIDIA_GPU: return &nvidia;
         case PROC_TYPE_AMD_GPU: return &ati;
         case PROC_TYPE_INTEL_GPU: return &intel_gpu;
+        case PROC_TYPE_MINER_ASIC: return lookup_type("miner_asic");
         }
         return NULL;
     }
