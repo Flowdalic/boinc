@@ -1,0 +1,88 @@
+diff --git a/sched/sched_check.cpp b/sched/sched_check.cpp
+index bf0af60..75614f0 100644
+--- a/sched/sched_check.cpp
++++ b/sched/sched_check.cpp
+@@ -140,7 +140,7 @@ static inline double get_estimated_delay(BEST_APP_VERSION& bav) {
+     if (pt == PROC_TYPE_CPU) {
+         return g_request->cpu_estimated_delay;
+     }
+-    COPROC* cp = g_request->coprocs.type_to_coproc(pt);
++    COPROC* cp = g_request->coprocs.proc_type_to_coproc(pt);
+     return cp->estimated_delay;
+ }
+ 
+diff --git a/sched/sched_send.cpp b/sched/sched_send.cpp
+index bda585f..800b431 100644
+--- a/sched/sched_send.cpp
++++ b/sched/sched_send.cpp
+@@ -546,7 +546,7 @@ static inline void update_estimated_delay(BEST_APP_VERSION& bav, double dt) {
+     if (pt == PROC_TYPE_CPU) {
+         g_request->cpu_estimated_delay += dt*bav.host_usage.avg_ncpus/g_request->host.p_ncpus;
+     } else {
+-        COPROC* cp = g_request->coprocs.type_to_coproc(pt);
++        COPROC* cp = g_request->coprocs.proc_type_to_coproc(pt);
+         cp->estimated_delay += dt*bav.host_usage.gpu_usage/cp->count;
+     }
+ }
+@@ -1168,7 +1168,7 @@ void send_gpu_messages() {
+     //
+     bool usable_gpu = false;
+     for (int i=1; i<NPROC_TYPES; i++) {
+-        COPROC* cp = g_request->coprocs.type_to_coproc(i);
++        COPROC* cp = g_request->coprocs.proc_type_to_coproc(i);
+         if (ssp->have_apps_for_proc_type[i] && cp->count) {
+             usable_gpu = true;
+             break;
+@@ -1423,7 +1423,7 @@ void send_work_setup() {
+     // do sanity checking on GPU scheduling parameters
+     //
+     for (i=1; i<NPROC_TYPES; i++) {
+-        COPROC* cp = g_request->coprocs.type_to_coproc(i);
++        COPROC* cp = g_request->coprocs.proc_type_to_coproc(i);
+         if (cp->count) {
+             g_wreq->req_secs[i] = clamp_req_sec(cp->req_secs);
+             g_wreq->req_instances[i] = cp->req_instances;
+@@ -1484,7 +1484,7 @@ void send_work_setup() {
+             g_request->cpu_estimated_delay
+         );
+         for (i=1; i<NPROC_TYPES; i++) {
+-            COPROC* cp = g_request->coprocs.type_to_coproc(i);
++            COPROC* cp = g_request->coprocs.proc_type_to_coproc(i);
+             if (cp->count) {
+                 log_messages.printf(MSG_NORMAL,
+                     "[send] %s: req %.2f sec, %.2f instances; est delay %.2f\n",
+diff --git a/sched/sched_types.cpp b/sched/sched_types.cpp
+index 2a8e64a..c07f863 100644
+--- a/sched/sched_types.cpp
++++ b/sched/sched_types.cpp
+@@ -71,7 +71,7 @@ int CLIENT_APP_VERSION::parse(XML_PARSER& xp) {
+ 
+             double pf = host_usage.avg_ncpus * g_reply->host.p_fpops;
+             if (host_usage.proc_type != PROC_TYPE_CPU) {
+-                COPROC* cp = g_request->coprocs.type_to_coproc(host_usage.proc_type);
++                COPROC* cp = g_request->coprocs.proc_type_to_coproc(host_usage.proc_type);
+                 pf += host_usage.gpu_usage*cp->peak_flops;
+             }
+             host_usage.peak_flops = pf;
+@@ -619,7 +619,7 @@ static bool have_apps_for_client() {
+     for (int i=0; i<NPROC_TYPES; i++) {
+         if (ssp->have_apps_for_proc_type[i]) {
+             if (!i) return true;
+-            COPROC* cp = g_request->coprocs.type_to_coproc(i);
++            COPROC* cp = g_request->coprocs.proc_type_to_coproc(i);
+             if (cp->count) return true;
+         }
+     }
+diff --git a/sched/sched_version.cpp b/sched/sched_version.cpp
+index 2d7d4a0..fdd04bc 100644
+--- a/sched/sched_version.cpp
++++ b/sched/sched_version.cpp
+@@ -94,7 +94,7 @@ inline int scaled_max_jobs_per_day(DB_HOST_APP_VERSION& hav, HOST_USAGE& hu) {
+             n *= g_reply->host.p_ncpus;
+         }
+     } else {
+-        COPROC* cp = g_request->coprocs.type_to_coproc(hu.proc_type);
++        COPROC* cp = g_request->coprocs.proc_type_to_coproc(hu.proc_type);
+         if (cp->count) {
+             n *= cp->count;
+         }

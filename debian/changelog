@@ -5,6 +5,7 @@ boinc (7.4.41+dfsg-1exp1) experimental; urgency=medium
   * Add nvidia-modprobe as dependency (LP: #1400021)
   * d/control.in according to gcc, virtual package libstdc++-dev
     is enough to provide libstdc++.a.
+  * d/patches/coproc.patch, fix build failure.
   [ Vincent Danjean ]
   * fix gpu stuff (Closes: #763655)
 
