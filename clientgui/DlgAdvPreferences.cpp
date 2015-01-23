@@ -71,20 +71,25 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
     int iImageIndex = 0;
     wxImageList* pImageList = m_Notebook->GetImageList();
     if (!pImageList) {
-        pImageList = new wxImageList(16, 16, true, 0);
+        pImageList = new wxImageList(ADJUSTFORXDPI(16), ADJUSTFORYDPI(16), true, 0);
         wxASSERT(pImageList != NULL);
         m_Notebook->SetImageList(pImageList);
     }
-    iImageIndex = pImageList->Add(wxBitmap(proj_xpm));
+    iImageIndex = pImageList->Add(GetScaledBitmapFromXPMData(proj_xpm));
     m_Notebook->SetPageImage(0,iImageIndex);
 
-    iImageIndex = pImageList->Add(wxBitmap(xfer_xpm));
+    iImageIndex = pImageList->Add(GetScaledBitmapFromXPMData(xfer_xpm));
     m_Notebook->SetPageImage(1,iImageIndex);
 
-    iImageIndex = pImageList->Add(wxBitmap(usage_xpm));
+    iImageIndex = pImageList->Add(GetScaledBitmapFromXPMData(usage_xpm));
     m_Notebook->SetPageImage(2,iImageIndex);
 
+#ifdef __WXMSW__
+    wxSize size = wxSize(wxSystemSettings::GetMetric(wxSYS_SMALLICON_X), wxSystemSettings::GetMetric(wxSYS_SMALLICON_Y));
+    iImageIndex = pImageList->Add(pSkinAdvanced->GetApplicationSnoozeIcon()->GetIcon(size, wxIconBundle::FALLBACK_NEAREST_LARGER));
+#else
     iImageIndex = pImageList->Add(pSkinAdvanced->GetApplicationSnoozeIcon()->GetIcon(wxSize(16,16)));
+#endif
     m_Notebook->SetPageImage(3,iImageIndex);
 
     //setting warning bitmap
@@ -102,18 +107,17 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
     RestoreState();
 
 #ifdef __WXMSW__
-    int margin = 0, tabwidth = 0;
+    int tabStart = 0, tabwidth = 0;
     RECT r;
     BOOL success = TabCtrl_GetItemRect(m_Notebook->GetHWND(), 0, &r);
     if (success) {
-        margin = r.left;
+        tabStart = r.left;
     }
 
     success = TabCtrl_GetItemRect(m_Notebook->GetHWND(), m_Notebook->GetPageCount()-1, &r);
     if (success) {
-        tabwidth += r.right;
+        tabwidth = r.right - tabStart + ADJUSTFORXDPI(4);
     }
-    tabwidth += margin;
     wxSize sz = m_Notebook->GetBestSize();
     if (sz.x < tabwidth) {
         sz.x = tabwidth;
@@ -121,8 +125,9 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
     }
 #endif
 
-    this->Layout();
+    Layout();
     Fit();
+    Centre();
 }
 
 /* destructor */
