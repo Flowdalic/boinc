@@ -9,6 +9,9 @@ boinc (7.4.42+dfsg-1exp1) experimental; urgency=medium
   * Make boinc Multi-Arch: same
   [ Vincent Danjean ]
   * fix gpu stuff (Closes: #763655)
+  [ Michael Tautschnig ]
+  * d/p/envargs.patch, fix inconsistencies spot with research compiler.
+    (Closes: #747964)
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 10 Dec 2014 14:00:28 +0100
 
