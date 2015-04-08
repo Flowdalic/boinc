@@ -21,7 +21,7 @@ Description: this patch avoid the iterator reuse, fixing cppcheck warnings
          //
          it = active.begin();
 @@ -301,7 +302,10 @@
-                 it++;
+                 ++it;
              }
          }
 +	}
@@ -32,7 +32,7 @@ Description: this patch avoid the iterator reuse, fixing cppcheck warnings
          //
          it = pbest->active.begin();
 @@ -313,6 +317,7 @@
-                 it++;
+                 ++it;
              }
          }
 +	}

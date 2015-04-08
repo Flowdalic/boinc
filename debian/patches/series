@@ -18,9 +18,7 @@ more_clang_warnings.patch
 add-ldflags.patch
 addressing_additional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
-server_status_php.patch
 #db_interface_use.patch
-fix-typo.patch
 # patches to get Debian going
 make_project_overcomes_Apache24_security.patch
 #debian specific patches
@@ -32,5 +30,4 @@ disable_svn_version.patch
 AdjustBoincTopdirPython.patch
 file_upload_handler_in_sched_linking.patch
 disable_silent_rules.patch
-coproc.patch
 envargs.patch

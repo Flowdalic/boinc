@@ -1,4 +1,4 @@
-boinc (7.4.42+dfsg-1exp1) experimental; urgency=medium
+boinc (7.5.0+dfsg-1exp1) experimental; urgency=medium
 
   [ Gianfranco Costamagna ]
   * New upstream release, patch refresh.
@@ -7,13 +7,17 @@ boinc (7.4.42+dfsg-1exp1) experimental; urgency=medium
     is enough to provide libstdc++.a.
   * d/patches/coproc.patch, fix build failure.
   * Make boinc Multi-Arch: same
+  * Drop patches now that 7.5 is a tag from master
+    - debian/patches/coproc.patch
+    - debian/patches/fix-typo.patch
+    - debian/patches/server_status_php.patch
   [ Vincent Danjean ]
   * fix gpu stuff (Closes: #763655)
   [ Michael Tautschnig ]
   * d/p/envargs.patch, fix inconsistencies spot with research compiler.
     (Closes: #747964)
 
- -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 10 Dec 2014 14:00:28 +0100
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 08 Apr 2015 12:43:01 +0200
 
 boinc (7.4.23+dfsg-2exp1) experimental; urgency=medium
 
