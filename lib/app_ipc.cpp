@@ -36,7 +36,7 @@
 
 #include "app_ipc.h"
 
-#if (!defined(HAVE_STRDUP) && defined(HAVE__STRDUP)) || defined(_MSC_VER)
+#if !defined(HAVE_STRDUP) && defined(HAVE__STRDUP)
 #define strdup _strdup
 #endif
 

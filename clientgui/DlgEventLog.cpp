@@ -66,14 +66,15 @@ static std::string s_strFilteredProjectName;
  * CDlgEventLog type definition
  */
 
-IMPLEMENT_DYNAMIC_CLASS( CDlgEventLog, wxDialog )
+IMPLEMENT_DYNAMIC_CLASS( CDlgEventLog, DlgEventLogBase )
 
 /*!
  * CDlgEventLog event table definition
  */
 
-BEGIN_EVENT_TABLE( CDlgEventLog, wxDialog )
+BEGIN_EVENT_TABLE( CDlgEventLog, DlgEventLogBase )
 ////@begin CDlgEventLog event table entries
+    EVT_ACTIVATE(CDlgEventLog::OnActivate)
     EVT_HELP(wxID_ANY, CDlgEventLog::OnHelp)
     EVT_BUTTON(wxID_OK, CDlgEventLog::OnOK)
     EVT_BUTTON(ID_COPYAll, CDlgEventLog::OnMessagesCopyAll)
@@ -215,7 +216,7 @@ bool CDlgEventLog::Create( wxWindow* parent, wxWindowID id, const wxString& capt
         oTempSize = size;
     }
 
-    wxDialog::Create( parent, id, caption, oTempPoint, oTempSize, style );
+    DlgEventLogBase::Create( parent, id, caption, oTempPoint, oTempSize, style );
 
     SetSizeHints(DLGEVENTLOG_MIN_WIDTH, DLGEVENTLOG_MIN_HEIGHT);
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
@@ -335,20 +336,6 @@ void CDlgEventLog::CreateControls()
     wxButton* itemButton44 = new wxButton(this, wxID_OK, _("&Close"),  wxDefaultPosition, wxDefaultSize);
     itemBoxSizer4->Add(itemButton44, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-#ifndef __WXMAC__
-    wxContextHelpButton* itemButton45 = new wxContextHelpButton(this);
-    itemBoxSizer4->Add(itemButton45, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-#else
-	wxButton* itemButton45 = new wxButton(this, ID_SIMPLE_HELP, _("&Help"), wxDefaultPosition, wxDefaultSize);
-    wxString helpTip;
-    helpTip.Printf(_("Get help with %s"), pSkinAdvanced->GetApplicationShortName().c_str());
-    itemButton45->SetHelpText(helpTip);
-#ifdef wxUSE_TOOLTIPS
-	itemButton45->SetToolTip(helpTip);
-#endif
-    itemBoxSizer4->Add(itemButton45, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-#endif
-
     SetFilterButtonText(); 
 }
 
@@ -393,6 +380,16 @@ void CDlgEventLog::SetTextColor() {
     }
 }
 
+
+/*!
+ * wxEVT_ACTIVATE event handler for ID_DLGMESSAGES
+ */
+
+void CDlgEventLog::OnActivate(wxActivateEvent& event) {
+    bool isActive = event.GetActive();
+    if (isActive) wxGetApp().SetEventLogWasActive(true);
+    event.Skip();
+}
 
 /*!
  * wxEVT_HELP event handler for ID_DLGMESSAGES

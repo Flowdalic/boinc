@@ -350,8 +350,6 @@ struct HOST {
     //
     char p_features[1024];
     char virtualbox_version[256];
-    char client_brand[256];
-        // as specific in client_brand.txt config file on client
     bool p_vm_extensions_disabled;
     int num_opencl_cpu_platforms;
     OPENCL_CPU_PROP opencl_cpu_prop[MAX_OPENCL_CPU_PLATFORMS];
@@ -798,6 +796,29 @@ struct BADGE_TEAM {
     int team_id;
     double create_time;
     double reassign_time;
+    void clear();
+};
+
+struct CREDIT_USER {
+    int userid;
+    int appid;
+        // need not be an app ID
+    int njobs;
+    double total;
+    double expavg;
+    double expavg_time;
+    int credit_type;
+    void clear();
+};
+
+struct CREDIT_TEAM {
+    int teamid;
+    int appid;
+    int njobs;
+    double total;
+    double expavg;
+    double expavg_time;
+    int credit_type;
     void clear();
 };
 

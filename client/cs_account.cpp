@@ -206,7 +206,7 @@ int PROJECT::parse_account_file_venue() {
     FILE* in = boinc_fopen(path, "r");
     if (!in) return ERR_FOPEN;
 
-	//msg_printf(this, MSG_INFO, "parsing project prefs, looking for venue %s", host_venue);
+    //msg_printf(this, MSG_INFO, "parsing project prefs, looking for venue %s", host_venue);
     MIOFILE mf;
     XML_PARSER xp(&mf);
     mf.init_file(in);
@@ -217,7 +217,7 @@ int PROJECT::parse_account_file_venue() {
         } else if (xp.match_tag("venue")) {
             parse_attr(attr_buf, "name", venue, sizeof(venue));
             if (!strcmp(venue, host_venue)) {
-				//msg_printf(this, MSG_INFO, "found venue %s", host_venue);
+                //msg_printf(this, MSG_INFO, "found venue %s", host_venue);
                 using_venue_specific_prefs = true;
                 in_right_venue = true;
 
@@ -353,6 +353,7 @@ int CLIENT_STATE::parse_account_files() {
             }
         }
     }
+    sort_projects();
     return 0;
 }
 
@@ -448,7 +449,7 @@ int CLIENT_STATE::parse_statistics_files() {
                     );
                 } else {
                     for (std::vector<DAILY_STATS>::const_iterator i=temp.statistics.begin();
-                        i!=temp.statistics.end(); i++
+                        i!=temp.statistics.end(); ++i
                     ) {
                         project->statistics.push_back(*i);
                     }
@@ -574,6 +575,7 @@ int CLIENT_STATE::add_project(
     retval = make_project_dir(*project);
     if (retval) return retval;
     projects.push_back(project);
+    sort_projects();
     project->sched_rpc_pending = RPC_REASON_INIT;
     set_client_state_dirty("Add project");
     return 0;

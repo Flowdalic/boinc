@@ -39,6 +39,14 @@ function req_to_xml($req, $op) {
     <app_name>$req->app_name</app_name>
     <batch_name>$req->batch_name</batch_name>
 ";
+    if ((isset($req->result_template_file)) && ($req->result_template_file)) {
+        $x .= "    <result_template_file>$req->result_template_file</result_template_file>
+";
+    }
+    if ((isset($req->workunit_template_file)) && ($req->workunit_template_file)) {
+        $x .= "    <workunit_template_file>$req->workunit_template_file</workunit_template_file>
+";
+    }
     foreach ($req->jobs as $job) {
         $x .= "    <job>
         <rsc_fpops_est>$job->rsc_fpops_est</rsc_fpops_est>
@@ -50,8 +58,8 @@ function req_to_xml($req, $op) {
         } elseif ((isset($job->target_user)) && ($job->target_user)) {
             $x .= "        <target_user>$job->target_user</target_user>
 ";
-        } elseif ((isset($job->target_team)) && ($job->target_team)) {
-            $x .= "        <target_team>$job->target_team</target_team>
+        } elseif ((isset($job->target_host)) && ($job->target_host)) {
+            $x .= "        <target_host>$job->target_host</target_host>
 ";
         }
         foreach ($job->input_files as $file) {
@@ -158,7 +166,7 @@ function boinc_estimate_batch($req) {
     $name = $reply->getName();
     if ($name == 'estimate') {
         return array((string)$reply->seconds, null);
-    } else if ($name = 'error') {
+    } else if ($name == 'error') {
         return array(null, (string)$reply->message);
     } else {
         return array(null, "Bad reply message");
@@ -284,7 +292,7 @@ function boinc_retire_batch($req) {
 }
 
 //// example usage follows
-
+/*
 $req->project = "http://isaac.ssl.berkeley.edu/test/";
 $req->authenticator = "x";
 if (0) {
@@ -344,5 +352,5 @@ if (0) {
         print_r($jobs);
     }
 }
-
+*/
 ?>

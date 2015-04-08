@@ -77,6 +77,20 @@
 #define MODE_QUIT               6
 #define NGRAPHICS_MSGS  7
 
+// process priorities
+//
+#define PROCESS_PRIORITY_UNSPECIFIED    0
+#define PROCESS_PRIORITY_LOWEST     1
+    // win: IDLE; unix: 19
+#define PROCESS_PRIORITY_LOW        2
+    // win: BELOW_NORMAL; unix: 10
+#define PROCESS_PRIORITY_NORMAL     3
+    // win: NORMAL; unix: 0
+#define PROCESS_PRIORITY_HIGH       4
+    // win: ABOVE_NORMAL; unix: -10
+#define PROCESS_PRIORITY_HIGHEST    5
+    // win: HIGH; unix: -16
+
 // priorities for client messages
 //
 #define MSG_INFO            1
@@ -216,6 +230,13 @@ enum BATTERY_STATE {
 #define BATCH_STATE_RETIRED         4
     // input/output files can be deleted,
     // result and workunit records can be purged.
+
+// credit types
+//
+#define CREDIT_TYPE_FLOPS           0
+#define CREDIT_TYPE_STORAGE         1
+#define CREDIT_TYPE_NETWORK         2
+#define CREDIT_TYPE_PROJECT         3
 
 struct TIME_STATS {
     double now;

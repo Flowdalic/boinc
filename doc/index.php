@@ -108,8 +108,11 @@ function show_participate() {
             "</a>"
         )."
         <p>
-        For Android devices, download the BOINC or <a href=http://www.htc.com/www/go/power-to-give-faqs/>HTC Power To Give</a> app from the Google Play Store.
+        For Android devices, download the BOINC or
+        <a href=http://www.htc.com/www/go/power-to-give-faqs/>HTC Power To Give</a> app from the Google Play Store.
+        <a href=http://www.htc.com/www/go/power-to-give-faqs/>
         <img align=right valign=top height=50 src=images/htc-power-to-give.jpg>
+        </a>
         </td></tr>
     ";
 }
@@ -166,6 +169,7 @@ function show_other() {
             </ul>
             </td><td valign=top>
             <ul>
+            <li> <a href=trac/wiki/SourceCodeGit>".tra("Source code")."</a>
             <li> ".tra("Help wanted")."
             <ul>
                 <li> <a href=\"trac/wiki/DevProjects\">".tra("Programming")."</a>

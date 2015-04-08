@@ -144,11 +144,11 @@ $sig_sites = array(
         "BOINC All Project Stats",
         "(Signature files for both users and teams)"
     ),
-    array(
-        "http://www.unitedboinc.com/news-sig/",
-        "United BOINC",
-        "(Images showing the latest news from your choice of projects)"
-    ),
+//    array(
+//        "http://www.unitedboinc.com/news-sig/",
+//        "United BOINC",
+//        "(Images showing the latest news from your choice of projects)"
+//    ),
 );
 
 // the following sites generate cross-project team stats based on CPID
@@ -162,7 +162,7 @@ $team_name_sites = array(
         "BOINCstats.com",
         "hashlc"
     ),
-    array("http://stats.setibzh.fr/team.php?teamcpid=",
+    array("http://statsbzh.boinc-af.org/team.php?teamcpid=",
         "SETIBZH",
         "hashlc"
     ),

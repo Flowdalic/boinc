@@ -1567,7 +1567,7 @@ RUNNING_GFX_APP* CMainDocument::GetRunningGraphicsApp(
     
     for( gfx_app_iter = m_running_gfx_apps.begin(); 
         gfx_app_iter != m_running_gfx_apps.end(); 
-        gfx_app_iter++
+        ++gfx_app_iter
     ) {
          if ((slot >= 0) && ((*gfx_app_iter).slot != slot)) continue;
 
@@ -2500,18 +2500,15 @@ wxString result_description(RESULT* result, bool show_resources) {
             strBuffer += _("Project suspended by user");
         } else if (result->suspended_via_gui) {
             strBuffer += _("Task suspended by user");
-        } else if (status.task_suspend_reason && !throttled) {
+        } else if (status.task_suspend_reason && !throttled && result->active_task_state != PROCESS_EXECUTING) {
+            // an NCI process can be running even though computation is suspended
+            // (because of <dont_suspend_nci>
+            //
             strBuffer += _("Suspended - ");
             strBuffer += suspend_reason_wxstring(status.task_suspend_reason);
-            if (strlen(result->resources) && show_resources) {
-                strBuffer += wxString(wxT(" (")) + wxString(result->resources, wxConvUTF8) + wxString(wxT(")"));
-            }
         } else if (status.gpu_suspend_reason && uses_gpu(result)) {
             strBuffer += _("GPU suspended - ");
             strBuffer += suspend_reason_wxstring(status.gpu_suspend_reason);
-            if (strlen(result->resources) && show_resources) {
-                strBuffer += wxString(wxT(" (")) + wxString(result->resources, wxConvUTF8) + wxString(wxT(")"));
-            }
         } else if (result->active_task) {
             if (result->too_large) {
                 strBuffer += _("Waiting for memory");
@@ -2526,9 +2523,6 @@ wxString result_description(RESULT* result, bool show_resources) {
                 strBuffer += _("Waiting to run");
             } else if (result->scheduler_state == CPU_SCHED_UNINITIALIZED) {
                 strBuffer += _("Ready to start");
-            }
-            if (strlen(result->resources)>1 && show_resources) {
-                strBuffer += wxString(wxT(" (")) + wxString(result->resources, wxConvUTF8) + wxString(wxT(")"));
             }
         } else {
             strBuffer += _("Ready to start");
@@ -2593,6 +2587,9 @@ wxString result_description(RESULT* result, bool show_resources) {
             strBuffer.Format(_("Error: invalid state '%d'"), result->state);
         }
         break;
+    }
+    if (strlen(result->resources)>1 && show_resources) {
+        strBuffer += wxString(wxT(" (")) + wxString(result->resources, wxConvUTF8) + wxString(wxT(")"));
     }
     return strBuffer;
 }

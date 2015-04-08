@@ -26,6 +26,7 @@
 
 #ifndef _WIN32
 #include "config.h"
+#include <sstream>
 #include <string>
 #include <cmath>
 #include <string.h>
@@ -45,6 +46,8 @@
 #include "str_util.h"
 
 using std::string;
+using std::stringstream;
+using std::vector;
 
 // Use this instead of strncpy().
 // Result will always be null-terminated, and it's faster.
@@ -468,6 +471,7 @@ const char* boincerror(int which_error) {
         case ERR_NOT_FOUND: return "not found";
         case ERR_NO_EXIT_STATUS: return "no exit status in scheduler request";
         case ERR_FILE_MISSING: return "file missing";
+        case ERR_KILL: return "kill() or TerminateProcess() failed";
         case ERR_SEMGET: return "semget() failed";
         case ERR_SEMCTL: return "semctl() failed";
         case ERR_SEMOP: return "semop() failed";
@@ -718,4 +722,37 @@ char* lf_terminate(char* p) {
     p[n] = '\n';
     p[n+1] = 0;
     return p;
+}
+
+void parse_serialnum(char* in, char* boinc, char* vbox, char* coprocs) {
+    strcpy(boinc, "");
+    strcpy(vbox, "");
+    strcpy(coprocs, "");
+    while (*in) {
+        if (*in != '[') break;      // format error
+        char* p = strchr(in, ']');
+        if (!p) break;              // format error
+        p++;
+        char c = *p;
+        *p = 0;
+        if (strstr(in, "BOINC")) {
+            strcpy(boinc, in);
+        } else if (strstr(in, "vbox")) {
+            strcpy(vbox, in);
+        } else {
+            strcat(coprocs, in);
+        }
+        *p = c;
+        in = p;
+    }
+}
+
+vector<string> split(string s, char delim) {
+    vector<string> result;
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        result.push_back(item);
+    }
+    return result;
 }
