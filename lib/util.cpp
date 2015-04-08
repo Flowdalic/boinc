@@ -468,33 +468,27 @@ int kill_program(int pid, int exit_code) {
     int retval;
 
     HANDLE h = OpenProcess(PROCESS_TERMINATE, false, pid);
-    if (h == NULL && GetLastError() == ERROR_ACCESS_DENIED) return EPERM;
-    if (h == NULL && GetLastError() == ERROR_INVALID_PARAMETER) return EINVAL;
-    if (h == NULL && GetLastError() == ERROR_FILE_NOT_FOUND) return ESRCH;
-    if (h == NULL) return EIO;
+    if (h == NULL) return ERR_NOT_FOUND;
     if (TerminateProcess(h, exit_code)) {
         retval = 0;
     } else {
-        retval = 1;
+        retval = ERR_KILL;
     }
     CloseHandle(h);
+    return retval;
+}
 
-    return retval;
+int kill_program(HANDLE pid) {
+    if (TerminateProcess(pid, 0)) return 0;
+    return ERR_KILL;
 }
-void kill_program(HANDLE pid) {
-    TerminateProcess(pid, 0);
-}
+
 #else
-int kill_program(int pid, int exit_code) {
-    int retval;
-    retval = kill(pid, SIGKILL);
-    if (-1 == retval) {
-        retval = errno;
+int kill_program(int pid) {
+    if (kill(pid, SIGKILL)) {
+        return ERR_KILL;
     }
-    return retval;
-}
-void kill_program(int pid) {
-    kill(pid, SIGKILL);
+    return 0;
 }
 #endif
 

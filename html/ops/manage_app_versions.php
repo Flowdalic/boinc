@@ -23,7 +23,7 @@ require_once('../inc/util_ops.inc');
 function update() {
     $id = post_int("id");
     $av = BoincAppVersion::lookup_id($id);
-    if (!$av) error_page("no such app version");
+    if (!$av) admin_error_page("no such app version");
 
     $n = post_str("beta", true) ? 1 : 0;
     $av->update("beta=$n");
@@ -37,10 +37,18 @@ function update() {
     $n = post_int("max_core_version");
     $av->update("max_core_version=$n");
 
+    $n = post_str("plan_class");
+    $av->update("plan_class='$n'");
+
     echo "<b>Updated app version $id.  This change will take effect when you restart the project.</b><p>";
 }
 
-function show_form() {
+function show_form($all) {
+    if ($all) {
+        echo "<a href=manage_app_versions.php>Don't show deprecated app versions</a>\n";
+    } else {
+        echo "<a href=manage_app_versions.php?all=1>Show deprecated app versions</a>\n";
+    }
     $_platforms = BoincPlatform::enum("");
     foreach ($_platforms as $platform) {
         $platforms[$platform->id] = $platform;
@@ -53,19 +61,20 @@ function show_form() {
 
     start_table("");
     table_header(
-        "ID #<br><span class=note>click for details</span>",
-      "Application<br><span class=note>click for details</span>",
+        "ID #<br><p class=\"text-muted\">click for details</p>",
+      "Application<br><p class=\"text-muted\">click for details</p>",
       "Version",
       "Platform",
-      "Plan Class",
+      "Plan class",
       "minimum<br>client version",
       "maximum<br>client version",
       "beta?",
       "deprecated?",
       ""
     );
+    $clause = $all?"true":"deprecated = 0";
     $avs = BoincAppVersion::enum(
-        "true order by appid, platformid, plan_class, version_num"
+        "$clause order by appid, platformid, plan_class, version_num"
     );
     $i = 0;
     foreach ($avs as $av) {
@@ -90,7 +99,7 @@ function show_form() {
         $platform = $platforms[$av->platformid];
         echo "  <TD>$f1 $platform->name $f2</TD>\n";
 
-        echo "  <td>$f1 $av->plan_class $f2</td>\n";
+        echo "  <td><input type=text name=plan_class size=12 value='$av->plan_class'></td>\n";
 
         $v = $av->min_core_version;
         echo "  <TD><input type='text' size='4' name=min_core_version value='$v'></TD>\n";
@@ -106,7 +115,7 @@ function show_form() {
         if ($av->deprecated) $v=' CHECKED ';
         echo "  <TD> <input name=deprecated type='checkbox' $v></TD>\n";
 
-        echo "<td><input name=submit type=submit value=Update>";
+        echo "<td><input class=\"btn btn-default\" name=submit type=submit value=Update>";
 
         echo "</tr></form>"; 
     }
@@ -119,6 +128,7 @@ admin_page_head("Manage application versions");
 if (post_str("submit", true)) {
     update();
 }
-show_form();
+$all = get_str("all", true);
+show_form($all);
 admin_page_tail();
 ?>

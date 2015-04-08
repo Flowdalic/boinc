@@ -79,6 +79,10 @@ if ($uotd_candidates >= 0) {
 
 echo "</ul>\n";
 
+if (function_exists('admin_index_extra')) {
+    admin_index_extra();
+}
+
 echo "
     <p>
     <table border=\"0\"><tr valign=\"top\">
@@ -104,18 +108,19 @@ echo "
         <li><a href=\"manage_app_versions.php\">Manage application versions</a></li>
         <li> Manage jobs
         <ul>
-            <li><a href=\"cancel_wu_form.php\">Cancel jobs</a></li>
+            <li><a href=\"cancel_wu_form.php\">Cancel jobs by ID</a>
+            <li><a href=\"cancel_workunits.php\">Cancel jobs by SQL clause</a>
             <li><a href=transition_all.php>Transition jobs</a>
-              <br><span class=note>(this can 'unstick' old jobs)</span>
-            <li><a href=\"revalidate.php\">Re-validate jobs</a></li>
-
+              <p class=\"text-muted\">(this can 'unstick' old jobs)</p>
+            <li><a href=\"revalidate.php\">Re-validate jobs</a>
+            <li><a href=assign.php>Assigned jobs</a>
         </ul>
         <li><a href=\"job_times.php\">FLOP count statistics</a>
         <li><a href=\"$stripchart_cgi_url/stripchart.cgi\">Stripcharts</a>
         <li><a href=\"show_log.php\">Show/Grep logs</a>
         <li>
             <form method=\"get\" action=\"clear_host.php\">
-            <input type=\"submit\" value=\"Clear RPC seqno\">
+            <input class=\"btn btn-default\" type=\"submit\" value=\"Clear RPC seqno\">
             host ID: 
             <input type=\"text\" size=\"5\" name=\"hostid\">
             </form>
@@ -131,7 +136,7 @@ echo "
         <li><a href=".URL_BASE."/manage_project.php>User job submission privileges</a></li>
         <li><a href=\"mass_email.php\">Send mass email to a selected set of users</a></li>
         <li><form action=\"manage_user.php\">
-            <input type=\"submit\" value=\"Manage user\">
+            <input class=\"btn btn-default\" type=\"submit\" value=\"Manage user\">
             ID: <input name=\"userid\">
             </form>
         </li>

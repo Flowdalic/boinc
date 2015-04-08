@@ -298,25 +298,29 @@ function file_delete_state_str($s) {
 }
 function wu_error_mask_str($s) {
     $x = "";
-    if ($s & 1) {
+    if ($s & WU_ERROR_COULDNT_SEND_RESULT) {
         $x = $x." ".tra("Couldn't send result");
-        $s -= 1;
+        $s -= WU_ERROR_COULDNT_SEND_RESULT;
     }
-    if ($s & 2) {
+    if ($s & WU_ERROR_TOO_MANY_ERROR_RESULTS) {
         $x = $x." ".tra("Too many errors (may have bug)");
-        $s -= 2;
+        $s -= WU_ERROR_TOO_MANY_ERROR_RESULTS;
     }
-    if ($s & 4) {
+    if ($s & WU_ERROR_TOO_MANY_SUCCESS_RESULTS) {
         $x = $x." ".tra("Too many results (may be nondeterministic)");
-        $s -= 4;
+        $s -= WU_ERROR_TOO_MANY_SUCCESS_RESULTS;
     }
-    if ($s & 8) {
+    if ($s & WU_ERROR_TOO_MANY_TOTAL_RESULTS) {
         $x = $x." ".tra("Too many total results");
-        $s -= 8;
+        $s -= WU_ERROR_TOO_MANY_TOTAL_RESULTS;
     }
-    if ($s & 16) {
+    if ($s & WU_ERROR_CANCELLED) {
         $x = $x." ".tra("WU cancelled");
-        $s -= 16;
+        $s -= WU_ERROR_CANCELLED;
+    }
+    if ($s & WU_ERROR_NO_CANONICAL_RESULT) {
+        $x = $x." ".tra("Canonical result is missing");
+        $s -= WU_ERROR_NO_CANONICAL_RESULT;
     }
     if ($s) {
         $x = $x." ".tra("Unrecognized Error: %1", $s);
@@ -346,18 +350,18 @@ function result_table_start($show_wu_link, $show_host_link, $info) {
             $i2 = clone $info;
             $i2->show_names = 0;
             $url = result_page_url($i2);
-            echo "<th>".tra("Task name")."<br><span class=\"smalltext\">".tra("click for details")."<br><a href=$url>".tra("Show IDs")."</a></span></th>\n";
+            echo "<th>".tra("Task name")."<br><small>".tra("click for details")."<br><a href=$url>".tra("Show IDs")."</a></small></th>\n";
         } else {
             $i2 = clone $info;
             $i2->show_names = 1;
             $url = result_page_url($i2);
-            echo "<th>Task<br><span class=\"smalltext\">".tra("click for details")."<br><a href=$url>".tra("Show names")."</a></span></th>\n";
+            echo "<th>Task<br><small>".tra("click for details")."<br><a href=$url>".tra("Show names")."</a></small></th>\n";
         }
     } else {
-        echo "<th>".tra("Task")."<br><span class=\"smalltext\">".tra("click for details")."</span></th>\n";
+        echo "<th>".tra("Task")."<br><small>".tra("click for details")."</small></th>\n";
     }
     if ($show_wu_link) {
-        echo "<th>".tra("Work unit")."<br><span class=\"smalltext\">".tra("click for details")."</span></th>\n";
+        echo "<th>".tra("Work unit")."<br><small>".tra("click for details")."</small></th>\n";
         if (function_exists('project_result_info_heading')) {
             $x = project_result_info_heading();
             if ($x) {
@@ -371,7 +375,7 @@ function result_table_start($show_wu_link, $show_host_link, $info) {
     echo "
         <th>".tra("Sent")."</th>
         <th>".tra("Time reported<br />or deadline")."
-            <br><span class=\"smalltext\"><a href=\"explain_state.php?field=result_time\">".tra("explain")."</a></span>
+            <br><small><a href=\"explain_state.php?field=result_time\">".tra("explain")."</a></small>
         </th>
         <th>".tra("Status")."</th>
         <th>".tra("Run time<br />(sec)")."</th>
@@ -640,6 +644,7 @@ function show_result($result, $show_outfile_links=false) {
     row2(tra("CPU time"), time_diff($result->cpu_time));
     row2(tra("Validate state"), validate_state_str($result));
     row2(tra("Credit"), number_format($result->granted_credit, 2));
+    row2(tra("Device peak FLOPS"), number_format($result->flops_estimate/1e9, 2)." GFLOPS");
     row2(tra("Application version"), app_version_string($result));
     if ($result->peak_working_set_size) {
         $x = number_format($result->peak_working_set_size/MEGA, 2);
@@ -687,9 +692,14 @@ function result_navigation($info, $where_clause) {
 	}
 	$app_count[0] = 0;
 
-	$results = BoincResult::enum_fields("appid, server_state, outcome, validate_state", $where_clause, null);
+	$results = BoincResult::enum_fields(
+        "appid, server_state, outcome, validate_state",
+        $where_clause, null
+    );
 	foreach ($results as $r) {
-		$app_count[$r->appid]++;
+        if (array_key_exists($r->appid, $app_count)) {
+            $app_count[$r->appid]++;
+        }
 		$app_count[0]++;
         if (!$info->appid || ($r->appid == $info->appid)) {
             $state_count[state_num($r)]++;
@@ -756,7 +766,7 @@ function result_navigation($info, $where_clause) {
         }
     }
 
-    $x .= "<form action=result.php>".tra("Task name:")."<input size=40 name=result_name><input type=submit value='OK'></form>";
+    $x .= "<form action=result.php>".tra("Task name:")."<input size=40 name=result_name><input class=\"btn btn-primary\" type=submit value='OK'></form>";
     $x .= "</center><br>";
 	return $x;
 }

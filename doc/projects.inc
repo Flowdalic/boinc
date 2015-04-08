@@ -1,5 +1,9 @@
 <?php
 
+// if you change anything here,
+// look at http://boinc.berkeley.edu/project_list.php in a browser to make sure
+// you didn't mess up the XML
+
 require_once("../inc/translation.inc");
 
 // 0: name
@@ -88,12 +92,12 @@ $biomed = array(
             "Study and design RNA molecules"
         ),
         array(
-            "FightMalaria@Home",
-            "http://boinc.ucd.ie/fmah/",
+            "FightNeglectedDiseases@Home",
+            "http://findah.ucd.ie/",
             tra("University College Dublin"),
             tra("Antimalarial drug discovery"),
-            tra("The parasite that causes malaria continues to evolve resistance to available medication. We therefore urgently need to discover new drugs to replace existing drugs. Importantly, these new drugs need to target NEW proteins in the parasite. The FightMalaria@Home project is aimed at finding these new targets."),
-            "FMAH_banner3_wt.png",
+            tra("The parasite that causes malaria continues to evolve resistance to available medication. We therefore urgently need to discover new drugs, targeting new proteins in the parasite. The FightNeglectedDiseases@Home project is aimed at finding these new targets."),
+            "",
             "",
             "Develop malaria drugs"
         ),
@@ -201,16 +205,16 @@ $biomed = array(
             "",
             "Study diseases such as HIV, malaria, cancer, and Alzheimer's"
         ),
-        array(
-            "SIMAP",
-            "http://boincsimap.org/boincsimap/",
-            tra("University of Vienna"),
-            tra("Biology"),
-            tra("Calculate similarities between proteins. SIMAP provides a public database of the resulting data, which plays a key role in many bioinformatics research projects."),
-            "simaplogo.jpg",
-            "",
-            "Calculate similarities between proteins"
-        ),
+//        array(
+//            "SIMAP",
+//            "http://boincsimap.org/boincsimap/",
+//            tra("University of Vienna"),
+//            tra("Biology"),
+//            tra("Calculate similarities between proteins. SIMAP provides a public database of the resulting data, which plays a key role in many bioinformatics research projects."),
+//            "simaplogo.jpg",
+//            "",
+//            "Calculate similarities between proteins"
+//        ),
     ),
 );
 $earth = array(
@@ -364,14 +368,24 @@ $astro_phys_chem = array(
             "Improve the design of the Large Hadron Collider"
         ),
         array(
-            "LHC@home Test4Theory",
-            "http://lhcathome2.cern.ch/test4theory/",
+            "vLHCathome",
+            "http://lhcathome2.cern.ch/vLHCathome/",
             tra("CERN (European Organization for Nuclear Research)"),
             tra("Physics"),
-            tra("This project uses CERN-developed virtual machine technology for full-fledged LHC event physics simulation on volunteer computers.  Requires that you install VirtualBox on your computer"),
+            tra("This project uses CERN-developed virtual machine technology for LHC event physics simulation on volunteer computers.  Requires that you install VirtualBox on your computer"),
             "t4t.png",
             "",
             "Simulate high-energy particle collisions"
+        ),
+        array(
+            "ATLAS@Home",
+            "http://atlasathome.cern.ch/",
+            tra("CERN (European Organization for Nuclear Research)"),
+            tra("Physics"),
+            tra("ATLAS@Home uses volunteer computing to run simulations for ATLAS, a particle physics experiment at CERN's Large Hadron Collider.  ATLAS searches for new particles and processes using head-on collisions of protons of extraordinary high energy."),
+            "atlas_at_home.jpg",
+            "",
+            "Simulate high-energy particle collisions for CERN"
         ),
         array(
             "SETI@home",
@@ -407,6 +421,16 @@ $astro_phys_chem = array(
 $mixed = array(
     tra("Multiple applications"),
     array(
+        array(
+            "Citizen Science Grid",
+            "http://volunteer.cs.und.edu/csg/",
+            "University of North Dakota",
+            "Molecular biology, Computer Science",
+            "The Citizen Science Grid is dedicated to supporting a wide range of research and educational projects using volunteer computing and citizen science.",
+            "",
+            "",
+            "Support science from the University of North Dakota"
+        ),
         array(
             "CAS@home",
             "http://casathome.ihep.ac.cn/",
@@ -462,16 +486,16 @@ $mixed = array(
 $math = array(
     tra("Mathematics, computing, and games"),
     array(
-        array(
-            "SubsetSum@Home",
-            "http://volunteer.cs.und.edu/subset_sum/",
-            "University of North Dakota, Computer Science Department",
-            tra("Computer Science"),
-            "Research in computational complexity",
-            "",
-            "",
-            "Study the Subset Sum problem"
-        ),
+//        array(
+//            "SubsetSum@Home",
+//            "http://volunteer.cs.und.edu/subset_sum/",
+//            "University of North Dakota, Computer Science Department",
+//            tra("Computer Science"),
+//            "Research in computational complexity",
+//            "",
+//            "",
+//            "Study the Subset Sum problem"
+//        ),
         array(
             "OProject@Home",
             "http://oproject.info/",
@@ -492,16 +516,16 @@ $math = array(
             "",
             "Do research in algebraic number theory"
         ),
-        array(
-            "VolPEx",
-            "http://volpex.cs.uh.edu/VCP/",
-            "University of Houston",
-            "Computer science",
-            "Creating effective parallel computing on multiple volatile nodes. Apply research on REMD Protein Folding.",
-            "",
-            "",
-            "Study parallel computing across multiple computers"
-        ),
+//        array(
+//            "VolPEx",
+//            "http://volpex.cs.uh.edu/VCP/",
+//            "University of Houston",
+//            "Computer science",
+//            "Creating effective parallel computing on multiple volatile nodes. Apply research on REMD Protein Folding.",
+//            "",
+//            "",
+//            "Study parallel computing across multiple computers"
+//        ),
         array(
             "SAT@home",
             "http://sat.isa.ru/pdsat/",
@@ -521,15 +545,25 @@ $math = array(
 //
 //            "mersenne_logo80.png"
 //        ),
+//        array(
+//            "DistrRTgen",
+//            "http://boinc.freerainbowtables.com/distrrtgen/",
+//            "Private",
+//            tra("Cryptography"),
+//            "To give the world's security experts the best tools available for detecting weak hashes. This can help them to force developers to use more secure methods of password protection.",
+//            "freerainbowtables_logo.png",
+//            "",
+//            "Study hash functions"
+//        ),
         array(
-            "DistrRTgen",
-            "http://boinc.freerainbowtables.com/distrrtgen/",
+            "Moo! Wrapper",
+            "http://moowrap.net/",
             "Private",
-            tra("Cryptography"),
-            "To give the world's security experts the best tools available for detecting weak hashes. This can help them to force developers to use more secure methods of password protection.",
-            "freerainbowtables_logo.png",
+            tra("Cryptography and combinatorics"),
+            "Run applications from distributed.net",
             "",
-            "Study hash functions"
+            "",
+            "Run applications from distributed.net"
         ),
         array(
             "Enigma@Home",
@@ -561,16 +595,16 @@ $math = array(
             "",
             "Study the factorization of large integers"
         ),
-        array(
-            "VTU@home",
-            "http://boinc.vgtu.lt/vtuathome/",
-            tra("Vilnius Gediminas Technical University and Kaunas University of Technology (Lithuania)"),
-            tra("Software testing"),
-            tra("The aim of this project is to provide a powerful distributed computing platform for scientists of Vilnius Gediminas Technical University (VGTU) as well as others Lithuanian academic institutions.  Current applications involve the study of Monte-Carlo based software testing."),
-            "vtuathome-white.gif",
-            "",
-            "Help Lithuanian researchers"
-        ),
+//        array(
+//            "VTU@home",
+//            "http://boinc.vgtu.lt/vtuathome/",
+//            tra("Vilnius Gediminas Technical University and Kaunas University of Technology (Lithuania)"),
+//            tra("Software testing"),
+//            tra("The aim of this project is to provide a powerful distributed computing platform for scientists of Vilnius Gediminas Technical University (VGTU) as well as others Lithuanian academic institutions.  Current applications involve the study of Monte-Carlo based software testing."),
+//            "vtuathome-white.gif",
+//            "",
+//            "Help Lithuanian researchers"
+//        ),
 //        array(
 //            "AQUA@home",
 //            "http://aqua.dwavesys.com/",
@@ -587,16 +621,16 @@ $math = array(
 //            tra("Search for collisions (weaknesses) of the widely-used SHA-1 hash function."),
 //            "LogoKryptoGroup_klein.jpg"
 //        ),
-        array(
-            "ABC@home",
-            "http://abcathome.com/",
-            tra("Mathematical Institute of Leiden University / Kennislink"),
-            tra("Mathematics"),
-            tra("Search for 'abc-triples': positive integers a,b,c such that a+b=c, a &lt; b &lt; c, a,b,c have no common divisors and c > rad(abc), where rad(n) is the product of the distinct prime factors of n. The ABC conjecture says that there are only finitely many a,b,c such that log(c)/log(rad(abc)) > h for any real h > 1. The ABC conjecture is currently one of the greatest open problems in mathematics. If it is proven to be true, a lot of other open problems can be answered directly from it."),
-            "abclogo.jpg",
-            "",
-            "Study the ABC conjecture"
-        ),
+//        array(
+//            "ABC@home",
+//            "http://abcathome.com/",
+//            tra("Mathematical Institute of Leiden University / Kennislink"),
+//            tra("Mathematics"),
+//            tra("Search for 'abc-triples': positive integers a,b,c such that a+b=c, a &lt; b &lt; c, a,b,c have no common divisors and c > rad(abc), where rad(n) is the product of the distinct prime factors of n. The ABC conjecture says that there are only finitely many a,b,c such that log(c)/log(rad(abc)) > h for any real h > 1. The ABC conjecture is currently one of the greatest open problems in mathematics. If it is proven to be true, a lot of other open problems can be answered directly from it."),
+//            "abclogo.jpg",
+//            "",
+//            "Study the ABC conjecture"
+//        ),
         array(
             "PrimeGrid",
             "http://www.primegrid.com/",
@@ -677,9 +711,29 @@ $math = array(
 //            tra("Surveill@Home is a research project that conducts end-to-end fine-grained monitoring of web sites.  The project will deploy thousands of probes, each of which repeatedly performs transactions on web sites.  This approach provides end-user failure and performance statistics."),
 //            "surveill.png"
 //        ),
+        array(
+            "Gerasim@Home",
+            "http://gerasim.boinc.ru/",
+            "Southwest State University (Russia)",
+            "Computer engineering",
+            "Testing and comparison of heuristic methods for getting separations of parallel algorithms working in the CAD system for designing logic control systems",
+            "gerasim.gif",
+            "",
+            "",
+        ),
     ),
 );
 
 $areas = array($biomed, $astro_phys_chem, $math, $earth, $mixed, $cogsci, $sensing);
+
+function lookup_project($url) {
+    foreach ($areas as $area) {
+        foreach ($area as $p) {
+            if ($p[1] == $url) return $p;
+            if (sizeof($p)>6 && $p[6] == $url) return $p;
+        }
+    }
+    return null;
+}
 
 ?>

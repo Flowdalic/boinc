@@ -16,6 +16,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
+// Utility functions for BOINC web pages
+
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+
 require_once("../inc/util_basic.inc");
 require_once("../project/project.inc");
 require_once("../inc/countries.inc");
@@ -46,6 +52,21 @@ if (!defined('DISABLE_FORUMS')) {
 }
 if (!defined('DISABLE_TEAMS')) {
     define('DISABLE_TEAMS', false);
+}
+if (!defined('DISABLE_BADGES')) {
+    define('DISABLE_BADGES', false);
+}
+if (!defined('BADGE_HEIGHT_SMALL')) {
+    define('BADGE_HEIGHT_SMALL', 20);
+}
+if (!defined('BADGE_HEIGHT_MEDIUM')) {
+    define('BADGE_HEIGHT_MEDIUM', 24);
+}
+if (!defined('BADGE_HEIGHT_LARGE')) {
+    define('BADGE_HEIGHT_LARGE', 56);
+}
+if (!defined('LDAP_HOST')) {
+    define('LDAP_HOST', null);
 }
 
 $caching = false;
@@ -197,6 +218,10 @@ function page_head(
     if ($stylesheet2) {
         echo "<link rel=stylesheet type=\"text/css\" href=\"$stylesheet2\">\n";
     }
+    if (defined("SHORTCUT_ICON")) {
+        echo '<link rel="icon" type="image/x-icon", href="'.SHORTCUT_ICON.'"/>
+';
+    }
     echo "
         <link rel=alternate type=\"application/rss+xml\" title=\"$rssname\" href=\"$rsslink\">
         </head>
@@ -220,11 +245,6 @@ function page_head(
 
 }
 }
-
-// the following must be included in header
-// for Recaptcha to work with some IE browsers
-//
-define('IE_COMPAT_MODE', '<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >');
 
 function page_tail_aux($show_return, $show_date, $prefix="") {
     project_footer($show_return, $show_date, $prefix);
@@ -315,12 +335,14 @@ function pretty_time_str($x) {
     return time_str($x);
 }
 
-function start_table($extra="width=\"100%\"") {
-    echo "<table class=bordered $extra>";
+// TODO: currently only a few calls use the arguments, styling should only happen through CSS clases so $extra should be dropped in the future
+function start_table($extra="width=\"100%\"", $class="table-bordered") {
+    echo "<table class=\"table $class\" $extra>";
 }
 
-function start_table_noborder($width="100%") {
-    echo "<table cellpadding=5 width=\"$width\">";
+// TODO: currently no call uses the arguments, styling should only happen through CSS clases so $extra could be dropped in the future
+function start_table_noborder($extra="width=\"100%\"", $class="noborder") {
+    echo "<table class=\"table $class\" $extra>";
 }
 
 function end_table() {
@@ -358,7 +380,11 @@ function table_row() {
 }
 
 function row1($x, $ncols=2, $class="heading") {
-    echo "<tr><td class=\"$class\" colspan=\"$ncols\">$x</td></tr>\n";
+    if ($class == "heading") {
+        echo "<tr><th colspan=\"$ncols\">$x</th></tr>\n";
+    } else {
+        echo "<tr><td class=\"$class\" colspan=\"$ncols\">$x</td></tr>\n";
+    }
 }
 
 function row2($x, $y, $show_error=false) {
@@ -380,16 +406,6 @@ function row2_init($x, $y) {
 
 function row2_plain($x, $y) {
     echo "<tr><td>$x</td><td>$y</td></tr>\n";
-}
-
-function row3($x, $y, $z) {
-    echo "<tr><td width=\"30%\" align=\"right\">$x</td><td>$y</td><td>$z</td></tr>\n";
-}
-
-function row4($xx, $xy, $yx, $yy) {
-    echo "<tr><td width=\"25%\">$xx</td><td width=\"25%\">$xy</td>"
-        . "<td width=\"25%\">$yx</td><td width=\"%25\">$yy</td></tr>
-    ";
 }
 
 function rowify($string) {
@@ -511,52 +527,6 @@ function format_credit_large($x) {
     return number_format($x, 0);
 }
 
-function friend_links($user) {
-    if (is_banished($user)) {
-        return "";
-    }
-    $x = "<table height=\"100\" width=\"150\" border=\"0\" cellpadding=\"4\"><tr><td class=\"friend\">";
-    if ($user->has_profile) {
-        $profile = BoincProfile::lookup_fields("has_picture", "userid=$user->id");
-        if ($profile && $profile->has_picture) {
-            $img_url = profile_thumb_url($user->id);
-        } else {
-            $img_url = URL_BASE."img/head_20.png";
-        }
-        $title = tra("View the profile of %1", $user->name);
-        $alt = tra("Profile");
-        $x .= ' <a href="'.URL_BASE.'view_profile.php?userid='.$user->id.'"><img title="'.$title.'" src="'.$img_url.'" alt="'.$alt.'"></a><br>';
-    }
-    $x .= " <a href=\"".URL_BASE."show_user.php?userid=".$user->id."\">".$user->name."</a>";
-    if ($user->donated == 1) {
-        require_once("../project/donations.inc");
-        $x .= DONATION_LINK;
-    }
-    $x .= "</td></tr></table>\n";
-    return $x;
-}
-
-function user_links($user) {
-    BoincForumPrefs::lookup($user);
-    if (is_banished($user)) {
-        return "(banished: ID $user->id)";
-    }
-    $x = "";
-    if ($user->has_profile) {
-        $img_url = URL_BASE."img/head_20.png";
-        $x .= ' <a href="'.URL_BASE.'view_profile.php?userid='.$user->id.'"><img title="View the profile of '.$user->name.'" src="'.$img_url.'" alt="Profile"></a>';
-    }
-    $x .= " <a href=\"".URL_BASE."show_user.php?userid=".$user->id."\">".$user->name."</a>";
-    if ($user->donated == 1) {
-        require_once("../project/donations.inc");
-        $x .= DONATION_LINK;
-    }
-    if (function_exists("project_user_links")){
-        $x .= project_user_links($user);
-    }
-    return $x;
-}
-
 function host_link($hostid) {
     if ($hostid) {
         return "<a href=\"show_host_detail.php?hostid=$hostid\">$hostid</a>";
@@ -579,7 +549,7 @@ function close_output_buffer($filename) {
 }
 
 function html_info() {
-    return "<br><a href=bbcode.php target=new><span class=smalltext>".tra("Use BBCode tags to format your text")."</span></a>\n";
+    return "<br><a href=bbcode.php target=new><small>".tra("Use BBCode tags to format your text")."</small></a>\n";
 }
 
 // strip slashes if magic quotes in effect
@@ -769,11 +739,11 @@ function current_url() {
 // @param desc The title of the destination - typically used as a popup
 // @param class The optional CSS class of the button. Defaults to a standard button
 //
-function show_button($url, $text, $desc=null, $class="button") {
+function show_button($url, $text, $desc=null, $class="btn btn-default") {
     if (!$desc) $desc = $text;
     echo "<a href=\"".$url."\" title=\"$desc\" class=\"".$class."\">".$text."</a>\n";
 }
-function button_text($url, $text, $desc=null, $class="button") {
+function button_text($url, $text, $desc=null, $class="btn btn-default") {
     if (!$desc) $desc = $text;
     return "<a href=\"".$url."\" title=\"$desc\" class=\"".$class."\">".$text."</a>\n";
 }
@@ -785,7 +755,7 @@ function button_text($url, $text, $desc=null, $class="button") {
 // @param desc The title of the destination - typically used as a popup
 // @param class The optional CSS class of the button. Defaults to a standard button
 //
-function show_actionlist_button($url, $text, $desc, $class="button"){
+function show_actionlist_button($url, $text, $desc, $class="btn btn-default"){
     echo "<li>";
     echo show_button($url, $text, $desc, $class);
     echo "</li>";
@@ -939,20 +909,28 @@ function redirect_to_secure_url($url) {
     }
 }
 
-function show_badges($is_user, $item) {
-    if (DISABLE_BADGES) return;
+function badges_string($is_user, $item, $height) {
+    if (DISABLE_BADGES) return null;
     if ($is_user) {
         $bus = BoincBadgeUser::enum("user_id=$item->id");
     } else {
         $bus = BoincBadgeTeam::enum("team_id=$item->id");
     }
-    if (!$bus) return;
+    if (!$bus) return null;
     $x = "";
     foreach ($bus as $bu) {
         $badge = BoincBadge::lookup_id($bu->badge_id);
-        $x .= "<img title=\"$badge->title\" height=48 src=$badge->image_url> ";
+        $x .= "<img title=\"$badge->title\" valign=top height=$height src=$badge->image_url> ";
     }
-    row2("Badges", $x);
+    return $x;
+}
+
+function show_badges_row($is_user, $item) {
+    if (BADGE_HEIGHT_LARGE == 0) return;
+    $x = badges_string($is_user, $item, BADGE_HEIGHT_LARGE);
+    if ($x) {
+        row2("Badges", $x);
+    }
 }
 
 function dtime() {
@@ -964,12 +942,72 @@ function dtime() {
 // Format of user agent string is "BOINC client (windows_x86_64 7.3.17)"
 //
 function boinc_client_version(){
-    $x = $_SERVER[HTTP_USER_AGENT];
+    if (!array_key_exists('HTTP_USER_AGENT', $_SERVER)) return 0;
+    $x = $_SERVER['HTTP_USER_AGENT'];
     $e =  "/BOINC client [^ ]* (\d+).(\d+).(\d+)\)/";
     if (preg_match($e, $x, $matches)) {
         return $matches[1]*10000 + $matches[2]*100 + $matches[3];
     }
     return 0;
+}
+
+// output a script for counting chars left in text field
+//
+function text_counter_script() {
+    echo "<script type=\"text/javascript\">
+        function text_counter(field, countfield, maxlimit) {
+            if (field.value.length > maxlimit) {
+                field.value =field.value.substring(0, maxlimit);
+            } else {
+                countfield.value = maxlimit - field.value.length
+            }
+        }
+        </script>
+    ";
+}
+
+// return HTML for a textarea with chars-remaining counter.
+// Call text_counter_script() before using this.
+//
+function textarea_with_counter($name, $maxlen, $text) {
+    $rem_name = $name."_remaining";
+    return "<textarea name=\"$name\" rows=4 cols=50 id=\"$name\" onkeydown=\"text_counter(this.form.$name, this.form.$rem_name, $maxlen);\"
+        onkeyup=\"text_counter(this.form.$name, this.form.$rem_name, $maxlen);\">".$text."</textarea>
+        <br><input name=\"$rem_name\" type=\"text\" id=\"$rem_name\" value=\"".($maxlen-strlen($text))."\" size=\"3\" maxlength=\"3\" readonly> ".tra("characters remaining")
+    ;
+}
+
+// convert number MMmmrr to string MM.mm.rr
+//
+function version_string_maj_min_rel($v) {
+    $maj = (int)($v/10000);
+    $v -= $maj*10000;
+    $min = (int)($v/100);
+    $v -= $min*100;
+    return sprintf("%d.%d.%d", $maj, $min, $v);
+}
+
+// recaptcha utilities
+
+function recaptcha_get_head_extra() {
+    // are we using recaptcha?
+    $publickey = parse_config(get_config(), "<recaptcha_public_key>");
+    if ($publickey) {
+        // the meta tag must be included
+        // for Recaptcha to work with some IE browsers
+        return '<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+    } else {
+        return null;
+    }
+}
+
+function recaptcha_get_html($publickey) {
+    if ($publickey) {
+        return '<div class="g-recaptcha" data-sitekey="' . $publickey . '"></div>';
+    } else {
+        return '';
+    }
 }
 
 $cvs_version_tracker[]="\$Id$";  //Generated automatically - do not edit

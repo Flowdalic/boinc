@@ -73,6 +73,9 @@ struct HOST_USAGE {
     double peak_flops;
         // stored in result.flops_estimate, and used for credit calculations
     char cmdline[256];
+    char custom_coproc_type[256];
+        // if we're using a custom GPU type, it's name
+        // TODO: get rid of PROC_TYPE_*, and this
 
     HOST_USAGE() {
         proc_type = PROC_TYPE_CPU;
@@ -83,6 +86,7 @@ struct HOST_USAGE {
         projected_flops = 0;
         peak_flops = 0;
         strcpy(cmdline, "");
+        strcpy(custom_coproc_type, "");
     }
     void sequential_app(double flops) {
         proc_type = PROC_TYPE_CPU;
@@ -286,6 +290,9 @@ struct SCHEDULER_REQUEST {
     char global_prefs_xml[BLOB_SIZE];
     char working_global_prefs_xml[BLOB_SIZE];
     char code_sign_key[4096];
+    bool dont_send_work;
+    char client_brand[256];
+        // as specified in client_brand.txt config file on client
 
     std::vector<CLIENT_APP_VERSION> client_app_versions;
 
@@ -391,9 +398,6 @@ struct WORK_REQ_BASE {
         // instance-seconds requested
     double req_instances[NPROC_TYPES];
         // number of idle instances, use if possible
-    inline bool need_proc_type(int t) {
-        return (req_secs[t]>0) || (req_instances[t]>0);
-    }
     inline void clear_req(int proc_type) {
         req_secs[proc_type] = 0;
         req_instances[proc_type] = 0;
@@ -406,6 +410,13 @@ struct WORK_REQ_BASE {
     // true if new-type request, which has resource-specific requests
     //
     bool rsc_spec_request;
+
+    inline bool need_proc_type(int t) {
+        if (rsc_spec_request) {
+            return (req_secs[t]>0) || (req_instances[t]>0);
+        }
+        return seconds_to_fill > 0;
+    }
 
     double disk_available;
     double ram, usable_ram;

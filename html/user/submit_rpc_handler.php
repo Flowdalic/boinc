@@ -77,8 +77,12 @@ function est_elapsed_time($r, $template) {
     return batch_flop_count($r, $template) / project_flops();
 }
 
-function read_input_template($app) {
-    $path = "../../templates/$app->name"."_in";
+function read_input_template($app, $r) {
+    if ((isset($r->batch)) && (isset($r->batch->workunit_template_file)) && ($r->batch->workunit_template_file)) {
+        $path = "../../templates/".$r->batch->workunit_template_file;
+    } else {
+        $path = "../../templates/$app->name"."_in";
+    }
     return simplexml_load_file($path);
 }
 
@@ -97,7 +101,7 @@ function estimate_batch($r) {
     $app = get_app((string)($r->batch->app_name));
     list($user, $user_submit) = authenticate_user($r, $app);
 
-    $template = read_input_template($app);
+    $template = read_input_template($app, $r);
     $e = est_elapsed_time($r, $template);
     echo "<estimate>\n<seconds>$e</seconds>\n</estimate>\n";
 }
@@ -169,7 +173,10 @@ function stage_files(&$jobs, $template) {
     }
 }
 
-function submit_jobs($jobs, $template, $app, $batch_id, $priority) {
+function submit_jobs(
+    $jobs, $template, $app, $batch_id, $priority,
+    $result_template_file = null, $workunit_template_file = null
+) {
     $x = "";
     foreach($jobs as $job) {
         if ($job->name) {
@@ -195,7 +202,14 @@ function submit_jobs($jobs, $template, $app, $batch_id, $priority) {
         $x .= "\n";
     }
 
-    $cmd = "cd ../..; ./bin/create_work --appname $app->name --batch $batch_id --rsc_fpops_est $job->rsc_fpops_est --priority $priority --stdin";
+    $cmd = "cd ../..; ./bin/create_work --appname $app->name --batch $batch_id --rsc_fpops_est $job->rsc_fpops_est --priority $priority";
+    if ($result_template_file) {
+        $cmd .= " --result_template templates/$result_template_file";
+    }
+    if ($workunit_template_file) {
+        $cmd .= " --wu_template templates/$workunit_template_file";
+    }
+    $cmd .= " --stdin";
     $h = popen($cmd, "w");
     if ($h === false) {
         xml_error(-1, "BOINC server: can't run create_work");
@@ -238,7 +252,7 @@ function xml_get_jobs($r) {
 function submit_batch($r) {
     $app = get_app((string)($r->batch->app_name));
     list($user, $user_submit) = authenticate_user($r, $app);
-    $template = read_input_template($app);
+    $template = read_input_template($app, $r);
     $jobs = xml_get_jobs($r);
     validate_batch($jobs, $template);
     stage_files($jobs, $template);
@@ -288,6 +302,7 @@ function submit_batch($r) {
         if (!$ret) xml_error(-1, "BOINC server: batch->update() failed");
     } else {
         $batch_name = (string)($r->batch->batch_name);
+        $batch_name = BoincDb::escape_string($batch_name);
         $batch_id = BoincBatch::insert(
             "(user_id, create_time, njobs, name, app_id, logical_end_time, state) values ($user->id, $now, $njobs, '$batch_name', $app->id, $let, ".BATCH_STATE_INIT.")"
         );
@@ -296,8 +311,23 @@ function submit_batch($r) {
         }
         $batch = BoincBatch::lookup_id($batch_id);
     }
+    
+    if ($r->batch->result_template_file) {
+        $result_template_file = $r->batch->result_template_file;
+    } else {
+        $result_template_file = null;
+    }
+    
+    if ($r->batch->workunit_template_file) {
+        $workunit_template_file = $r->batch->workunit_template_file;
+    } else {
+        $workunit_template_file = null;
+    }
 
-    submit_jobs($jobs, $template, $app, $batch_id, $let);
+    submit_jobs(
+        $jobs, $template, $app, $batch_id, $let,
+        $result_template_file, $workunit_template_file
+    );
 
     // set state to IN_PROGRESS only after creating jobs;
     // otherwise we might flag batch as COMPLETED
@@ -313,6 +343,7 @@ function create_batch($r) {
     list($user, $user_submit) = authenticate_user($r, $app);
     $now = time();
     $batch_name = (string)($r->batch->batch_name);
+    $batch_name = BoincDb::escape_string($batch_name);
     $expire_time = (double)($r->expire_time);
     $batch_id = BoincBatch::insert(
         "(user_id, create_time, name, app_id, state, expire_time) values ($user->id, $now, '$batch_name', $app->id, ".BATCH_STATE_INIT.", $expire_time)"

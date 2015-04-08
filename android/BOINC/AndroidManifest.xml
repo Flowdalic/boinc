@@ -2,7 +2,7 @@
 <!--
   This file is part of BOINC.
   http://boinc.berkeley.edu
-  Copyright (C) 2014 University of California
+  Copyright (C) 2012 University of California
   
   BOINC is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License
@@ -20,8 +20,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.berkeley.boinc"
     android:installLocation="internalOnly"
-    android:versionCode="114"
-    android:versionName="7.4.42" > <!-- installation on SD card would break boot receiver -->
+    android:versionCode="72"
+    android:versionName="7.5.0" > <!-- installation on SD card would break boot receiver -->
 
 
     <!-- Add Google Play store metadata informing the store we can run on tablets and other large screen devices -->
@@ -46,6 +46,7 @@
 
     <application
         android:allowBackup="true"
+        android:debuggable="true"
         android:icon="@drawable/boinc"
         android:label="@string/app_name"
         android:theme="@style/Theme.Styled"

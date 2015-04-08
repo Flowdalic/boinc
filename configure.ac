@@ -6,15 +6,15 @@ dnl not sure exactly what the minimum version is (but 2.13 wont work)
 AC_PREREQ(2.58)
 
 dnl Set the BOINC version here.  You can also use the set-version script.
-AC_INIT(BOINC, 7.4.42)
+AC_INIT(BOINC, 7.5.0)
 AC_CONFIG_MACRO_DIR([m4])
 LIBBOINC_VERSION=`echo ${PACKAGE_VERSION} | sed 's/\./:/g'`
 AC_SUBST([LIBBOINC_VERSION])
 
-WRAPPER_RELEASE=26010
+WRAPPER_RELEASE=26013
 AC_SUBST([WRAPPER_RELEASE])
 
-VBOXWRAPPER_RELEASE=26089
+VBOXWRAPPER_RELEASE=26161
 AC_SUBST([VBOXWRAPPER_RELEASE])
 
 AC_CANONICAL_TARGET
@@ -32,7 +32,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_CONFIG_SRCDIR(lib/shmem.cpp)
 
-AC_REVISION([$Revision$]) 
+AC_REVISION([$Revision$])
 REV=`echo '$Revision$' | awk "{print $2}"`
 RDATE=`date '+%Y.%m.%d'`
 if test -d .svn ; then
@@ -41,6 +41,13 @@ if test -d .svn ; then
 fi
 AC_SUBST(REV)
 AC_SUBST(RDATE)
+
+dnl Are we compiling for windows
+if echo $host_os | egrep '^mingw|^winnt' > /dev/null ; then
+  isWIN32=yes
+else
+  isWIN32=no
+fi
 
 dnl turn dependency tracking on by default
 if test x${enable_dependency_tracking} != xno ; then
@@ -65,45 +72,45 @@ AM_PROG_CC_C_O
 m4_divert_once([HELP_ENABLE],
   AS_HELP_STRING([BOINC Default enable values], [--enable-server --enable-client --enable-libraries --enable-manager: builds server, client, and libraries]))
 
-AC_ARG_ENABLE(dynamic-client-linkage, 
+AC_ARG_ENABLE(dynamic-client-linkage,
     AS_HELP_STRING([--enable-dynamic-client-linkage],
                    [dynamically link the client to the boinc libraries]),
     [dynamic_client=${enableval}],
     [dynamic_client=no])
 
-AC_ARG_ENABLE(server, 
+AC_ARG_ENABLE(server,
     AS_HELP_STRING([--disable-server],
                    [disable building the scheduling server]),
     [enable_server=${enableval}],
     [enable_server=yes])
 
-AC_ARG_ENABLE(fcgi, 
+AC_ARG_ENABLE(fcgi,
     AS_HELP_STRING([--disable-fcgi],
                    [disable building fcgi libraries or server components]),
     [enable_fcgi=${enableval}],
     [enable_fcgi=${enable_server}])
 
-AC_ARG_ENABLE(client, 
+AC_ARG_ENABLE(client,
     AS_HELP_STRING([--disable-client],
                    [disable building the client]),
     [enable_client=${enableval}],
     [enable_client=yes])
 
-AC_ARG_ENABLE(manager, 
+AC_ARG_ENABLE(manager,
     AS_HELP_STRING([--disable-manager],
                    [disable building the boinc manager gui]),
     [enable_manager=${enableval}],
     [enable_manager=yes])
 
-AC_ARG_ENABLE(libraries, 
+AC_ARG_ENABLE(libraries,
     AS_HELP_STRING([--disable-libraries],
                    [disable building the boinc client and server libraries]),
     [enable_libraries=${enableval}],
     [enable_libraries=yes])
 
-AC_ARG_ENABLE(install-headers, 
+AC_ARG_ENABLE(install-headers,
     AS_HELP_STRING([--disable-install-headers],
-                   [if building libraries do not install the boinc library 
+                   [if building libraries do not install the boinc library
                     header files]),
     [enable_install_headers=${enableval}],
     [enable_install_headers=yes])
@@ -114,7 +121,13 @@ AC_ARG_ENABLE(boinczip,
     [enable_boinczip=${enableval}],
     [enable_boinczip=no])
 
-AC_ARG_ENABLE(pkg-libs, 
+AC_ARG_ENABLE(apps,
+    AS_HELP_STRING([--enable-apps],
+                   [enable building the boinc example apps]),
+    [enable_apps=${enableval}],
+    [enable_apps=no])
+
+AC_ARG_ENABLE(pkg-libs,
     AS_HELP_STRING([--enable-pkg-libs],
                    [Builds and installs components that would be present in a
 		   boinc-libs package.  This is a synonym for --disable-server
@@ -128,10 +141,11 @@ AC_ARG_ENABLE(pkg-libs,
      enable_install_headers=no
      enable_static=no
 	 enable_boinczip=yes
+	 enable_apps=no
     ],
     [])
 
-AC_ARG_ENABLE(pkg-devel, 
+AC_ARG_ENABLE(pkg-devel,
     AS_HELP_STRING([--enable-pkg-devel],
                    [Builds and installs components that would be present in a
 		   boinc-devel package.  This is a synonym for --disable-server
@@ -144,10 +158,11 @@ AC_ARG_ENABLE(pkg-devel,
      enable_manager=no
      enable_install_headers=yes
 	 enable_boinczip=yes
+	 enable_apps=no
     ],
     [])
 
-AC_ARG_ENABLE(pkg-client, 
+AC_ARG_ENABLE(pkg-client,
     AS_HELP_STRING([--enable-pkg-client],
                    [Builds and installs components that would be present in a
 		   boinc-client package. This is a synonym for --disable-server
@@ -160,10 +175,11 @@ AC_ARG_ENABLE(pkg-client,
      enable_manager=no
      enable_install_headers=no
 	 enable_boinczip=no
+	 enable_apps=no
     ],
     [])
 
-AC_ARG_ENABLE(pkg-manager, 
+AC_ARG_ENABLE(pkg-manager,
     AS_HELP_STRING([--enable-pkg-manager],
                    [Builds and installs components that would be present in a boinc-manager package. This is a synonym for --disable-server --disable-client --disable-libraries --enable-manager
     ]),
@@ -174,6 +190,7 @@ AC_ARG_ENABLE(pkg-manager,
      enable_manager=yes
      enable_install_headers=no
 	 enable_boinczip=no
+	 enable_apps=no
     ],
     [])
 
@@ -193,6 +210,9 @@ fi
 if test x$enable_server = xyes ; then
   configured_to_build="${configured_to_build} server"
 fi
+if test x$enable_apps = xyes ; then
+  configured_to_build="${configured_to_build} apps"
+fi
 
 if test -z "${configured_to_build}" ; then
         AC_MSG_ERROR([
@@ -210,11 +230,11 @@ fi
 dnl ======================================================================
 dnl some vodoo required for building portable client-binary (client, clientgui)
 dnl ======================================================================
-AC_ARG_ENABLE([client-release], 
+AC_ARG_ENABLE([client-release],
    AS_HELP_STRING([--enable-client-release],
         [Attempt to build a portable "release-candidate": this links libstd++ and
-	other addon-libraries statically. 
-	(On GNU/Linux you might need to use gcc-3.0 for this to produce a 
+	other addon-libraries statically.
+	(On GNU/Linux you might need to use gcc-3.0 for this to produce a
 	binary that works for glibc <= 2.2 systems. => use CC=gcc-3.0 and CXX=g++-3.0)
 	(Default = no)]),
     [
@@ -232,7 +252,7 @@ WARNING:  You have requested a statically linked release build.
     also need to edit Makefiles manually in order for linking to work.
 
     It is far better to use dynamic linkage, which can resolve most
-    library interdependencies at run time.  
+    library interdependencies at run time.
 
     When the executable fails to link, and you can identify the missing
     library, you can edit the Makefile to add it, or if there is a --with
@@ -296,7 +316,7 @@ dnl AC_DEFINE_UNQUOTED([BOINC_MAJOR_VERSION], $BOINC_MAJOR_VERSION, [Major part 
 dnl AC_DEFINE_UNQUOTED([BOINC_MINOR_VERSION], $BOINC_MINOR_VERSION, [Minor part of BOINC version number])
 dnl AC_DEFINE_UNQUOTED([BOINC_RELEASE], $BOINC_RELEASE, [Release part of BOINC version number])
 
-dnl Need to duplicate these AC_SUBST because some versions of autoconf wont 
+dnl Need to duplicate these AC_SUBST because some versions of autoconf wont
 dnl find AC_SUBST in a macro unless subsequently used in a DEFINE or SUBST
 dnl outside of a macro.  Dont ask me why.
 AC_SUBST([BOINC_VERSION_STRING])
@@ -324,7 +344,7 @@ dnl If we're running under cygwin, check whether we want to use X11 or WIN32
 dnl GUI
 BOINC_CHECK_CYGWIN
 
-dnl enable objective-C 
+dnl enable objective-C
 if test x$OBJC = x ; then
   OBJC="$CC"
 fi
@@ -354,7 +374,7 @@ if ( test "${enable_client_release}" = yes ) && ( test "${enable_client}" != yes
 The switch --enable-client-release is only useful for building the client and will be ignored
 --------------------------------------------------])
 fi
-   
+
 
 
 dnl Find the extensions used on shared and static libraries on this system
@@ -366,7 +386,7 @@ dnl enable debug mode on all components using standard debug flags
 dnl if test "${enable_debug}" = yes; then
     dnl CXXFLAGS="$CXXFLAGS -DDEBUG -D_DEBUG"
     dnl CFLAGS="$CFLAGS -DDEBUG -D_DEBUG"
-dnl 
+dnl
     dnl AC_SUBST(CXXFLAGS)
     dnl AC_SUBST(CFLAGS)
 dnl fi
@@ -392,15 +412,15 @@ fi
 dnl Checks for libraries.
 
 dnl NOTE: Libraries subject to version changes, or those that might not be
-dnl installed everywhere should be linked statically when building portable 
+dnl installed everywhere should be linked statically when building portable
 dnl binaries.  Put libraries that should be linked statically on every platform
-dnl in the STATIC_LIB_LIST variable before calling SAH_CHECK_LIB.  (Note: Only 
+dnl in the STATIC_LIB_LIST variable before calling SAH_CHECK_LIB.  (Note: Only
 dnl the '*' wildcard is supported).
 STATIC_LIB_LIST="stdc++* gcc gcc_s gcc_eh atk* gtk* gdk* gmodule* gthread* gobject* glib* pango* cairo* wx* tiff* jpeg* png* Xi glut socket z expat* krb5support freetype fontconfig* resolv* idn c_nonshared gpg* gss* gnutls sasl2 sqlite3"
 
-dnl We'll store these libs in a separate variable BOINC_EXTRA_LIBS for later 
-dnl post-processing instead of the default-action, which would append 
-dnl them to LIBS (note, we also dont define HAVE_LIBXXX, because 
+dnl We'll store these libs in a separate variable BOINC_EXTRA_LIBS for later
+dnl post-processing instead of the default-action, which would append
+dnl them to LIBS (note, we also dont define HAVE_LIBXXX, because
 dnl currently they arent used)
 
 dnl Special rules for specific targets go here:  It's easier to add static libs
@@ -422,7 +442,7 @@ dnl ---------- libcurl (m4/libcurl.m4) ------------------------------
 
 if test "${enable_client}" = yes; then
    LIBCURL_CHECK_CONFIG([yes], [7.17.1], [haveCurl=yes], [haveCurl=no])
-   
+
    if test "${haveCurl}" != yes; then
       AC_MSG_ERROR([
 ================================================================================
@@ -431,8 +451,8 @@ ERROR: could not find (recent enough) development-libs for libcurl.
   This library is required to build the boinc-client.
   (If you don't want to build the client, use --disable-client with configure.
 
-  If libcurl-dev is installed on your system, make sure that the script 
-  'curl-config' is found in your PATH, and that 
+  If libcurl-dev is installed on your system, make sure that the script
+  'curl-config' is found in your PATH, and that
   'curl-config --version' gives something recent enough (see above).
 
   You can download libcurl from: http://curl.haxx.se/
@@ -453,14 +473,17 @@ ERROR: could not find (recent enough) development-libs for libcurl.
       fi
       BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${LIBCURL}"
 
-   fi	
+   fi
 
 fi
 
 dnl ---------- SSL (m4/check_ssl.m4)
-CHECK_SSL
-if test "${found_ssl}" = "yes"; then
-   BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${SSL_LIBS}"
+if [[ "x${enable_client}" = "xyes" -o "x${enable_server}" = "xyes" ]]
+then
+    CHECK_SSL
+    if test "x${found_ssl}" = "xyes"; then
+       BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${SSL_LIBS}"
+    fi
 fi
 
 dnl save the libs, since SAH_CHECK_LIB() will change them
@@ -469,20 +492,30 @@ SAH_CHECK_LIB([cygipc], [shmget],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
 SAH_CHECK_LIB([aio], [aio_fork],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
-SAH_CHECK_LIB([dl], [dlopen], 
+SAH_CHECK_LIB([dl], [dlopen],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
-SAH_CHECK_LIB([nsl], [gethostbyname], 
+SAH_CHECK_LIB([nsl], [gethostbyname],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
-#SAH_CHECK_LIB([wsock32], [fopen], 
-#   [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
-#SAH_CHECK_LIB([wsock], [fopen], 
-#   [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
-SAH_CHECK_LIB([socket], [bind], 
+SAH_CHECK_LIB([freetype], [fopen],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
-SAH_CHECK_LIB([z], [gzopen], 
+SAH_CHECK_LIB([socket], [bind],
+    [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+SAH_CHECK_LIB([z], [gzopen],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
 SAH_CHECK_LIB([cups], [md5_finish],
     [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+if test "${isWIN32}" = "yes" ; then
+   SAH_CHECK_LIB([wsock32], [fopen],
+       [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+   SAH_CHECK_LIB([wsock], [fopen],
+       [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+   SAH_CHECK_LIB([comctl32], [fopen],
+       [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+   SAH_CHECK_LIB([winmm], [fopen],
+       [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+   SAH_CHECK_LIB([msimg32], [fopen],
+       [BOINC_EXTRA_LIBS="${BOINC_EXTRA_LIBS} ${sah_lib_last}"])
+fi
 
 LIBS=${SAVELIBS_AAF}
 
@@ -508,7 +541,7 @@ if test "x${libdir}" = "xNONE" -o -z "${libdir}" ; then
 fi
 
 dnl if --sysconfdir was not specified, default ${sysconfdir} to '/etc/'.
-dnl this is done to preserve the behaviour of previous BOINC versions 
+dnl this is done to preserve the behaviour of previous BOINC versions
 dnl which always installed to /etc/ in client/scripts/. Now we install
 dnl to ${sysconfdir}/.
 dnl the default value for ${sysconfdir} set by automake is '${prefix}/etc',
@@ -522,7 +555,7 @@ AC_DEFINE_UNQUOTED(BOINC_EXECPREFIX,"`eval echo ${bindir}`",[Directory where BOI
 AC_DEFINE_UNQUOTED(BOINC_LIBDIR,"`eval echo ${libdir}`",[Directory where BOINC libraries will be installed])
 
 dnl ---------- decide wether to build the graphical boinc-api libs or not
-dnl check for X11 
+dnl check for X11
 AC_PATH_X
 AC_PATH_XTRA
 
@@ -534,8 +567,10 @@ dnl check for glut and prerequesites to the glut-test: libXmu and libXi
 dnl or on windows libGDI32 and libWinMM
 AC_CHECK_LIB([Xmu], [fopen], [have_Xmu="yes"], [have_Xmu="no"])
 AC_CHECK_LIB([Xi], [fopen], [have_Xi="yes"], [have_Xi="no"])
-AC_CHECK_LIB([gdi32], [fopen])
-AC_CHECK_LIB([winmm], [fopen])
+if test "${isWIN32}" = "yes" ; then
+  AC_CHECK_LIB([gdi32], [fopen])
+  AC_CHECK_LIB([winmm], [fopen])
+fi
 
 AX_CHECK_GLUT
 if test "X${no_x}" != "Xyes" -a "$no_glut" = yes; then
@@ -545,7 +580,7 @@ if test "X${no_x}" != "Xyes" -a "$no_glut" = yes; then
    if test "$have_Xi" = no; then
    	AC_MSG_WARN([Test for glut-dev might have failed because of missing libXi-dev!])
    fi
-fi	
+fi
 
 if test "$no_gl" = yes -o "$no_glu" = yes -o "$no_glut" = yes; then
    have_glut=no
@@ -569,7 +604,7 @@ else
    echo "DEBUG: GLUT_CFLAGS = $GLUT_CFLAGS" >&5
    echo "DEBUG: GLUT_LIBS = $GLUT_LIBS" >&5
 
-   AC_CHECK_HEADERS([gl.h glu.h glut.h glaux.h GL/gl.h GL/glu.h GL/glut.h GL/glaux.h OpenGL/gl.h OpenGL/glu.h OpenGL/glut.h OpenGL/glaux.h GLUT/glut.h MesaGL/gl.h MesaGL/glu.h MesaGL/glut.h MesaGL/glaux.h libnotify/notify.h gtk/gtk.h xlocale.h])
+   AC_CHECK_HEADERS([gl.h glu.h glut.h glaux.h GL/gl.h GL/glu.h GL/glut.h GL/glaux.h OpenGL/gl.h OpenGL/glu.h OpenGL/glut.h OpenGL/glaux.h GLUT/glut.h MesaGL/gl.h MesaGL/glu.h MesaGL/glut.h MesaGL/glaux.h libnotify/notify.h gtk/gtk.h locale.h xlocale.h])
 
    AC_CHECK_LIB([jpeg], [jpeg_start_compress],[have_jpeg=1],[have_jpeg=0])
    AC_CHECK_HEADER([jpeglib.h],[have_jpeg=1],[have_jpeg=0])
@@ -579,7 +614,7 @@ else
 ================================================================================
 WARNING: libjpeg.a/jpeglib.h not found.
 
-BOINC's openGL graphics-API needs libjpeg ! 
+BOINC's openGL graphics-API needs libjpeg !
 see http://www.ijg.org/
 
 ==> I will continue building the non-graphical parts of the BOINC API library.
@@ -606,8 +641,12 @@ AH_TOP([
 ])
 AH_BOTTOM([
 
-#ifndef HAVE_XLOCALE_H
+#if !HAVE_DECL__CONFIGTHREADLOCALE
 #define NO_PER_THREAD_LOCALE 1
+#undef HAVE__CONFIGTHREADLOCALE
+#else
+#undef NO_PER_THREAD_LOCALE
+#define HAVE__CONFIGTHREADLOCALE 1
 #endif
 
 #ifndef HAVE_RES_INIT
@@ -627,40 +666,139 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_TYPE_SIGNAL
-AC_CHECK_HEADERS(winsock2.h winsock.h windows.h ws2tcpip.h winternl.h crtdbg.h sys/types.h sys/un.h arpa/inet.h dirent.h grp.h fcntl.h inttypes.h stdint.h memory.h netdb.h netinet/in.h netinet/tcp.h netinet/ether.h net/if.h net/if_arp.h signal.h strings.h sys/auxv.h sys/file.h sys/fcntl.h sys/ipc.h sys/ioctl.h sys/msg.h sys/param.h sys/resource.h sys/select.h sys/sem.h sys/shm.h sys/sockio.h sys/socket.h sys/stat.h sys/statvfs.h sys/statfs.h sys/systeminfo.h sys/time.h sys/types.h sys/utsname.h sys/vmmeter.h sys/wait.h unistd.h utmp.h errno.h procfs.h ieeefp.h setjmp.h float.h)
-
-if test x${ac_cv_header_windows_h} = xyes ; then
-
-AC_CHECK_HEADERS([winhttp.h ntapi.h ddk/ntapi.h dbghelp.h delayimp.h],[], [], [[
-#if HAVE_WINDOWS_H
-# include <windows.h>
-#endif
-]])
-
-AC_CHECK_HEADER(security.h, [
-AC_DEFINE(HAVE_SECURITY_H,1,[Define to 1 if your compiler has the security.h header file])
-AC_DEFINE(SECURITY_WIN32,1,[Define to 1 if your compiler has the security.h header file])
-], [], [[
-#define SECURITY_WIN32 1
-#if HAVE_WINDOWS_H
-# include <windows.h>
-#endif
-]])
-
-AC_CHECK_TYPES([SYSTEM_PROCESSES, CLIENT_ID, VM_COUNTERS, SYSTEM_THREADS, THREAD_STATE, THREAD_WAIT_REASON],[],[],[[
-#if HAVE_WINDOWS_H
-#include <windows.h>
-#endif
-#ifdef HAVE_WINTERNL_H
-#include <winternl.h>
-#elif defined(HAVE_DDK_NTAPI_H)
-#include <ddk/ntapi.h>
-#elif defined(HAVE_NTAPI_H)
-#include <ntapi.h>
-#endif
-]])
-
+if test "${isWIN32}" = "yes" ; then
+  AC_CHECK_HEADERS(winsock2.h winsock.h windows.h ws2tcpip.h winternl.h crtdbg.h)
 fi
+AC_CHECK_HEADERS(sys/types.h sys/un.h arpa/inet.h dirent.h grp.h fcntl.h inttypes.h stdint.h memory.h netdb.h netinet/in.h netinet/tcp.h netinet/ether.h net/if.h net/if_arp.h signal.h strings.h sys/auxv.h sys/file.h sys/fcntl.h sys/ipc.h sys/ioctl.h sys/msg.h sys/param.h sys/resource.h sys/select.h sys/sem.h sys/shm.h sys/sockio.h sys/socket.h sys/stat.h sys/statvfs.h sys/statfs.h sys/systeminfo.h sys/time.h sys/types.h sys/utsname.h sys/vmmeter.h sys/wait.h unistd.h utmp.h errno.h procfs.h ieeefp.h setjmp.h float.h sal.h)
+
+save_cxxflags="${CXXFLAGS}"
+save_cppflags="${CPPFLAGS}"
+CXXFLAGS="${CXXFLAGS} -msse3"
+CPPFLAGS="${CPPFLAGS} -msse3"
+AC_CHECK_HEADERS([intrin.h x86intrin.h pmmintrin.h xmmintrin.h emmintrin.h])
+CXXFLAGS="${save_cxxflags} -mavx"
+CPPFLAGS="${save_cppflags} -mavx"
+AC_CHECK_HEADERS([immintrin.h avxintrin.h])
+
+AC_CHECK_DECLS([_xgetbv, xgetbv, __xgetbv, cpuid, _cpuid, __cpuid],
+    [],[],[[
+#if HAVE_INTRIN_H
+# include <intrin.h>
+#endif
+#if HAVE_IMMINTRIN_H
+# include <immintrin.h>
+#endif
+#if HAVE_AVXINTRIN_H
+# include <avxintrin.h>
+#endif
+#if HAVE_X86INTRIN_H
+# include <x86intrin.h>
+#endif
+#if HAVE_PMMINTRIN_H
+# include <pmmintrin.h>
+#endif
+#if HAVE_XMMINTRIN_H
+# include <xmmintrin.h>
+#endif
+#if HAVE_EMMINTRIN_H
+# include <emmintrin.h>
+#endif
+]])
+
+AC_MSG_CHECKING(if assembler supports xgetbv)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("xgetbv");])],
+  AC_DEFINE([ASM_SUPPORTS_XGETBV],1,[Define to 1 if the xgetbv instruction can be used in inline assember])
+  AC_MSG_RESULT(yes),
+  AC_MSG_RESULT(no)
+)
+
+CXXFLAGS="${save_cxxflags}"
+CPPFLAGS="${save_cppflags}"
+
+if test "${isWIN32}" = "yes" ; then
+  AC_CHECK_HEADERS([winhttp.h ntapi.h ddk/ntapi.h dbghelp.h delayimp.h],[], [], [[
+  #if HAVE_WINDOWS_H
+  # include <windows.h>
+  #endif
+  ]])
+
+  AC_CHECK_HEADER(security.h, [
+  AC_DEFINE(HAVE_SECURITY_H,1,[Define to 1 if your compiler has the security.h header file])
+  AC_DEFINE(SECURITY_WIN32,1,[Define to 1 if your compiler has the security.h header file])
+  ], [], [[
+  #define SECURITY_WIN32 1
+  #if HAVE_WINDOWS_H
+  # include <windows.h>
+  #endif
+  ]])
+
+  AC_CHECK_TYPES([SYSTEM_PROCESSES, CLIENT_ID, VM_COUNTERS, SYSTEM_THREADS, THREAD_STATE, THREAD_WAIT_REASON],[],[],[[
+  #if HAVE_WINDOWS_H
+  #include <windows.h>
+  #endif
+  #ifdef HAVE_WINTERNL_H
+  #include <winternl.h>
+  #elif defined(HAVE_DDK_NTAPI_H)
+  #include <ddk/ntapi.h>
+  #elif defined(HAVE_NTAPI_H)
+  #include <ntapi.h>
+  #endif
+  ]])
+fi
+
+AC_CHECK_HEADER(nvapi.h, [
+  AC_DEFINE(HAVE_NVAPI_H,1,[Define to 1 if your compiler has the nvapi.h header file])
+  ],[],[[
+  #ifdef HAVE_WINDOWS_H
+  #include <windows.h>
+  #endif
+  #ifdef HAVE_SAL_H
+  #include "sal.h"
+  #endif
+  #ifndef __success
+  #define __success(x)
+  #endif
+  #ifndef __in
+  #define __in
+  #endif
+  #ifndef __out
+  #define __out
+  #endif
+  #ifndef __in_ecount
+  #define __in_ecount(x)
+  #endif
+  #ifndef __out_ecount
+  #define __out_ecount(x)
+  #endif
+  #ifndef __in_opt
+  #define __in_opt
+  #endif
+  #ifndef __out_opt
+  #define __out_opt
+  #endif
+  #ifndef __inout
+  #define __inout
+  #endif
+  #ifndef __inout_opt
+  #define __inout_opt
+  #endif
+  #ifndef __inout_ecount
+  #define __inout_ecount(x)
+  #endif
+  #ifndef __inout_ecount_full
+  #define __inout_ecount_full(x)
+  #endif
+  #ifndef __inout_ecount_part_opt
+  #define __inout_ecount_part_opt(x,y)
+  #endif
+  #ifndef __inout_ecount_full_opt
+  #define __inout_ecount_full_opt(x,y)
+  #endif
+  #ifndef __out_ecount_full_opt
+  #define __out_ecount_full_opt(x)
+  #endif
+]])
+
 
 AC_CHECK_TYPES([socklen_t],[],[],[[
 #if HAVE_WINDOWS_H
@@ -789,9 +927,9 @@ AC_LANG_POP
 dnl Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(ether_ntoa setpriority sched_setscheduler strlcpy strlcat strcasestr strcasecmp sigaction getutent setutent getisax strdup strdupa daemon stat64 putenv setenv unsetenv res_init strtoull)
+AC_CHECK_FUNCS(ether_ntoa setpriority sched_setscheduler strlcpy strlcat strcasestr strcasecmp sigaction getutent setutent getisax strdup _strdup strdupa _strdupa daemon stat64 putenv setenv unsetenv res_init strtoull localtime localtime_r gmtime gmtime_r)
 
-AC_CHECK_DECLS([_fpreset, fpreset],
+AC_CHECK_DECLS([_fpreset, fpreset, _configthreadlocale],
     [],[],[[
 #include <stdio.h>
 #if HAVE_SYS_TYPES_H
@@ -838,6 +976,12 @@ AC_CHECK_DECLS([_fpreset, fpreset],
 #ifdef HAVE_MATH_H
 #include <math.h>
 #endif
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+#ifdef HAVE_XLOCALE_H
+#include <xlocale.h>
+#endif
 ]])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -874,18 +1018,15 @@ fi
 dnl ---------- wxWidgets --------------------------------------------------
 if test "${enable_manager}" = yes ; then
   BOINC_OPTIONS_WXWIDGETS([3.0.0])
+else
+  AM_CONDITIONAL([GUI_GTK], false)
 fi
 
 dnl ---------- libNotify --------------------------------------------------
 if test "${enable_manager}" = yes ; then
   PKG_CHECK_MODULES(LIBNOTIFY, [libnotify])
 fi
- 
-dnl ---------- GTK2 -------------------------------------------------------
-if test "${enable_manager}" = yes ; then
-  PKG_CHECK_MODULES(GTK, [gtk+-2.0])
-fi
- 
+
 dnl ---------- Sqlite3 ----------------------------------------------------
 if test "${enable_manager}" = yes ; then
   AM_PATH_SQLITE3
@@ -896,7 +1037,7 @@ if test "${enable_manager}" = yes; then
     PKG_CHECK_MODULES(XCB,xcb,have_Xcb="yes",[echo "WARNING: Xcb not found, x11_screensaver will not be built"])
     PKG_CHECK_MODULES(XCBATOM,xcb-atom,have_Xcbatom="yes",[echo "WARNING: Xcb-atom not found, x11_screensaver will not be built"])
 fi
-AM_CONDITIONAL(BUILD_X11_SCREENSAVER, [ test "$have_Xcb" = yes -a "$have_Xcbatom" = yes ]) 
+AM_CONDITIONAL(BUILD_X11_SCREENSAVER, [ test "$have_Xcb" = yes -a "$have_Xcbatom" = yes ])
 dnl -----------------------------------------------------------------------
 
 dnl Heres another way to set up host-specific stuff
@@ -925,6 +1066,8 @@ AM_CONDITIONAL(ENABLE_CLIENT, [test "${enable_client}" = yes])
 AM_CONDITIONAL(ENABLE_MANAGER, [ test "x${ac_cv_have_wxwidgets}" = xyes -a "${enable_manager}" = yes ])
 AM_CONDITIONAL(ENABLE_LIBRARIES, [test "${enable_libraries}" = yes])
 AM_CONDITIONAL(ENABLE_BOINCZIP, [test "${enable_boinczip}" = yes])
+AM_CONDITIONAL(ENABLE_APPS, [test "${enable_apps}" = yes])
+AM_CONDITIONAL(ENABLE_BOINCCRYPT, [test "x${enable_server}" = xyes  || test "x${enable_client}" = xyes ])
 AM_CONDITIONAL(INSTALL_HEADERS, [test "${enable_install_headers}" = yes])
 AM_CONDITIONAL(HAVE_CUDA_LIB, [test "${enable_client}" = yes -a -f ./coprocs/CUDA/posix/${boinc_platform}/libcudart.so])
 
@@ -950,7 +1093,7 @@ fi
        echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
 if test "$enable_release_client" = yes -a "$disable_static_linkage" = no ; then
 if test x${ac_cv_cxx_compiler_gnu} != xno ; then
-  SAH_CHECK_LIB([gcc_eh],[_Unwind_Resume],[ 
+  SAH_CHECK_LIB([gcc_eh],[_Unwind_Resume],[
     AC_DEFINE([HAVE_LIBGCC_EH],[1],[Define to 1 if you have the gcc_eh library])
     CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
@@ -958,7 +1101,7 @@ if test x${ac_cv_cxx_compiler_gnu} != xno ; then
     AC_DEFINE([HAVE_LIBGCC],[1],[Define to 1 if you have the gcc library])
     CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
-  SAH_CHECK_LIB([c_nonshared],[fopen],[ 
+  SAH_CHECK_LIB([c_nonshared],[fopen],[
     AC_DEFINE([HAVE_LIBC_NONSHARED],[1],[Define to 1 if you have the c_nonshared library])
     CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
@@ -968,17 +1111,82 @@ if test x${ac_cv_cxx_compiler_gnu} != xno ; then
    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
 fi
 fi
-SAH_CHECK_LIB([wsock32],[fopen],[
-    AC_DEFINE([HAVE_LIBWSOCK32],[1],[Define to 1 if you have the wsock32 library])
+SAH_CHECK_LIB([nvapi],[fopen],[
+    AC_DEFINE([HAVE_LIBNVAPI],[1],[Define to 1 if you have the NVIDIA API library])
     CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
-SAH_CHECK_LIB([userenv],[fopen],[
-    AC_DEFINE([HAVE_LIBUSERENV],[1],[Define to 1 if you have the userenv library])
-    CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
-   echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+if test ${isWIN32} = "yes" ; then
+  SAH_CHECK_LIB([gdi32],[fopen],[
+      AC_DEFINE([HAVE_LIBWGDI32],[1],[Define to 1 if you have the gdi32 library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+     found_msvcrt=no
+  SAH_CHECK_LIB([msvcr110],[fopen],[
+      found_msvcrt=yes
+      AC_DEFINE([HAVE_LIBMSVCR110],[1],[Define to 1 if you have the msvcr110 library])
+      AC_DEFINE([HAVE_MSVCRT],[1],[Define to 1 if you have a visual c runtime library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  if test $found_msvcrt = no ; then
+    SAH_CHECK_LIB([msvcr100],[fopen],[
+        found_msvcrt=yes
+        AC_DEFINE([HAVE_LIBMSVCR100],[1],[Define to 1 if you have the msvcr100 library])
+        AC_DEFINE([HAVE_MSVCRT],[1],[Define to 1 if you have a visual c runtime library])
+        CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  fi
+  if test $found_msvcrt = no ; then
+    SAH_CHECK_LIB([msvcr90d],[fopen],[
+        found_msvcrt=yes
+        AC_DEFINE([HAVE_LIBMSVCR90D],[1],[Define to 1 if you have the msvcr90d library])
+        AC_DEFINE([HAVE_MSVCRT],[1],[Define to 1 if you have a visual c runtime library])
+        CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  fi
+  if test $found_msvcrt = no ; then
+    SAH_CHECK_LIB([msvcr90],[fopen],[
+        found_msvcrt=yes
+        AC_DEFINE([HAVE_LIBMSVCR90],[1],[Define to 1 if you have the msvcr90 library])
+        AC_DEFINE([HAVE_MSVCRT],[1],[Define to 1 if you have a visual c runtime library])
+        CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+    echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  fi
+  SAH_CHECK_LIB([wininet],[fopen],[
+      AC_DEFINE([HAVE_LIBWININET],[1],[Define to 1 if you have the wininet library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([wsock32],[fopen],[
+      AC_DEFINE([HAVE_LIBWSOCK32],[1],[Define to 1 if you have the wsock32 library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([userenv],[fopen],[
+      AC_DEFINE([HAVE_LIBUSERENV],[1],[Define to 1 if you have the userenv library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([iphlpapi],[fopen],[
+      AC_DEFINE([HAVE_LIBIPHLPAPI],[1],[Define to 1 if you have the iphlpapi library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([sensapi],[fopen],[
+      AC_DEFINE([HAVE_LIBSENSAPI],[1],[Define to 1 if you have the sensapi library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([wtsapi32],[fopen],[
+      AC_DEFINE([HAVE_LIBWTSAPI32],[1],[Define to 1 if you have the wtsapi32 library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([winhttp],[fopen],[
+      AC_DEFINE([HAVE_LIBWINHTTP],[1],[Define to 1 if you have the WinHttp library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+  SAH_CHECK_LIB([secur32],[fopen],[
+      AC_DEFINE([HAVE_LIBSECUR32],[1],[Define to 1 if you have the secur32 library])
+      CLIENTLIBS="${sah_lib_last} ${CLIENTLIBS}"])
+     echo DEBUG: CLIENTLIBS=${CLIENTLIBS} >&5
+fi
 
 svlibs=$LIBS
-if test "${ac_cv_func_res_init}" != "yes" ; then 
+if test "${ac_cv_func_res_init}" != "yes" ; then
   AC_CHECK_LIB([resolv],[res_init],[
     ac_cv_func_res_init="yes"
     AC_CHECK_FUNCS([res_init])
@@ -1039,7 +1247,7 @@ if test "${enable_client_release}" = "yes" ; then
 
 
 
-   ## NOTE: its *extremely* important to always compile with __NO_CTYPE 
+   ## NOTE: its *extremely* important to always compile with __NO_CTYPE
    ## defined, because this avoids GLIBC_2.3 symbols being pulled in via ctype.h-macros,
    CPPFLAGS="${CPPFLAGS} -D__NO_CTYPE"
 fi
@@ -1114,6 +1322,7 @@ AC_CONFIG_FILES([
                  packages/solaris/CSW/boincmanager/Makefile
                  packages/solaris/CSW/boincmanager/pkginfo
                  packages/solaris/CSW/boincmanager/prototype
+                 samples/Makefile
                  test/boinc_path_config.py:py/boinc_path_config.py.in
                  test/Makefile
                  test/version.inc

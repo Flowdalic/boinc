@@ -26,7 +26,7 @@ check_get_args(array("id"));
 $user = get_logged_in_user();
 $teamid = get_int("id");
 
-$team = lookup_team($teamid);
+$team = BoincTeam::lookup_id($teamid);
 if (!$team->joinable) {
     error_page(tra("The team %1 is not joinable.", $team->name));
 }
@@ -42,7 +42,7 @@ echo " <p><b>".tra("Please note:")."</b>
 echo form_tokens($user->authenticator);
 echo "
     <input type=\"hidden\" name=\"teamid\" value=\"$teamid\">
-    <input type=\"submit\" value=\"".tra("Join team")."\">
+    <input class=\"btn btn-default\" type=\"submit\" value=\"".tra("Join team")."\">
     </form>
 ";
 page_tail();

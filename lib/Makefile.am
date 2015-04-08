@@ -125,7 +125,6 @@ pkginclude_HEADERS = \
     average.h \
     base64.h \
     boinc_fcgi.h \
-    boinc_win.h \
     cal_boinc.h \
     cc_config.h \
     cert_sig.h \
@@ -152,11 +151,9 @@ pkginclude_HEADERS = \
     procinfo.h \
     proxy_info.h \
     stackwalker_imports.h \
-    stackwalker_win.h \
     str_util.h \
     url.h \
     util.h \
-    win_util.h \
     $(mac_headers) \
     $(win_headers)
 endif
@@ -171,19 +168,21 @@ noinst_HEADERS = \
     synch.h \
     unix_util.h
 
-lib_LTLIBRARIES = libboinc.la libboinc_crypt.la
+lib_LTLIBRARIES = libboinc.la
 libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
 libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
 libboinc_la_LIBADD =
 
+if ENABLE_BOINCCRYPT
+lib_LTLIBRARIES += libboinc_crypt.la
 libboinc_crypt_la_SOURCES = crypt.cpp
 libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
 libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
 libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
 libboinc_crypt_la_LIBADD =
-
+endif
 
 if ENABLE_FCGI
 lib_LTLIBRARIES += libboinc_fcgi.la
@@ -209,7 +208,10 @@ endif
 
 
 if BUILD_STATIC_LIBS
-all_local = $(LIBBOINC_STATIC) $(LIBBOINC_CRTYPT_STATIC)
+all_local = $(LIBBOINC_STATIC) 
+if ENABLE_BOINCCRYPT
+all_local += $(LIBBOINC_CRYPT_STATIC) 
+endif
 if ENABLE_FCGI
 all_local += $(LIBBOINC_FCGI_STATIC) 
 endif
@@ -249,7 +251,7 @@ msg_test_SOURCES = msg_test.cpp
 msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
 msg_test_LDADD = $(LIBBOINC)
 crypt_prog_SOURCES = crypt_prog.cpp 
-crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS)
+crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
 crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS) 
 parse_test_SOURCES = parse_test.cpp 
 parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)

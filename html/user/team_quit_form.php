@@ -25,7 +25,7 @@ check_get_args(array());
 
 $user = get_logged_in_user(true);
 
-$team = lookup_team($user->teamid);
+$team = BoincTeam::lookup_id($user->teamid);
 if (!$team) {
     error_page(tra("No such team"));
 }
@@ -39,7 +39,7 @@ echo tra("<strong>Please note before quitting a team:</strong>
     ."<form method=\"post\" action=\"team_quit_action.php\">";
 echo form_tokens($user->authenticator);
 echo "<input type=\"hidden\" name=\"id\" value=\"$team->id\">
-    <input type=\"submit\" value=\"".tra("Quit Team")."\">
+    <input class=\"btn btn-default\" type=\"submit\" value=\"".tra("Quit Team")."\">
     </form>
 ";
 page_tail();
