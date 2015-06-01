@@ -1,4 +1,4 @@
-boinc (7.5.0+dfsg-1exp1) experimental; urgency=medium
+boinc (7.6.2+dfsg-1exp1) experimental; urgency=medium
 
   [ Gianfranco Costamagna ]
   * New upstream release, patch refresh.
@@ -17,7 +17,7 @@ boinc (7.5.0+dfsg-1exp1) experimental; urgency=medium
   * d/p/envargs.patch, fix inconsistencies spot with research compiler.
     (Closes: #747964)
 
- -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Wed, 08 Apr 2015 12:43:01 +0200
+ -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 01 Jun 2015 10:29:55 +0200
 
 boinc (7.4.23+dfsg-2exp1) experimental; urgency=medium
 

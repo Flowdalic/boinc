@@ -1,7 +1,7 @@
 Description: this patch adds an useful error message in case of dir open failure.
 --- a/lib/filesys.cpp
 +++ b/lib/filesys.cpp
-@@ -144,7 +144,12 @@ DIRREF dir_open(const char* p) {
+@@ -146,7 +146,12 @@ DIRREF dir_open(const char* p) {
      dirp->handle = INVALID_HANDLE_VALUE;
  #else
      dirp = opendir(p);
@@ -15,7 +15,7 @@ Description: this patch adds an useful error message in case of dir open failure
  #endif
      return dirp;
  }
-@@ -599,7 +604,7 @@ static int boinc_rename_aux(const char*
+@@ -614,7 +619,7 @@ static int boinc_rename_aux(const char*
      //
      int retval = rename(old, newf);
      if (retval) {

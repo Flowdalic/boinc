@@ -3,7 +3,7 @@ Description: Installations outside /var/www are disabled by default
  http://dabase.com/blog/AH01630:_client_denied_by_server_configuration/
 --- a/tools/make_project
 +++ b/tools/make_project
-@@ -330,6 +330,7 @@
+@@ -331,6 +331,7 @@
      <Directory "%(proot)s/html">
          Options Indexes FollowSymlinks MultiViews
          AllowOverride AuthConfig
@@ -11,7 +11,7 @@ Description: Installations outside /var/www are disabled by default
          Order allow,deny
          Allow from all
      </Directory>
-@@ -337,6 +338,7 @@
+@@ -338,6 +339,7 @@
      <Directory "%(proot)s/cgi-bin">
          Options ExecCGI
          AllowOverride AuthConfig
