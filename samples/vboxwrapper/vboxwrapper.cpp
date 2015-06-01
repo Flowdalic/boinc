@@ -80,6 +80,7 @@
 #ifdef _WIN32
 #include "vbox_mscom42.h"
 #include "vbox_mscom43.h"
+#include "vbox_mscom50.h"
 #endif
 #include "vbox_vboxmanage.h"
 
@@ -368,6 +369,7 @@ int main(int argc, char** argv) {
     APP_INIT_DATA aid;
     VBOX_VM* pVM = NULL;
     VBOX_CHECKPOINT checkpoint;
+    double desired_checkpoint_interval = 0;
     double random_checkpoint_factor = 0;
     double elapsed_time = 0;
     double fraction_done = 0;
@@ -394,7 +396,6 @@ int main(int argc, char** argv) {
     int temp_delay = 86400;
     string message;
     char buf[256];
-
 
     // Initialize diagnostics system
     //
@@ -444,7 +445,9 @@ int main(int argc, char** argv) {
     int vbox_major = 0, vbox_minor = 0;
 
     if (BOINC_SUCCESS != vbox42::VBOX_VM::get_version_information(vbox_version)) {
-        vbox43::VBOX_VM::get_version_information(vbox_version);
+        if (BOINC_SUCCESS != vbox43::VBOX_VM::get_version_information(vbox_version)) {
+            vbox50::VBOX_VM::get_version_information(vbox_version);
+        }
     }
     if (!vbox_version.empty()) {
         sscanf(vbox_version.c_str(), "%d.%d", &vbox_major, &vbox_minor);
@@ -453,6 +456,9 @@ int main(int argc, char** argv) {
         }
         if ((4 == vbox_major) && (3 == vbox_minor)) {
             pVM = (VBOX_VM*) new vbox43::VBOX_VM();
+        }
+        if ((5 == vbox_major) && (0 == vbox_minor)) {
+            pVM = (VBOX_VM*) new vbox50::VBOX_VM();
         }
     }
     if (!pVM) {
@@ -491,6 +497,7 @@ int main(int argc, char** argv) {
         srand((int)(vm_image_stat.st_mtime * time(NULL)));
     }
     random_checkpoint_factor = (double)(((int)(drand() * 100000.0)) % 600);
+
     vboxlog_msg("Feature: Checkpoint interval offset (%d seconds)", (int)random_checkpoint_factor);
 
     // Display trickle value if specified
@@ -1030,10 +1037,17 @@ int main(int argc, char** argv) {
                 pVM->dump_hypervisor_status_reports();
             }
 
+            // Real VM checkpoints (snapshots) are expensive, don't do them very often.
+            // 
+            // If the project has disabled automatic checkpoints, just report that we have
+            // successfully completed the checkpoint as soon as the API reports that we should
+            // checkpoint.
+            //
             if (boinc_time_to_checkpoint()) {
-                // Only peform a VM checkpoint every ten minutes or so.
-                //
-                if (elapsed_time >= last_checkpoint_elapsed_time + pVM->minimum_checkpoint_interval + random_checkpoint_factor) {
+                if (
+                    (elapsed_time >= last_checkpoint_elapsed_time + desired_checkpoint_interval + random_checkpoint_factor) ||
+                    pVM->disable_automatic_checkpoints
+                ) {
                     // Basic interleave factor is only needed once.
                     if (random_checkpoint_factor > 0) {
                         random_checkpoint_factor = 0.0;
@@ -1059,12 +1073,14 @@ int main(int argc, char** argv) {
                 }
             }
 
-            // send elapsed-time trickle message if needed
+            // Send elapsed-time trickle message if needed
             //
             if (trickle_period) {
                 check_trickle_period(elapsed_time, trickle_period);
             }
 
+            // Changes detected, re-read preferences
+            //
             if (boinc_status.reread_init_data_file) {
                 boinc_status.reread_init_data_file = false;
 
@@ -1074,7 +1090,17 @@ int main(int argc, char** argv) {
                 boinc_get_init_data_p(&aid);
                 set_throttles(aid, *pVM);
 
-                vboxlog_msg("Checkpoint Interval is now %d seconds.", (int)aid.checkpoint_period);
+                desired_checkpoint_interval = aid.checkpoint_period;
+                if (pVM->minimum_checkpoint_interval > aid.checkpoint_period) {
+                    desired_checkpoint_interval = pVM->minimum_checkpoint_interval;
+                }
+
+                vboxlog_msg(
+                    "Setting checkpoint interval to %d seconds. (Higher value of (Preference: %d seconds) or (Vbox_job.xml: %d seconds))",
+                    (int)desired_checkpoint_interval,
+                    (int)aid.checkpoint_period,
+                    (int)pVM->minimum_checkpoint_interval
+                );
             }
 
             // if the VM has a maximum amount of time it is allowed to run,

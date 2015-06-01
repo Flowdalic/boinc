@@ -553,26 +553,40 @@ bool ACTIVE_TASK_SET::is_slot_dir_in_use(char* dir) {
     return false;
 }
 
-// Get a free slot,
-// and make a slot dir if needed
+// Get a free slot:
+// either find an unused an empty slot dir,
+// or create a new slot dir if needed
 //
 int ACTIVE_TASK::get_free_slot(RESULT* rp) {
 #ifndef SIM
     int j, retval;
     char path[MAXPATHLEN];
 
+    // scan slot numbers: slots/0, slots/1, etc.
+    //
     for (j=0; ; j++) {
+        // skip slots that are in use by existing jobs
+        //
         if (gstate.active_tasks.is_slot_in_use(j)) continue;
 
-        // make sure we can make an empty directory for this slot
-        //
         get_slot_dir(j, path, sizeof(path));
         if (boinc_file_exists(path)) {
             if (is_dir(path)) {
+                // If the directory exists, try to clean it out.
+                // If this succeeds, use it.
+                //
                 retval = client_clean_out_dir(path, "get_free_slot()");
                 if (!retval) break;
+                if (log_flags.slot_debug) {
+                    msg_printf(rp->project, MSG_INFO,
+                        "[slot] failed to clean out dir: %s",
+                        boincerror(retval)
+                    );
+                }
             }
         } else {
+            // directory doesn't exist - create one
+            //
             retval = make_slot_dir(j);
             if (!retval) break;
         }
@@ -588,7 +602,9 @@ int ACTIVE_TASK::get_free_slot(RESULT* rp) {
     }
     slot = j;
     if (log_flags.slot_debug) {
-        msg_printf(rp->project, MSG_INFO, "[slot] assigning slot %d to %s", j, rp->name);
+        msg_printf(rp->project, MSG_INFO,
+            "[slot] assigning slot %d to %s", j, rp->name
+        );
     }
 #endif
     return 0;
@@ -1112,7 +1128,10 @@ void* throttler(void*) {
 
     while (1) {
         client_mutex.lock();
-        if (gstate.tasks_suspended || gstate.global_prefs.cpu_usage_limit > 99) {
+        if (gstate.tasks_suspended
+            || gstate.global_prefs.cpu_usage_limit > 99
+            || gstate.global_prefs.cpu_usage_limit < 0.005
+            ) {
             client_mutex.unlock();
             boinc_sleep(10);
             continue;

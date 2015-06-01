@@ -98,14 +98,17 @@ define('S_TESTER', 3);
 define('S_VOLUNTEER', 4);
 define('S_VOLUNTEER_TESTER', 5);
 define('S_SCIENTIST', 6);
+define('S_HELP_DESK_EXPERT', 7);
+define('S_NFLAGS', 8);
 
-$special_user_bitfield[S_MODERATOR]="Volunteer moderator";
-$special_user_bitfield[S_ADMIN]="Project administrator";
-$special_user_bitfield[S_DEV]="Project developer";
-$special_user_bitfield[S_TESTER]="Project tester";
-$special_user_bitfield[S_VOLUNTEER]="Volunteer developer";
-$special_user_bitfield[S_VOLUNTEER_TESTER]="Volunteer tester";
-$special_user_bitfield[S_SCIENTIST]="Project scientist";
+$special_user_bitfield[S_MODERATOR] = tra("Volunteer moderator");
+$special_user_bitfield[S_ADMIN] = tra("Project administrator");
+$special_user_bitfield[S_DEV] = tra("Project developer");
+$special_user_bitfield[S_TESTER] = tra("Project tester");
+$special_user_bitfield[S_VOLUNTEER] = tra("Volunteer developer");
+$special_user_bitfield[S_VOLUNTEER_TESTER] = tra("Volunteer tester");
+$special_user_bitfield[S_SCIENTIST] = tra("Project scientist");
+$special_user_bitfield[S_HELP_DESK_EXPERT] = tra("Help desk expert");
 
 // show a banner with search form on left and PM info on right
 //
@@ -666,7 +669,7 @@ function show_post(
         $posttext = output_transform($posttext, $options);
         
         echo "<p>", $posttext, "</p>";
-        echo "</td></tr><tr><td class=\"postfooter\">ID: <i>", $post->id;
+        echo "</td></tr><tr><td class=\"postfooter\"><span>ID: <i>", $post->id;
         if ($no_forum_rating) {
             echo " &middot; <a href=\"forum_report_post.php?post=".$post->id."\">";
             show_image(REPORT_POST_IMAGE, tra("Report this post as offensive"), tra("Report as offensive"), REPORT_POST_IMAGE_HEIGHT);
@@ -690,7 +693,7 @@ function show_post(
             $url = "forum_reply.php?thread=" . $thread->id . "&amp;post=" . $post->id . "#input";
             show_button($url, tra("Quote"), tra("Post a reply by quoting this message"));
         }
-        echo "</td></tr>";
+        echo "</span></td></tr>";
     } else {
         echo "</td></tr><tr><td class=\"postfooter\">";
     }

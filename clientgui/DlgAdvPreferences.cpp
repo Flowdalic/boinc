@@ -76,8 +76,10 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
     m_Notebook->SetPageImage(3,iImageIndex);
 
     //setting warning bitmap
-    m_bmpWarning->SetBitmap(GetScaledBitmapFromXPMData(warning_xpm));
-
+    if (m_bmpWarning) {
+        m_bmpWarning->SetBitmap(GetScaledBitmapFromXPMData(warning_xpm));
+    }
+    
     wxCheckBox* proc_cb[] = {m_chkProcSunday,m_chkProcMonday,m_chkProcTuesday,m_chkProcWednesday,m_chkProcThursday,m_chkProcFriday,m_chkProcSaturday};
     wxTextCtrl* proc_tstarts[] = {m_txtProcSundayStart,m_txtProcMondayStart,m_txtProcTuesdayStart,m_txtProcWednesdayStart,m_txtProcThursdayStart,m_txtProcFridayStart,m_txtProcSaturdayStart};
     wxTextCtrl* proc_tstops[] = {m_txtProcSundayStop,m_txtProcMondayStop,m_txtProcTuesdayStop,m_txtProcWednesdayStop,m_txtProcThursdayStop,m_txtProcFridayStop,m_txtProcSaturdayStop};
@@ -99,6 +101,9 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
     SetValidators();
     //read in settings and initialize controls
     ReadPreferenceSettings();
+
+    if (! m_bOKToShow) return;
+
     // Get default preference values
     defaultPrefs.enabled_defaults();
     //
@@ -130,7 +135,9 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
 
 /* destructor */
 CDlgAdvPreferences::~CDlgAdvPreferences() {
-    SaveState();
+    if (m_bOKToShow) {
+        SaveState();
+    }
     delete m_vTimeValidator;
 }
 
@@ -286,8 +293,14 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
     if (retval == ERR_NOT_FOUND) {
         // Older clients don't support get_global_prefs_working_struct RPC
         prefs = pDoc->state.global_prefs;
-        pDoc->rpc.get_global_prefs_override_struct(prefs, mask);
+        retval = pDoc->rpc.get_global_prefs_override_struct(prefs, mask);
     }
+    if (retval) {
+        m_bOKToShow = false;
+        return;
+    }
+    
+    m_bOKToShow = true;
 
     // ######### proc usage page
     // max cpus
@@ -396,7 +409,7 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
     //special day times
     for(int i=0; i< 7;i++) {
         TIME_SPAN& cpu = prefs.cpu_times.week.days[i];
-        if(cpu.present) {
+        if(cpu.present && (cpu.start_hour != cpu.end_hour)) {
             procDayChks[i]->SetValue(true);
             procDayStartTxts[i]->ChangeValue(DoubleToTimeString(cpu.start_hour));
             procDayStopTxts[i]->ChangeValue(DoubleToTimeString(cpu.end_hour));
@@ -413,7 +426,7 @@ void CDlgAdvPreferences::ReadPreferenceSettings() {
     //special net times
     for(int i=0; i< 7;i++) {
         TIME_SPAN& net = prefs.net_times.week.days[i];
-        if(net.present) {
+        if(net.present && (net.start_hour != net.end_hour)) {
             netDayChks[i]->SetValue(true);
             netDayStartTxts[i]->ChangeValue(DoubleToTimeString(net.start_hour));
             netDayStopTxts[i]->ChangeValue(DoubleToTimeString(net.end_hour));
@@ -668,9 +681,11 @@ void CDlgAdvPreferences::UpdateControlStates() {
 bool CDlgAdvPreferences::ValidateInput() {
     wxString invMsgFloat = _("Invalid number");
     wxString invMsgTime = _("Invalid time, value must be between 0:00 and 24:00, format is HH:MM");
+    wxString invMsgTimeSpan = _("Start time must be different from end time");
     wxString invMsgLimit10 = _("Number must be between 0 and 10");
     wxString invMsgLimit100 = _("Number must be between 0 and 100");
     wxString buffer;
+    double startTime, endTime;
 
     // ######### proc usage page
     buffer = m_txtProcUseProcessors->GetValue();
@@ -819,6 +834,12 @@ bool CDlgAdvPreferences::ValidateInput() {
             ShowErrorMessage(invMsgTime,m_txtProcEveryDayStop);
             return false;
         }
+        startTime = TimeStringToDouble(m_txtProcEveryDayStart->GetValue());
+        endTime = TimeStringToDouble(m_txtProcEveryDayStop->GetValue());
+        if (startTime == endTime) {
+            ShowErrorMessage(invMsgTimeSpan,m_txtProcEveryDayStop);
+            return false;
+        }
     }
     
     //all text ctrls in proc special time textBox
@@ -832,6 +853,12 @@ bool CDlgAdvPreferences::ValidateInput() {
            buffer = procDayStopTxts[i]->GetValue();
             if(!IsValidTimeValue(buffer)) {
                 ShowErrorMessage(invMsgTime,procDayStopTxts[i]);
+                return false;
+            }
+            startTime = TimeStringToDouble(procDayStartTxts[i]->GetValue());
+            endTime = TimeStringToDouble(procDayStopTxts[i]->GetValue());
+            if (startTime == endTime) {
+                ShowErrorMessage(invMsgTimeSpan,procDayStopTxts[i]);
                 return false;
             }
         }
@@ -848,6 +875,12 @@ bool CDlgAdvPreferences::ValidateInput() {
             ShowErrorMessage(invMsgTime,m_txtNetEveryDayStop);
             return false;
         }
+        startTime = TimeStringToDouble(m_txtNetEveryDayStart->GetValue());
+        endTime = TimeStringToDouble(m_txtNetEveryDayStop->GetValue());
+        if (startTime == endTime) {
+            ShowErrorMessage(invMsgTimeSpan,m_txtNetEveryDayStop);
+            return false;
+        }
     }
     
     //all text ctrls in net special time textBox
@@ -861,6 +894,12 @@ bool CDlgAdvPreferences::ValidateInput() {
             buffer = netDayStopTxts[i]->GetValue();
             if(!IsValidTimeValue(buffer)) {
                 ShowErrorMessage(invMsgTime,netDayStopTxts[i]);
+                return false;
+            }
+            startTime = TimeStringToDouble(netDayStartTxts[i]->GetValue());
+            endTime = TimeStringToDouble(netDayStopTxts[i]->GetValue());
+            if (startTime == endTime) {
+                ShowErrorMessage(invMsgTimeSpan,netDayStopTxts[i]);
                 return false;
             }
         }

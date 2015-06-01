@@ -161,11 +161,13 @@ void CStatusBar::OnSize(wxSizeEvent& event) {
 IMPLEMENT_DYNAMIC_CLASS(CAdvancedFrame, CBOINCBaseFrame)
 
 BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
+    EVT_MENU_OPEN(CAdvancedFrame::OnMenuOpening)
     // View
     EVT_MENU_RANGE(ID_ADVNOTICESVIEW, ID_ADVRESOURCEUSAGEVIEW, CAdvancedFrame::OnChangeView)
     EVT_MENU(ID_CHANGEGUI, CAdvancedFrame::OnChangeGUI)
     // Tools
-    EVT_MENU(ID_WIZARDATTACH, CAdvancedFrame::OnWizardAttach)
+    EVT_MENU(ID_WIZARDATTACHPROJECT, CAdvancedFrame::OnWizardAttachProject)
+    EVT_MENU(ID_WIZARDATTACHACCOUNTMANAGER, CAdvancedFrame::OnWizardUpdate)
     EVT_MENU(ID_WIZARDUPDATE, CAdvancedFrame::OnWizardUpdate)
     EVT_MENU(ID_WIZARDDETACH, CAdvancedFrame::OnWizardDetach)
     // Activity
@@ -381,9 +383,10 @@ bool CAdvancedFrame::CreateMenu() {
     );
 
 #ifdef __WXMAC__
+    // wxWidgets actually puts this in the BOINCManager menu
     menuFile->Append(
         wxID_PREFERENCES,
-        _("Preferences…")
+        _("Preferences...")
     );
 #endif
 
@@ -427,12 +430,6 @@ bool CAdvancedFrame::CreateMenu() {
     );
 
     menuView->AppendSeparator();
-    menuView->Append(
-        ID_EVENTLOG, 
-        _("Event Log...\tCtrl+Shift+E"),
-        _("Show diagnostic messages")
-    );
-    menuView->AppendSeparator();
 
     menuView->Append(
         ID_CHANGEGUI,
@@ -450,9 +447,14 @@ bool CAdvancedFrame::CreateMenu() {
 
     if (!is_acct_mgr_detected) {
         menuTools->Append(
-            ID_WIZARDATTACH, 
-            _("&Add project or account manager..."),
-            _("Add a new science project, or use an account manager")
+            ID_WIZARDATTACHPROJECT, 
+            _("&Add project..."),
+            _("Add a project")
+        );
+        menuTools->Append(
+            ID_WIZARDATTACHACCOUNTMANAGER, 
+            _("&Use account manager..."),
+            _("Use an account manager to control this computer.")
         );
     } else {
         strMenuName.Printf(
@@ -469,7 +471,7 @@ bool CAdvancedFrame::CreateMenu() {
             strMenuDescription
         );
         menuTools->Append(
-            ID_WIZARDATTACH, 
+            ID_WIZARDATTACHPROJECT, 
             _("&Add project..."),
             _("Add a project")
         );
@@ -493,6 +495,12 @@ bool CAdvancedFrame::CreateMenu() {
         ID_RETRYCOMMUNICATIONS, 
         _("Retry pending transfers"),
         _("Retry deferred file transfers and task requests")
+    );
+    menuTools->AppendSeparator();
+    menuTools->Append(
+        ID_EVENTLOG, 
+        _("Event Log...\tCtrl+Shift+E"),
+        _("Show diagnostic messages")
     );
 
     // Activity menu
@@ -1064,6 +1072,45 @@ int CAdvancedFrame::_GetCurrentViewPage() {
 }
 
 
+void CAdvancedFrame::OnMenuOpening( wxMenuEvent &event) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnMenuOpening - Function Begin"));
+
+    CMainDocument*     pDoc = wxGetApp().GetDocument();
+    wxMenu* menuFile = NULL;
+    wxMenu* menuHelp = NULL;
+    
+    wxASSERT(pDoc);
+    
+    bool isConnected = pDoc->IsConnected();
+    wxMenu* menu = event.GetMenu();
+    
+    menu->FindItem(ID_SELECTCOMPUTER, &menuFile);
+    menu->FindItem(ID_HELPBOINC, &menuHelp);
+    size_t numItems = menu->GetMenuItemCount();
+    for (size_t pos = 0; pos < numItems; ++pos) {
+        wxMenuItem * item = menu->FindItemByPosition(pos);
+        if ((menu == menuFile) || (menu == menuHelp)) {
+            // Always enable all items in File menu or Help menu:
+            // ID_LAUNCHNEWINSTANCE, ID_SELECTCOMPUTER, ID_SHUTDOWNCORECLIENT,
+            // ID_CLOSEWINDOW, wxID_EXIT, ID_HELPBOINC, ID_HELPBOINCMANAGER,
+            // ID_HELPBOINCWEBSITE, wxID_ABOUT
+            item->Enable(true);
+        } else {
+            // Disable other menu items if not connected to client
+            item->Enable(isConnected);
+        }
+    }
+    
+    // wxID_EXIT and wxID_PREFERENCES are not in File menu on some platforms
+    wxMenuItem* exitItem = menu->FindChildItem(wxID_EXIT, NULL);
+    if (exitItem) {
+        exitItem->Enable(true);
+    }
+    
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnMenuOpening - Function End"));
+}
+
+
 void CAdvancedFrame::OnChangeView(wxCommandEvent& event) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnChangeView - Function Begin"));
 
@@ -1082,8 +1129,8 @@ void CAdvancedFrame::OnChangeGUI(wxCommandEvent& WXUNUSED(event)) {
 }
 
 
-void CAdvancedFrame::OnWizardAttach( wxCommandEvent& WXUNUSED(event) ) {
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnWizardAttach - Function Begin"));
+void CAdvancedFrame::OnWizardAttachProject( wxCommandEvent& WXUNUSED(event) ) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnWizardAttachProject - Function Begin"));
 
     CMainDocument* pDoc     = wxGetApp().GetDocument();
 
@@ -1120,7 +1167,7 @@ void CAdvancedFrame::OnWizardAttach( wxCommandEvent& WXUNUSED(event) ) {
         ShowNotCurrentlyConnectedAlert();
     }
 
-    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnWizardAttach - Function End"));
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnWizardAttachProject - Function End"));
 }
 
 
@@ -1316,7 +1363,9 @@ void CAdvancedFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnPreferences - Function Begin"));
 
     CDlgAdvPreferences dlg(this);
-	dlg.ShowModal();
+    if (dlg.OKToShow()) {
+        dlg.ShowModal();
+    }
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnPreferences - Function End"));
 }
@@ -1947,7 +1996,7 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent& WXUNUSED(event)) {
                     UpdateNetworkModeControls(status);
 
                     if (status.disallow_attach) {
-                        pMenuBar->Enable(ID_WIZARDATTACH, false);
+                        pMenuBar->Enable(ID_WIZARDATTACHPROJECT, false);
                     }
                 }
 

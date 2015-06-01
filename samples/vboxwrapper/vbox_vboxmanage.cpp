@@ -42,6 +42,7 @@ using std::string;
 #if defined(_MSC_VER)
 #define getcwd      _getcwd
 #define stricmp     _stricmp
+#define snprintf    _snprintf
 #endif
 
 #include "diagnostics.h"
@@ -448,16 +449,18 @@ int VBOX_VM::create_vm() {
 
         // Add guest additions to the VM
         //
-        vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
-        command  = "storageattach \"" + vm_name + "\" ";
-        command += "--storagectl \"Hard Disk Controller\" ";
-        command += "--port 2 ";
-        command += "--device 0 ";
-        command += "--type dvddrive ";
-        command += "--medium \"" + virtualbox_guest_additions + "\" ";
+        if (virtualbox_guest_additions.size()) {
+            vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
+            command  = "storageattach \"" + vm_name + "\" ";
+            command += "--storagectl \"Hard Disk Controller\" ";
+            command += "--port 2 ";
+            command += "--device 0 ";
+            command += "--type dvddrive ";
+            command += "--medium \"" + virtualbox_guest_additions + "\" ";
 
-        retval = vbm_popen(command, output, "storage attach (guest additions image)");
-        if (retval) return retval;
+            retval = vbm_popen(command, output, "storage attach (guest additions image)");
+            if (retval) return retval;
+        }
 
         // Add a virtual cache disk drive to VM
         //
@@ -493,16 +496,18 @@ int VBOX_VM::create_vm() {
 
         // Add guest additions to the VM
         //
-        vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
-        command  = "storageattach \"" + vm_name + "\" ";
-        command += "--storagectl \"Hard Disk Controller\" ";
-        command += "--port 1 ";
-        command += "--device 0 ";
-        command += "--type dvddrive ";
-        command += "--medium \"" + virtualbox_guest_additions + "\" ";
+        if (virtualbox_guest_additions.size()) {
+            vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
+            command  = "storageattach \"" + vm_name + "\" ";
+            command += "--storagectl \"Hard Disk Controller\" ";
+            command += "--port 1 ";
+            command += "--device 0 ";
+            command += "--type dvddrive ";
+            command += "--medium \"" + virtualbox_guest_additions + "\" ";
 
-        retval = vbm_popen(command, output, "storage attach (guest additions image)");
-        if (retval) return retval;
+            retval = vbm_popen(command, output, "storage attach (guest additions image)");
+            if (retval) return retval;
+        }
 
     }
 
@@ -844,11 +849,11 @@ int VBOX_VM::poll(bool log_state) {
     if (aid.using_sandbox && vboxsvc_pid_handle && !process_exists(vboxsvc_pid_handle)) {
         vboxlog_msg("Status Report: vboxsvc.exe is no longer running.");
     }
-    if (vm_pid_handle && !process_exists(vm_pid_handle)) {
+    if (started_successfully && vm_pid_handle && !process_exists(vm_pid_handle)) {
         vboxlog_msg("Status Report: virtualbox.exe/vboxheadless.exe is no longer running.");
     }
 #else
-    if (vm_pid && !process_exists(vm_pid)) {
+    if (started_successfully && vm_pid && !process_exists(vm_pid)) {
         vboxlog_msg("Status Report: virtualbox/vboxheadless is no longer running.");
     }
 #endif
@@ -1013,6 +1018,7 @@ int VBOX_VM::start() {
 
     if (BOINC_SUCCESS == retval) {
         vboxlog_msg("Successfully started VM. (PID = '%d')", vm_pid);
+        started_successfully = true;
     } else {
         vboxlog_msg("VM failed to start.");
     }
@@ -1346,10 +1352,22 @@ bool VBOX_VM::is_system_ready(std::string& message) {
         rc = false;
     }
 
-    if (output.find("WARNING: The vboxdrv kernel module is not loaded.") != string::npos) {
-        vboxlog_msg("WARNING: The vboxdrv kernel module is not loaded.");
+    if (
+        (output.find("WARNING: The vboxdrv kernel module is not loaded.") != string::npos) ||
+        (output.find("WARNING: The VirtualBox kernel modules are not loaded.") != string::npos)
+    ){
+        vboxlog_msg("WARNING: The VirtualBox kernel modules are not loaded.");
         vboxlog_msg("WARNING: Please update/recompile VirtualBox kernel drivers.");
         message = "Please update/recompile VirtualBox kernel drivers.";
+        rc = false;
+    }
+
+    if (
+        (output.find("Warning: program compiled against ") != string::npos) &&
+        (output.find(" using older ") != string::npos)
+    ){
+        vboxlog_msg("WARNING: VirtualBox incompatible dependencies detected.");
+        message = "Please update/reinstall VirtualBox";
         rc = false;
     }
 
@@ -1463,7 +1481,9 @@ int VBOX_VM::get_install_directory(string& install_directory) {
 int VBOX_VM::get_version_information(string& version) {
     string command;
     string output;
+    int vbox_major = 0, vbox_minor = 0, vbox_release = 0;
     int retval;
+    char buf[256];
 
     // Record the VirtualBox version information for later use.
     command = "--version ";
@@ -1479,7 +1499,17 @@ int VBOX_VM::get_version_information(string& version) {
                 ++iter;
             }
         }
-        version = string("VirtualBox VboxManage Interface (Version: ") + output + string(")");
+
+        if (3 == sscanf(output.c_str(), "%d.%d.%d", &vbox_major, &vbox_minor, &vbox_release)) {
+            snprintf(
+                buf, sizeof(buf),
+                "VirtualBox VboxManage Interface (Version: %d.%d.%d)",
+                vbox_major, vbox_minor, vbox_release
+            );
+            version = buf;
+        } else {
+            version = "VirtualBox VboxManage Interface (Version: Unknown)";
+        }
     }
 
     return retval;
@@ -1514,7 +1544,13 @@ int VBOX_VM::get_guest_additions(string& guest_additions) {
     ga_end = output.find("\n", ga_start);
     guest_additions = output.substr(ga_start, ga_end - ga_start);
     strip_whitespace(guest_additions);
+
     if (guest_additions.size() <= 0) {
+        return ERR_NOT_FOUND;
+    }
+
+    if (!boinc_file_exists(guest_additions.c_str())) {
+        guest_additions.clear();
         return ERR_NOT_FOUND;
     }
 
