@@ -100,6 +100,27 @@ int virtualbox_check_error(HRESULT rc, char* szFunction, char* szFile, int iLine
     return rc;
 }
 
+void __stdcall virtualbox_com_raise_error(HRESULT rc, IErrorInfo* perrinfo) {
+    HRESULT hr;
+    CComPtr<IErrorInfo> pErrorInfo;
+    CComBSTR strSource;
+    CComBSTR strDescription;
+
+    pErrorInfo.Attach(perrinfo);
+
+    vboxlog_msg("COM Error 0x%x", rc);
+    hr = pErrorInfo->GetSource(&strSource);
+    if (SUCCEEDED(hr) && strSource) {
+        vboxlog_msg("Error Source     : %S", strSource);
+    }
+    hr = pErrorInfo->GetDescription(&strDescription);
+    if (SUCCEEDED(hr) && strDescription) {
+        vboxlog_msg("Error Description: %S", strDescription);
+    }
+
+    DebugBreak();
+}
+
 
 // We want to recurisively walk the snapshot tree so that we can get the most recent children first.
 // We also want to skip whatever the most current snapshot is.
@@ -166,6 +187,10 @@ void TraverseMediums(std::vector<CComPtr<IMedium>>& mediums, IMedium* pMedium) {
 
 
 VBOX_VM::VBOX_VM() {
+    // Initialize COM Exception Trap
+    //
+    _set_com_error_handler(virtualbox_com_raise_error);
+
     m_pPrivate = new VBOX_PRIV();
 }
 
@@ -605,25 +630,27 @@ int VBOX_VM::create_vm() {
 
         // Add guest additions to the VM
         //
-        vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
-        CComPtr<IMedium> pGuestAdditionsImage;
-        rc = m_pPrivate->m_pVirtualBox->OpenMedium(
-            CComBSTR(virtualbox_guest_additions.c_str()),
-            DeviceType_DVD,
-            AccessMode_ReadOnly,
-            FALSE,
-            &pGuestAdditionsImage
-        );
-        if (CHECK_ERROR(rc)) goto CLEANUP;
+        if (virtualbox_guest_additions.size()) {
+            vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
+            CComPtr<IMedium> pGuestAdditionsImage;
+            rc = m_pPrivate->m_pVirtualBox->OpenMedium(
+                CComBSTR(virtualbox_guest_additions.c_str()),
+                DeviceType_DVD,
+                AccessMode_ReadOnly,
+                FALSE,
+                &pGuestAdditionsImage
+            );
+            if (CHECK_ERROR(rc)) goto CLEANUP;
 
-        rc = pMachine->AttachDevice(
-            CComBSTR("Hard Disk Controller"),
-            2,
-            0,
-            DeviceType_DVD,
-            pGuestAdditionsImage
-        );
-        if (CHECK_ERROR(rc)) goto CLEANUP;
+            rc = pMachine->AttachDevice(
+                CComBSTR("Hard Disk Controller"),
+                2,
+                0,
+                DeviceType_DVD,
+                pGuestAdditionsImage
+            );
+            if (CHECK_ERROR(rc)) goto CLEANUP;
+        }
 
         // Add a virtual cache disk drive to VM
         //
@@ -673,25 +700,27 @@ int VBOX_VM::create_vm() {
 
         // Add guest additions to the VM
         //
-        vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
-        CComPtr<IMedium> pGuestAdditionsImage;
-        rc = m_pPrivate->m_pVirtualBox->OpenMedium(
-            CComBSTR(virtualbox_guest_additions.c_str()),
-            DeviceType_DVD,
-            AccessMode_ReadOnly,
-            FALSE,
-            &pGuestAdditionsImage
-        );
-        if (CHECK_ERROR(rc)) goto CLEANUP;
+        if (virtualbox_guest_additions.size()) {
+            vboxlog_msg("Adding VirtualBox Guest Additions to VM.");
+            CComPtr<IMedium> pGuestAdditionsImage;
+            rc = m_pPrivate->m_pVirtualBox->OpenMedium(
+                CComBSTR(virtualbox_guest_additions.c_str()),
+                DeviceType_DVD,
+                AccessMode_ReadOnly,
+                FALSE,
+                &pGuestAdditionsImage
+            );
+            if (CHECK_ERROR(rc)) goto CLEANUP;
 
-        rc = pMachine->AttachDevice(
-            CComBSTR("Hard Disk Controller"),
-            1,
-            0,
-            DeviceType_DVD,
-            pGuestAdditionsImage
-        );
-        if (CHECK_ERROR(rc)) goto CLEANUP;
+            rc = pMachine->AttachDevice(
+                CComBSTR("Hard Disk Controller"),
+                1,
+                0,
+                DeviceType_DVD,
+                pGuestAdditionsImage
+            );
+            if (CHECK_ERROR(rc)) goto CLEANUP;
+        }
     }
 
     // Adding virtual floppy disk drive to VM
@@ -1173,7 +1202,7 @@ int VBOX_VM::poll(bool log_state) {
     if (aid.using_sandbox && vboxsvc_pid_handle && !process_exists(vboxsvc_pid_handle)) {
         vboxlog_msg("Status Report: vboxsvc.exe is no longer running.");
     }
-    if (vm_pid_handle && !process_exists(vm_pid_handle)) {
+    if (started_successfully && vm_pid_handle && !process_exists(vm_pid_handle)) {
         vboxlog_msg("Status Report: virtualbox.exe/vboxheadless.exe is no longer running.");
     }
 
@@ -1372,6 +1401,7 @@ int VBOX_VM::start() {
             } while (timeout >= dtime());
 
             vboxlog_msg("Successfully started VM. (PID = '%d')", vm_pid);
+            started_successfully = true;
             retval = BOINC_SUCCESS;
         } else {
             vboxlog_msg("VM failed to start.");
@@ -1512,10 +1542,12 @@ int VBOX_VM::pause() {
     if (CHECK_ERROR(rc)) goto CLEANUP;
 
     // Pause the machine.
-    rc = pConsole->Pause();
-    if (CHECK_ERROR(rc)) goto CLEANUP;
+    if (pConsole) {
+        rc = pConsole->Pause();
+        if (CHECK_ERROR(rc)) goto CLEANUP;
 
-    retval = BOINC_SUCCESS;
+        retval = BOINC_SUCCESS;
+    }
 
 CLEANUP:
     return retval;
@@ -1539,10 +1571,12 @@ int VBOX_VM::resume() {
     if (CHECK_ERROR(rc)) goto CLEANUP;
 
     // Resume the machine.
-    rc = pConsole->Resume();
-    if (CHECK_ERROR(rc)) goto CLEANUP;
+    if (pConsole) {
+        rc = pConsole->Resume();
+        if (CHECK_ERROR(rc)) goto CLEANUP;
 
-    retval = BOINC_SUCCESS;
+        retval = BOINC_SUCCESS;
+    }
 
 CLEANUP:
     return retval;
@@ -1935,7 +1969,7 @@ int VBOX_VM::get_version_information(string& version) {
 }
 
 int VBOX_VM::get_guest_additions(string& guest_additions) {
-    int retval = ERR_EXEC;
+    int retval = ERR_NOT_FOUND;
     HRESULT rc;
     CComPtr<ISystemProperties> properties;
     CComBSTR tmp;
@@ -1945,7 +1979,11 @@ int VBOX_VM::get_guest_additions(string& guest_additions) {
         rc = properties->get_DefaultAdditionsISO(&tmp);
         if (SUCCEEDED(rc)) {
             guest_additions = CW2A(tmp);
-            retval = BOINC_SUCCESS;
+            if (!boinc_file_exists(guest_additions.c_str())) {
+                guest_additions.clear();
+            } else {
+                retval = BOINC_SUCCESS;
+            }
         }
     }
 
@@ -2249,7 +2287,28 @@ int VBOX_VM::launch_vboxsvc() {
 
                 command = "\"VBoxSVC.exe\" --logrotate 1";
 
-                CreateProcess(NULL, (LPTSTR)command.c_str(), NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+                // Execute command
+                if (!CreateProcess(
+                    NULL,
+                    (LPTSTR)command.c_str(),
+                    NULL,
+                    NULL,
+                    TRUE,
+                    CREATE_NO_WINDOW,
+                    NULL,
+                    virtualbox_home_directory.c_str(),
+                    &si,
+                    &pi
+                )) {
+                    vboxlog_msg(
+                        "Status Report: Launching vboxsvc.exe failed!."
+                    );
+                    vboxlog_msg(
+                        "        Error: %s (%d)",
+                        windows_format_error_string(GetLastError(), buf, sizeof(buf)),
+                        GetLastError()
+                    );
+                }
 
                 if (pi.hThread) CloseHandle(pi.hThread);
                 if (pi.hProcess) {
@@ -2257,9 +2316,6 @@ int VBOX_VM::launch_vboxsvc() {
                     vboxsvc_pid = pi.dwProcessId;
                     vboxsvc_pid_handle = pi.hProcess;
                     retval = BOINC_SUCCESS;
-                } else {
-                    vboxlog_msg("Status Report: Launching vboxsvc.exe failed!.");
-                    vboxlog_msg("        Error: %s", windows_format_error_string(GetLastError(), buf, sizeof(buf)));
                 }
             }
         }

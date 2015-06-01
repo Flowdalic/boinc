@@ -132,104 +132,100 @@ void CPanelPreferences::CreateControls()
     wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
     itemDialog1->SetSizer(itemBoxSizer2);
 
-    wxStaticBox* topSectionStaticBox = new wxStaticBox();
-    topSectionStaticBox->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
-    topSectionStaticBox->Create(this, -1, wxEmptyString);
-
-    wxStaticBoxSizer* topSectionSizer = new wxStaticBoxSizer( topSectionStaticBox, wxVERTICAL );
-
-    wxBoxSizer* topControlsSizer = new wxBoxSizer( wxHORIZONTAL );
-    topSectionSizer->Add(topControlsSizer);
-    
-    wxBitmap warningBmp = GetScaledBitmapFromXPMData(warning_xpm);
-    CTransparentStaticBitmap* bmpWarning = new CTransparentStaticBitmap(
-                                topSectionStaticBox, wxID_ANY, 
-                                warningBmp, 
-                                wxDefaultPosition, wxDefaultSize, 0
-                                );
-    bmpWarning->SetMinSize( warningBmp.GetSize() );
-
-    topControlsSizer->Add( bmpWarning, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
-
-    wxBoxSizer* legendSizer = new wxBoxSizer( wxVERTICAL );
-
     bool usingLocalPrefs = doesLocalPrefsFileExist();
-    if (usingLocalPrefs) {
-        legendSizer->Add(
-            new CTransparentStaticText( topSectionStaticBox, wxID_ANY,
-                        _("Using local preferences.\n"
-                        "Click \"Use web prefs\" to use web-based preferences from"
-                        ), wxDefaultPosition, wxDefaultSize, 0 ),
-            0, wxALL, 1
+    if (! web_prefs_url->IsEmpty()) {
+        wxStaticBox* topSectionStaticBox = new wxStaticBox();
+        topSectionStaticBox->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
+        topSectionStaticBox->Create(this, -1, wxEmptyString);
+
+        wxStaticBoxSizer* topSectionSizer = new wxStaticBoxSizer( topSectionStaticBox, wxVERTICAL );
+
+        wxBoxSizer* topControlsSizer = new wxBoxSizer( wxHORIZONTAL );
+        topSectionSizer->Add(topControlsSizer);
+        
+        wxBitmap warningBmp = GetScaledBitmapFromXPMData(warning_xpm);
+        CTransparentStaticBitmap* bmpWarning = new CTransparentStaticBitmap(
+                                    topSectionStaticBox, wxID_ANY, 
+                                    warningBmp, 
+                                    wxDefaultPosition, wxDefaultSize, 0
+                                    );
+        bmpWarning->SetMinSize( warningBmp.GetSize() );
+
+        topControlsSizer->Add( bmpWarning, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
+
+        wxBoxSizer* legendSizer = new wxBoxSizer( wxVERTICAL );
+
+        if (usingLocalPrefs) {
+            legendSizer->Add(
+                new CTransparentStaticText( topSectionStaticBox, wxID_ANY,
+                            _("Using local preferences.\n"
+                            "Click \"Use web prefs\" to use web-based preferences from"
+                            ), wxDefaultPosition, wxDefaultSize, 0 ),
+                0, wxALL, 1
+            );
+        } else {
+            legendSizer->Add(
+                new CTransparentStaticText( topSectionStaticBox, wxID_ANY,
+                            _("Using web-based preferences from"),
+                            wxDefaultPosition, wxDefaultSize, 0 ),
+                0, wxALL, 1
+            );
+        }
+        
+         legendSizer->Add(
+            new CTransparentHyperlinkCtrl(
+                topSectionStaticBox, wxID_ANY, *web_prefs_url, *web_prefs_url,
+                wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE,
+                wxHyperlinkCtrlNameStr, &m_backgroundBitmap
+            ),
+            0, wxLEFT, 5
         );
-    } else {
-        legendSizer->Add(
-            new CTransparentStaticText( topSectionStaticBox, wxID_ANY,
-                        _("Using web-based preferences from"),
-                        wxDefaultPosition, wxDefaultSize, 0 ),
-            0, wxALL, 1
-        );
-    }
-    
-     legendSizer->Add(
-        new CTransparentHyperlinkCtrl(
-            topSectionStaticBox, wxID_ANY, *web_prefs_url, *web_prefs_url,
-            wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE,
-            wxHyperlinkCtrlNameStr, &m_backgroundBitmap
-        ),
-        0, wxLEFT, 5
-    );
-    
-    if (!usingLocalPrefs) {
-        legendSizer->Add(
-            new CTransparentStaticText( topSectionStaticBox, wxID_ANY,
-                 _("Set values and click OK to use local preferences instead."),
-                 wxDefaultPosition, wxDefaultSize, 0 ),
-            0, wxALL, 1
-        );
-    }
-  
+        
+        if (!usingLocalPrefs) {
+            legendSizer->Add(
+                new CTransparentStaticText( topSectionStaticBox, wxID_ANY,
+                     _("Set values and click OK to use local preferences instead."),
+                     wxDefaultPosition, wxDefaultSize, 0 ),
+                0, wxALL, 1
+            );
+        }
+      
 #if 1
-    topSectionSizer->AddSpacer( 10 );
+        topSectionSizer->AddSpacer( 10 );
 
-    CTransparentStaticLine* itemStaticLine8 = new CTransparentStaticLine( topSectionStaticBox, wxID_ANY, 
-                                                                        wxDefaultPosition, 
-                                                                        wxSize(ADJUSTFORXDPI(300), 1),
-                                                                         wxLI_HORIZONTAL|wxNO_BORDER
-                                                                         );
-    itemStaticLine8->SetLineColor(pSkinSimple->GetStaticLineColor());
-    topSectionSizer->Add(itemStaticLine8, 0, wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT, ADJUSTFORXDPI(20));
+        CTransparentStaticLine* itemStaticLine8 = new CTransparentStaticLine( topSectionStaticBox, wxID_ANY, 
+                                                                            wxDefaultPosition, 
+                                                                            wxSize(ADJUSTFORXDPI(300), 1),
+                                                                             wxLI_HORIZONTAL|wxNO_BORDER
+                                                                             );
+        itemStaticLine8->SetLineColor(pSkinSimple->GetStaticLineColor());
+        topSectionSizer->Add(itemStaticLine8, 0, wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT, ADJUSTFORXDPI(20));
 
-    topSectionSizer->AddSpacer( 10 );
+        topSectionSizer->AddSpacer( 10 );
 
-    CTransparentStaticText* itemStaticText7 = new CTransparentStaticText( topSectionStaticBox, wxID_ANY, _("For additional settings, select Computing Preferences in the Advanced View."), wxDefaultPosition, wxDefaultSize, 0 );
-    
-//    itemStaticText7->SetFont(wxFont(MEDIUM_FONT, wxSWISS, wxNORMAL, wxBOLD, false, _T("Arial")));
-    topSectionSizer->Add(itemStaticText7, 0, wxALL, 0);
+        CTransparentStaticText* itemStaticText7 = new CTransparentStaticText( topSectionStaticBox, wxID_ANY, _("For additional settings, select Computing Preferences in the Advanced View."), wxDefaultPosition, wxDefaultSize, 0 );
+        
+        topSectionSizer->Add(itemStaticText7, 0, wxALL, 0);
 
-    topSectionSizer->AddSpacer( 10 );
+        topSectionSizer->AddSpacer( 10 );
 #endif
 
-    topControlsSizer->Add( legendSizer, 1, wxALL, 1 );
+        topControlsSizer->Add( legendSizer, 1, wxALL, 1 );
 
-    m_btnClear = new wxButton( topSectionStaticBox, ID_SGPREFERENCESCLEAR, _("Use web prefs"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_btnClear->SetToolTip( _("Restore web-based preferences and close the dialog.") );
-    if (!usingLocalPrefs) {
-        m_btnClear->Hide();
-    }
-    
-    topControlsSizer->Add( m_btnClear, 0, wxALIGN_BOTTOM|wxALL, 4 );
+        m_btnClear = new wxButton( topSectionStaticBox, ID_SGPREFERENCESCLEAR, _("Use web prefs"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_btnClear->SetToolTip( _("Restore web-based preferences and close the dialog.") );
+        if (!usingLocalPrefs) {
+            m_btnClear->Hide();
+        }
+        
+        topControlsSizer->Add( m_btnClear, 0, wxALIGN_BOTTOM|wxALL, 4 );
 
 #ifdef __WXMAC__
-    itemBoxSizer2->Add( topSectionSizer, 0, wxTOP|wxLEFT|wxRIGHT|wxEXPAND, 10 );
+        itemBoxSizer2->Add( topSectionSizer, 0, wxTOP|wxLEFT|wxRIGHT|wxEXPAND, 10 );
 #else
-    itemBoxSizer2->Add( topSectionSizer, 0, wxALL|wxEXPAND, 5 );
+        itemBoxSizer2->Add( topSectionSizer, 0, wxALL|wxEXPAND, 5 );
 #endif
-
-
-//    wxFlexGridSizer* itemFlexGridSizer9 = new wxFlexGridSizer(1, 1, 0, 0);
-//    itemFlexGridSizer9->AddGrowableCol(0);
-//    itemBoxSizer2->Add(itemFlexGridSizer9, 0, wxGROW|wxALL, ADJUSTFORXDPI(5));
+    }
 
     wxBoxSizer* itemBoxSizer11 = new wxBoxSizer(wxVERTICAL);
     itemBoxSizer2->Add(itemBoxSizer11, 0, wxLEFT, ADJUSTFORXDPI(20));
@@ -352,11 +348,6 @@ void CPanelPreferences::CreateControls()
 
     itemBoxSizer44->Add(itemButton44, 0, wxALIGN_CENTER_VERTICAL|wxALL, ADJUSTFORXDPI(5));
 
-//    m_btnClear = new wxButton( this, ID_SGPREFERENCESCLEAR, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
-//    m_btnClear->SetToolTip( _("Clear all local preferences listed above and close the dialog") );
-
-//    itemBoxSizer44->Add(m_btnClear, 0, wxALIGN_CENTER_VERTICAL|wxALL, ADJUSTFORXDPI(5));
-    
     wxButton* itemButton45 = new wxButton( itemDialog1, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer44->Add(itemButton45, 0, wxALIGN_CENTER_VERTICAL|wxALL, ADJUSTFORXDPI(5));
     
@@ -442,20 +433,41 @@ void CPanelPreferences::MakeBackgroundBitmap() {
         wxImage img = bmp.ConvertToImage();
         img.Rescale((int) sz.x, (int) sz.y);
 
-        // Draw our cool background (centered)
+        // Draw our cool background (enlarged and centered)
         dc.DrawBitmap(wxBitmap(img), 0, 0);
     } else {
-        // Snag the center of the bitmap and use it
-        //   for the background image
-        x = wxMax(0, (w - sz.x)/2);
-        y = wxMax(0, (h - sz.y)/2);
+        switch(pSkinSimple->GetDialogBackgroundImage()->GetHorizontalAnchor()) {
+        case BKGD_ANCHOR_HORIZ_LEFT:
+        default:
+            x = 0;
+            break;
+        case BKGD_ANCHOR_HORIZ_CENTER:
+            x = (w - sz.x) / 2;
+            break;
+        case BKGD_ANCHOR_HORIZ_RIGHT:
+            x = w - sz.x;
+            break;
+        }
+
+        switch(pSkinSimple->GetDialogBackgroundImage()->GetVerticalAnchor()) {
+        case BKGD_ANCHOR_VERT_TOP:
+        default:
+            y = 0;
+            break;
+        case BKGD_ANCHOR_VERT_CENTER:
+            y = (h - sz.y) /2;
+            break;
+        case BKGD_ANCHOR_VERT_BOTTOM:
+            y = h - sz.y;
+            break;
+        }
 
         // Select the desired bitmap into the memory DC so we can take
-        //   the center chunk of it.
+        //   the desired chunk of it.
         memDC.SelectObject(bmp);
 
-        // Draw the center chunk on the window
-        dc.Blit(0, 0, w, h, &memDC, x, y, wxCOPY);
+        // Draw the desired chunk on the window
+        dc.Blit(0, 0, sz.x, sz.y, &memDC, x, y, wxCOPY);
 
         // Drop the bitmap
         memDC.SelectObject(wxNullBitmap);
@@ -627,6 +639,12 @@ bool CPanelPreferences::ReadPreferenceSettings() {
         global_preferences_working = pDoc->state.global_prefs;
         retval = pDoc->rpc.get_global_prefs_override_struct(global_preferences_working, global_preferences_mask);
     }
+    if (retval) {
+        m_bOKToShow = false;
+        return true;
+    }
+    
+    m_bOKToShow = true;
 
 #if 0   // We might use this to tell user whether local prefs exist
     if (!retval && global_preferences_override_mask.are_simple_prefs_set()) {
@@ -750,7 +768,9 @@ bool CPanelPreferences::SavePreferenceSettings() {
 bool CPanelPreferences::ValidateInput() {
     wxString invMsgFloat = _("Invalid number");
     wxString invMsgTime = _("Invalid time, value must be between 0:00 and 24:00, format is HH:MM");
+    wxString invMsgTimeSpan = _("Start time must be different from end time");
     wxString invMsgLimit100 = _("Number must be between 0 and 100");
+    double startTime, endTime;
     wxString buffer;
 
     if(m_txtProcIdleFor->IsEnabled()) {
@@ -772,6 +792,12 @@ bool CPanelPreferences::ValidateInput() {
             ShowErrorMessage(invMsgTime,m_txtProcEveryDayStop);
             return false;
         }
+        startTime = TimeStringToDouble(m_txtProcEveryDayStart->GetValue());
+        endTime = TimeStringToDouble(m_txtProcEveryDayStop->GetValue());
+        if (startTime == endTime) {
+            ShowErrorMessage(invMsgTimeSpan,m_txtProcEveryDayStop);
+            return false;
+        }
     }
     
     buffer = m_txtProcUseCPUTime->GetValue();
@@ -789,6 +815,12 @@ bool CPanelPreferences::ValidateInput() {
         buffer = m_txtNetEveryDayStop->GetValue();
         if(!IsValidTimeValue(buffer)) {
             ShowErrorMessage(invMsgTime,m_txtNetEveryDayStop);
+            return false;
+        }
+        startTime = TimeStringToDouble(m_txtNetEveryDayStart->GetValue());
+        endTime = TimeStringToDouble(m_txtNetEveryDayStop->GetValue());
+        if (startTime == endTime) {
+            ShowErrorMessage(invMsgTimeSpan,m_txtNetEveryDayStop);
             return false;
         }
     }
@@ -990,10 +1022,14 @@ bool CPanelPreferences::doesLocalPrefsFileExist() {
     web_prefs.init();
     
     retval = pDoc->rpc.get_global_prefs_file(s);
-    mf.init_buf_read(s.c_str());
-    XML_PARSER xp(&mf);
-    web_prefs.parse(xp, "", found_venue, mask);
-    web_prefs_url = new wxString(web_prefs.source_project);
+    if (retval) {
+        web_prefs_url = new wxString(wxEmptyString);
+    } else {
+        mf.init_buf_read(s.c_str());
+        XML_PARSER xp(&mf);
+        web_prefs.parse(xp, "", found_venue, mask);
+        web_prefs_url = new wxString(web_prefs.source_project);
+    }
     
     return local_prefs_found;
 }
