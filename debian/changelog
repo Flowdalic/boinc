@@ -1,6 +1,7 @@
 boinc (7.6.2+dfsg-1exp1) experimental; urgency=medium
 
   [ Gianfranco Costamagna ]
+  * Re-enable screensaver package.
   * New upstream release, patch refresh.
   * Add nvidia-modprobe as dependency (LP: #1400021)
   * d/control.in according to gcc, virtual package libstdc++-dev

@@ -150,36 +150,36 @@ Package: boinc
 @ attaching a local machine to a project, this client will also
 @ dynamically download the scientific data and executables to be then
 @ wrapped by the BOINC core client.
-#
-#Package: boinc-screensaver
-#Section: x11
-#Architecture: any
-#Depends: boinc-client, ${misc:Depends}, ${shlibs:Depends}
-#Suggests: boinc-manager
-#Description: screen saver auto-controlling volunteer computing
-# The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-# software platform for distributed computing: several initiatives of
-# various scientific disciplines all compete for the idle time of
-# desktop computers. The developers' web site at the University of
-# Berkeley serves as a common portal to the otherwise independently run
-# projects.
-# .
-# The BOINC client is configurable by the command line or the BOINC
-# manager's GUI to compute with any range between 0% and 100% of
-# available resources, and to change that ratio to a higher after
-# some user determined duration of inactivity. There is now quite
-# a number of individuals who prefer to have everything presented
-# with their accustomed principle for setting and choosing a screen
-# saver. Upon inactivity, the BOINC client is started, and stopped
-# again when the user is back. To save the screen, it then shows
-# the graphical progress indication as optionally shown also by
-# the manager.
-# .
-# This package is excellent to further promote BOINC, recalling the
-# effect SETI@Home once had in the Cambridge, UK, CB2 Cybercafe.
-# Just, when using it together with the regular BOINC client setup,
-# it is suggested not to have all CPUs used to avoid multiple
-# processes running on the same core.
+@
+@Package: boinc-screensaver
+@Section: x11
+@Architecture: any
+@Depends: boinc-client, ${misc:Depends}, ${shlibs:Depends}
+@Suggests: boinc-manager
+@Description: screen saver auto-controlling volunteer computing
+@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+@ software platform for distributed computing: several initiatives of
+@ various scientific disciplines all compete for the idle time of
+@ desktop computers. The developers' web site at the University of
+@ Berkeley serves as a common portal to the otherwise independently run
+@ projects.
+@ .
+@ The BOINC client is configurable by the command line or the BOINC
+@ manager's GUI to compute with any range between 0% and 100% of
+@ available resources, and to change that ratio to a higher after
+@ some user determined duration of inactivity. There is now quite
+@ a number of individuals who prefer to have everything presented
+@ with their accustomed principle for setting and choosing a screen
+@ saver. Upon inactivity, the BOINC client is started, and stopped
+@ again when the user is back. To save the screen, it then shows
+@ the graphical progress indication as optionally shown also by
+@ the manager.
+@ .
+@ This package is excellent to further promote BOINC, recalling the
+@ effect SETI@Home once had in the Cambridge, UK, CB2 Cybercafe.
+@ Just, when using it together with the regular BOINC client setup,
+@ it is suggested not to have all CPUs used to avoid multiple
+@ processes running on the same core.
 @
 @Package: boinc-manager
 @Section: x11
