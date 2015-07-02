@@ -41,7 +41,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
      return system(cmd);
  #else
      // POSIX requires that shells run from an application will use the 
-@@ -695,7 +695,7 @@
+@@ -699,7 +699,7 @@
          p = strchr(q, '/');
          if (!p) break;
          *p = 0;
