@@ -1,8 +1,9 @@
 boinc (7.6.6+dfsg-1exp1) experimental; urgency=medium
 
   [ Gianfranco Costamagna ]
-  * Re-enable screensaver package.
   * New upstream release, patch refresh.
+  * Update my uid
+  * Re-enable screensaver package.
   * Add nvidia-modprobe as dependency (LP: #1400021)
   * d/control.in according to gcc, virtual package libstdc++-dev
     is enough to provide libstdc++.a.
@@ -18,7 +19,7 @@ boinc (7.6.6+dfsg-1exp1) experimental; urgency=medium
   * d/p/envargs.patch, fix inconsistencies spot with research compiler.
     (Closes: #747964)
 
- -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 01 Jun 2015 10:29:55 +0200
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 22 Jul 2015 14:25:20 +0200
 
 boinc (7.4.23+dfsg-2exp1) experimental; urgency=medium
 
