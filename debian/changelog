@@ -1,4 +1,4 @@
-boinc (7.6.5+dfsg-1exp1) experimental; urgency=medium
+boinc (7.6.6+dfsg-1exp1) experimental; urgency=medium
 
   [ Gianfranco Costamagna ]
   * Re-enable screensaver package.
