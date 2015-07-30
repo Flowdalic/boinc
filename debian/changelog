@@ -1,3 +1,12 @@
+boinc (7.6.6+dfsg-2exp2) experimental; urgency=medium
+
+  * The previous upload was meant for experimental, not unstable.
+    Fortunately the control file is created by reading the target series, not
+    the "exp" string. Hence:
+    - Upload to experimental again, with the boinc-server-* packages.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 30 Jul 2015 09:18:00 +0200
+
 boinc (7.6.6+dfsg-2exp1) unstable; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
