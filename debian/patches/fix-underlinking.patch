@@ -1,0 +1,70 @@
+Description: this should fix some underlinking on boinc, leading to some warning in the build process
+Author: Gianfranco Costamagna <locutusofborg@debian.org>
+Bug-Debian: https://bugs.debian.org/794107
+
+--- boinc-7.6.6+dfsg.orig/api/Makefile.am
++++ boinc-7.6.6+dfsg/api/Makefile.am
+@@ -43,18 +43,18 @@ endif
+ 
+ lib_LTLIBRARIES = libboinc_api.la
+ libboinc_api_la_SOURCES = $(api_files)
+-libboinc_api_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
++libboinc_api_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -lpthread -L../lib/.libs $(LIBBOINC)
+ 
+ if BUILD_GRAPHICS_API
+ lib_LTLIBRARIES += libboinc_graphics2.la
+ libboinc_graphics2_la_SOURCES = $(graphics2_files)
+ libboinc_graphics2_la_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/samples/image_libs
+-libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg
++libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg -lGL -lglut -L../lib/.libs $(LIBBOINC)
+ endif #BUILD_GRAPHICS_API
+ 
+ lib_LTLIBRARIES += libboinc_opencl.la
+ libboinc_opencl_la_SOURCES = $(opencl_files)
+-libboinc_opencl_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
++libboinc_opencl_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -L../lib/.libs $(LIBBOINC) -lboinc_api
+ 
+ if INSTALL_HEADERS
+ ## install only headers that are meant for exporting the API !!
+--- boinc-7.6.6+dfsg.orig/lib/Makefile.am
++++ boinc-7.6.6+dfsg/lib/Makefile.am
+@@ -180,7 +180,7 @@ lib_LTLIBRARIES += libboinc_crypt.la
+ libboinc_crypt_la_SOURCES = crypt.cpp
+ libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
+ libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
+-libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
++libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS) $(LIBBOINC)
+ libboinc_crypt_la_LIBADD =
+ endif
+ 
+--- boinc-7.6.6+dfsg.orig/sched/Makefile.am
++++ boinc-7.6.6+dfsg/sched/Makefile.am
+@@ -26,7 +26,7 @@ lib_LTLIBRARIES = libsched.la
+ libsched_la_SOURCES = $(libsched_sources)
+ libsched_la_CFLAGS = $(AM_CPPFLAGS)
+ libsched_la_CXXFLAGS = $(AM_CPPFLAGS)
+-libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
++libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(MYSQL_LIBS) $(LIBBOINC)
+ libsched_la_LIBADD= $(SSL_LIBS)
+ 
+ ## install only headers that are meant for exporting the API !!
+@@ -48,7 +48,7 @@ lib_LTLIBRARIES += libsched_fcgi.la
+ libsched_fcgi_la_SOURCES = $(libsched_sources)
+ libsched_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
+ libsched_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
+-libsched_fcgi_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
++libsched_fcgi_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(BOINC_CRYPT)
+ libsched_fcgi_la_LIBADD=
+ 
+ endif
+--- boinc-7.6.6+dfsg.orig/zip/Makefile.am
++++ boinc-7.6.6+dfsg/zip/Makefile.am
+@@ -62,7 +62,7 @@ endif
+ lib_LTLIBRARIES = libboinc_zip.la
+ libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
+ libboinc_zip_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+-libboinc_zip_la_LIBADD =
++libboinc_zip_la_LIBADD = -L../lib/.libs $(LIBBOINC)
+ 
+ # Some OSs may not prefix libraries with lib.
+ # For example OS2
