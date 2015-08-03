@@ -339,14 +339,9 @@ License: MIT
 
 Files: html/user/openid_login.php
        samples/vboxwrapper/vboxwrapper.cpp
-       samples/vboxwrapper/cernvm/cernvmwrapper.cpp
 Copyright: 2008-2014 University of California
            2011 Daniel Lombraña González <teleyinex AT gmail DOT com>
 License: LGPL-3+
-
-Files: html/inc/kses.php
-Copyright: 2002, 2003 Ulf Harnhammar
-License: GPL-2+
 
 Files: html/inc/recaptchalib.php
 Copyright: 2007 reCAPTCHA -- http://recaptcha.net

@@ -27,40 +27,15 @@ QUILT_NO_DIFF_TIMESTAMPS=1
 
 Repackaged upstream source:
 ===========================
- The BOINC project does not distribute source code releases as tarballs,
- but they are tagged in the BOINC Git repository.  Anonymous Git access
- is explained on http://boinc.berkeley.edu/trac/wiki/SourceCodeGit .
- The 'boinc' source package refers to the respective release tags.
- For more information see:
+ The BOINC project does distribute source code releases as tarballs,
+ but they contain non DFSG files.
 
-   http://boinc.berkeley.edu/trac/wiki/SourceCode
-
- We put the tarball generation into an 'export-boinc' script, which is available in
- our pkg-boinc Git repository:
-
-   wget -O export-boinc \
-    "http://git.debian.org/?p=pkg-boinc/scripts.git;a=blob_plain;f=export-boinc;hb=HEAD"
-   chmod 755 export-boinc
-
- It will take a considerable while to download as the final tarball yields >15MB.
- The script will take care of remove the non-DFSG files from the upstream
- tag.  Above process is integrated into debian/get-orig-source.sh target.
-
- This target can be easily called by running "uscan" in your source tree, the first
- time will download the "boinc-v2" git repository in your parent directory, while on the
- next runs will just perform a "git update" to retrieve new commits and new tags.
+ To update you can easily call  "uscan" in your source tree, that will call
+ automatically the get-orig-source.sh script, to remove unwanted files from
+ the source tree.
 
  The final tarball is put on the parent directory, and can be easily imported with
  git-import-orig ../boinc_VERSION+dfsg.orig.tar.gz
-
-
-Screen saver
-------------
-
- No screen saver is built, disabled in the patch
- debian/patches/Makefile_subdirs.patch, which also allowed for the
- removal of the build dependencies
- libxcb-atom1-dev
 
 
 Launcher icon sources
@@ -108,24 +83,4 @@ source/include-binaries and boinc-manager.menu
 
 Removed non-dfsg upstream files
 ===============================
- The files removed from upstream tag are:
-
-   *.dll
-   *.exe
-   samples/example_app/bin
-   api/ttf
-   api/ttfont.{cpp,h}
-   samples/glut
-   zip/configure
-   lib/mac
-   curl
-   samples/jpeglib
-   .vimrc
-   coprocs
-   win_build
-   mac_build
-   clientgui/mac
-   mac_installer
-   client/app_stats_mac.cpp
-   version.h
-   .gitignore
+ The files removed from upstream tag are listed in get-orig-source.sh file

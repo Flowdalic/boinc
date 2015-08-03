@@ -72,6 +72,8 @@ rm -rfv ${ORIG_TARBALL_DIR}/samples/vboxwrapper/vboxwrapper_win.h
 rm -rfv ${ORIG_TARBALL_DIR}/samples/vboxwrapper/vboxwrapper_win.rc
 rm -rfv ${ORIG_TARBALL_DIR}/samples/wrapper/wrapper_win.h
 rm -rfv ${ORIG_TARBALL_DIR}/samples/wrapper/wrapper_win.rc
+rm -rfv ${ORIG_TARBALL_DIR}/samples/gfx_html/browser_win.h
+rm -rfv ${ORIG_TARBALL_DIR}/samples/gfx_html/browser_win.rc
 rm -rfv ${ORIG_TARBALL_DIR}/build
 # bzr stuff and debian directory aren't needed
 # if you use the same source tree for building the latest version
