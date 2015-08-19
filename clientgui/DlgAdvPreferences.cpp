@@ -127,6 +127,8 @@ CDlgAdvPreferences::CDlgAdvPreferences(wxWindow* parent) : CDlgAdvPreferencesBas
         m_Notebook->SetMinSize(sz);
     }
 #endif
+    lastErrorCtrl = NULL;
+    stdTextBkgdColor = *wxWHITE;
 
     Layout();
     Fit();
@@ -719,13 +721,13 @@ bool CDlgAdvPreferences::ValidateInput() {
     //limit additional days from 0 to 10
     buffer = m_txtNetConnectInterval->GetValue();
     if(!IsValidFloatValueBetween(buffer, 0.0, 10.0)) {
-        ShowErrorMessage(invMsgLimit100,m_txtNetConnectInterval);
+        ShowErrorMessage(invMsgLimit10,m_txtNetConnectInterval);
         return false;
     }
     
     buffer = m_txtNetAdditionalDays->GetValue();
     if(!IsValidFloatValueBetween(buffer, 0.0, 10.0)) {
-        ShowErrorMessage(invMsgLimit100,m_txtNetAdditionalDays);
+        ShowErrorMessage(invMsgLimit10,m_txtNetAdditionalDays);
         return false;
     }
 
@@ -943,6 +945,16 @@ void CDlgAdvPreferences::ShowErrorMessage(wxString& message,wxTextCtrl* errorCtr
     if(message.IsEmpty()){
         message = _("invalid input value detected");
     }
+    if (lastErrorCtrl) {
+        lastErrorCtrl->SetBackgroundColour(stdTextBkgdColor);
+        lastErrorCtrl->Refresh();
+    }
+    if (lastErrorCtrl != errorCtrl) {
+        stdTextBkgdColor = errorCtrl->GetBackgroundColour();
+    }
+    errorCtrl->SetBackgroundColour(wxColour(255, 192, 192));
+    errorCtrl->Refresh();
+    lastErrorCtrl = errorCtrl;
     wxGetApp().SafeMessageBox(message,_("Validation Error"),wxOK | wxCENTRE | wxICON_ERROR,this);
     errorCtrl->SetFocus();
 }

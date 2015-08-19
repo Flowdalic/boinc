@@ -191,21 +191,29 @@ bool CDlgItemProperties::RestoreState() {
 
 void CDlgItemProperties::show_rsc(wxString rsc_name, RSC_DESC rsc_desc) {
     if (rsc_desc.no_rsc_pref) {
-        addProperty(_("Don't fetch tasks for ") + rsc_name, _("Project preference"));
+        addProperty(_("Don't request tasks for ") + rsc_name, _("Project preference"));
     }
     if (rsc_desc.no_rsc_ams) {
-        addProperty(_("Don't fetch tasks for ") + rsc_name, _("Account manager preference"));
+        addProperty(_("Don't request tasks for ") + rsc_name, _("Account manager preference"));
     }
     if (rsc_desc.no_rsc_apps) {
-        addProperty(_("Don't fetch tasks for ") + rsc_name, _("Project has no apps for ") + rsc_name);
+        addProperty(_("Don't request tasks for ") + rsc_name, _("Project has no apps for ") + rsc_name);
     }
     if (rsc_desc.no_rsc_config) {
-        addProperty(_("Don't fetch tasks for ") + rsc_name, _("Client configuration excludes ") + rsc_name);
+        addProperty(_("Don't request tasks for ") + rsc_name, _("Client configuration excludes ") + rsc_name);
     }
     double x = rsc_desc.backoff_time - dtime();
     if (x<0) x = 0;
-    addProperty(rsc_name + _(" work fetch deferred for"), FormatTime(x));
-    addProperty(rsc_name + _(" work fetch deferral interval"), FormatTime(rsc_desc.backoff_interval));
+    if (x) {
+        addProperty(
+			wxString::Format(_("%s task request deferred for"), rsc_name.c_str()),
+			FormatTime(x)
+	    );
+        addProperty(
+			wxString::Format(_("%s task request deferral interval"), rsc_name.c_str()),
+			FormatTime(rsc_desc.backoff_interval)
+		);
+    }
 }
 
 // show project properties
@@ -241,7 +249,7 @@ void CDlgItemProperties::renderInfos(PROJECT* project_in) {
     SetTitle(wxTitle);
     //layout controls
     addSection(_("General"));
-    addProperty(_("Master URL"), wxString(project->master_url, wxConvUTF8));
+    addProperty(_("URL"), wxString(project->master_url, wxConvUTF8));
     addProperty(_("User name"), wxString(project->user_name.c_str(), wxConvUTF8));
     addProperty(_("Team name"), wxString(project->team_name.c_str(), wxConvUTF8));
     addProperty(_("Resource share"), wxString::Format(wxT("%0.0f"), project->resource_share));
@@ -260,7 +268,7 @@ void CDlgItemProperties::renderInfos(PROJECT* project_in) {
         addProperty(_("Non CPU intensive"), _("yes"));
     }
     addProperty(_("Suspended via GUI"), project->suspended_via_gui ? _("yes") : _("no"));
-    addProperty(_("Don't request more work"), project->dont_request_more_work ? _("yes") : _("no"));
+    addProperty(_("Don't request tasks"), project->dont_request_more_work ? _("yes") : _("no"));
     if (project->scheduler_rpc_in_progress) {
         addProperty(_("Scheduler call in progress"), _("yes"));
     }
@@ -287,15 +295,17 @@ void CDlgItemProperties::renderInfos(PROJECT* project_in) {
 
     addSection(_("Credit"));
     addProperty(_("User"),
+		// Displays the average and total user credit
         wxString::Format(
-            wxT("%0.2f total, %0.2f average"),
+            _("%0.2f total, %0.2f average"),
             project->user_total_credit,
             project->user_expavg_credit
         )
     );
     addProperty(_("Host"),
+		// Displays the average and total host credit
         wxString::Format(
-            wxT("%0.2f total, %0.2f average"),
+            _("%0.2f total, %0.2f average"),
             project->host_total_credit,
             project->host_expavg_credit
         )
@@ -332,6 +342,11 @@ void CDlgItemProperties::renderInfos(PROJECT* project_in) {
                 wxString::Format(wxT("%0.4f"), dcf)
             );
         }
+    }
+    if (project->last_rpc_time) {
+        wxDateTime dt;
+        dt.Set((time_t)project->last_rpc_time);
+        addProperty(_("Last scheduler reply"), dt.Format());
     }
     m_gbSizer->Layout();
     m_scrolledWindow->FitInside();
@@ -388,6 +403,9 @@ void CDlgItemProperties::renderInfos(RESULT* result) {
     } else if (result->state >= RESULT_COMPUTE_ERROR) {
         addProperty(_("CPU time"), FormatTime(result->final_cpu_time));
         addProperty(_("Elapsed time"), FormatTime(result->final_elapsed_time));
+    }
+    if (avp) {
+        addProperty(_("Executable"), wxString(avp->exec_filename, wxConvUTF8));
     }
     m_gbSizer->Layout();
     m_scrolledWindow->FitInside();
