@@ -16,7 +16,7 @@ Bug-Debian: https://bugs.debian.org/794107
  libboinc_graphics2_la_SOURCES = $(graphics2_files)
  libboinc_graphics2_la_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/samples/image_libs
 -libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg
-+libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg -lGL -lglut -L../lib/.libs $(LIBBOINC)
++libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg -lGL -lGLU -lglut -L../lib/.libs $(LIBBOINC)
  endif #BUILD_GRAPHICS_API
  
  lib_LTLIBRARIES += libboinc_opencl.la
