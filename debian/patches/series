@@ -14,7 +14,6 @@ rrsim_iterator_cppcheck.patch
 filesys_error_message.patch
 de.po.patch
 more_clang_warnings.patch
-#mmap_mem_only.patch
 add-ldflags.patch
 addressing_additional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
@@ -23,8 +22,6 @@ gui_urls_xml_added_to_Makefile.patch
 make_project_overcomes_Apache24_security.patch
 #debian specific patches
 boinclib_shared.patch
-Missing_libSched.patch
-boinc-server-dynamic-libs.patch
 disable_new_version_check.patch
 disable_svn_version.patch
 AdjustBoincTopdirPython.patch

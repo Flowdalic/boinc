@@ -1,9 +1,11 @@
 Description: this patch makes the build system create a dynamic shared library.
  Upstream didn't accept this patch because of the unstable api, so this is a
- significative debian delta.
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
-@@ -172,7 +172,7 @@ lib_LTLIBRARIES = libboinc.la
+ significative Debian delta.
+Index: boinc/lib/Makefile.am
+===================================================================
+--- boinc.orig/lib/Makefile.am
++++ boinc/lib/Makefile.am
+@@ -172,7 +172,7 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -12,7 +14,7 @@ Description: this patch makes the build system create a dynamic shared library.
  libboinc_la_LIBADD =
  
  if ENABLE_BOINCCRYPT
-@@ -180,7 +180,7 @@ lib_LTLIBRARIES += libboinc_crypt.la
+@@ -180,7 +180,7 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -21,23 +23,116 @@ Description: this patch makes the build system create a dynamic shared library.
  libboinc_crypt_la_LIBADD =
  endif
  
-@@ -252,7 +252,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
- msg_test_LDADD = $(LIBBOINC)
- crypt_prog_SOURCES = crypt_prog.cpp 
- crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
--crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS) 
-+crypt_prog_LDADD = -L../lib/.libs $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS) 
- parse_test_SOURCES = parse_test.cpp 
- parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
- parse_test_LDADD = $(LIBBOINC)
---- a/client/Makefile.am
-+++ b/client/Makefile.am
-@@ -106,7 +106,7 @@
- boinc_client_SOURCES += hostinfo_unix.cpp
- endif
- endif
--boinc_client_LDADD = $(LIBBOINC) $(LIBBOINC_CRYPT) $(BOINC_EXTRA_LIBS) $(PTHREAD_LIBS)
-+boinc_client_LDADD = -L../lib/.libs $(LIBBOINC) $(LIBBOINC_CRYPT) $(BOINC_EXTRA_LIBS) $(PTHREAD_LIBS)
+Index: boinc/apps/Makefile.am
+===================================================================
+--- boinc.orig/apps/Makefile.am
++++ boinc/apps/Makefile.am
+@@ -8,15 +8,15 @@
  
- boinc_clientdir = $(bindir)
+ upper_case_SOURCES = upper_case.cpp
+ upper_case_CXXFLAGS = $(PTHREAD_CFLAGS)
+-upper_case_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS)
++upper_case_LDFLAGS = $(PTHREAD_CFLAGS)
+ upper_case_LDADD = $(APPLIBS)
  
+ concat_SOURCES = concat.cpp
+ concat_CXXFLAGS = $(PTHREAD_CFLAGS)
+-concat_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS)
++concat_LDFLAGS = $(PTHREAD_CFLAGS)
+ concat_LDADD = $(APPLIBS)
+ 
+ 1sec_SOURCES = 1sec.cpp
+ 1sec_CXXFLAGS = $(PTHREAD_CFLAGS)
+-1sec_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS)
++1sec_LDFLAGS = $(PTHREAD_CFLAGS)
+ 1sec_LDADD = $(APPLIBS)
+Index: boinc/client/Makefile.am
+===================================================================
+--- boinc.orig/client/Makefile.am
++++ boinc/client/Makefile.am
+@@ -4,7 +4,6 @@
+ include $(top_srcdir)/Makefile.incl
+ 
+ if ENABLE_CLIENT_RELEASE
+-  AM_LDFLAGS += -static-libtool-libs
+ ## for an entirely statically linked library, you may want to try
+ ## -all-static instead.  There's a good chance it won't work properly,
+ ## so we'll use the safer "-static-libtool-libs" by default.
+Index: boinc/clientgui/Makefile.am
+===================================================================
+--- boinc.orig/clientgui/Makefile.am
++++ boinc/clientgui/Makefile.am
+@@ -7,7 +7,6 @@
+ include $(top_srcdir)/Makefile.incl
+ 
+ if ENABLE_CLIENT_RELEASE
+-  AM_LDFLAGS += -static-libtool-libs
+ ## for an entirely statically linked library, you may want to try
+ ## -all-static instead.  There's a good chance it won't work properly,
+ ## so we'll use the safer "-static-libtool-libs" by default.
+Index: boinc/clientscr/Makefile.am
+===================================================================
+--- boinc.orig/clientscr/Makefile.am
++++ boinc/clientscr/Makefile.am
+@@ -5,7 +5,6 @@
+ 
+ AM_LDFLAGS += -lpthread
+ if ENABLE_CLIENT_RELEASE
+-  AM_LDFLAGS += -static-libtool-libs
+ ## for an entirely statically linked library, you may want to try
+ ## -all-static instead.  There's a good chance it won't work properly,
+ ## so we'll use the safer "-static-libtool-libs" by default.
+--- boinc-7.6.7+dfsg.orig/dcapi/boinc/Makefile.am
++++ boinc-7.6.7+dfsg/dcapi/boinc/Makefile.am
+@@ -36,4 +36,3 @@ libdcapi_client_boinc_la_LIBADD = \
+ 		../common/libdcapi-common-client.la \
+ 		$(BOINC_CLIENT_LIBS)
+ libdcapi_client_boinc_la_CPPFLAGS = $(AM_CPPFLAGS) $(BOINC_CPPFLAGS)
+-libdcapi_client_boinc_la_LDFLAGS = -static
+--- boinc-7.6.7+dfsg.orig/dcapi/condor/Makefile.am
++++ boinc-7.6.7+dfsg/dcapi/condor/Makefile.am
+@@ -42,7 +42,6 @@ libdcapi_client_condor_la_SOURCES = cond
+ 				 condor_utils.c
+ 
+ libdcapi_client_condor_la_LIBADD = ../common/libdcapi-common-client.la
+-libdcapi_client_condor_la_LDFLAGS = -static
+ 
+ #appdir		= $(libdir)/dcapi/condor
+ #app_PROGRAMS	= tss tm
+--- boinc-7.6.7+dfsg.orig/dcapi/local/Makefile.am
++++ boinc-7.6.7+dfsg/dcapi/local/Makefile.am
+@@ -35,4 +35,3 @@ libdcapi_client_local_la_SOURCES = \
+ 		local_utils.c \
+ 		local_common.c
+ libdcapi_client_local_la_LIBADD = ../common/libdcapi-common-client.la
+-libdcapi_client_local_la_LDFLAGS = -static
+--- boinc-7.6.7+dfsg.orig/sched/Makefile.am
++++ boinc-7.6.7+dfsg/sched/Makefile.am
+@@ -4,7 +4,6 @@
+ include $(top_srcdir)/Makefile.incl
+ 
+ AM_CPPFLAGS += $(MYSQL_CFLAGS) $(PTHREAD_CFLAGS)
+-AM_LDFLAGS += -static
+ 
+ if ENABLE_LIBRARIES
+ 
+--- boinc-7.6.7+dfsg.orig/tools/Makefile.am
++++ boinc-7.6.7+dfsg/tools/Makefile.am
+@@ -44,7 +44,6 @@ dist_tools_DATA = \
+     gui_urls.xml
+ 
+ AM_CXXFLAGS += $(MYSQL_CFLAGS)
+-AM_LDFLAGS += -static
+ 
+ cancel_jobs_SOURCES = cancel_jobs.cpp
+ cancel_jobs_LDADD = $(SERVERLIBS)
+--- boinc-7.6.7+dfsg.orig/vda/Makefile.am
++++ boinc-7.6.7+dfsg/vda/Makefile.am
+@@ -4,7 +4,6 @@ vdadir=$(prefix)/lib/boinc-server-maker/
+ vda_PROGRAMS = vda vdad ssim
+ 
+ AM_CXXFLAGS += $(MYSQL_CFLAGS)
+-AM_LDFLAGS += -static
+ 
+ vda_SOURCES = vda.cpp vda_lib.cpp vda_lib2.cpp vda_policy.cpp stats.cpp
+ vda_LDADD = $(SERVERLIBS)

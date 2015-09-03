@@ -5,15 +5,6 @@ Index: boinc-6.10.58/locale/Makefile.am
 ===================================================================
 --- boinc-6.10.58.orig/locale/Makefile.am	2010-04-15 20:59:36.000000000 +0200
 +++ boinc-6.10.58/locale/Makefile.am	2010-07-13 17:19:39.000000000 +0200
-@@ -2,7 +2,7 @@
- 
- include $(top_srcdir)/Makefile.incl
- 
--datadir = $(prefix)/share/locale 
-+datadir = $(prefix)/share/locale
- 
- locale_dirs = \
- 	ar \
 @@ -45,9 +45,9 @@
  install-exec-hook:
  	mydir=$(DESTDIR)$(datadir) ;\
