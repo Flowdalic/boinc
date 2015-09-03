@@ -1352,6 +1352,7 @@ bool ACTIVE_TASK::get_app_status_msg() {
     double fd;
     int other_pid;
     double dtemp;
+    static double last_msg_time=0;
 
     if (!app_client_shm.shm) {
         msg_printf(result->project, MSG_INFO,
@@ -1370,8 +1371,6 @@ bool ACTIVE_TASK::get_app_status_msg() {
     want_network = 0;
     current_cpu_time = checkpoint_cpu_time = 0.0;
     if (parse_double(msg_buf, "<fraction_done>", fd)) {
-        if (fd < 0) fd = 0;
-        if (fd > 1) fd = 1;
         // fraction_done will be reported as zero
         // until the app's first call to boinc_fraction_done().
         // So ignore zeros.
@@ -1382,6 +1381,14 @@ bool ACTIVE_TASK::get_app_status_msg() {
             if (!first_fraction_done) {
                 first_fraction_done = fd;
                 first_fraction_done_elapsed_time = elapsed_time;
+            }
+            if (log_flags.task_debug && (fd<0 || fd>1)) {
+                if (gstate.now > last_msg_time + 60) {
+                    msg_printf(this->wup->project, MSG_INFO,
+                        "[task_debug] app reported bad fraction done: %f", fd
+                    );
+                    last_msg_time = gstate.now;
+                }
             }
         }
     }
@@ -1507,7 +1514,7 @@ void ACTIVE_TASK_SET::get_msgs() {
         atp = active_tasks[i];
         if (!atp->process_exists()) continue;
         old_time = atp->checkpoint_cpu_time;
-        if (atp->scheduler_state == CPU_SCHED_SCHEDULED) {
+        if (atp->scheduler_state == CPU_SCHED_SCHEDULED && !gstate.tasks_suspended) {
             double x = atp->result->dont_throttle()?et_diff:et_diff_throttle;
             atp->elapsed_time += x;
             atp->wup->project->elapsed_time += x;
