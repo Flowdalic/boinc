@@ -1,0 +1,9 @@
+client/win/boinc_path_config.py
+py/Boinc/version.py
+py/boinc_path_config.py
+py/setup.py
+samples/Makefile
+sched/boinc_path_config.py
+test/boinc_path_config.py
+test/version.inc
+tools/boinc_path_config.py
