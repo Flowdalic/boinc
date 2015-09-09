@@ -1,3 +1,10 @@
+boinc (7.6.9+dfsg-1exp2) UNRELEASED; urgency=medium
+
+  * Add license for wrappture, thanks Andrew M. 'Leny' Lindley
+    and Maximilian Rüdiger for the report!
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 09 Sep 2015 07:41:50 +0200
+
 boinc (7.6.9+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
