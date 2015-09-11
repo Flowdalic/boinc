@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 Uploaders: Steffen Moeller <moeller@debian.org>,
            Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
-           Gianfranco Costamagna <costamagnagianfranco@yahoo.it>
+           Gianfranco Costamagna <locutusofborg@debian.org>
 Standards-Version: 3.9.6
 Build-Depends: autoconf,
                automake,
