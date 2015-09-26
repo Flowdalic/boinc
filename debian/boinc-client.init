@@ -207,7 +207,7 @@ schedule()
     fi
     for BPID in ${pid} ${children}; do
       if [ -w /proc/${BPID}/oom_adj ]; then
-        echo ${BOINC_OOM_AD} > /proc/${BPID}/oom_adj 2>/dev/null || true
+        echo ${BOINC_OOM_ADJ} > /proc/${BPID}/oom_adj 2>/dev/null || true
       else
         echo "Could not write to /proc/${BPID}/oom_adj"
       fi
