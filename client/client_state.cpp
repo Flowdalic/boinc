@@ -1960,15 +1960,17 @@ int CLIENT_STATE::reset_project(PROJECT* project, bool detaching) {
         }
         garbage_collect_always();
     }
-#ifdef ANDROID
-    // space is likely to be an issue on Android, so clean out project dir
-    // If we did this on other platforms we'd need to avoid deleting
-    // app_config.xml, but this isn't likely to exist on Android.
+
+    // if not anonymous platform, clean out the project dir
+    // except for app_config.xml
     //
     if (!project->anonymous_platform) {
-        client_clean_out_dir(project->project_dir(), "reset project");
+        client_clean_out_dir(
+            project->project_dir(),
+            "reset project",
+            "app_config.xml"
+        );
     }
-#endif
 
     // force refresh of scheduler URLs
     //
@@ -2176,8 +2178,8 @@ void CLIENT_STATE::log_show_projects() {
             strcpy(buf, "not assigned yet");
         }
         msg_printf(p, MSG_INFO,
-            "URL %s; Computer ID %s; resource share %.0f",
-            p->master_url, buf, p->resource_share
+            "URL %s; Computer ID %s; resource share %s",
+            p->master_url, buf, comma_print(p->resource_share, 0).c_str()
         );
         if (p->ended) {
             msg_printf(p, MSG_INFO, "Project has ended - OK to detach");
