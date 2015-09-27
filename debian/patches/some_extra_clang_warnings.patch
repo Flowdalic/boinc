@@ -3,7 +3,7 @@ Description: fixing some clang warning.
  addressed this.
 --- a/clientgui/sg_ProjectPanel.cpp
 +++ b/clientgui/sg_ProjectPanel.cpp
-@@ -423,8 +423,7 @@
+@@ -425,8 +425,7 @@
      CMainDocument* pDoc = wxGetApp().GetDocument();
      ProjectSelectionData* selData;
      PROJECT* project;
@@ -13,7 +13,7 @@ Description: fixing some clang warning.
  
      if ( pDoc->IsConnected() ) {
          int projCnt = pDoc->GetSimpleProjectCount();
-@@ -432,10 +431,11 @@
+@@ -434,10 +433,11 @@
          oldProjectSelection = m_ProjectSelectionCtrl->GetSelection();
          
          // If a new project has been added, figure out which one
@@ -27,7 +27,7 @@ Description: fixing some clang warning.
                  ctrl_url = ((ProjectSelectionData*)m_ProjectSelectionCtrl->GetClientData(j))->project_url;
                  if (!strcmp(project->master_url, ctrl_url)) {
                      found = true;
-@@ -447,7 +447,7 @@
+@@ -449,7 +449,7 @@
              if ( !found ) {
                  wxString projname(project->project_name.c_str(), wxConvUTF8);
  #if SORTPROJECTLIST
@@ -36,7 +36,7 @@ Description: fixing some clang warning.
                  for(j = 0; j < ctrlCount; ++j) {
                      alphaOrder = (m_ProjectSelectionCtrl->GetString(j)).CmpNoCase(projname);
                      if (alphaOrder > 0) {
-@@ -479,8 +479,8 @@
+@@ -481,8 +481,8 @@
          if ( projCnt < ctrlCount ) {
              project = NULL;
              // Check items in descending order so deletion won't change indexes of items yet to be checked
@@ -47,7 +47,7 @@ Description: fixing some clang warning.
                  project = pDoc->state.lookup_project(ctrl_url);
                  if ( project == NULL ) {
                      selData = (ProjectSelectionData*)m_ProjectSelectionCtrl->GetClientData(j);
-@@ -508,9 +508,9 @@
+@@ -510,9 +510,9 @@
      
          // Check to see if we need to reload the project icon
          ctrlCount = m_ProjectSelectionCtrl->GetCount();

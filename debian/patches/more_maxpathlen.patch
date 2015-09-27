@@ -21,7 +21,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
  
 --- a/lib/filesys.cpp
 +++ b/lib/filesys.cpp
-@@ -440,7 +440,7 @@
+@@ -441,7 +441,7 @@
      while (1) {
          retval = dir_scan(filename, dirp, sizeof(filename));
          if (retval) break;
@@ -30,7 +30,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
  
          if (is_dir(subdir)) {
              if (recurse) {
-@@ -563,8 +563,8 @@
+@@ -564,8 +564,8 @@
      }
      return 0;
  #elif defined(__EMX__)
@@ -41,7 +41,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
      return system(cmd);
  #else
      // POSIX requires that shells run from an application will use the 
-@@ -699,7 +699,7 @@
+@@ -700,7 +700,7 @@
          p = strchr(q, '/');
          if (!p) break;
          *p = 0;
