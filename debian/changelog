@@ -1,8 +1,10 @@
-boinc (7.6.11+dfsg-2) UNRELEASED; urgency=medium
+boinc (7.6.12+dfsg-1) unstable; urgency=medium
 
   * fix-localization-path-and-missing.patch (forwarded upstream)
     - Install locales in LC_MESSAGES subdir (LP: #1315614)
     - Add sv localization to install (LP: #1502568, Closes: #800838)
+  * Upload to unstable.
+  * New upstream release.
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 06 Oct 2015 06:32:18 +0200
 
