@@ -2,4 +2,4 @@ debian/boinc-manager.desktop       usr/share/applications
 debian/icons/hicolor               usr/share/icons
 debian/icons/pixmaps/boincmgr.xpm  usr/share/pixmaps
 usr/bin/boincmgr
-usr/share/locale/*/BOINC-Manager.mo
+usr/share/locale/*/LC_MESSAGES/BOINC-Manager.mo

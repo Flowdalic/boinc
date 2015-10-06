@@ -329,7 +329,6 @@ override_dh_auto_clean:
 	  missing \
 	  sched/credit_test \
 	  svn_version.h \
-	  locale/client/ar/BOINC\ Manager.mo \
 	  config.guess \
 	  config.sub \
 	  client/scripts/Makefile \

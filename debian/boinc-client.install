@@ -6,4 +6,4 @@ debian/extra/update-boinc-applinks  usr/bin
 usr/bin/boinc
 usr/bin/boinccmd
 usr/bin/switcher                    usr/lib/boinc-client
-usr/share/locale/*/BOINC-Client.mo
+usr/share/locale/*/LC_MESSAGES/BOINC-Client.mo
