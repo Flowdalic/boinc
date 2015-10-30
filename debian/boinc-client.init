@@ -29,6 +29,7 @@ BOINC_USER=boinc
 BOINC_DIR=/var/lib/boinc-client
 BOINC_CLIENT=/usr/bin/boinc
 BOINC_OOM_ADJ=15
+BOINC_OOM_SCORE_ADJ=1000
 
 #VALGRIND_OPTIONS="-v --log-file=/tmp/valgrind_boinc.log "
 VALGRIND_OPTIONS=""
@@ -206,6 +207,10 @@ schedule()
       fi
     fi
     for BPID in ${pid} ${children}; do
+      if [ -w /proc/${BPID}/oom_score_adj ]; then
+        echo ${BOINC_OOM_SCORE_ADJ} > /proc/${BPID}/oom_score_adj 2>/dev/null || true
+      fi
+      # Fallback to old oom_adj if oom_score_adj doesn't exist
       if [ -w /proc/${BPID}/oom_adj ]; then
         echo ${BOINC_OOM_ADJ} > /proc/${BPID}/oom_adj 2>/dev/null || true
       else
