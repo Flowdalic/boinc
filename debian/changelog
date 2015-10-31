@@ -1,3 +1,9 @@
+boinc (7.6.12+dfsg-2exp2) UNRELEASED; urgency=medium
+
+  * remove menu file.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 31 Oct 2015 14:02:43 +0100
+
 boinc (7.6.12+dfsg-2exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
