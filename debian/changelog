@@ -1,6 +1,9 @@
-boinc (7.6.12+dfsg-2exp2) UNRELEASED; urgency=medium
+boinc (7.6.15+dfsg-1) unstable; urgency=medium
 
+  * New upstream release.
+    - drop fix-localization-path-and-missing.patch: upstream
   * remove menu file.
+  * Upload to unstable.
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 31 Oct 2015 14:02:43 +0100
 

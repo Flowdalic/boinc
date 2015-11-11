@@ -12,7 +12,7 @@ Last-Update: <2013-03-07>
 
 --- a/client/client_state.cpp
 +++ b/client/client_state.cpp
-@@ -528,7 +528,7 @@
+@@ -609,7 +609,7 @@
  
      // inform the user if there's a newer version of client
      //
@@ -23,7 +23,7 @@ Last-Update: <2013-03-07>
      // now that we know the host's venue on each project
 --- a/client/scheduler_op.cpp
 +++ b/client/scheduler_op.cpp
-@@ -129,7 +129,7 @@
+@@ -134,7 +134,7 @@
          // and project list
          //
          if (!cc_config.no_info_fetch) {
