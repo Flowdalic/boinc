@@ -82,30 +82,6 @@ Index: boinc/clientscr/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
---- boinc-7.6.7+dfsg.orig/dcapi/boinc/Makefile.am
-+++ boinc-7.6.7+dfsg/dcapi/boinc/Makefile.am
-@@ -36,4 +36,3 @@ libdcapi_client_boinc_la_LIBADD = \
- 		../common/libdcapi-common-client.la \
- 		$(BOINC_CLIENT_LIBS)
- libdcapi_client_boinc_la_CPPFLAGS = $(AM_CPPFLAGS) $(BOINC_CPPFLAGS)
--libdcapi_client_boinc_la_LDFLAGS = -static
---- boinc-7.6.7+dfsg.orig/dcapi/condor/Makefile.am
-+++ boinc-7.6.7+dfsg/dcapi/condor/Makefile.am
-@@ -42,7 +42,6 @@ libdcapi_client_condor_la_SOURCES = cond
- 				 condor_utils.c
- 
- libdcapi_client_condor_la_LIBADD = ../common/libdcapi-common-client.la
--libdcapi_client_condor_la_LDFLAGS = -static
- 
- #appdir		= $(libdir)/dcapi/condor
- #app_PROGRAMS	= tss tm
---- boinc-7.6.7+dfsg.orig/dcapi/local/Makefile.am
-+++ boinc-7.6.7+dfsg/dcapi/local/Makefile.am
-@@ -35,4 +35,3 @@ libdcapi_client_local_la_SOURCES = \
- 		local_utils.c \
- 		local_common.c
- libdcapi_client_local_la_LIBADD = ../common/libdcapi-common-client.la
--libdcapi_client_local_la_LDFLAGS = -static
 --- boinc-7.6.7+dfsg.orig/sched/Makefile.am
 +++ boinc-7.6.7+dfsg/sched/Makefile.am
 @@ -4,7 +4,6 @@

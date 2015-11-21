@@ -15,7 +15,7 @@ Description: this patch adds an useful error message in case of dir open failure
  #endif
      return dirp;
  }
-@@ -615,7 +620,7 @@ static int boinc_rename_aux(const char*
+@@ -623,7 +628,7 @@ static int boinc_rename_aux(const char*
      //
      int retval = rename(old, newf);
      if (retval) {

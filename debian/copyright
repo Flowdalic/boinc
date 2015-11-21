@@ -21,29 +21,9 @@ Copyright:
  2004-2014 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 License: GPL-2+
 
-Files: dcapi/*
-Copyright:
- 2006-2007 Daniel Drotos
- 2005-2006 Gabor Vida
- 20069 MTA SZTAKI
-License: LGPL-3+
-
 Files: doc/manpages/*.xml
 Copyright: 2007-2008 University of California
 License: GFDL-NIV-1.2+
-
-Files: rboinc/server/etc/rboinc_httpd_conf
-       rboinc/client/boinc_retrieve.pl
-       rboinc/client/boinc_submit.pl
-       rboinc/client/boinc_lib.pl
-       rboinc/server/boinc_authentication.pl
-       rboinc/server/boinc_submit_server.pl
-       rboinc/server/boinc_configuration.pl
-       rboinc/server/boinc_retrieve_server.pl
-       rboinc/server/boinc_configuration_template.pl
-Copyright: 2009-2010 Toni Giorgino
-           2010 Universitat Pompeu Fabra
-License: LGPL-3+
 
 Files: rboinc/monitoring/Text/Table.pm
        rboinc/monitoring/Text/Aligner.pm

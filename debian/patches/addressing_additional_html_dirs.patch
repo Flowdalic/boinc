@@ -6,4 +6,4 @@ Description: Adding some missing html dirs to the install script
  install-data-local:
  	mkdir -p $(htmldir)
 -	cp -r $(srcdir)/inc $(srcdir)/languages $(srcdir)/ops $(srcdir)/user $(htmldir)
-+	cp -r $(srcdir)/bt $(srcdir)/drupal $(srcdir)/inc $(srcdir)/languages $(srcdir)/ops $(srcdir)/project.sample $(srcdir)/queue $(srcdir)/user $(htmldir)
++	cp -r $(srcdir)/drupal $(srcdir)/inc $(srcdir)/languages $(srcdir)/ops $(srcdir)/project.sample $(srcdir)/user $(htmldir)

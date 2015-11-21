@@ -30,7 +30,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
  
          if (is_dir(subdir)) {
              if (recurse) {
-@@ -564,8 +564,8 @@
+@@ -566,8 +566,8 @@
      }
      return 0;
  #elif defined(__EMX__)
@@ -41,7 +41,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
      return system(cmd);
  #else
      // POSIX requires that shells run from an application will use the 
-@@ -700,7 +700,7 @@
+@@ -708,7 +708,7 @@
          p = strchr(q, '/');
          if (!p) break;
          *p = 0;
