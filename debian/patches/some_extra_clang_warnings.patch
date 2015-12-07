@@ -36,7 +36,7 @@ Description: fixing some clang warning.
                  for(j = 0; j < ctrlCount; ++j) {
                      alphaOrder = (m_ProjectSelectionCtrl->GetString(j)).CmpNoCase(projname);
                      if (alphaOrder > 0) {
-@@ -483,8 +483,8 @@
+@@ -482,8 +482,8 @@
          if ( projCnt < ctrlCount ) {
              project = NULL;
              // Check items in descending order so deletion won't change indexes of items yet to be checked
@@ -47,7 +47,7 @@ Description: fixing some clang warning.
                  project = pDoc->state.lookup_project(ctrl_url);
                  if ( project == NULL ) {
                      selData = (ProjectSelectionData*)m_ProjectSelectionCtrl->GetClientData(j);
-@@ -512,9 +512,9 @@
+@@ -511,9 +511,9 @@
      
          // Check to see if we need to reload the project icon
          ctrlCount = m_ProjectSelectionCtrl->GetCount();

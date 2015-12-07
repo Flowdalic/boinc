@@ -1,3 +1,12 @@
+boinc (7.6.19+dfsg-1) unstable; urgency=medium
+
+  * Upload to unstable
+  * New upstream release, patch refresh.
+  * Strip more files from source tarball (Closes: #806721)
+    tanks Dmitry Smirnov for the useful and complete bug report!
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 07 Dec 2015 12:29:58 +0100
+
 boinc (7.6.17+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
