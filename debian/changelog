@@ -1,3 +1,13 @@
+boinc (7.6.20+dfsg-2) unstable; urgency=medium
+
+  * Upload to unstable
+
+  [ Matthias Klose ]
+  * Build boinc-client-nvidia-cuda on amd64 only.
+  * boinc-client-nvidia-cuda: Add libcudart7.0 as an alternative dependency.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 08 Dec 2015 23:19:58 +0100
+
 boinc (7.6.20+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
