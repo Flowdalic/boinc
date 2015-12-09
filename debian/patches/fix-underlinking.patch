@@ -57,7 +57,7 @@ Index: boinc/sched/Makefile.am
 -libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
 -libsched_la_LIBADD= $(SSL_LIBS)
 +libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(MYSQL_LIBS) $(SSL_LIBS)
-+libsched_la_LIBADD= $(LIBBOINC)
++libsched_la_LIBADD= $(LIBBOINC) $(LIBBOINC_CRYPT)
  
  ## install only headers that are meant for exporting the API !!
  if INSTALL_HEADERS
@@ -66,7 +66,7 @@ Index: boinc/sched/Makefile.am
  libsched_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
  libsched_fcgi_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
 -libsched_fcgi_la_LIBADD=
-+libsched_fcgi_la_LIBADD= $(BOINC_CRYPT)
++libsched_fcgi_la_LIBADD= $(LIBBOINC_CRYPT)
  
  endif
  # end of "if ENABLE_FCGI"
