@@ -1,7 +1,9 @@
 boinc (7.6.21+dfsg-1) unstable; urgency=medium
 
+  [ Gianfranco Costamagna ]
   * Upload to unstable
   * New upstream release.
+  * Add libxss-dev to build dependencies again.
 
   [ Preston Maness ]
   * debian/patches/156b0be9f13b3427973f1d83a004947225b2d8b6.patch:
