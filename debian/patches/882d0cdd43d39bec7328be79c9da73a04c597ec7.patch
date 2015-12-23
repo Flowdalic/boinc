@@ -1,0 +1,98 @@
+## Description: add some description
+## Origin/Author: add some origin or author
+## Bug: bug URL
+From 882d0cdd43d39bec7328be79c9da73a04c597ec7 Mon Sep 17 00:00:00 2001
+From: Preston Maness <aggroskater@gmail.com>
+Date: Fri, 18 Dec 2015 09:56:24 -0600
+Subject: [PATCH] Adjusting the failure behaviour of xss_idle to report idle
+ rather than busy, and send a message to the Event Log that X-based idle
+ detection is disabled. Also changed how to handle the 'Always' definition
+ conflict with X.h.
+
+---
+ client/hostinfo_unix.cpp | 17 +++++++++++------
+ lib/prefs.cpp            |  2 +-
+ lib/prefs.h              |  6 +-----
+ 3 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/client/hostinfo_unix.cpp b/client/hostinfo_unix.cpp
+index c059895..5adc50e 100644
+--- a/client/hostinfo_unix.cpp
++++ b/client/hostinfo_unix.cpp
+@@ -43,6 +43,9 @@
+ 
+ #if HAVE_XSS
+ #include <X11/extensions/scrnsaver.h> //X-based idle detection
++// prevents naming collision between X.h define of Always and boinc's
++// lib/prefs.h definition in an enum.
++#undef Always
+ #endif
+ 
+ #include <cstdio>
+@@ -1959,10 +1962,12 @@ bool interrupts_idle(time_t t) {
+ bool xss_idle(long idle_threshold) {
+     static XScreenSaverInfo* xssInfo = NULL;
+     static Display* disp = NULL;
++    // if an X-related error occurs, set this to true and always
++    // report that we are idle (have xss_idle return true). Will report the
++    // failure in Event Log for user visibility.
+     static bool error = false;
+-        // some X call failed - always return not idle
+     
+-    if (error) return false;
++    if (error) return true;
+ 
+     long idle_time = 0;
+     
+@@ -1973,8 +1978,8 @@ bool xss_idle(long idle_threshold) {
+         //
+         if (disp == NULL) {
+             error = true;
+-            //msg_printf(NULL, MSG_INFO, "XDisplay not found.");
+-            return false;
++            msg_printf(NULL, MSG_INFO, "XDisplay not found. X-based idle detection disabled.");
++            return true;
+         }
+         int event_base_return, error_base_return;
+         xssInfo = XScreenSaverAllocInfo();
+@@ -1982,8 +1987,8 @@ bool xss_idle(long idle_threshold) {
+             disp, &event_base_return, &error_base_return
+         )){
+             error = true;
+-            //msg_printf(NULL, MSG_INFO, "XScreenSaverQueryExtension() failed.");
+-            return false;
++            msg_printf(NULL, MSG_INFO, "XScreenSaverQueryExtension() failed. X-based idle detection disabled.");
++            return true;
+         }
+     }
+ 
+diff --git a/lib/prefs.cpp b/lib/prefs.cpp
+index 9bd4160..3a8267e 100644
+--- a/lib/prefs.cpp
++++ b/lib/prefs.cpp
+@@ -149,7 +149,7 @@ bool TIME_SPAN::suspended(double hour) const {
+ 
+ TIME_SPAN::TimeMode TIME_SPAN::mode() const {
+     if (end_hour == start_hour || (start_hour == 0 && end_hour == 24)) {
+-        return Always2;
++        return Always;
+     } else if (start_hour == 24 && end_hour == 0) {
+         return Never;
+     }
+diff --git a/lib/prefs.h b/lib/prefs.h
+index da81ea7..ebbe3cc 100644
+--- a/lib/prefs.h
++++ b/lib/prefs.h
+@@ -89,11 +89,7 @@ struct TIME_SPAN {
+     double end_hour;
+ 
+     enum TimeMode {
+-        // "Always" is defined by X.h, which itself is (indirectly) included
+-        // from client/hostinfo_unix.cpp when including the XSS API
+-        // (<X11/extensions/scrnsaver.h>). Hence, renaming here (and in
+-        // prefs.cpp).
+-        Always2 = 7000,
++        Always = 7000,
+         Never,
+         Between
+     };
