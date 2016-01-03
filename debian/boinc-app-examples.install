@@ -6,5 +6,5 @@ apps/concat                          usr/lib/boinc-server-maker/apps
 apps/upper_case                      usr/lib/boinc-server-maker/apps
 # where should it go
 samples/example_app/uc2              usr/lib/boinc-server-maker/apps
-samples/worker/worker                usr/lib/boinc-server-maker/apps
 samples/sleeper/sleeper              usr/lib/boinc-server-maker/apps
+samples/worker/worker                usr/lib/boinc-server-maker/apps

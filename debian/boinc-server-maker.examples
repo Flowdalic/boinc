@@ -1,6 +1,6 @@
 debian/fetch_example_applications.sh
-debian/upper_case_wu
 debian/upper_case_result
+debian/upper_case_wu
 samples/client_state_save.xml
 samples/example_app/Mac/app_icon.h
 samples/example_app/Mac/uc2_graphics.icns
