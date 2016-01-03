@@ -120,10 +120,6 @@ License: custom-wrapper
  .
  4. This notice must not be removed or altered.
 
-Files: samples/wrappture/wrappture_example.cpp
-Copyright: 2004-2008  Purdue Research Foundation
-License: LGPL-3+
-
 Files: samples/example_app/slide_show.cpp
 Copyright: 2012 David Coss, PhD
            2012 University of California
