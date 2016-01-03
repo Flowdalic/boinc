@@ -1,0 +1,9 @@
+# This file is sourced by Xsession(5), not executed.
+
+# If xhost (from x11-xserver-utils) is installed, use it to give access
+# to the X server to the boinc user on the local host so that idle
+# detection is functional.
+
+if type xhost >/dev/null 2>&1; then
+xhost +si:localuser:boinc || :
+fi
