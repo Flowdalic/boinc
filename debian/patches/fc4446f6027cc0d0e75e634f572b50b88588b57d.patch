@@ -1,0 +1,253 @@
+## Description: add some description
+## Origin/Author: add some origin or author
+## Bug: bug URL
+From fc4446f6027cc0d0e75e634f572b50b88588b57d Mon Sep 17 00:00:00 2001
+From: Preston Maness <aggroskater@gmail.com>
+Date: Wed, 30 Dec 2015 17:03:35 -0600
+Subject: [PATCH] Reinstate and Improve XScreenSaver Idle Detection
+
+The set of commits on this pull request:
+
+https://github.com/BOINC/boinc/pull/1453
+
+first reinstated previously existing code to utilize the XScreenSaver
+(XSS) X extension when determining a system's idle state (there was
+also additional DPMS code that was not reinstated).
+
+Original removal:
+
+https://github.com/BOINC/boinc/commit/bfae1032e5c1ac73f2d8d92f222293d8383a6cee
+
+The code would attempt to open a connection to the display at the client
+binary's DISPLAY environment variable and, if unable to connect, always
+report busy (undesirable).
+
+The original motivation for reinstating this code was that the remaining
+idle detection mechanisms did not detect mouse or keyboard movement if
+an Xserver was responsible for them. Only activities in terminals were
+detected. Through the course of extending and improving this code, the
+following changes have been made:
+
+  * As per "man Xserver", each local Xserver should have a socket file
+    at standard location /tmp/.X11-unix/ with standard naming scheme
+"Xn", where n is the number of the DISPLAY. This code will open this
+directory and parse its contents for open DISPLAYs, adding them to a
+vector for later interrogation of idle time by xss_idle. If no DISPLAYs
+were found, a static guess-list from DISPLAY :0 to DISPLAY :6 is set and
+interrogated.
+  * xss_idle uses the XScreenSaver X extension's API, as documented at
+    "man 3 xss". Certain checks are performed to determine if the X
+server is accessible, and if so, whether it has the XScreenSaver
+extension. If it does, then we obtain information on the DISPLAY's idle
+time and determine whether the Xserver is idle or not.
+  * The user running the boinc client (typically the "boinc" user for
+    most distributions), must have access to the Xserver for XSS idle
+detection to work. Dropping an appropriate file in /etc/X11/Xsession.d/
+(Debian flavours) or /etc/X11/xinit/xinitrc.d/ (Fedora and others)
+should permit Xservers to run something like "xhost +SI:localuser:boinc"
+on start. If the boinc client cannot access an Xserver/DISPLAY, it
+simply skips it and treats it as though it is idle. If no DISPLAY is
+accessible, then xss_idle is effectively passed through --xss_idle will
+report the system as idle-- and idle detection is left to other
+mechanisms.
+  * A debug logging flag "idle_detection_debug" was added. If this
+    flag is defined in the cc_config.xml file as "1", then verbose
+debugging information related to boinc's idle detection determinations is
+provided to the Event Log. This logging flag may also be utilized
+by other components of idle detection as/if needed/desired.
+---
+ client/hostinfo_unix.cpp | 64 ++++++++++++++++++++++++++++++++++++------------
+ client/log_flags.cpp     |  1 +
+ lib/cc_config.cpp        |  3 +++
+ lib/cc_config.h          |  2 ++
+ 4 files changed, 55 insertions(+), 15 deletions(-)
+
+diff --git a/client/hostinfo_unix.cpp b/client/hostinfo_unix.cpp
+index 1e20ad6..a1fc652 100644
+--- a/client/hostinfo_unix.cpp
++++ b/client/hostinfo_unix.cpp
+@@ -47,7 +47,8 @@
+ // lib/prefs.h definition in an enum.
+ #undef Always
+ #include <dirent.h> //for opening /tmp/.X11-unix/
+-// (There is a DirScanner class in BOINC, but it doesn't do what we want)
++  // (There is a DirScanner class in BOINC, but it doesn't do what we want)
++#include "log_flags.h" // idle_detection_debug flag for verbose output
+ #endif
+ 
+ #include <cstdio>
+@@ -1983,7 +1984,10 @@ const vector<string> X_display_values_initialize() {
+   DIR *dp;
+   struct dirent *dirp;
+   if((dp = opendir(dir.c_str())) == NULL) {
+-    msg_printf(NULL, MSG_INFO, "Error (%d) opening %s.", errno, dir.c_str());
++    if ( log_flags.idle_detection_debug ) {
++      msg_printf(NULL, MSG_INFO, 
++        "[idle_detection] Error (%d) opening %s.", errno, dir.c_str());
++    }
+   }
+ 
+   while ((dirp = readdir(dp)) != NULL) {
+@@ -2010,6 +2014,12 @@ const vector<string> X_display_values_initialize() {
+   // more than seven active, local Xservers. I'm sure they exist... somewhere.
+   // But seven was the magic number for me).
+   if ( display_values.size() == 0 ) {
++    if ( log_flags.idle_detection_debug ) {
++      msg_printf(NULL, MSG_INFO,
++        "[idle_detection] No DISPLAY values found in /tmp/.X11-unix/.");
++      msg_printf(NULL, MSG_INFO,
++        "[idle_detection] Using static DISPLAY list, :{0..6}.");
++    }
+     display_values.push_back(":0");
+     display_values.push_back(":1");
+     display_values.push_back(":2");
+@@ -2037,14 +2047,18 @@ bool xss_idle(long idle_threshold) {
+ 
+   const vector<string> display_values = X_display_values_initialize();
+   vector<string>::const_iterator it;
++  // If we can connect to at least one DISPLAY, this is set to false.
++  bool no_available_x_display = true;
+ 
+   static XScreenSaverInfo* xssInfo = XScreenSaverAllocInfo();
+   // This shouldn't fail. XScreenSaverAllocInfo just returns a small
+   // struct (see "man 3 xss"). If we can't allocate this, then we've
+   // got bigger problems to worry about.
+   if ( xssInfo == NULL ) {
+-    msg_printf(NULL, MSG_INFO,
+-      "XScreenSaverAllocInfo failed. Out of memory? Skipping XScreenSaver idle detection.");
++    if ( log_flags.idle_detection_debug ) {
++      msg_printf(NULL, MSG_INFO,
++        "[idle_detection] XScreenSaverAllocInfo failed. Out of memory? Skipping XScreenSaver idle detection.");
++    }
+     return true;
+   }
+ 
+@@ -2057,9 +2071,11 @@ bool xss_idle(long idle_threshold) {
+     // XOpenDisplay may return NULL if there is no running X
+     // or DISPLAY points to wrong/invalid display
+     if (disp == NULL) {
+-      msg_printf(NULL, MSG_INFO, 
+-      "DISPLAY '%s' not found or insufficient access.",
+-      it->c_str());
++      if ( log_flags.idle_detection_debug ) {
++	msg_printf(NULL, MSG_INFO, 
++	"[idle_detection] DISPLAY '%s' not found or insufficient access.",
++	it->c_str());
++      }
+       continue;
+     }
+ 
+@@ -2069,27 +2085,41 @@ bool xss_idle(long idle_threshold) {
+     if (!XScreenSaverQueryExtension(
+       disp, &event_base_return, &error_base_return
+     )){
+-      msg_printf(NULL, MSG_INFO,
+-        "XScreenSaver extension not available for DISPLAY '%s'.",
+-        it->c_str());
++      if ( log_flags.idle_detection_debug ) {
++	msg_printf(NULL, MSG_INFO,
++	  "[idle_detection] XScreenSaver extension not available for DISPLAY '%s'.",
++	  it->c_str());
++      }
+       continue;
+     }
+ 
+     // All checks passed. Get the idle information.
++    no_available_x_display = false;
+     XScreenSaverQueryInfo(disp, DefaultRootWindow(disp), xssInfo);
+     idle_time = xssInfo->idle;
+ 
+     // convert from milliseconds to seconds
+     idle_time = idle_time / 1000;
+ 
+-    msg_printf(NULL, MSG_INFO, "XSS idle detection succeeded on DISPLAY '%s'.", it->c_str());
+-    msg_printf(NULL, MSG_INFO, "idle threshold: %ld", idle_threshold);
+-    msg_printf(NULL, MSG_INFO, "idle_time: %ld", idle_time);
++    if ( log_flags.idle_detection_debug ) {
++      msg_printf(NULL, MSG_INFO, 
++        "[idle_detection] XSS idle detection succeeded on DISPLAY '%s'.", it->c_str());
++      msg_printf(NULL, MSG_INFO, 
++        "[idle_detection] idle threshold: %ld", idle_threshold);
++      msg_printf(NULL, MSG_INFO,
++        "[idle_detection] idle_time: %ld", idle_time);
++    }
+ 
+     if ( idle_threshold < idle_time ) {
+-      msg_printf(NULL, MSG_INFO, "DISPLAY '%s' is idle.", it->c_str());
++      if ( log_flags.idle_detection_debug ) {
++        msg_printf(NULL, MSG_INFO,
++          "[idle_detection] DISPLAY '%s' is idle.", it->c_str());
++      }
+     } else {
+-      msg_printf(NULL, MSG_INFO, "DISPLAY '%s' is active.", it->c_str());
++      if ( log_flags.idle_detection_debug ) {
++        msg_printf(NULL, MSG_INFO,
++          "[idle_detection] DISPLAY '%s' is active.", it->c_str());
++      }
+       return false;
+     }
+ 
+@@ -2101,6 +2131,10 @@ bool xss_idle(long idle_threshold) {
+    * provides no information on the idle state of the system, as no Xservers
+    * were accessible to interrogate.
+    */
++  if ( log_flags.idle_detection_debug && no_available_x_display ) {
++    msg_printf(NULL, MSG_INFO,
++      "[idle_detection] Could not connect to any DISPLAYs. XSS idle determination impossible.");
++  }
+   return true;
+ 
+ }
+diff --git a/client/log_flags.cpp b/client/log_flags.cpp
+index 16002cb..fe5b1c1 100644
+--- a/client/log_flags.cpp
++++ b/client/log_flags.cpp
+@@ -87,6 +87,7 @@ void LOG_FLAGS::show() {
+     show_flag(buf, heartbeat_debug, "heartbeat_debug");
+     show_flag(buf, http_debug, "http_debug");
+     show_flag(buf, http_xfer_debug, "http_xfer_debug");
++    show_flag(buf, idle_detection_debug, "idle_detection_debug");
+     show_flag(buf, mem_usage_debug, "mem_usage_debug");
+     show_flag(buf, network_status_debug, "network_status_debug");
+     show_flag(buf, notice_debug, "notice_debug");
+diff --git a/lib/cc_config.cpp b/lib/cc_config.cpp
+index 23f78db..dad863f 100644
+--- a/lib/cc_config.cpp
++++ b/lib/cc_config.cpp
+@@ -80,6 +80,7 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
+         if (xp.parse_bool("heartbeat_debug", heartbeat_debug)) continue;
+         if (xp.parse_bool("http_debug", http_debug)) continue;
+         if (xp.parse_bool("http_xfer_debug", http_xfer_debug)) continue;
++	if (xp.parse_bool("idle_detection_debug", idle_detection_debug)) continue;
+         if (xp.parse_bool("mem_usage_debug", mem_usage_debug)) continue;
+         if (xp.parse_bool("network_status_debug", network_status_debug)) continue;
+         if (xp.parse_bool("notice_debug", notice_debug)) continue;
+@@ -127,6 +128,7 @@ int LOG_FLAGS::write(MIOFILE& out) {
+         "        <heartbeat_debug>%d</heartbeat_debug>\n"
+         "        <http_debug>%d</http_debug>\n"
+         "        <http_xfer_debug>%d</http_xfer_debug>\n"
++	"        <idle_detection_debug>%d</idle_detection_debug>\n"
+         "        <mem_usage_debug>%d</mem_usage_debug>\n"
+         "        <network_status_debug>%d</network_status_debug>\n"
+         "        <notice_debug>%d</notice_debug>\n"
+@@ -167,6 +169,7 @@ int LOG_FLAGS::write(MIOFILE& out) {
+         heartbeat_debug ? 1 : 0,
+         http_debug ? 1 : 0,
+         http_xfer_debug ? 1 : 0,
++	idle_detection_debug ? 1 : 0,
+         mem_usage_debug ? 1 : 0,
+         network_status_debug ? 1 : 0,
+         notice_debug ? 1 : 0,
+diff --git a/lib/cc_config.h b/lib/cc_config.h
+index 29a000f..f9a1f7f 100644
+--- a/lib/cc_config.h
++++ b/lib/cc_config.h
+@@ -83,6 +83,8 @@ struct LOG_FLAGS {
+     bool heartbeat_debug;
+     bool http_debug;
+     bool http_xfer_debug;
++    bool idle_detection_debug;
++        // show details leading to idle/not-idle determinations.
+     bool mem_usage_debug;
+         // memory usage
+     bool network_status_debug;
