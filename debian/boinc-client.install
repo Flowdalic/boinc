@@ -1,4 +1,3 @@
-debian/35x11-common_xhost-local     etc/X11/Xsession.d/
 debian/36x11-common_xhost-boinc     etc/X11/Xsession.d/
 debian/bug/boinc-client/script      usr/share/bug/boinc-client
 debian/conffiles/*                  etc/boinc-client

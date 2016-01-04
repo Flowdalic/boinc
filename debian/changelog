@@ -1,3 +1,10 @@
+boinc (7.6.22+dfsg-1exp3) experimental; urgency=medium
+
+  * Drop 35x11-common_xhost-local, it is just an example
+    and prevents package installation
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 04 Jan 2016 12:03:59 +0100
+
 boinc (7.6.22+dfsg-1exp2) experimental; urgency=medium
 
   [ Preston Maness ]
