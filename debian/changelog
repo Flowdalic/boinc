@@ -1,3 +1,13 @@
+boinc (7.6.22+dfsg-2) unstable; urgency=medium
+
+  * Upload to unstable
+  [ Preston Maness ]
+  * debian/patches/85c8d0d85c73bbd3508d4e348226dcbcfec1402e.patch:
+    fix resource leaks when opening display for idle detection.
+    Closes: #812835
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 27 Jan 2016 09:40:33 +0100
+
 boinc (7.6.22+dfsg-1exp3) experimental; urgency=medium
 
   * Drop 35x11-common_xhost-local, it is just an example
