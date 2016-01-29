@@ -12,6 +12,7 @@ ExecStartPre=/bin/chown boinc:boinc /var/log/boinc.log /var/log/boincerr.log
 ExecStart=/usr/bin/boinc --dir /var/lib/boinc-client
 ExecReload=/usr/bin/boinccmd --read_cc_config
 ExecStopPost=/bin/rm -f /var/lib/boinc-client/lockfile
+IOSchedulingClass=idle
 
 [Install]
 WantedBy=multi-user.target

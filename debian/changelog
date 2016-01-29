@@ -1,3 +1,11 @@
+boinc (7.6.22+dfsg-3) unstable; urgency=medium
+
+  [ Marcel Partap]
+  * Add IOSchedulingClass=idle to service file, avoiding ionice
+    (Closes: #813134)
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Fri, 29 Jan 2016 18:35:35 +0100
+
 boinc (7.6.22+dfsg-2exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
