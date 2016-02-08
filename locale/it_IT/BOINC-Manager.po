@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: BOINC\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-16 17:27-0500\n"
-"PO-Revision-Date: 2015-12-17 14:10+0000\n"
-"Last-Translator: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>\n"
+"PO-Revision-Date: 2016-01-19 11:07+0000\n"
+"Last-Translator: Sebastiano Pistore <olatusrooc@virgilio.it>\n"
 "Language-Team: Italian (Italy) (http://www.transifex.com/boinc/boinc/language/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -135,7 +135,7 @@ msgstr "Usa l'account manager"
 
 #: clientgui/AccountInfoPage.cpp:567
 msgid "Please enter a user name."
-msgstr "Si prega di inserire il nome utente."
+msgstr "Si prega di inserire un nome utente."
 
 #: clientgui/AccountInfoPage.cpp:569
 msgid "Please enter an email address."
@@ -149,7 +149,7 @@ msgstr "Per favore inserire una password di almeno %d caratteri."
 #: clientgui/AccountInfoPage.cpp:589
 msgid ""
 "The password and confirmation password do not match. Please type them again."
-msgstr "La password e la password di conferma non corrispondono. Prova a scriverle di nuovo."
+msgstr "La password inserita e la password di conferma non corrispondono. Prova a scriverle di nuovo."
 
 #: clientgui/AccountManagerInfoPage.cpp:270
 msgid "Choose an account manager"
@@ -159,7 +159,7 @@ msgstr "Scegli un account manager"
 msgid ""
 "To choose an account manager, click its name or \n"
 "type its URL below."
-msgstr "Per selezionare un account manager, clicca sul suo nome o \ndigita il suo indirizzo (URL) in basso."
+msgstr "Per scegliere un account manager clicca sul suo nome o \ndigita il suo indirizzo (URL) in basso."
 
 #: clientgui/AccountManagerInfoPage.cpp:277
 msgid "Account manager details:"
@@ -352,7 +352,7 @@ msgstr "Esegui il &benchmark della CPU"
 
 #: clientgui/AdvancedFrame.cpp:494
 msgid "Run tests that measure CPU speed"
-msgstr "Avvia dei test che misurazione la velocità di calcolo della CPU e della GPU"
+msgstr "Avvia dei test che misurano la velocità di calcolo della CPU e della GPU"
 
 #: clientgui/AdvancedFrame.cpp:498
 msgid "Retry pending transfers"
@@ -512,12 +512,12 @@ msgstr "Fornisce assistenza per risolvere i problemi legati a %s"
 #: clientgui/AdvancedFrame.cpp:660
 #, c-format
 msgid "&%s help"
-msgstr "Assistenza di &%s"
+msgstr "Guida di &%s"
 
 #: clientgui/AdvancedFrame.cpp:664 clientgui/sg_BoincSimpleFrame.cpp:237
 #, c-format
 msgid "Show information about the %s"
-msgstr "Mostra le informazioni su %s"
+msgstr "Una breve guida di %s"
 
 #: clientgui/AdvancedFrame.cpp:675 clientgui/sg_BoincSimpleFrame.cpp:247
 #, c-format
@@ -537,7 +537,7 @@ msgstr "&Informazioni su %s..."
 
 #: clientgui/AdvancedFrame.cpp:696 clientgui/sg_BoincSimpleFrame.cpp:268
 msgid "Licensing and copyright information."
-msgstr "Mostra le informazioni sulla licenza ed il copyright"
+msgstr "Mostra le informazioni sulla licenza ed il copyright del software."
 
 #: clientgui/AdvancedFrame.cpp:703 clientgui/sg_BoincSimpleFrame.cpp:275
 msgid "&File"
@@ -1104,7 +1104,7 @@ msgstr "Il numero deve essere compreso tra 0 e 10"
 
 #: clientgui/DlgAdvPreferences.cpp:688 clientgui/sg_DlgPreferences.cpp:778
 msgid "Number must be between 0 and 100"
-msgstr "I numeri devono essere compresi tra 0 e 100"
+msgstr "Il numero deve essere compreso tra 0 e 100"
 
 #: clientgui/DlgAdvPreferences.cpp:689
 msgid "Number must be between 1 and 100"
@@ -1112,7 +1112,7 @@ msgstr "Il numero deve essere compreso tra 1 e 100"
 
 #: clientgui/DlgAdvPreferences.cpp:947 clientgui/sg_DlgPreferences.cpp:849
 msgid "invalid input value detected"
-msgstr "trovato un valore inserito non valido"
+msgstr "rilevato valore inserito non valido"
 
 #: clientgui/DlgAdvPreferences.cpp:959 clientgui/sg_DlgPreferences.cpp:861
 msgid "Validation Error"
@@ -1247,7 +1247,7 @@ msgstr "Spunta questa voce per sospendere l'elaborazione degli smartphone quando
 
 #: clientgui/DlgAdvPreferencesBase.cpp:282 clientgui/sg_DlgPreferences.cpp:253
 msgid "Suspend when computer is in use"
-msgstr "Sospendi quando il computer è in uso"
+msgstr "Sospendi quando il computer è 'in uso'"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:285 clientgui/sg_DlgPreferences.cpp:249
 msgid ""
@@ -1271,7 +1271,7 @@ msgstr "Questo determina quando il computer è considerato 'in uso'."
 #. context: 'In use' means mouse/keyboard input in last ___ minutes
 #: clientgui/DlgAdvPreferencesBase.cpp:304 clientgui/sg_DlgPreferences.cpp:268
 msgid "'In use' means mouse/keyboard input in last"
-msgstr "'In uso' significa che c'è attività di mouse o tastiera"
+msgstr "'In uso' significa che sono stati usati il mouse o la tastiera negli ultimi"
 
 #. context: 'In use' means mouse/keyboard input in last ___ minutes
 #. context: Switch between tasks every ___ minutes
@@ -1480,7 +1480,7 @@ msgstr "Limita la memoria utilizzata da %s quando stai usando il computer."
 
 #: clientgui/DlgAdvPreferencesBase.cpp:616
 msgid "When computer is in use, use at most"
-msgstr "Quando il computer è in uso, usa al massimo"
+msgstr "Quando il computer è in 'uso', utilizza al massimo"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:622
 #: clientgui/DlgAdvPreferencesBase.cpp:634
@@ -1496,7 +1496,7 @@ msgstr "Limita la memoria utilizzata da %s quando non stai utilizzando il comput
 
 #: clientgui/DlgAdvPreferencesBase.cpp:629
 msgid "When computer is not in use, use at most"
-msgstr "Quando il computer non è in uso, utilizza al massimo"
+msgstr "Quando il computer non è 'in uso', utilizza al massimo"
 
 #: clientgui/DlgAdvPreferencesBase.cpp:638
 msgid "Leave non-GPU tasks in memory while suspended"
@@ -1599,7 +1599,7 @@ msgstr "Questi flag abilitano vari tipi di messaggi di diagnostica nel Log degli
 
 #: clientgui/DlgDiagnosticLogFlags.cpp:99
 msgid "More info ..."
-msgstr "Maggiori informazioni ..."
+msgstr "Maggiori informazioni..."
 
 #: clientgui/DlgDiagnosticLogFlags.cpp:120 clientgui/DlgHiddenColumns.cpp:101
 msgid "Save all values and close the dialog"
@@ -1607,7 +1607,7 @@ msgstr "Salva tutti i valori e chiudi la finestra"
 
 #: clientgui/DlgDiagnosticLogFlags.cpp:123 clientgui/DlgHiddenColumns.cpp:104
 msgid "Defaults"
-msgstr "Predefinito"
+msgstr "Valori predefiniti"
 
 #: clientgui/DlgDiagnosticLogFlags.cpp:124 clientgui/DlgHiddenColumns.cpp:105
 msgid "Restore default settings"
@@ -2330,7 +2330,7 @@ msgstr "Domande frequenti"
 
 #: clientgui/Localization.cpp:63
 msgid "Read the Einstein@Home Frequently Asked Question list"
-msgstr "Leggi la lista delle domande frequenti su Einstein@Home"
+msgstr "Leggi le FAQ di Einstein@Home"
 
 #: clientgui/Localization.cpp:65
 msgid "Screensaver info"
@@ -2351,7 +2351,7 @@ msgstr "Stato di Einstein"
 
 #: clientgui/Localization.cpp:75
 msgid "Current status of the Einstein@Home server"
-msgstr "Stato attuale del server di Einstein@Home"
+msgstr "Stato attuale di funzionamento dei server di Einstein@Home"
 
 #: clientgui/Localization.cpp:77
 msgid "Report problems"
@@ -2359,7 +2359,7 @@ msgstr "Segnala i problemi"
 
 #: clientgui/Localization.cpp:79
 msgid "A link to the Einstein@Home problems and bug reports message board"
-msgstr "Riepilogo dei problemi di Einstein@Home e segnalazione bug"
+msgstr "Riepilogo dei problemi di Einstein@Home e segnalazione nuovi bug"
 
 #: clientgui/Localization.cpp:83
 msgid "View and modify your Einstein@Home account profile and preferences"
@@ -2485,7 +2485,7 @@ msgstr "alimentazione a batterie"
 
 #: clientgui/MainDocument.cpp:2444
 msgid "computer is in use"
-msgstr "Anche quando il computer è in uso"
+msgstr "il computer è in uso"
 
 #: clientgui/MainDocument.cpp:2445
 msgid "user request"
@@ -2505,7 +2505,7 @@ msgstr "È necessario più spazio su disco, controlla le preferenze"
 
 #: clientgui/MainDocument.cpp:2449
 msgid "computer is not in use"
-msgstr "Anche quando il computer non è in uso"
+msgstr "il computer non è in uso"
 
 #: clientgui/MainDocument.cpp:2450
 msgid "starting up"
@@ -2660,7 +2660,7 @@ msgstr "Errore: stato non valido '%d'"
 
 #: clientgui/NoInternetConnectionPage.cpp:179
 msgid "No Internet connection"
-msgstr "Connessione Internet assente"
+msgstr "Nessuna connessione Internet"
 
 #: clientgui/NoInternetConnectionPage.cpp:182
 msgid "Please connect to the Internet and try again."
