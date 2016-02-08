@@ -1,3 +1,12 @@
+boinc (7.6.23+dfsg-1) unstable; urgency=medium
+
+  * Upload to unstable
+  * New upstream release (Closes: #811947)
+  * Drop all patches from Preston: upstream.
+  * Patch refresh.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 08 Feb 2016 20:00:48 +0100
+
 boinc (7.6.22+dfsg-3exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.

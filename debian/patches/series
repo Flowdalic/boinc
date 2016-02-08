@@ -29,8 +29,3 @@ file_upload_handler_in_sched_linking.patch
 disable_silent_rules.patch
 envargs.patch
 fix-underlinking.patch
-156b0be9f13b3427973f1d83a004947225b2d8b6.patch
-882d0cdd43d39bec7328be79c9da73a04c597ec7.patch
-69abe830e6069ec2139783392e8d3a73fb7e6baf.patch
-fc4446f6027cc0d0e75e634f572b50b88588b57d.patch
-85c8d0d85c73bbd3508d4e348226dcbcfec1402e.patch
