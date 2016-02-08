@@ -565,7 +565,7 @@ int CLIENT_STATE::handle_scheduler_reply(
 
     get_sched_reply_filename(*project, filename, sizeof(filename));
 
-    f = fopen(filename, "r");
+    f = fopen(filename, "rb");
     if (!f) return ERR_FOPEN;
     retval = sr.parse(f, project);
     fclose(f);
@@ -1210,6 +1210,8 @@ PROJECT* CLIENT_STATE::next_project_sched_rpc_pending() {
             honor_suspend = false;
             break;
         case RPC_REASON_INIT:
+            // always do the initial RPC so we can get project name etc.
+            honor_suspend = false;
             break;
         case RPC_REASON_PROJECT_REQ:
             break;

@@ -80,6 +80,7 @@ int LOG_FLAGS::parse(XML_PARSER& xp) {
         if (xp.parse_bool("heartbeat_debug", heartbeat_debug)) continue;
         if (xp.parse_bool("http_debug", http_debug)) continue;
         if (xp.parse_bool("http_xfer_debug", http_xfer_debug)) continue;
+	if (xp.parse_bool("idle_detection_debug", idle_detection_debug)) continue;
         if (xp.parse_bool("mem_usage_debug", mem_usage_debug)) continue;
         if (xp.parse_bool("network_status_debug", network_status_debug)) continue;
         if (xp.parse_bool("notice_debug", notice_debug)) continue;
@@ -127,6 +128,7 @@ int LOG_FLAGS::write(MIOFILE& out) {
         "        <heartbeat_debug>%d</heartbeat_debug>\n"
         "        <http_debug>%d</http_debug>\n"
         "        <http_xfer_debug>%d</http_xfer_debug>\n"
+	"        <idle_detection_debug>%d</idle_detection_debug>\n"
         "        <mem_usage_debug>%d</mem_usage_debug>\n"
         "        <network_status_debug>%d</network_status_debug>\n"
         "        <notice_debug>%d</notice_debug>\n"
@@ -167,6 +169,7 @@ int LOG_FLAGS::write(MIOFILE& out) {
         heartbeat_debug ? 1 : 0,
         http_debug ? 1 : 0,
         http_xfer_debug ? 1 : 0,
+	idle_detection_debug ? 1 : 0,
         mem_usage_debug ? 1 : 0,
         network_status_debug ? 1 : 0,
         notice_debug ? 1 : 0,
@@ -202,9 +205,9 @@ void CC_CONFIG::defaults() {
     allow_multiple_clients = false;
     allow_remote_gui_rpc = false;
     alt_platforms.clear();
-    client_download_url = "http://boinc.berkeley.edu/download.php";
+    client_download_url = "https://boinc.berkeley.edu/download.php";
     client_new_version_text = "";
-    client_version_check_url = "http://boinc.berkeley.edu/download.php?xml=1";
+    client_version_check_url = "https://boinc.berkeley.edu/download.php?xml=1";
     config_coprocs.clear();
     disallow_attach = false;
     dont_check_file_sizes = false;
@@ -234,7 +237,7 @@ void CC_CONFIG::defaults() {
     max_stdout_file_size = 0;
     max_tasks_reported = 0;
     ncpus = -1;
-    network_test_url = "http://www.google.com/";
+    network_test_url = "https://www.google.com/";
     no_alt_platform = false;
     no_gpus = false;
     no_info_fetch = false;

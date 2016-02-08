@@ -278,9 +278,9 @@ void COPROCS::get_opencl(
         for (device_index=0; device_index<num_devices; ++device_index) {
             memset(&prop, 0, sizeof(prop));
             prop.device_id = devices[device_index];
-            strncpy(
+            strlcpy(
                 prop.opencl_platform_version, platform_version,
-                sizeof(prop.opencl_platform_version)-1
+                sizeof(prop.opencl_platform_version)
             );
 
             ciErrNum = get_opencl_info(prop, device_index, warnings);
@@ -364,9 +364,9 @@ void COPROCS::get_opencl(
         for (device_index=0; device_index<num_devices; ++device_index) {
             memset(&prop, 0, sizeof(prop));
             prop.device_id = devices[device_index];
-            strncpy(
+            strlcpy(
                 prop.opencl_platform_version, platform_version,
-                sizeof(prop.opencl_platform_version)-1
+                sizeof(prop.opencl_platform_version)
             );
 
 //TODO: Should we store the platform(s) for each GPU found?
@@ -858,6 +858,78 @@ cl_int COPROCS::get_opencl_info(
         );
         warnings.push_back(buf);
         return ciErrNum;
+    }
+
+    // Nvidia Specific Extensions
+    if (strstr(prop.extensions, "cl_nv_device_attribute_query") != NULL) {
+
+        ciErrNum = (*__clGetDeviceInfo)(prop.device_id, CL_DEVICE_COMPUTE_CAPABILITY_MAJOR_NV, sizeof(prop.nv_compute_capability_major), &prop.nv_compute_capability_major, NULL);
+        if (ciErrNum != CL_SUCCESS) {
+            snprintf(buf, sizeof(buf),
+                "clGetDeviceInfo failed to get CL_DEVICE_COMPUTE_CAPABILITY_MAJOR_NV for device %d",
+                (int)device_index
+            );
+            warnings.push_back(buf);
+            return ciErrNum;
+        }
+
+        ciErrNum = (*__clGetDeviceInfo)(prop.device_id, CL_DEVICE_COMPUTE_CAPABILITY_MINOR_NV, sizeof(prop.nv_compute_capability_minor), &prop.nv_compute_capability_minor, NULL);
+        if (ciErrNum != CL_SUCCESS) {
+            snprintf(buf, sizeof(buf),
+                "clGetDeviceInfo failed to get CL_DEVICE_COMPUTE_CAPABILITY_MINOR_NV for device %d",
+                (int)device_index
+            );
+            warnings.push_back(buf);
+            return ciErrNum;
+        }
+
+    }
+
+    // AMD Specific Extensions
+    if (strstr(prop.extensions, "cl_amd_device_attribute_query") != NULL) {
+
+        ciErrNum = (*__clGetDeviceInfo)(prop.device_id, CL_DEVICE_BOARD_NAME_AMD, sizeof(buf), buf, NULL);
+        if (strlen(buf) && ciErrNum == CL_SUCCESS) {
+            strlcpy(prop.name, buf, sizeof(prop.name));
+        } else if (ciErrNum != CL_SUCCESS) {
+            snprintf(buf, sizeof(buf),
+                "clGetDeviceInfo failed to get AMD Board Name for device %d",
+                (int)device_index
+            );
+            warnings.push_back(buf);
+            return ciErrNum;
+        }
+    
+        ciErrNum = (*__clGetDeviceInfo)(prop.device_id, CL_DEVICE_SIMD_PER_COMPUTE_UNIT_AMD, sizeof(prop.amd_simd_per_compute_unit), &prop.amd_simd_per_compute_unit, NULL);
+        if (ciErrNum != CL_SUCCESS) {
+            snprintf(buf, sizeof(buf),
+                "clGetDeviceInfo failed to get CL_DEVICE_SIMD_PER_COMPUTE_UNIT_AMD for device %d",
+                (int)device_index
+            );
+            warnings.push_back(buf);
+            return ciErrNum;
+        }
+
+        ciErrNum = (*__clGetDeviceInfo)(prop.device_id, CL_DEVICE_SIMD_WIDTH_AMD, sizeof(prop.amd_simd_width), &prop.amd_simd_width, NULL);
+        if (ciErrNum != CL_SUCCESS) {
+            snprintf(buf, sizeof(buf),
+                "clGetDeviceInfo failed to get CL_DEVICE_SIMD_WIDTH_AMD for device %d",
+                (int)device_index
+            );
+            warnings.push_back(buf);
+            return ciErrNum;
+        }
+
+        ciErrNum = (*__clGetDeviceInfo)(prop.device_id, CL_DEVICE_SIMD_INSTRUCTION_WIDTH_AMD, sizeof(prop.amd_simd_instruction_width), &prop.amd_simd_instruction_width, NULL);
+        if (ciErrNum != CL_SUCCESS) {
+            snprintf(buf, sizeof(buf),
+                "clGetDeviceInfo failed to get CL_DEVICE_SIMD_INSTRUCTION_WIDTH_AMD for device %d",
+                (int)device_index
+            );
+            warnings.push_back(buf);
+            return ciErrNum;
+        }
+
     }
 
     return CL_SUCCESS;
