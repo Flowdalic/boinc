@@ -6,7 +6,6 @@ After=network.target
 Nice=10
 User=boinc
 PermissionsStartOnly=yes
-ExecStartPre=/bin/sleep 1
 ExecStartPre=/usr/bin/touch /var/log/boinc.log /var/log/boincerr.log
 ExecStartPre=/bin/chown boinc:boinc /var/log/boinc.log /var/log/boincerr.log
 ExecStart=/usr/bin/boinc --dir /var/lib/boinc-client
