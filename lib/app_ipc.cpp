@@ -25,6 +25,10 @@
 #include <string>
 #endif
 
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
+
 #include "error_numbers.h"
 #include "filesys.h"
 #include "miofile.h"
@@ -472,7 +476,7 @@ int boinc_resolve_filename(
     // must initialize buf since fgets() on an empty file won't do anything
     //
     buf[0] = 0;
-    p =fgets(buf, sizeof(buf), fp);
+    p = fgets(buf, sizeof(buf), fp);
     fclose(fp);
 
     // If it's the <soft_link> XML tag, return its value,
@@ -505,9 +509,34 @@ int boinc_resolve_filename_s(const char *virtual_name, string& physical_name) {
     return 0;
 }
 
-void url_to_project_dir(char* url, char* dir) {
+// if the given file is a soft link of the form ../../project_dir/x,
+// return x, else return empty string
+//
+string resolve_soft_link(const char* project_dir, const char* file) {
+    char buf[1024], physical_name[1024];
+    FILE* fp = boinc_fopen(file, "r");
+    if (!fp) {
+        return string("");
+    }
+    buf[0] = 0;
+    char* p = fgets(buf, sizeof(buf), fp);
+    fclose(fp);
+    if (!p) {
+        return string("");
+    }
+    if (!parse_str(buf, "<soft_link>", physical_name, sizeof(physical_name))) {
+        return string("");
+    }
+    snprintf(buf, sizeof(buf), "../../%s/", project_dir);
+    if (strstr(physical_name, buf) != physical_name) {
+        return string("");
+    }
+    return string(physical_name + strlen(buf));
+}
+
+void url_to_project_dir(char* url, char* dir, int dirsize) {
     char buf[256];
     escape_project_url(url, buf);
-    sprintf(dir, "%s/%s", PROJECT_DIR, buf);
+    snprintf(dir, dirsize, "%s/%s", PROJECT_DIR, buf);
 }
 
