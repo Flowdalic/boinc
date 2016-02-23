@@ -2,6 +2,9 @@ boinc (7.6.28+dfsg-1) unstable; urgency=medium
 
   * Upload to unstable.
   * New upstream release, patch refresh.
+  [ Preston Maness ]
+  * Fix missing stdout/stderr logs with systemd service file.
+    Closes: #815214
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 23 Feb 2016 17:28:44 +0100
 
