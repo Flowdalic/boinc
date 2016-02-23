@@ -21,57 +21,12 @@ Description: use MAXPATHLEN and change sprintf to snprintf
  
 --- a/lib/filesys.cpp
 +++ b/lib/filesys.cpp
-@@ -441,7 +441,7 @@
-     while (1) {
-         retval = dir_scan(filename, dirp, sizeof(filename));
-         if (retval) break;
--        sprintf(subdir, "%s/%s", dirpath, filename);
-+        snprintf(subdir, sizeof(subdir), "%s/%s", dirpath, filename);
- 
-         if (is_dir(subdir)) {
-             if (recurse) {
-@@ -567,8 +567,8 @@
+@@ -581,7 +581,7 @@ int boinc_copy(const char* orig, const char* newf) {
      }
      return 0;
  #elif defined(__EMX__)
 -    char cmd[2*MAXPATHLEN];
--    sprintf(cmd, "copy \"%s\" \"%s\"", orig, newf);
 +    char cmd[2*MAXPATHLEN+5];
-+    snprintf(cmd, sizeof(cmd), "copy \"%s\" \"%s\"", orig, newf);
+     snprintf(cmd, sizeof(cmd), "copy \"%s\" \"%s\"", orig, newf);
+     cmd[sizeof(cmd)-1] = 0;
      return system(cmd);
- #else
-     // POSIX requires that shells run from an application will use the 
-@@ -719,7 +719,7 @@
-         p = strchr(q, '/');
-         if (!p) break;
-         *p = 0;
--        sprintf(newpath, "%s/%s", oldpath, q);
-+        snprintf(newpath, sizeof(newpath), "%s/%s", oldpath, q);
-         retval = boinc_mkdir(newpath);
-         if (retval) return retval;
-         safe_strcpy(oldpath, newpath);
---- a/lib/network.cpp
-+++ b/lib/network.cpp
-@@ -73,7 +73,7 @@
-     case WSAENOTSOCK:
-         return "not a socket";
-     }
--    sprintf(buf, "error %d", e);
-+    snprintf(buf, sizeof(buf), "error %d", e);
-     return buf;
- #else
-     switch (h_errno) {
-@@ -87,11 +87,11 @@
-         return "host not found or server failure";
- #ifdef NETDB_INTERNAL
-     case NETDB_INTERNAL:
--        sprintf(buf,"network internal error %d",errno);
-+        snprintf(buf, sizeof(buf), "network internal error %d",errno);
-         return buf;
- #endif
-     }
--    sprintf(buf, "error %d", h_errno);
-+    snprintf(buf, sizeof(buf), "error %d", h_errno);
-     return buf;
- #endif
- }

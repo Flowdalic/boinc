@@ -1,7 +1,7 @@
 Description: adding another error check.
 --- a/lib/shmem.cpp
 +++ b/lib/shmem.cpp
-@@ -337,7 +337,10 @@
+@@ -339,7 +339,10 @@
          // area to all zeros because they write beyond the old EOF. 
          // See the lseek man page for details.
          lseek(fd, size-1, SEEK_SET);

@@ -63,7 +63,7 @@ Description: this patch makes boinc correctly close the open files.
      } else {
 --- a/lib/mfile.cpp
 +++ b/lib/mfile.cpp
-@@ -42,7 +42,7 @@
+@@ -43,7 +43,7 @@
  }
  
  MFILE::~MFILE() {
