@@ -5,7 +5,7 @@ Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 Uploaders: Steffen Moeller <moeller@debian.org>,
            Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
            Gianfranco Costamagna <locutusofborg@debian.org>
-Standards-Version: 3.9.6
+Standards-Version: 3.9.7
 Build-Depends: autoconf,
                automake,
                autotools-dev,
@@ -41,9 +41,9 @@ Build-Depends: autoconf,
                python-all,
                python-setuptools,
                zlib1g-dev
-Homepage: http://boinc.berkeley.edu/
-Vcs-Git: git://anonscm.debian.org/pkg-boinc/boinc.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-boinc/boinc.git
+Homepage: https://boinc.berkeley.edu/
+Vcs-Git: https://anonscm.debian.org/git/pkg-boinc/boinc.git
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-boinc/boinc.git
 
 Package: boinc
 @Architecture: all
