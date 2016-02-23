@@ -20,6 +20,7 @@ Files-Excluded:
 # compiled samples ... also for Linux shall not be with the source
  samples/example_app/bin api/ttf
 # redundant with GLUT library, license does not express clearly freedom to modify
+ clientsetup
  samples/glut
 # license fails to explicitly express that is allows modifications
  api/ttfont.cpp api/ttfont.h
