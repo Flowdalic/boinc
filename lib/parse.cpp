@@ -40,6 +40,10 @@
 #endif
 
 #ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
+
+#if !defined(HAVE_STRDUP) && defined(HAVE__STRDUP)
 #define strdup _strdup
 #endif
 
@@ -68,13 +72,13 @@ bool parse_bool(const char* buf, const char* tag, bool& result) {
     if (!strstr(buf, tag)) {
         return false;
     }
-    sprintf(tag2, "<%s/>", tag);
-    sprintf(tag3, "<%s />", tag);
+    snprintf(tag2, sizeof(tag2), "<%s/>", tag);
+    snprintf(tag3, sizeof(tag3), "<%s />", tag);
     if (match_tag(buf, tag2) || match_tag(buf, tag3)) {
         result = true;
         return true;
     }
-    sprintf(tag2, "<%s>", tag);
+    snprintf(tag2, sizeof(tag2), "<%s>", tag);
     if (parse_int(buf, tag2, x)) {
         result = (x != 0);
         return true;
@@ -198,13 +202,13 @@ int dup_element(FILE* in, const char* tag_name, char** pp) {
     char buf[256], end_tag[256];
     int retval;
 
-    sprintf(buf, "<%s>\n", tag_name);
-    sprintf(end_tag, "</%s>", tag_name);
+    snprintf(buf, sizeof(buf), "<%s>\n", tag_name);
+    snprintf(end_tag, sizeof(end_tag), "</%s>", tag_name);
 
     char* p = strdup(buf);
     while (fgets(buf, 256, in)) {
         if (strstr(buf, end_tag)) {
-            sprintf(buf, "</%s>\n", tag_name);
+            snprintf(buf, sizeof(buf), "</%s>\n", tag_name);
             retval = strcatdup(p, buf);
             if (retval) return retval;
             *pp = p;
@@ -314,7 +318,7 @@ void extract_venue(const char* in, const char* venue_name, char* out, int len) {
     const char* p, *q;
     char* wp;
     char buf[256];
-    sprintf(buf, "<venue name=\"%s\">", venue_name);
+    snprintf(buf, sizeof(buf), "<venue name=\"%s\">", venue_name);
     p = strstr(in, buf);
     if (p) {
         // prefs contain the specified venue
@@ -366,7 +370,7 @@ void non_ascii_escape(const char* in, char* out, int len) {
         int x = (int) *in;
         x &= 0xff;   // just in case
         if (x>127) {
-            sprintf(buf, "&#%d;", x);
+            snprintf(buf, sizeof(buf), "&#%d;", x);
             strcpy(p, buf);
             p += strlen(buf);
         } else {
@@ -397,7 +401,7 @@ void xml_escape(const char* in, char* out, int len) {
             strcpy(p, "&amp;");
             p += 5;
         } else if (x>127) {
-            sprintf(buf, "&#%d;", x);
+            snprintf(buf, sizeof(buf), "&#%d;", x);
             strcpy(p, buf);
             p += strlen(buf);
         } else if (x<32) {
@@ -405,7 +409,7 @@ void xml_escape(const char* in, char* out, int len) {
             case 9:
             case 10:
             case 13:
-                sprintf(buf, "&#%d;", x);
+                snprintf(buf, sizeof(buf), "&#%d;", x);
                 strcpy(p, buf);
                 p += strlen(buf);
                 break;
@@ -665,6 +669,41 @@ bool XML_PARSER::parse_int(const char* start_tag, int& i) {
     return true;
 }
 
+// Same, for long
+//
+bool XML_PARSER::parse_long(const char* start_tag, long& i) {
+    char buf[256], *end;
+    bool eof;
+    char end_tag[TAG_BUF_LEN], tag[TAG_BUF_LEN];
+
+    if (strcmp(parsed_tag, start_tag)) return false;
+
+    end_tag[0] = '/';
+    strcpy(end_tag+1, start_tag);
+
+    eof = get(buf, sizeof(buf), is_tag);
+    if (eof) return false;
+    if (is_tag) {
+        if (!strcmp(buf, end_tag)) {
+            i = 0;      // treat <foo></foo> as <foo>0</foo>
+            return true;
+        } else {
+            return false;
+        }
+    }
+    errno = 0;
+    long val = strtol(buf, &end, 0);
+    if (errno) return false;
+    if (end != buf+strlen(buf)) return false;
+
+    eof = get(tag, sizeof(tag), is_tag);
+    if (eof) return false;
+    if (!is_tag) return false;
+    if (strcmp(tag, end_tag)) return false;
+    i = val;
+    return true;
+}
+
 // Same, for doubles
 //
 bool XML_PARSER::parse_double(const char* start_tag, double& x) {
@@ -844,7 +883,7 @@ void XML_PARSER::skip_unexpected(
         );
     }
     if (strchr(start_tag, '/')) return;
-    sprintf(end_tag, "/%s", start_tag);
+    snprintf(end_tag, sizeof(end_tag), "/%s", start_tag);
 
     while (1) {
         int c;
@@ -878,7 +917,7 @@ int XML_PARSER::copy_element(string& out) {
     out = "<";
     out += parsed_tag;
     out += ">";
-    sprintf(end_tag, "</%s>", parsed_tag);
+    snprintf(end_tag, sizeof(end_tag), "</%s>", parsed_tag);
     int retval = element_contents(end_tag, buf, sizeof(buf));
     if (retval) return retval;
     out += buf;
