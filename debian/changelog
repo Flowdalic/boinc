@@ -1,3 +1,11 @@
+boinc (7.6.29+dfsg-2) unstable; urgency=high
+
+  * Upload to unstable.
+  * fix typo in control.in file, preventing the package
+    from being backported (libstdc++5-dev not available)
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 03 Mar 2016 17:14:23 +0100
+
 boinc (7.6.29+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.

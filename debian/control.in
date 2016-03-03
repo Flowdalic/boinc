@@ -226,7 +226,7 @@ Package: boinc
 @         libc6-dev | libc-dev,
 @         libmysqlclient-dev,
 @         libssl-dev,
-@         libstdc++6-4.7-dev | libstdc++-4.8-dev | libstdc++-4.9-dev, libstdc++-5-dev,
+@         libstdc++6-4.7-dev | libstdc++-4.8-dev | libstdc++-4.9-dev | libstdc++-5-dev,
 @         ${misc:Depends}
 @Breaks: boinc-dev (<< 7.0.28+dfsg-3)
 @Replaces: boinc-dev (<< 7.0.28+dfsg-3)
