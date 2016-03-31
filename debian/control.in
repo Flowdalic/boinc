@@ -64,12 +64,12 @@ Package: boinc
 @ BOINC core client.
 @
 @Package: boinc-client-nvidia-cuda
-@Architecture: amd64 i386 armhf
+@Architecture: amd64 i386 armhf ppc64el
 @Section: contrib/net
 @Priority: extra
 @Breaks: boinc-nvidia-cuda
 @Replaces: boinc-nvidia-cuda
-@Depends: ${misc:Depends}, boinc-client, libcuda1 | libcuda1-352-updates | libcuda1-352
+@Depends: ${misc:Depends}, boinc-client, libcuda1 | libcuda1-any | libcuda-7.5-1 | libcuda-7.0-1 | libcuda-6.5-1 | libcuda-6.0-1 | libcuda-5.5-1 | libcuda-5.0-1
 @Description: metapackage for CUDA-savvy BOINC client and manager
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
