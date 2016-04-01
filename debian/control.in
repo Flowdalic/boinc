@@ -64,7 +64,7 @@ Package: boinc
 @ BOINC core client.
 @
 @Package: boinc-client-nvidia-cuda
-@Architecture: amd64 i386 armhf ppc64el
+@Architecture: amd64 i386 armhf
 @Section: contrib/net
 @Priority: extra
 @Breaks: boinc-nvidia-cuda
