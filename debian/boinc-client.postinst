@@ -62,7 +62,7 @@ case "$1" in
 	# cc_config.xml should be boinc:boinc and not root:boinc in order to avoid lp bug #1162596
 	# users should be able to change the boinc configuration by default
 
-        ch_stat 0644 boinc:boinc "$CONF_DIR/cc_config.xml"
+        ch_stat 0664 boinc:boinc "$CONF_DIR/cc_config.xml"
         ch_stat 0664 root:boinc "$CONF_DIR/global_prefs_override.xml"
         ch_stat 0640 root:boinc "$CONF_DIR/gui_rpc_auth.cfg"
         ch_stat 0644 root:boinc "$CONF_DIR/remote_hosts.cfg"
