@@ -1,3 +1,12 @@
+boinc (7.6.31+dfsg-6exp2) experimental; urgency=medium
+
+  * Corrected compiler flag management for link time optimisation,
+    binaries and libraries  lost considerable weight (85%-95%)
+  * Better consistency for compiler flags when building wrapper apps
+    and sample scientific applications.
+
+ -- Steffen Moeller <moeller@debian.org>  Sun, 24 Apr 2016 12:45:27 +0200
+
 boinc (7.6.31+dfsg-6exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.

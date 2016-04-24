@@ -116,17 +116,13 @@ ifneq (,$(findstring clang,$(DEB_BUILD_OPTIONS)))
   export CXX=clang
 endif
 
-ifneq (clang++,$(CXX))
- CFLAGS += -flto
- LDFLAGS += -flto
-endif
-
 CFLAGS += -Wall
 CXXFLAGS += -Wall
 LDFLAGS += -Wl,--as-needed
 
 ifeq (,$(DEB_OPT_FLAGS))
    DEB_OPT_FLAGS = -O3 -funroll-loops -fforce-addr -ffast-math
+   $(info W: No default DEB_OPT_FLAGS set, adding $(DEB_OPT_FLAGS))
 endif
 
 CFLAGS += $(DEB_OPT_FLAGS)
@@ -134,6 +130,25 @@ CXXFLAGS += $(DEB_OPT_FLAGS)
 
 CFLAGS_boinc-client := $(CFLAGS)
 CXXFLAGS_boinc-client := $(CXXFLAGS)
+
+# Link-time optimisation demands knowledge about all CFLAGS both at
+# compile time (as represented by CFLAGS and CXXFLAGS) but also at
+# at link time.
+ifeq (,$(findstring nolto,$(DEB_BUILD_OPTIONS)))
+ $(info I: Activating LinkTimeOptimisation)
+ CXXFLAGS += -flto
+ CFLAGS += -flto
+ LDFLAGS += -flto
+ myCXX:=$(CXX)
+ myCC:=$(CC)
+ CXX:=$(myCXX) $(CXXFLAGS)
+ CC:=$(myCC) $(CFLAGS)
+ CFLAGS:=
+ CXXFLAGS:=
+else
+ $(info I: Not activating LinkTimeOptimisation because of DEB_BUILD_OPTIONS)
+endif
+
 
 #copy the original control.in file
 $(shell cp debian/control.in debian/control)
@@ -148,7 +163,10 @@ $(shell sed '/^%/d' -i debian/control)
 endif
 
 ifeq (,$(ENABLE_SERVER_TEST))
+$(info I: Building both the server and the client packages)
 ENABLE_SERVER := --enable-server
+else
+$(info I: Building regular client packages only)
 endif
 
 #ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control debian/control.in)
@@ -180,7 +198,9 @@ CFGFLAGS_boinc-client = \
   CFLAGS="$(CFLAGS_boinc-client)" \
   CXXFLAGS="$(CXXFLAGS_boinc-client)" \
   CPPFLAGS="$(CPPFLAGS)" \
-  LDFLAGS="$(LDFLAGS)"
+  LDFLAGS="$(LDFLAGS)" \
+  CC="$(CC)" \
+  CXX="$(CXX)"
 
 
 %:
@@ -256,8 +276,8 @@ override_dh_auto_build: update-boinc-applinks.1
 # we need to build zip because of the libboinc7 reference, until we split the dev packages or we move it in a new package
 #ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
-	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
-	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
+	$(MAKE) -C zip CC=gcc CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
+	$(MAKE) -C zip/unzip CC=gcc CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 #endif
 
 	# Generate binary message catalogs of the BOINC Manager.
