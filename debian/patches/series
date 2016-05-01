@@ -31,3 +31,4 @@ envargs.patch
 fix-underlinking.patch
 dcd9eb3c2ec1f729b12983bf5ee6395565871a22.patch
 changes_for_LTO.patch
+static_scientific_apps.patch
