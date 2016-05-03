@@ -131,10 +131,6 @@ CXXFLAGS += $(DEB_OPT_FLAGS)
 CFLAGS_boinc-client := $(CFLAGS)
 CXXFLAGS_boinc-client := $(CXXFLAGS)
 
-CCorig := $(CC)
-CXXorig := $(CXX)
-
-AR=ar
 # Link-time optimisation demands knowledge about all CFLAGS both at
 # compile time (as represented by CFLAGS and CXXFLAGS) but also at
 # at link time.
@@ -143,21 +139,7 @@ ifeq (,$(findstring nolto,$(DEB_BUILD_OPTIONS)))
  CXXFLAGS += -flto
  CFLAGS += -flto
  LDFLAGS += -flto
- myCXX:=$(CXX)
- myCC:=$(CC)
- CXX:=$(myCXX) $(CXXFLAGS)
- CC:=$(myCC) $(CFLAGS)
- CFLAGS:=
- CXXFLAGS:=
-ifeq (g++,$(CXX))
-  AR:=gcc-ar
-  $(info I: using gcc-ar for LTO compatibility with static libraries)
 endif
-
-else
- $(info I: Not activating LinkTimeOptimisation because of DEB_BUILD_OPTIONS)
-endif
-
 
 #copy the original control.in file
 $(shell cp debian/control.in debian/control)
@@ -207,9 +189,7 @@ CFGFLAGS_boinc-client = \
   CFLAGS="$(CFLAGS_boinc-client)" \
   CXXFLAGS="$(CXXFLAGS_boinc-client)" \
   CPPFLAGS="$(CPPFLAGS)" \
-  LDFLAGS="$(LDFLAGS)" \
-  CC="$(CC)" \
-  CXX="$(CXX)"
+  LDFLAGS="$(LDFLAGS)"
 
 
 %:
@@ -286,8 +266,8 @@ override_dh_auto_build: update-boinc-applinks.1
 # we need to build zip because of the libboinc7 reference, until we split the dev packages or we move it in a new package
 #ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
-	$(MAKE) -C zip AR=$(AR) CC=$(CCorig) CXX=$(CXXorig) CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
-	$(MAKE) -C zip/unzip AR=$(AR) CC=$(CCorig) CXX=$(CXXorig) CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
+	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
+	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
 #endif
 
 	# Generate binary message catalogs of the BOINC Manager.
@@ -301,10 +281,10 @@ override_dh_auto_build: update-boinc-applinks.1
 #	fi
 	dh_auto_build
 ifeq (,$(ENABLE_SERVER_TEST))
-	$(MAKE) AR=$(AR) -C samples/sleeper
-	$(MAKE) AR=$(AR) -C samples/worker
-	$(MAKE) AR=$(AR) -C samples/example_app
-	$(MAKE) AR=$(AR) -C samples/wrapper
+	$(MAKE) -C samples/sleeper
+	$(MAKE) -C samples/worker
+	$(MAKE) -C samples/example_app
+	$(MAKE) -C samples/wrapper
 endif
 
 BINARIES= sched/census sched/cgi sched/db_dump sched/db_purge \

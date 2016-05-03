@@ -1,385 +1,150 @@
-Index: boinc/samples/wrapper/Makefile
-===================================================================
---- boinc.orig/samples/wrapper/Makefile
-+++ boinc/samples/wrapper/Makefile
-@@ -5,6 +5,9 @@ BOINC_DIR = ../..
- BOINC_API_DIR = $(BOINC_DIR)/api
- BOINC_LIB_DIR = $(BOINC_DIR)/lib
- BOINC_ZIP_DIR = $(BOINC_DIR)/zip
-+BOINCLIB=$(BOINC_LIB_DIR)/libboinc_*.o
-+BOINCAPILIB=$(BOINC_API_DIR)/*.o
-+BOINCZIPLIB=$(BOINC_ZIP_DIR)/libboinc_zip.a
- PTHREAD = -pthread
+--- boinc-7.6.31+dfsg.orig/lib/Makefile.am
++++ boinc-7.6.31+dfsg/lib/Makefile.am
+@@ -253,7 +253,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
+ msg_test_LDADD = $(LIBBOINC)
+ crypt_prog_SOURCES = crypt_prog.cpp 
+ crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
+-crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS) 
++crypt_prog_LDADD = $(LIBBOINC_CRYPT) $(LIBBOINC) $(SSL_LIBS)
+ parse_test_SOURCES = parse_test.cpp 
+ parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
+ parse_test_LDADD = $(LIBBOINC)
+--- boinc-7.6.31+dfsg.orig/samples/condor/Makefile
++++ boinc-7.6.31+dfsg/samples/condor/Makefile
+@@ -1,14 +1,17 @@
+ all: boinc_gahp
  
- CXXFLAGS += -g -O0 \
-@@ -18,6 +21,11 @@ CXXFLAGS += -g -O0 \
-     -L$(BOINC_ZIP_DIR) \
-     -L.
- 
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
-+
- PROGS = wrapper
- 
- all: $(PROGS)
-@@ -43,7 +51,7 @@ REGEXP_OBJS = \
- 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -fPIC $<
- 
- wrapper: wrapper.o $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(REGEXP_OBJS)
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) -lstdc++ $(PTHREAD) \
--		$(BOINC_API_DIR)/.libs/libboinc_api.so \
--		$(BOINC_LIB_DIR)/.libs/libboinc.so \
--		$(BOINC_ZIP_DIR)/.libs/libboinc_zip.so $(LDFLAGS)
-+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -o wrapper wrapper.o $(REGEXP_OBJS) \
-+		$(LDFLAGS) \
-+		$(BOINCZIPLIB) $(BOINCAPILIB) $(BOINCLIB) \
-+		-lstdc++ $(PTHREAD) -ldl
-Index: boinc/samples/condor/Makefile
-===================================================================
---- boinc.orig/samples/condor/Makefile
-+++ boinc/samples/condor/Makefile
-@@ -3,12 +3,14 @@ all: boinc_gahp
  clean:
- 	rm boinc_gahp
+-	rm boinc_gahp
++	rm boinc_gahp libcurl.a
  
-+BOINCLIB=../../lib/libboinc_*.o
-+
- boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp
+-boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp
 -	g++ -g -O0 -I../../lib \
-+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -O0 -I../../lib \
++libcurl.a:
++	ln -s `$(CXX) -print-file-name=libcurl.a`
++
++boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp $(BOINC_LIB_DIR)/libboinc.a
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -g -O0 -I../../lib \
  	-o boinc_gahp boinc_gahp.cpp ../../lib/remote_submit.cpp \
 -	-L../../lib -lboinc -lpthread -lcurl
-+	$(BOINCLIB) -lpthread -lcurl
++	$(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a libcurl.a
  
  test: test.cpp ../../lib/remote_submit.cpp ../../lib/remote_submit.h
 -	g++ -g -o test -I../../lib \
-+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o test -I../../lib \
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -g -o test -I../../lib \
  	test.cpp ../../lib/remote_submit.cpp \
 -	-L../../lib -lboinc -lcurl
-+	$(BOINCLIB) -lcurl
-Index: boinc/samples/example_app/Makefile
-===================================================================
---- boinc.orig/samples/example_app/Makefile
-+++ boinc/samples/example_app/Makefile
-@@ -4,6 +4,9 @@ BOINC_DIR = ../..
- BOINC_API_DIR = $(BOINC_DIR)/api
- BOINC_LIB_DIR = $(BOINC_DIR)/lib
- BOINC_ZIP_DIR = $(BOINC_DIR)/zip
-+BOINCLIB=$(BOINC_LIB_DIR)/libboinc_*.o
-+BOINCAPILIB=$(BOINC_API_DIR)/graphics*.o $(BOINC_API_DIR)/boinc_api*.o
-+
- FREETYPE_DIR = /usr/include/freetype2
- 
- CXXFLAGS += -g \
-@@ -17,6 +20,12 @@ CXXFLAGS += -g \
-     -L /usr/X11R6/lib \
-     -L.
- 
-+# For static binaries, the position-independent coding in executables is incompatible
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
-+
- # to get the graphics app to compile you may need to install some packages
- # e.g. ftgl-devel.x86_64
- #
-@@ -44,16 +53,13 @@ PROGS = uc2 ucn \
- 
- all: $(PROGS)
- 
--libstdc++.a:
--	ln -s `g++ -print-file-name=libstdc++.a`
--
- ttfont.cpp:
- 	ln -s ../../api/ttfont.cpp .
- 
- clean: distclean
- 
- distclean:
--	/bin/rm -f $(PROGS) *.o libstdc++.a
-+	/bin/rm -f $(PROGS) *.o
- 
- install: uc2
- 
-@@ -61,31 +67,27 @@ install: uc2
- # because otherwise you might get a version in /usr/lib etc.
- 
- .cpp.o:
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -fPIE $<
-+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
-+
-+
-+uc2: uc2.o $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o uc2 uc2.o $(BOINCAPILIB) $(BOINCLIB) -pthread -ldl
- 
--uc2: uc2.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o uc2 uc2.o -lstdc++ -pthread \
--	$(BOINC_API_DIR)/.libs/libboinc_api.so \
--	$(BOINC_LIB_DIR)/.libs/libboinc.so
--
--ucn: ucn.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o ucn ucn.o -lstdc++ -pthread \
--	$(BOINC_API_DIR)/.libs/libboinc_api.so \
--	$(BOINC_LIB_DIR)/.libs/libboinc.so
-+ucn: ucn.o $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o ucn ucn.o \
-+	$(BOINCAPILIB) $(BOINCLIB) -pthread -ldl
- 
--uc2_graphics: uc2_graphics.o ttfont.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o uc2_graphics uc2_graphics.o ttfont.o -lstdc++ -pthread \
-+uc2_graphics: uc2_graphics.o ttfont.o $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o uc2_graphics uc2_graphics.o ttfont.o \
- 	$(BOINC_API_DIR)/.libs/libboinc_graphics2.so \
--	$(BOINC_API_DIR)/.libs/libboinc_api.so \
--	$(BOINC_LIB_DIR)/.libs/libboinc.so \
--    $(LIBGLUT) $(LIBGLU) $(LIBJPEG) \
--    -lftgl -lGL -lX11 -lXmu -lm
-+	$(BOINCAPILIB) $(BOINCLIB) -pthread \
-+	$(LIBGLUT) $(LIBGLU) $(LIBJPEG) \
-+	-lftgl -lGL -lX11 -lXmu -lm -ldl
- 
--slide_show: slide_show.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
--	$(CXX) $(CXXFLAGS) -o slide_show slide_show.o -lstdc++ -pthread \
-+slide_show: slide_show.o $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o slide_show slide_show.o \
- 	$(BOINC_API_DIR)/.libs/libboinc_graphics2.so \
--	$(BOINC_API_DIR)/.libs/libboinc_api.so \
--	$(BOINC_LIB_DIR)/.libs/libboinc.so \
- 	$(BOINC_ZIP_DIR)/.libs/libboinc_zip.so \
--    $(LIBGLUT) $(LIBGLU) $(LIBJPEG) \
--    -lGL -lX11 -lXmu -lm
-+	$(BOINCAPILIB) $(BOINCLIB) -pthread \
-+	$(LIBGLUT) $(LIBGLU) $(LIBJPEG) \
-+	-lGL -lX11 -lXmu -lm -ldl
-Index: boinc/samples/multi_thread/Makefile
-===================================================================
---- boinc.orig/samples/multi_thread/Makefile
-+++ boinc/samples/multi_thread/Makefile
-@@ -3,6 +3,8 @@
- BOINC_DIR = ../..
- BOINC_API_DIR = $(BOINC_DIR)/api
- BOINC_LIB_DIR = $(BOINC_DIR)/lib
-+BOINCLIB=$(BOINC_LIB_DIR)/*.o
-+BOINCAPILIB=$(BOINC_API_DIR)/*.o
- 
- CXXFLAGS = -g \
-     -I$(BOINC_DIR) \
-@@ -12,6 +14,8 @@ CXXFLAGS = -g \
-     -L$(BOINC_LIB_DIR) \
-     -L.
- 
-+LDFLAGS += -static
-+
- PROGS = multi_thread
- 
- all: $(PROGS)
-@@ -26,4 +30,6 @@ distclean:
++	$(BOINC_LIB_DIR)/libboinc.a libcurl.a
+--- boinc-7.6.31+dfsg.orig/samples/multi_thread/Makefile
++++ boinc-7.6.31+dfsg/samples/multi_thread/Makefile
+@@ -26,4 +26,4 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  multi_thread: multi_thread.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
 -	$(CXX) $(CXXFLAGS) -o multi_thread multi_thread.o libstdc++.a -pthread -lboinc_api -lboinc
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o multi_thread multi_thread.o \
-+	$(BOINCAPILIB) $(BOINCLIB) \
-+	libstdc++.a -pthread -ldl
-Index: boinc/samples/sleeper/Makefile
-===================================================================
---- boinc.orig/samples/sleeper/Makefile
-+++ boinc/samples/sleeper/Makefile
-@@ -3,21 +3,44 @@
- BOINC_DIR = ../..
- BOINC_API_DIR = $(BOINC_DIR)/api
- BOINC_LIB_DIR = $(BOINC_DIR)/lib
-+BOINCAPILIB=$(BOINC_API_DIR)/boinc_api*.o
-+BOINCLIB=$(BOINC_LIB_DIR)/libboinc_*.o
- 
- CXXFLAGS += -g \
-     -I$(BOINC_DIR) \
-     -I$(BOINC_LIB_DIR) \
--    -I$(BOINC_API_DIR) \
--    -L$(BOINC_API_DIR) \
--    -L$(BOINC_LIB_DIR) \
--    -L.
-+    -I$(BOINC_API_DIR)
-+
-+#    -L$(BOINC_API_DIR) \
-+#    -L$(BOINC_LIB_DIR) \
-+#    -L.
-+
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
- 
- PROGS = sleeper
- 
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -o multi_thread multi_thread.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
+--- boinc-7.6.31+dfsg.orig/samples/sleeper/Makefile
++++ boinc-7.6.31+dfsg/samples/sleeper/Makefile
+@@ -17,7 +17,7 @@ PROGS = sleeper
  all: $(PROGS)
  
--#libstdc++.a:
--#	ln -s `g++ -print-file-name=libstdc++.a`
-+libstdc++.a:
+ libstdc++.a:
+-	ln -s `g++ -print-file-name=libstdc++.a`
 +	ln -s `$(CXX) -print-file-name=libstdc++.a`
-+
-+libssl.a:
-+	ln -s `$(CXX) -print-file-name=libssl.a`
-+
-+libc.a:
-+	ln -s `$(CXX) -print-file-name=libc.a`
-+
-+libm.a:
-+	ln -s `$(CXX) -print-file-name=libm.a`
-+
-+libcrypto.a:
-+	ln -s `$(CXX) -print-file-name=libcrypto.a`
-+
-+libpthread.a:
-+	ln -s `$(CXX) -print-file-name=libpthread.a`
  
  clean: distclean
  
-@@ -25,7 +48,7 @@ distclean:
+@@ -25,4 +25,4 @@ distclean:
  	rm -f $(PROGS) *.o libstdc++.a
  
- .cpp.o:
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -fPIE -c $<
-+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -fPIC -c $<
- 
- sleeper: sleeper.o $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o sleeper sleeper.o -lstdc++ -pthread $(BOINC_API_DIR)/.libs/libboinc_api.so $(BOINC_LIB_DIR)/.libs/libboinc.so
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o sleeper sleeper.o $(BOINCAPILIB) $(BOINCLIB) -lstdc++ -lssl -lcrypto -pthread -ldl
-Index: boinc/samples/vboxmonitor/Makefile
-===================================================================
---- boinc.orig/samples/vboxmonitor/Makefile
-+++ boinc/samples/vboxmonitor/Makefile
-@@ -4,16 +4,21 @@
- BOINC_DIR = ../..
+ sleeper: sleeper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
+-	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o sleeper sleeper.o libstdc++.a -pthread -lboinc_api -lboinc
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -o sleeper sleeper.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
+--- boinc-7.6.31+dfsg.orig/samples/vboxmonitor/Makefile
++++ boinc-7.6.31+dfsg/samples/vboxmonitor/Makefile
+@@ -5,7 +5,7 @@ BOINC_DIR = ../..
  BOINC_API_DIR = $(BOINC_DIR)/api
  BOINC_LIB_DIR = $(BOINC_DIR)/lib
-+BOINCLIB=$(BOINC_LIB_DIR)/*.o
-+BOINCAPILIB=$(BOINC_API_DIR)/*.o
  
 -CXXFLAGS = -g \
 +CXXFLAGS += -g \
  	-Wall -W -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -fno-common \
      -I$(BOINC_DIR) \
      -I$(BOINC_LIB_DIR) \
-     -I$(BOINC_API_DIR) \
--    -L$(BOINC_API_DIR) \
--    -L$(BOINC_LIB_DIR) \
-     -L.
- 
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
-+
- PROGS = vboxmonitor
- 
- all: $(PROGS)
-@@ -27,4 +32,4 @@ distclean:
+@@ -27,4 +27,4 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  vboxmonitor: vboxmonitor.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
 -	g++ $(CXXFLAGS) -o vboxmonitor vboxmonitor.o libstdc++.a -pthread -lboinc_api -lboinc
-+	g++ $(CXXFLAGS) $(LDFLAGS) -o vboxmonitor vboxmonitor.o $(BOINCAPILIB) $(BOINCLIB) libstdc++.a -pthread -ldl
-Index: boinc/samples/vboxwrapper/Makefile
-===================================================================
---- boinc.orig/samples/vboxwrapper/Makefile
-+++ boinc/samples/vboxwrapper/Makefile
-@@ -4,16 +4,21 @@
- BOINC_DIR = ../..
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -o vboxmonitor vboxmonitor.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
+--- boinc-7.6.31+dfsg.orig/samples/vboxwrapper/Makefile
++++ boinc-7.6.31+dfsg/samples/vboxwrapper/Makefile
+@@ -5,7 +5,7 @@ BOINC_DIR = ../..
  BOINC_API_DIR = $(BOINC_DIR)/api
  BOINC_LIB_DIR = $(BOINC_DIR)/lib
-+BOINCLIB=$(BOINC_LIB_DIR)/libboinc_*.o
-+BOINCAPILIB=$(BOINC_API_DIR)/*.o
  
 -CXXFLAGS = -g \
 +CXXFLAGS += -g \
  	-Wall -W -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -fno-common \
      -I$(BOINC_DIR) \
      -I$(BOINC_LIB_DIR) \
-     -I$(BOINC_API_DIR) \
--    -L$(BOINC_API_DIR) \
--    -L$(BOINC_LIB_DIR) \
-     -L.
- 
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
-+
- PROGS = vboxwrapper
- 
- all: $(PROGS)
-@@ -27,25 +32,26 @@ distclean:
+@@ -27,25 +27,26 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  floppyio.o: floppyio.cpp
 -	g++ $(CXXFLAGS) -c floppyio.cpp
-+	$(CXX) $(CXXFLAGS) -c floppyio.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c floppyio.cpp
  
  vbox_common.o: vbox_common.cpp
 -	g++ $(CXXFLAGS) -c vbox_common.cpp
-+	$(CXX) $(CXXFLAGS) -c vbox_common.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vbox_common.cpp
  
  vbox_vboxmanage.o: vbox_vboxmanage.cpp
 -	g++ $(CXXFLAGS) -c vbox_vboxmanage.cpp
-+	$(CXX) $(CXXFLAGS) -c vbox_vboxmanage.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vbox_vboxmanage.cpp
  
  vboxcheckpoint.o: vboxcheckpoint.cpp
 -	g++ $(CXXFLAGS) -c vboxcheckpoint.cpp
-+	$(CXX) $(CXXFLAGS) -c vboxcheckpoint.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vboxcheckpoint.cpp
  
  vboxjob.o: vboxjob.cpp
 -	g++ $(CXXFLAGS) -c vboxjob.cpp
-+	$(CXX) $(CXXFLAGS) -c vboxjob.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vboxjob.cpp
  
  vboxlogging.o: vboxlogging.cpp
 -	g++ $(CXXFLAGS) -c vboxlogging.cpp
-+	$(CXX) $(CXXFLAGS) -c vboxlogging.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vboxlogging.cpp
  
  vboxwrapper.o: vboxwrapper.cpp
 -	g++ $(CXXFLAGS) -c vboxwrapper.cpp
-+	$(CXX) $(CXXFLAGS) -c vboxwrapper.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c vboxwrapper.cpp
  
  vboxwrapper: vboxwrapper.o vbox_common.o vbox_vboxmanage.o vboxcheckpoint.o vboxjob.o vboxlogging.o floppyio.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
 -	g++ $(CXXFLAGS) -o vboxwrapper vboxwrapper.o vbox_common.o vbox_vboxmanage.o vboxcheckpoint.o vboxjob.o vboxlogging.o floppyio.o libstdc++.a -pthread -lboinc_api -lboinc
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o vboxwrapper vboxwrapper.o vbox_common.o vbox_vboxmanage.o vboxcheckpoint.o vboxjob.o vboxlogging.o floppyio.o \
-+	$(BOINCAPILIB) $(BOINCLIB) libstdc++.a -pthread -ldl
-Index: boinc/samples/worker/Makefile
-===================================================================
---- boinc.orig/samples/worker/Makefile
-+++ boinc/samples/worker/Makefile
-@@ -2,6 +2,11 @@ CXXFLAGS += -g
- 
- PROGS = worker
- 
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
-+
- all: $(PROGS)
- 
- clean: distclean
-@@ -13,4 +18,4 @@ distclean:
- 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -c -fPIC $<
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -o vboxwrapper vboxwrapper.o vbox_common.o vbox_vboxmanage.o vboxcheckpoint.o vboxjob.o vboxlogging.o floppyio.o \
++	libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
+--- boinc-7.6.31+dfsg.orig/samples/worker/Makefile
++++ boinc-7.6.31+dfsg/samples/worker/Makefile
+@@ -10,4 +10,4 @@ distclean:
+ 	rm -f $(PROGS) *.o
  
  worker: worker.o
--	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o worker worker.o
-+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o worker worker.o -ldl
-Index: boinc/samples/wrappture/Makefile
-===================================================================
---- boinc.orig/samples/wrappture/Makefile
-+++ boinc/samples/wrappture/Makefile
-@@ -4,18 +4,22 @@
- BOINC_DIR = ../..
- BOINC_API_DIR = $(BOINC_DIR)/api
+-	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o worker worker.o
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o worker worker.o
+--- boinc-7.6.31+dfsg.orig/samples/wrapper/Makefile
++++ boinc-7.6.31+dfsg/samples/wrapper/Makefile
+@@ -37,5 +37,5 @@ REGEXP_OBJS = \
+ 	regexp_memory.o \
+ 	regexp_report.o
+ 
+-wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(REGEXP_OBJS)
+-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip $(LDFLAGS)
++wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_ZIP_DIR)/libboinc_zip.a $(REGEXP_OBJS)
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(PTHREAD) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_ZIP_DIR)/libboinc_zip.a
+--- boinc-7.6.31+dfsg.orig/samples/wrappture/Makefile
++++ boinc-7.6.31+dfsg/samples/wrappture/Makefile
+@@ -6,7 +6,7 @@ BOINC_API_DIR = $(BOINC_DIR)/api
  BOINC_LIB_DIR = $(BOINC_DIR)/lib
-+BOINCLIB=$(BOINC_LIB_DIR)/libboinc_*.o
-+BOINCAPILIB=$(BOINC_API_DIR)/*.o
  RAPPTURE_DIR = /home/boincadm/rappture/rappture/src/core
  
 -CXXFLAGS = -g \
@@ -387,35 +152,17 @@ Index: boinc/samples/wrappture/Makefile
      -I$(BOINC_DIR) \
      -I$(BOINC_LIB_DIR) \
      -I$(BOINC_API_DIR) \
-     -I$(RAPPTURE_DIR) \
--    -L$(BOINC_API_DIR) \
--    -L$(BOINC_LIB_DIR) \
--    -L$(RAPPTURE_DIR) \
-     -L.
- 
-+LDFLAGS := $(subst -fPIE,,$(LDFLAGS))
-+LDFLAGS := $(subst -fpie,,$(LDFLAGS))
-+LDFLAGS := $(subst -pie,,$(LDFLAGS))
-+LDFLAGS += -static
-+
- PROGS = wrappture_example fermi
- 
- all: $(PROGS)
-@@ -29,10 +33,14 @@ distclean:
+@@ -29,10 +29,10 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  wrappture.o: wrappture.cpp
 -	g++ $(CXXFLAGS) -c -o wrappture.o wrappture.cpp
-+	$(CC) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -c -o wrappture.o wrappture.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o wrappture.o wrappture.cpp
  
  wrappture_example: wrappture.o wrappture_example.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(RAPPTURE_DIR)/librappture.a
 -	g++ $(CXXFLAGS) -o wrappture_example wrappture_example.o wrappture.o $(RAPPTURE_DIR)/librappture.a libstdc++.a -pthread -lboinc_api -lboinc -lexpat -lz
-+	$(CC) $(CXXFLAGS) $(LDFLAGS) -o wrappture_example wrappture_example.o wrappture.o \
-+		$(RAPPTURE_DIR)/librappture.a \
-+		$(BOINCAPILIB) $(BOINCLIB) \
-+		-lexpat -lz \
-+		libstdc++.a -pthread -ldl
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -o wrappture_example wrappture_example.o wrappture.o $(RAPPTURE_DIR)/librappture.a libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
  
  fermi: fermi.cpp
 -	g++ $(CSSFLAGS) -o fermi fermi.cpp
-+	$(CC) $(CSSFLAGS) -o fermi fermi.cpp
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o fermi fermi.cpp
