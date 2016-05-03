@@ -1,5 +1,7 @@
 boinc (7.6.31+dfsg-6exp2) experimental; urgency=medium
 
+  [ Steffen Moeller ]
+  * Drop debug packages.
   * Corrected compiler flag management for link time optimisation,
     binaries and libraries  lost considerable weight (85%-95%)
   * Better consistency for compiler flags when building wrapper apps

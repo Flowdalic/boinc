@@ -205,7 +205,6 @@ override_dh_clean:
 	rm -rf clientscr/.libs
 	rm -rf debian/boinc-app-examples   debian/boinc-app-examples.substvars
 	rm -rf debian/boinc-server-maker   debian/boinc-server-maker.substvars
-	rm -rf debian/boinc-server-dbg     debian/boinc-server-dbg.substvars
 	rm -rf debian/boinc-cgi-stripchart debian/boinc-cgi-stripchart.substvars
 	rm -rf debian/*.debhelper
 	rm -rf debian/tmp autoreconf-stamp build-*-stamp install-*-stamp
@@ -383,10 +382,6 @@ override_dh_install:
 	# delete .la files (Closes: #621197)
 	find $(CURDIR)/debian -name "*.la" | xargs -r rm -f
 	dh_install
-
-override_dh_strip:
-	dh_strip -pboinc-server-maker -pboinc-app-examples -pboinc-cgi-stripchart --dbg-package=boinc-server-dbg || true
-	dh_strip --dbg-package=boinc-dbg
 
 override_dh_fixperms:
 	dh_fixperms
