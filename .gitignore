@@ -155,6 +155,10 @@ vda/vdad
 #debian specific files
 .pc
 update-boinc-applinks.1
+debian/*-stamp
  
 # upstream files not here
 version.h
+
+# Text editor artifacts
+*~
