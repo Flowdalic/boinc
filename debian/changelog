@@ -1,4 +1,7 @@
-boinc (7.6.31+dfsg-6exp2) experimental; urgency=medium
+boinc (7.6.32+dfsg-1) unstable; urgency=medium
+
+  [ Gianfranco Costamagna ]
+  * New upstream release.
 
   [ Steffen Moeller ]
   * Drop debug packages.
