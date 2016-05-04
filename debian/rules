@@ -206,6 +206,8 @@ override_dh_clean:
 	rm -rf debian/boinc-app-examples   debian/boinc-app-examples.substvars
 	rm -rf debian/boinc-server-maker   debian/boinc-server-maker.substvars
 	rm -rf debian/boinc-cgi-stripchart debian/boinc-cgi-stripchart.substvars
+	rm -rf debian/boinc-dbg            debian/boinc-dbg.substvars
+	rm -rf debian/boinc-server-dbg     debian/boinc-server-dbg.substvars
 	rm -rf debian/*.debhelper
 	rm -rf debian/tmp autoreconf-stamp build-*-stamp install-*-stamp
 	rm -fr debian/boinc-amd-opencl debian/boinc-screensaver # for cases when this is not in debian/control

@@ -12,6 +12,8 @@ boinc (7.6.32+dfsg-1) unstable; urgency=medium
     and sample scientific applications.
   * Example apps are now truly static.
   * Compliance with Debian Policy 3.9.8.
+  * Added clean for past debian/boinc(-server)-dbg folders to help 
+    the overall experience while upgrading our build folders.
 
  -- Steffen Moeller <moeller@debian.org>  Wed, 04 May 2016 13:02:44 +0200
 
