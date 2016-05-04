@@ -2,16 +2,18 @@ boinc (7.6.32+dfsg-1) unstable; urgency=medium
 
   [ Gianfranco Costamagna ]
   * New upstream release.
+  * Drop debug packages.
 
   [ Steffen Moeller ]
-  * Drop debug packages.
-  * Corrected compiler flag management for link time optimisation,
-    binaries and libraries  lost considerable weight (85%-95%)
+  * Link time optimisation: corrected compiler flag management for 
+    binaries and libraries which yielded a considerable drop in
+    disk space (85%-95%)
   * Better consistency for compiler flags when building wrapper apps
     and sample scientific applications.
   * Example apps are now truly static.
+  * Compliance with Debian Policy 3.9.8.
 
- -- Steffen Moeller <moeller@debian.org>  Sun, 24 Apr 2016 12:45:27 +0200
+ -- Steffen Moeller <moeller@debian.org>  Wed, 04 May 2016 13:02:44 +0200
 
 boinc (7.6.31+dfsg-6exp1) experimental; urgency=medium
 
