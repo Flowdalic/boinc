@@ -3,6 +3,7 @@ boinc (7.6.32+dfsg-1) unstable; urgency=medium
   [ Gianfranco Costamagna ]
   * New upstream release.
   * Drop debug packages.
+  * Simplify flags handling
 
   [ Steffen Moeller ]
   * Link time optimisation: corrected compiler flag management for 

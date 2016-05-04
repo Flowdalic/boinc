@@ -128,15 +128,11 @@ endif
 CFLAGS += $(DEB_OPT_FLAGS)
 CXXFLAGS += $(DEB_OPT_FLAGS)
 
-CFLAGS_boinc-client := $(CFLAGS)
-CXXFLAGS_boinc-client := $(CXXFLAGS)
-
 # Link-time optimisation demands knowledge about all CFLAGS both at
 # compile time (as represented by CFLAGS and CXXFLAGS) but also at
 # at link time.
 ifeq (,$(findstring nolto,$(DEB_BUILD_OPTIONS)))
  $(info I: Activating LinkTimeOptimisation)
- CXXFLAGS += -flto
  CFLAGS += -flto
  LDFLAGS += -flto
 endif
@@ -185,19 +181,10 @@ CFGFLAGS_boinc-client = \
   --enable-shared \
   --enable-dynamic-client-linkage \
   --with-ssl \
-  --with-x \
-  CFLAGS="$(CFLAGS_boinc-client)" \
-  CXXFLAGS="$(CXXFLAGS_boinc-client)" \
-  CPPFLAGS="$(CPPFLAGS)" \
-  LDFLAGS="$(LDFLAGS)"
-
+  --with-x
 
 %:
-ifeq (,$(ENABLE_SERVER_TEST))
-	dh $@ --with python2,autoreconf,systemd # --parallel # this still doesn't work
-else
-	dh $@ --with python2,autoreconf,systemd
-endif
+	dh $@ --with python2,autoreconf,systemd # --parallel
 
 override_dh_clean:
 	dh_clean
@@ -267,8 +254,8 @@ override_dh_auto_build: update-boinc-applinks.1
 # we need to build zip because of the libboinc7 reference, until we split the dev packages or we move it in a new package
 #ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
-	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
-	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain) -fPIC"
+	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
+	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
 #endif
 
 	# Generate binary message catalogs of the BOINC Manager.
