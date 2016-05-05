@@ -128,12 +128,16 @@ endif
 CFLAGS += $(DEB_OPT_FLAGS)
 CXXFLAGS += $(DEB_OPT_FLAGS)
 
+CFLAGS_boinc-client := $(CFLAGS)
+CXXFLAGS_boinc-client := $(CXXFLAGS)
+
 # Link-time optimisation demands knowledge about all CFLAGS both at
 # compile time (as represented by CFLAGS and CXXFLAGS) but also at
 # at link time.
 ifeq (,$(findstring nolto,$(DEB_BUILD_OPTIONS)))
  $(info I: Activating LinkTimeOptimisation)
  CFLAGS += -flto
+ CXXFLAGS += -flto
  LDFLAGS += -flto
 endif
 
@@ -181,7 +185,9 @@ CFGFLAGS_boinc-client = \
   --enable-shared \
   --enable-dynamic-client-linkage \
   --with-ssl \
-  --with-x
+  --with-x \
+  CFLAGS="$(CFLAGS_boinc-client)" \
+  CXXFLAGS="$(CXXFLAGS_boinc-client)"
 
 %:
 	dh $@ --with python2,autoreconf,systemd # --parallel
