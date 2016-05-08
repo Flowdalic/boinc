@@ -19,7 +19,7 @@ DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 # Set default flags with dpkg-buildflags
-export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
 
 # Disable WXDEBUG assertions (avoiding e.g. https://bugs.debian.org/763113) -
 # with -DNDEBUG these are quietly dealt with like they were with wx2.8.
@@ -131,6 +131,9 @@ CXXFLAGS += $(DEB_OPT_FLAGS)
 CFLAGS_boinc-client := $(CFLAGS)
 CXXFLAGS_boinc-client := $(CXXFLAGS)
 
+CCorig := $(CC)
+CXXorig := $(CXX)
+
 # Link-time optimisation demands knowledge about all CFLAGS both at
 # compile time (as represented by CFLAGS and CXXFLAGS) but also at
 # at link time.
@@ -139,6 +142,8 @@ ifeq (,$(findstring nolto,$(DEB_BUILD_OPTIONS)))
  CFLAGS += -flto
  CXXFLAGS += -flto
  LDFLAGS += -flto
+ CXX := $(CXX) $(CXXFLAGS)
+ CC := $(CC) $(CFLAGS)
 endif
 
 #copy the original control.in file
@@ -186,8 +191,7 @@ CFGFLAGS_boinc-client = \
   --enable-dynamic-client-linkage \
   --with-ssl \
   --with-x \
-  CFLAGS="$(CFLAGS_boinc-client)" \
-  CXXFLAGS="$(CXXFLAGS_boinc-client)"
+  CFLAGS="$(CFLAGS_boinc-client)"
 
 %:
 	dh $@ --with python2,autoreconf,systemd # --parallel
@@ -222,6 +226,7 @@ override_dh_auto_test:
 #	  debian/conffiles/cc_config.xml \
 #	  debian/conffiles/global_prefs_override.xml
 #	touch $@
+LDFLAGS+=$(CFLAGS)
 
 override_dh_auto_configure:
 	debconf-updatepo
@@ -260,8 +265,8 @@ override_dh_auto_build: update-boinc-applinks.1
 # we need to build zip because of the libboinc7 reference, until we split the dev packages or we move it in a new package
 #ifeq (,$(ENABLE_SERVER_TEST))
 	# FIXME For some reasons unzip build fails if hardening flags are enabled.
-	$(MAKE) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
-	$(MAKE) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
+	$(MAKE) CC=$(CCorig) CXX=$(CXXorig) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
+	$(MAKE) CC=$(CCorig) CXX=$(CXXorig) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
 #endif
 
 	# Generate binary message catalogs of the BOINC Manager.
