@@ -2,7 +2,40 @@ Index: boinc/lib/Makefile.am
 ===================================================================
 --- boinc.orig/lib/Makefile.am
 +++ boinc/lib/Makefile.am
-@@ -253,7 +253,7 @@
+@@ -173,6 +173,10 @@ lib_LTLIBRARIES = libboinc.la
+ libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
+ libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
+ libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
++libboinc_la_AR = gcc-ar
++libboinc_la_RANLIB = gcc-ranlib
++libboinc_a_AR = gcc-ar
++libboinc_a_RANLIB = gcc-ranlib
+ libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_la_LIBADD =
+ 
+@@ -181,6 +185,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
+ libboinc_crypt_la_SOURCES = crypt.cpp
+ libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
+ libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
++libboinc_crypt_la_AR = gcc-ar
++libboinc_crypt_la_RANLIB = gcc-ranlib
++libboinc_crypt_a_AR = gcc-ar
++libboinc_crypt_a_RANLIB = gcc-ranlib
+ libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
+ libboinc_crypt_la_LIBADD = $(LIBBOINC)
+ endif
+@@ -190,6 +198,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
+ libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
+ libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
+ libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
++libboinc_fcgi_la_AR = gcc-ar
++libboinc_fcgi_la_RANLIB = gcc-ranlib
++libboinc_fcgi_a_AR = gcc-ar
++libboinc_fcgi_a_RANLIB = gcc-ranlib
+ libboinc_fcgi_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_fcgi_la_LIBADD =
+ endif 
+@@ -253,7 +265,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp 
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -43,7 +76,7 @@ Index: boinc/samples/multi_thread/Makefile
 ===================================================================
 --- boinc.orig/samples/multi_thread/Makefile
 +++ boinc/samples/multi_thread/Makefile
-@@ -26,4 +26,4 @@
+@@ -26,4 +26,4 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  multi_thread: multi_thread.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
@@ -53,7 +86,7 @@ Index: boinc/samples/sleeper/Makefile
 ===================================================================
 --- boinc.orig/samples/sleeper/Makefile
 +++ boinc/samples/sleeper/Makefile
-@@ -17,7 +17,7 @@
+@@ -17,7 +17,7 @@ PROGS = sleeper
  all: $(PROGS)
  
  libstdc++.a:
@@ -62,7 +95,7 @@ Index: boinc/samples/sleeper/Makefile
  
  clean: distclean
  
-@@ -25,4 +25,4 @@
+@@ -25,4 +25,4 @@ distclean:
  	rm -f $(PROGS) *.o libstdc++.a
  
  sleeper: sleeper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
@@ -72,7 +105,7 @@ Index: boinc/samples/vboxmonitor/Makefile
 ===================================================================
 --- boinc.orig/samples/vboxmonitor/Makefile
 +++ boinc/samples/vboxmonitor/Makefile
-@@ -27,4 +27,4 @@
+@@ -27,4 +27,4 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  vboxmonitor: vboxmonitor.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
@@ -82,7 +115,7 @@ Index: boinc/samples/vboxwrapper/Makefile
 ===================================================================
 --- boinc.orig/samples/vboxwrapper/Makefile
 +++ boinc/samples/vboxwrapper/Makefile
-@@ -27,25 +27,26 @@
+@@ -27,25 +27,26 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  floppyio.o: floppyio.cpp
@@ -121,7 +154,7 @@ Index: boinc/samples/worker/Makefile
 ===================================================================
 --- boinc.orig/samples/worker/Makefile
 +++ boinc/samples/worker/Makefile
-@@ -10,4 +10,4 @@
+@@ -10,4 +10,4 @@ distclean:
  	rm -f $(PROGS) *.o
  
  worker: worker.o
@@ -131,7 +164,7 @@ Index: boinc/samples/wrapper/Makefile
 ===================================================================
 --- boinc.orig/samples/wrapper/Makefile
 +++ boinc/samples/wrapper/Makefile
-@@ -37,5 +37,5 @@
+@@ -37,5 +37,5 @@ REGEXP_OBJS = \
  	regexp_memory.o \
  	regexp_report.o
  
@@ -143,7 +176,7 @@ Index: boinc/samples/wrappture/Makefile
 ===================================================================
 --- boinc.orig/samples/wrappture/Makefile
 +++ boinc/samples/wrappture/Makefile
-@@ -29,10 +29,10 @@
+@@ -29,10 +29,10 @@ distclean:
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  wrappture.o: wrappture.cpp
@@ -161,7 +194,7 @@ Index: boinc/samples/example_app/Makefile
 ===================================================================
 --- boinc.orig/samples/example_app/Makefile
 +++ boinc/samples/example_app/Makefile
-@@ -61,17 +61,17 @@
+@@ -61,17 +61,17 @@ install: uc2
  # because otherwise you might get a version in /usr/lib etc.
  
  uc2: uc2.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
@@ -182,7 +215,7 @@ Index: boinc/samples/example_app/Makefile
  	$(BOINC_API_DIR)/libboinc_graphics2.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a \
-@@ -79,7 +79,7 @@
+@@ -79,7 +79,7 @@ uc2_graphics: uc2_graphics.o ttfont.o li
      -lftgl -lGL -lX11 -lXmu -lm
  
  slide_show: slide_show.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
@@ -191,3 +224,71 @@ Index: boinc/samples/example_app/Makefile
  	$(BOINC_API_DIR)/libboinc_graphics2.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a \
+Index: boinc/api/Makefile.am
+===================================================================
+--- boinc.orig/api/Makefile.am
++++ boinc/api/Makefile.am
+@@ -45,6 +45,10 @@ lib_LTLIBRARIES = libboinc_api.la
+ libboinc_api_la_SOURCES = $(api_files)
+ libboinc_api_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -lpthread
+ libboinc_api_la_LIBADD = -L../lib/.libs $(LIBBOINC)
++libboinc_api_la_AR = gcc-ar
++libboinc_api_la_RANLIB = gcc-ranlib
++libboinc_api_a_AR = gcc-ar
++libboinc_api_a_RANLIB = gcc-ranlib
+ 
+ if BUILD_GRAPHICS_API
+ lib_LTLIBRARIES += libboinc_graphics2.la
+@@ -52,12 +56,20 @@ libboinc_graphics2_la_SOURCES = $(graphi
+ libboinc_graphics2_la_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/samples/image_libs
+ libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg
+ libboinc_graphics2_la_LIBADD = -L../lib/.libs $(APPLIBS)
++libboinc_graphics2_la_AR = gcc-ar
++libboinc_graphics2_la_RANLIB = gcc-ranlib
++libboinc_graphics2_a_AR = gcc-ar
++libboinc_graphics2_a_RANLIB = gcc-ranlib
+ endif #BUILD_GRAPHICS_API
+ 
+ lib_LTLIBRARIES += libboinc_opencl.la
+ libboinc_opencl_la_SOURCES = $(opencl_files)
+ libboinc_opencl_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_opencl_la_LIBADD = -L../lib/.libs $(APPLIBS)
++libboinc_opencl_la_AR = gcc-ar
++libboinc_opencl_la_RANLIB = gcc-ranlib
++libboinc_opencl_a_AR = gcc-ar
++libboinc_opencl_a_RANLIB = gcc-ranlib
+ 
+ if INSTALL_HEADERS
+ ## install only headers that are meant for exporting the API !!
+Index: boinc/zip/Makefile.am
+===================================================================
+--- boinc.orig/zip/Makefile.am
++++ boinc/zip/Makefile.am
+@@ -63,6 +63,10 @@ lib_LTLIBRARIES = libboinc_zip.la
+ libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
+ libboinc_zip_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_zip_la_LIBADD = $(LIBBOINC)
++libboinc_zip_la_AR = gcc-ar
++libboinc_zip_la_RANLIB = gcc-ranlib
++libboinc_zip_a_AR = gcc-ar
++libboinc_zip_a_RANLIB = gcc-ranlib
+ 
+ # Some OSs may not prefix libraries with lib.
+ # For example OS2
+Index: boinc/configure.ac
+===================================================================
+--- boinc.orig/configure.ac
++++ boinc/configure.ac
+@@ -69,6 +69,12 @@ SAH_LINKS
+ AC_LANG_PUSH(C)
+ AM_PROG_CC_C_O
+ 
++dnl ------
++dnl  essential for LTO and static applications in apps and samples
++AC_PROG_RANLIB
++AM_PROG_AR
++dnl ------
++
+ m4_divert_once([HELP_ENABLE],
+   AS_HELP_STRING([BOINC Default enable values], [--enable-server --enable-client --enable-libraries --enable-manager: builds server, client, and libraries]))
+ 

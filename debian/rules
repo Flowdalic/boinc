@@ -14,6 +14,8 @@ export CXXFLAGS := $(shell dpkg-buildflags --get CXXFLAGS)
 export LDFLAGS  := $(shell dpkg-buildflags --get LDFLAGS)
 
 #export CXX=clang++
+export AR=ar
+export RANLIB=ranlib
 
 DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
@@ -144,13 +146,15 @@ ifeq (,$(findstring nolto,$(DEB_BUILD_OPTIONS)))
  LDFLAGS += -flto
  CXX := $(CXX) $(CXXFLAGS)
  CC := $(CC) $(CFLAGS)
+ AR := gcc-ar
+ RANLIB := gcc-ranlib
 endif
 
 #copy the original control.in file
 $(shell cp debian/control.in debian/control)
 $(shell sed '/^#/d' -i debian/control)
 
-ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
+export ENABLE_SERVER_TEST := $(shell dpkg-parsechangelog | egrep '^Distribution:' |egrep -v 'experimental|UNRELEASED')
 
 ifeq (,$(ENABLE_SERVER_TEST))
 $(shell sed 's/^%//' -i debian/control)
@@ -163,6 +167,7 @@ $(info I: Building both the server and the client packages)
 ENABLE_SERVER := --enable-server
 else
 $(info I: Building regular client packages only)
+#ENABLE_SERVER := --disable-server
 endif
 
 #ENABLE_CLIENT_TEST := $(shell egrep '^Package:.*boinc$$' debian/control debian/control.in)
@@ -216,6 +221,7 @@ override_dh_clean:
 	rm -f sched/adjust_user_priority sched/size_regulator
 	rm -f config.status libtool version.h stamp-h1
 	find . -name ".libs" | xargs -r rm -r
+	find zip -name "*.lo" -delete
 
 # Commands not to execute - empty overrides
 override_dh_auto_test:
@@ -237,6 +243,11 @@ override_dh_auto_configure:
 	@echo "****             *****"
 	@echo "**** Configuring *****"
 	@echo "****             *****"
+	@echo "**** CXX=$(CXX)"
+	@echo "**** LD=$(LD)"
+	@echo "**** AR=$(AR)"
+	@echo "**** RANLIB=$(RANLIB)"
+	@echo "****             *****"
 	@echo
 	dh_auto_configure -- $(CFGFLAGS_boinc-client)
 
@@ -255,9 +266,10 @@ override_dh_auto_build: update-boinc-applinks.1
 	@echo "****            *****"
 	@echo "**** Making     *****"
 	@echo "****            *****"
-	@echo "**** CC=$(CC)      *****"
-	@echo "**** CXX=$(CXX)    *****"
-	@echo "**** AR=$(AR)  *****"
+	@echo "**** CC=$(CC)"
+	@echo "**** CXX=$(CXX)"
+	@echo "**** AR=$(AR)"
+	@echo "**** RANLIB=$(RANLIB)"
 	@echo
 	# disable optimization in api/, for SETI to work
 	#$(MAKE) -C api CFLAGS="$(CFLAGS_noopt)" CXXFLAGS="$(CXXFLAGS_noopt)"
