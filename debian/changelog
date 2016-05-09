@@ -3,6 +3,7 @@ boinc (7.6.32+dfsg-1exp1) experimental; urgency=medium
   * Upload to experimental again, with the boinc-server-* packages.
   [ Steffen Moeller ]
   * Fix boinc-app-examples build.
+  * Add some lintian overrides against static apps.
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 09 May 2016 10:11:32 +0200
 

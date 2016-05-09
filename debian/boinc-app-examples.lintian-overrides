@@ -1,0 +1,7 @@
+boinc-app-examples: embedded-library usr/lib/boinc-server-maker/apps/sleeper: libm
+boinc-app-examples: statically-linked-binary usr/lib/boinc-server-maker/apps/sleeper
+boinc-app-examples: embedded-library usr/lib/boinc-server-maker/apps/uc2: libm
+boinc-app-examples: statically-linked-binary usr/lib/boinc-server-maker/apps/uc2
+boinc-app-examples: statically-linked-binary usr/lib/boinc-server-maker/apps/worker
+boinc-app-examples: embedded-library usr/lib/boinc-server-maker/apps/wrapper: libm
+boinc-app-examples: statically-linked-binary usr/lib/boinc-server-maker/apps/wrapper
