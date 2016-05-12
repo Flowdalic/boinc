@@ -201,6 +201,8 @@ CFGFLAGS_boinc-client = \
 %:
 	dh $@ --with python2,autoreconf,systemd # --parallel
 
+override_dh_autoreconf-indep:
+
 override_dh_clean:
 	dh_clean
 	rm -rf config.log
@@ -234,7 +236,9 @@ override_dh_auto_test:
 #	touch $@
 LDFLAGS+=$(CFLAGS)
 
-override_dh_auto_configure:
+override_dh_auto_configure-indep:
+
+override_dh_auto_configure-arch:
 	debconf-updatepo
 	#./_autosetup
 	#if [ ! -r ltmain.sh ]; then libtoolize; fi
@@ -261,7 +265,9 @@ update-boinc-applinks.1: debian/manpages/update-boinc-applinks.xml
 CFLAGS_plain = -g -O0 -Wall
 CXXFLAGS_plain = $(CFLAGS_plain)
 
-override_dh_auto_build: update-boinc-applinks.1
+override_dh_auto_build-indep:
+
+override_dh_auto_build-arch: update-boinc-applinks.1
 	@echo
 	@echo "****            *****"
 	@echo "**** Making     *****"
@@ -374,7 +380,9 @@ override_dh_auto_clean:
 
 SAMPLES=samples/sleeper/sleeper samples/worker/worker samples/example_app/uc2 samples/wrapper/wrapper
 
-override_dh_auto_install: update-boinc-applinks.1
+override_dh_auto_install-indep:
+
+override_dh_auto_install-arch: update-boinc-applinks.1
 	dh_auto_install
 ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"

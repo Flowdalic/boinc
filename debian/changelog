@@ -7,6 +7,9 @@ boinc (7.6.32+dfsg-2) UNRELEASED; urgency=medium
   * debian/patches/8416d8a1a423535fbc5d4e7416d6eac8ac5c050b.patch:
     cherry-pick to fix crash on headless servers (LP: #1581029)
 
+  [ Santiago Vila ]
+  * Make boinc build faster with dpkg-buildpackage -A (Closes: #824106)
+
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 12 May 2016 12:01:32 +0200
 
 boinc (7.6.32+dfsg-1exp1) experimental; urgency=medium
