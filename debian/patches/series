@@ -30,3 +30,4 @@ disable_silent_rules.patch
 envargs.patch
 fix-underlinking.patch
 static_scientific_apps.patch
+8416d8a1a423535fbc5d4e7416d6eac8ac5c050b.patch
