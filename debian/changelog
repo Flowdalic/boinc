@@ -1,3 +1,10 @@
+boinc (7.6.32+dfsg-2) UNRELEASED; urgency=medium
+
+  [ Steffen Moeller ]
+  * Reintroduced dh_strip override for --dbgsym-migration
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 12 May 2016 12:01:32 +0200
+
 boinc (7.6.32+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
