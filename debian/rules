@@ -427,7 +427,7 @@ override_dh_fixperms:
 	  debian/boinc-server-maker/usr/share/boinc-server-maker/html/ops/delete_job_files || true
 
 override_dh_strip:
-	dh_strip --dbgsym-migration='boinc-server-dbg, boinc-dbg'
+	dh_strip --dbgsym-migration='boinc-server-dbg, boinc-dbg' || dh_strip
 
 override_dh_compress:
 	dh_compress -Xsamples -X.cpp -X.py -XMakefile
