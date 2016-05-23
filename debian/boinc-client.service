@@ -1,15 +1,15 @@
 [Unit]
 Description=Berkeley Open Infrastructure Network Computing Client
-Documentation=man:boinc(1)
-After=network-online.target
+After=network.target
 
 [Service]
-Type=forking
 Nice=10
 User=boinc
-WorkingDirectory=/var/lib/boinc-client
-ExecStart=/usr/bin/boinc --daemon --start_delay 1
-ExecStop=/usr/bin/boinccmd --quit
+PermissionsStartOnly=yes
+ExecStartPre=/usr/bin/touch /var/log/boinc.log /var/log/boincerr.log
+ExecStartPre=/bin/chown boinc:boinc /var/log/boinc.log /var/log/boincerr.log
+#ExecStart=/usr/bin/boinc --dir /var/lib/boinc-client
+ExecStart=/bin/sh -c '/usr/bin/boinc --dir /var/lib/boinc-client >/var/log/boinc.log 2>/var/log/boincerr.log'
 ExecReload=/usr/bin/boinccmd --read_cc_config
 ExecStopPost=/bin/rm -f /var/lib/boinc-client/lockfile
 IOSchedulingClass=idle
