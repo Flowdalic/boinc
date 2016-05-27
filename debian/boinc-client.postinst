@@ -44,10 +44,12 @@ case "$1" in
 	    usermod -a -G video boinc || echo "Could not assign boinc user to group 'video'."
 	fi
 
-        # Make sure the /var/lib/boinc-client directory exists and
-        # is owned by the boinc user.
-        mkdir $BOINC_DIR 2>/dev/null || true
-        chown -h boinc:boinc $BOINC_DIR 2>/dev/null || true
+	# Make sure the /var/lib/boinc-client directory exists and
+	# is owned by the boinc user.
+	mkdir -p $BOINC_DIR
+	[ -x /sbin/restorecon ] && /sbin/restorecon $BOINC_DIR
+
+	chown -h boinc:boinc $BOINC_DIR 2>/dev/null || true
 
         # Move old configuration files to /etc/boinc-client/ and
         # create symlinks for the BOINC core client.
