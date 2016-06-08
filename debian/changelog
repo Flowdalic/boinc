@@ -1,4 +1,8 @@
-boinc (7.6.32+dfsg-3) UNRELEASED; urgency=medium
+boinc (7.6.33+dfsg-1) unstable; urgency=medium
+
+  [ Gianfranco Costamagna ]
+  * New upstream release
+  * Upload to unstable
 
   [ Russell Coker ]
   * Restore SElinux context on installation for the boinc-client directory.
