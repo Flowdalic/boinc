@@ -150,15 +150,3 @@ vda/ssim
 vda/vda
 vda/vdad
 /win_build/*.sdf
-
-
-#debian specific files
-.pc
-update-boinc-applinks.1
-debian/*-stamp
- 
-# upstream files not here
-version.h
-
-# Text editor artifacts
-*~
