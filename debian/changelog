@@ -1,6 +1,11 @@
-boinc (7.6.33+dfsg-1exp3) UNRELEASED; urgency=medium
+boinc (7.6.33+dfsg-2) unstable; urgency=high
 
-  * Switch to unversioned php* packages and mysql*
+  [ Gianfranco Costamagna ]
+  * Upload to unstable
+  * Switch to unversioned php* packages.
+
+  [ Mike Brennan <debian@u4ear.com> ]
+  * Fix xhost syntax. (Closes: #841665)
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 05 Sep 2016 08:24:58 +0200
 
