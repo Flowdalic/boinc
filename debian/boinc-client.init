@@ -107,7 +107,7 @@ start()
   else
     if [ -n "$DISPLAY" -a -x /usr/bin/xhost ]; then
        # grant the boinc client to perform GPU computing
-       xhost local:boinc || echo -n "xhost error ignored, GPU computing may not be possible"
+       xhost +si:localuser:$BOINC_USER || echo -n "xhost error ignored, GPU computing may not be possible"
     fi
     if [ -n "$VALGRIND_OPTIONS" ]; then
       start-stop-daemon --start --quiet --background --pidfile $PIDFILE \
