@@ -6,8 +6,9 @@ Uploaders: Steffen Moeller <moeller@debian.org>,
            Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
            Gianfranco Costamagna <locutusofborg@debian.org>
 Standards-Version: 3.9.8
-Build-Depends: debhelper (>= 10),
+Build-Depends: debhelper (>= 9),
                default-libmysqlclient-dev,
+               dh-autoreconf,
                dh-python,
                dh-systemd,
                docbook-xml,
