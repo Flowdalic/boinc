@@ -207,14 +207,13 @@ schedule()
       fi
     fi
     for BPID in ${pid} ${children}; do
+      # Fallback to old oom_adj if oom_score_adj doesn't exist
       if [ -w /proc/${BPID}/oom_score_adj ]; then
         echo ${BOINC_OOM_SCORE_ADJ} > /proc/${BPID}/oom_score_adj 2>/dev/null || true
-      fi
-      # Fallback to old oom_adj if oom_score_adj doesn't exist
-      if [ -w /proc/${BPID}/oom_adj ]; then
+      elif [ -w /proc/${BPID}/oom_adj ]; then
         echo ${BOINC_OOM_ADJ} > /proc/${BPID}/oom_adj 2>/dev/null || true
       else
-        echo "Could not write to /proc/${BPID}/oom_adj"
+        echo "Could not adjust oom_score of task"
       fi
     done
   fi
