@@ -1,3 +1,9 @@
+boinc (7.6.33+dfsg-6exp1) experimental; urgency=medium
+
+  * Upload to experimental again, with the boinc-server-* packages.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 16 Feb 2017 22:48:11 +0100
+
 boinc (7.6.33+dfsg-6) unstable; urgency=medium
 
   * Upload to unstable.
