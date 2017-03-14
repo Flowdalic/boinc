@@ -1,0 +1,29 @@
+Description: "fix" the new process spawn
+Author: Gianfranco Costamagna <locutusofborg@debian.org>
+        Christian Beer
+
+Bug-Ubuntu: https://launchpad.net/bugs/1115607
+Forwarded: https://github.com/BOINC/boinc/issues/1177
+
+--- boinc-7.6.33+dfsg.orig/clientgui/AdvancedFrame.cpp
++++ boinc-7.6.33+dfsg/clientgui/AdvancedFrame.cpp
+@@ -1586,7 +1586,7 @@ void CAdvancedFrame::OnLaunchNewInstance
+ #endif
+     int argc = 2;
+     char* const argv[3] = {
+-         const_cast<char *>("boincmgr"), 
++         const_cast<char *>("/usr/bin/boincmgr"),
+          const_cast<char *>("--multiple"), 
+          NULL
+     }; 
+--- boinc-7.6.33+dfsg.orig/lib/util.cpp
++++ boinc-7.6.33+dfsg/lib/util.cpp
+@@ -468,7 +468,7 @@ int run_program(
+             retval = chdir(dir);
+             if (retval) return retval;
+         }
+-        execv(file, argv);
++        execv(argv[0], argv);
+ #ifdef _USING_FCGI_
+         FCGI::perror("execv");
+ #else
