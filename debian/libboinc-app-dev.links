@@ -2,7 +2,6 @@
 usr/include/boinc/boinc_api.h       usr/share/boinc-dev/api/boinc_api.h
 usr/include/boinc/gutil.h           usr/share/boinc-dev/api/gutil.h
 usr/include/boinc/app_ipc.h         usr/share/boinc-dev/lib/app_ipc.h
-usr/include/boinc/boinc_win.h       usr/share/boinc-dev/lib/boinc_win.h
 usr/include/boinc/common_defs.h     usr/share/boinc-dev/lib/common_defs.h
 usr/include/boinc/crypt.h           usr/share/boinc-dev/lib/crypt.h
 usr/include/boinc/diagnostics.h     usr/share/boinc-dev/lib/diagnostics.h
@@ -27,5 +26,6 @@ usr/include/boinc/api/boinc_gl.h        usr/share/boinc-dev/api/boinc_gl.h
 usr/include/boinc/api/graphics_data.h   usr/share/boinc-dev/api/graphics_data.h
 usr/include/boinc/api/reduce.h          usr/share/boinc-dev/api/reduce.h
 usr/include/boinc/lib/md5_file.h        usr/share/boinc-dev/lib/md5_file.h
+usr/include/boinc/lib/boinc_win.h       usr/share/boinc-dev/lib/boinc_win.h
 
 usr/include/boinc 		    usr/include/BOINC
