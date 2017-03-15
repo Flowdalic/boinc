@@ -1,3 +1,11 @@
+boinc (7.6.33+dfsg-9) unstable; urgency=medium
+
+  * Really fix the spawn of new shell (LP: #1115607)
+  * Fix broken symlink for app-dev package (Closes: #857218)
+    thanks Andreas Beckmann once again
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 15 Mar 2017 16:34:16 +0100
+
 boinc (7.6.33+dfsg-8exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
