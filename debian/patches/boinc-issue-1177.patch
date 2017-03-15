@@ -4,6 +4,17 @@ Author: Christian Beer
 Bug-Ubuntu: https://launchpad.net/bugs/1115607
 Forwarded: https://github.com/BOINC/boinc/issues/1177
 
+--- a/clientgui/AdvancedFrame.cpp
++++ b/clientgui/AdvancedFrame.cpp
+@@ -1601,7 +1601,7 @@ void CAdvancedFrame::OnLaunchNewInstance(wxCommandEvent& WXUNUSED(event)) {
+     wxString strExecutable = wxGetApp().GetRootDirectory() + wxGetApp().GetExecutableName();
+ 
+     run_program(
+-        wxGetApp().GetRootDirectory().mb_str(),
++        wxGetApp().GetDataDirectory().mb_str(),
+         strExecutable.mb_str(),
+         argc,
+         argv, 
 diff --git a/clientgui/BOINCGUIApp.cpp b/clientgui/BOINCGUIApp.cpp
 index 434769b5e4..b5c0b8a45b 100644
 --- a/clientgui/BOINCGUIApp.cpp
