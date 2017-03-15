@@ -1,0 +1,47 @@
+Description: Fix for the new process spawn
+Author: Christian Beer
+
+Bug-Ubuntu: https://launchpad.net/bugs/1115607
+Forwarded: https://github.com/BOINC/boinc/issues/1177
+
+diff --git a/clientgui/BOINCGUIApp.cpp b/clientgui/BOINCGUIApp.cpp
+index 434769b5e4..b5c0b8a45b 100644
+--- a/clientgui/BOINCGUIApp.cpp
++++ b/clientgui/BOINCGUIApp.cpp
+@@ -721,6 +721,17 @@ void CBOINCGUIApp::DetectExecutableName() {
+ 
+     // Store the root directory for later use.
+     m_strBOINCMGRExecutableName = pszProg;
++#else
++    char path[PATH_MAX];
++    memset(path,0,sizeof(path));
++    int ret = readlink("/proc/self/exe", path, PATH_MAX);
++    if ( ret >= 0) {
++        path[ret] = '\0'; // readlink does not null terminate
++        char* name = strrchr(path, '/') + 1;
++        m_strBOINCMGRExecutableName = name;
++    } else {
++        perror("readlink");
++    }
+ #endif
+ }
+ 
+@@ -742,6 +753,18 @@ void CBOINCGUIApp::DetectRootDirectory() {
+ 
+     // Store the root directory for later use.
+     m_strBOINCMGRRootDirectory = szPath;
++#else
++    char path[PATH_MAX];
++    memset(path,0,sizeof(path));
++    int ret = readlink("/proc/self/exe", path, PATH_MAX);
++    if ( ret >= 0) {
++        path[ret] = '\0'; // readlink does not null terminate
++        char* name = strrchr(path, '/') + 1;
++        *name = '\0';
++        m_strBOINCMGRRootDirectory = path;
++    } else {
++        perror("readlink");
++    }
+ #endif
+ }
+ 
