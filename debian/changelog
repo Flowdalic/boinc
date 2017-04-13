@@ -1,3 +1,10 @@
+boinc (7.6.33+dfsg-12) UNRELEASED; urgency=medium
+
+  * Added dependency on  lsb-base (>= 3.0-6) of boinc-client for the init
+    script. Thanks to Lintian and the Package Tracker for spotting that.
+
+ -- Steffen Moeller <moeller@debian.org>  Thu, 13 Apr 2017 11:37:11 +0200
+
 boinc (7.6.33+dfsg-11exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.

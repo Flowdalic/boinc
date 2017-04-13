@@ -129,6 +129,7 @@ Package: boinc
 @Architecture: any
 @Depends: adduser,
 @         ca-certificates,
+@         lsb-base (>= 3.0-6),
 @         libboinc7 (= ${binary:Version}),
 @         ${misc:Depends},
 @         ${python:Depends},
