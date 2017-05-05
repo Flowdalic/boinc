@@ -1,0 +1,341 @@
+Source: boinc
+Section: net
+Priority: optional
+Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
+Uploaders: Steffen Moeller <moeller@debian.org>,
+           Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
+           Gianfranco Costamagna <locutusofborg@debian.org>
+Standards-Version: 3.9.8
+Build-Depends: debhelper (>= 9.20160114),
+               default-libmysqlclient-dev,
+               dh-autoreconf,
+               dh-python,
+               dh-systemd,
+               docbook-xml,
+               docbook2x,
+               dpkg-dev (>= 1.16.1.1),
+               freeglut3-dev,
+               gettext,
+               libcurl4-openssl-dev,
+               libfcgi-dev,
+               libgtk2.0-dev,
+               libice-dev,
+               libjpeg-dev,
+               libnotify-dev (>= 0.7.0),
+               libsm-dev,
+               libsqlite3-dev,
+               libssl-dev,
+               libtool,
+               libwxgtk-webview3.0-dev,
+               libwxgtk3.0-dev,
+               libxcb-util0-dev,
+               libxi-dev,
+               libxml2-utils,
+               libxmu-dev,
+               libxss-dev,
+               pkg-config,
+               po-debconf,
+               python-all,
+               python-setuptools,
+               zlib1g-dev
+Homepage: https://boinc.berkeley.edu/
+Vcs-Git: https://anonscm.debian.org/git/pkg-boinc/boinc.git
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-boinc/boinc.git
+
+Package: boinc
+Architecture: all
+Depends: boinc-client (>= ${source:Version}),
+         boinc-manager (>= ${source:Version}),
+         ${misc:Depends}
+Description: metapackage for the BOINC client and the manager
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing: several initiatives of
+ various scientific disciplines all compete for the idle time of
+ desktop computers. The developers' web site at the University of
+ Berkeley serves as a common portal to the otherwise independently run
+ projects.
+ .
+ This package depends both on the BOINC core client program that is
+ required to participate in any project that uses BOINC, and the
+ BOINC Manager, a graphical monitor and control utility for the
+ BOINC core client.
+
+Package: boinc-client-nvidia-cuda
+Architecture: amd64 i386 armhf
+Section: contrib/net
+Priority: extra
+Breaks: boinc-nvidia-cuda
+Replaces: boinc-nvidia-cuda
+Depends: ${misc:Depends}, boinc-client, libcuda1 | libcuda1-any | libcuda-7.5-1 | libcuda-7.0-1 | libcuda-6.5-1 | libcuda-6.0-1 | libcuda-5.5-1 | libcuda-5.0-1
+Description: metapackage for CUDA-savvy BOINC client and manager
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing: several initiatives of
+ various scientific disciplines all compete for the idle time of
+ desktop computers. The developers' web site at the University of
+ Berkeley serves as a common portal to the otherwise independently run
+ projects.
+ .
+ Regular users (righteously) often find it an unbearable nuisance to
+ care for the exact configuration of BOINC for CUDA-savvy graphics
+ cards. This package adds a series of dependencies from the non-free
+ section to the regular boinc package. This also meant this binary
+ package to be redistributed in the contrib section of Debian.
+
+Package: boinc-client-opencl
+Architecture: any
+Section: contrib/net
+Priority: extra
+Breaks: boinc-amd-opencl
+Replaces: boinc-amd-opencl
+Depends: ${misc:Depends}, ocl-icd-libopencl1 | libopencl-1.1-1
+Recommends: amd-opencl-icd | opencl-icd
+Description: metapackage for AMD/ATI OpenCL-savvy BOINC client and manager
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing: several initiatives of
+ various scientific disciplines all compete for the idle time of
+ desktop computers. The developers' web site at the University of
+ Berkeley serves as a common portal to the otherwise independently run
+ projects.
+ .
+ Regular users (righteously) often find it an unbearable nuisance to
+ care for the configuration of BOINC for the OpenCL-savvy AMD/ATI
+ graphics cards.  This package adds a series of dependencies from the
+ non-free section to the regular boinc package. This also meant this
+ binary package to be redistributed in the contrib section of Debian.
+
+Package: boinc-client-fglrx
+Architecture: amd64 i386
+Section: contrib/net
+Priority: extra
+Breaks: boinc-nvidia-cuda
+Replaces: boinc-nvidia-cuda
+Depends: ${misc:Depends}, boinc-client
+Recommends: libfglrx | fglrx-updates | fglrx
+Description: metapackage for AMD/ATI fglrx-savvy BOINC client and manager
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing: several initiatives of
+ various scientific disciplines all compete for the idle time of
+ desktop computers. The developers' web site at the University of
+ Berkeley serves as a common portal to the otherwise independently run
+ projects.
+ .
+ Regular users (righteously) often find it an unbearable nuisance to
+ care for the configuration of BOINC for the fglrx-savvy AMD/ATI
+ graphics cards.  This package adds a series of dependencies from the
+ non-free section to the regular boinc package. This also meant this
+ binary package to be redistributed in the contrib section of Debian.
+
+Package: boinc-client
+Architecture: any
+Depends: adduser,
+         ca-certificates,
+         lsb-base (>= 3.0-6),
+         libboinc7 (= ${binary:Version}),
+         ${misc:Depends},
+         ${python:Depends},
+         ${shlibs:Depends}
+Suggests: boinc-client-opencl, boinc-client-fglrx, boinc-client-nvidia-cuda, boinc-manager, x11-xserver-utils
+Description: core client for the BOINC distributed computing infrastructure
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing: several initiatives of
+ various scientific disciplines all compete for the idle time of
+ desktop computers. The developers' web site at the University of
+ Berkeley serves as a common portal to the otherwise independently run
+ projects.
+ .
+ This package contains the BOINC core client program that is required
+ to participate in any project that uses BOINC. A central server
+ distributes work units and collects results via this client. When
+ attaching a local machine to a project, this client will also
+ dynamically download the scientific data and executables to be then
+ wrapped by the BOINC core client.
+
+Package: boinc-screensaver
+Section: x11
+Architecture: any
+Depends: boinc-client, ${misc:Depends}, ${shlibs:Depends}
+Suggests: boinc-manager
+Description: screen saver auto-controlling volunteer computing
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing: several initiatives of
+ various scientific disciplines all compete for the idle time of
+ desktop computers. The developers' web site at the University of
+ Berkeley serves as a common portal to the otherwise independently run
+ projects.
+ .
+ The BOINC client is configurable by the command line or the BOINC
+ manager's GUI to compute with any range between 0% and 100% of
+ available resources, and to change that ratio to a higher after
+ some user determined duration of inactivity. There is now quite
+ a number of individuals who prefer to have everything presented
+ with their accustomed principle for setting and choosing a screen
+ saver. Upon inactivity, the BOINC client is started, and stopped
+ again when the user is back. To save the screen, it then shows
+ the graphical progress indication as optionally shown also by
+ the manager.
+ .
+ This package is excellent to further promote BOINC, recalling the
+ effect SETI@Home once had in the Cambridge, UK, CB2 Cybercafe.
+ Just, when using it together with the regular BOINC client setup,
+ it is suggested not to have all CPUs used to avoid multiple
+ processes running on the same core.
+
+Package: boinc-manager
+Section: x11
+Architecture: any
+Depends: boinc-client, ${misc:Depends}, ${shlibs:Depends}
+Suggests: libgl1-mesa-glx, libxt6
+Description: GUI to control and monitor the BOINC core client
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources.
+ .
+ This package contains the BOINC Manager, a graphical monitor and
+ control utility for the BOINC core client. It gives a detailed
+ overview of the state of the client it is monitoring, as there are
+  * attached projects
+  * running tasks
+  * file transfers between the client and project servers
+  * statistics about granted credits and disk usage for every project
+  * constraints on CPU usage
+ The BOINC Manager has two modes of operation, the "Simple View" in which
+ it only displays the most important information and the "Advanced View"
+ in which all information and all control elements are available.
+ .
+ For active participation in any BOINC project the recommended
+ boinc-client package, not the boinc-manager, is required for every
+ machine contributing.
+
+Package: boinc-dev
+Section: oldlibs
+Architecture: any
+Priority: extra
+Depends: libboinc-app-dev (= ${binary:Version}), ${misc:Depends}
+Description: development files to build applications for BOINC projects (transitional)
+ Dummy transitional package helping the transition of a split of
+ architecture-independent development files and the architecture-dependent
+ dynamic libraries.  Static libraries are no longer redistributed.
+
+Package: libboinc-app-dev
+Section: libdevel
+Architecture: any
+Depends: libboinc-app7 (= ${binary:Version}),
+         libboinc7 (= ${binary:Version}),
+         libc6-dev | libc-dev,
+         default-libmysqlclient-dev,
+         libssl-dev,
+         build-essential,
+         ${misc:Depends}
+Breaks: boinc-dev (<< 7.0.28+dfsg-3)
+Replaces: boinc-dev (<< 7.0.28+dfsg-3)
+Description: development files to build applications for BOINC projects
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources.
+ .
+ This package contains header files that are needed to develop and
+ compile applications which utilizes the BOINC infrastructure.
+
+Package: libboinc-app7
+Provides: libboinc-app
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Breaks: boinc-dev (<< 7.0.28+dfsg-3), libboinc-app (<= 7.0.34+dfsg-1)
+Replaces: boinc-dev (<< 7.0.28+dfsg-3), libboinc-app (<= 7.0.34+dfsg-1)
+Section: libs
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: libraries for BOINC's scientific applications
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources.
+ .
+ This package contains dynamic libraries that are needed for applications
+ which utilizes the BOINC infrastructure and the boinc-client itself.
+
+Package: libboinc7
+Provides: libboinc
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Breaks: boinc-dev (<< 7.0.28+dfsg-3), libboinc (<= 7.0.34+dfsg-1)
+Replaces: boinc-dev (<< 7.0.28+dfsg-3), libboinc (<= 7.0.34+dfsg-1)
+Architecture: any
+Section: libs
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: libraries of BOINC the client depends on
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources.
+ .
+ The environment offers a series of libraries that both the user-run
+ client and the client-invoked scientific applications depend on. With
+ the number of cores per machine growing, and with scientific apps
+ commonly started for every core, it is essential to have memory
+ shared as much as possible between binaries of all projects.
+
+Package: boinc-server-maker
+Architecture: any
+Provides: boinc-server
+Depends: adduser,
+         apache2 | httpd-cgi,
+         libfcgi0ldbl,
+         default-mysql-server | virtual-mysql-server,
+         openssl,
+         php,
+         php-cli,
+         php-mysql,
+         python,
+         python-mysqldb,
+         tcsh,
+         ${misc:Depends},
+         ${perl:Depends},
+         ${python:Depends},
+         ${shlibs:Depends}
+Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime
+Suggests: boinc-app-examples, boinc-cgi-stripchart
+Description: BOINC server applications and data files
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources. For every scientific problem its own distinct project-server
+ must be provided. The users only run a common client with project-specific
+ additions (if not self-compiled or available as a Linux distribution's
+ package itself) being downloaded from the server.
+ .
+ This package contains the daemons and tools to create and run BOINC
+ projects.
+
+Package: boinc-app-examples
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Recommends: boinc-server-maker
+Description: example binaries for BOINC servers
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources. For every scientific problem its own distinct project-server
+ must be provided. The users only run a common client with project-specific
+ additions (if not self-compiled or available as a Linux distribution's
+ package itself) being downloaded from the server.
+ .
+ This package extends the boinc-server-maker package. It features a
+ series of small applications that a newly installed environment may
+ decide to use for testing purposes. Having them separated has the neat
+ side effect that those binaries may be retrieved more easily for foreign
+ platforms to feed the local servers with.
+ .
+ The package also features the wrapper application, which is likely
+ to find its audience also in real projects.
+
+Package: boinc-cgi-stripchart
+Section: libs
+Priority: extra
+Architecture: all
+Depends: gnuplot-nox, ${misc:Depends}, ${perl:Depends}
+Recommends: apache2 | httpd-cgi
+Description: CGI script for plotting basic statistical graphs
+ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
+ software platform for distributed computing using volunteered computer
+ resources.
+ .
+ The BOINC developers have found their charting library to be of
+ interest for a larger audience. It is isolated in the BOINC source
+ tree and thus presented as a separate package.
