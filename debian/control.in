@@ -103,28 +103,6 @@ Package: boinc
 @ non-free section to the regular boinc package. This also meant this
 @ binary package to be redistributed in the contrib section of Debian.
 @
-@Package: boinc-client-fglrx
-@Architecture: amd64 i386
-@Section: contrib/net
-@Priority: extra
-@Breaks: boinc-nvidia-cuda
-@Replaces: boinc-nvidia-cuda
-@Depends: ${misc:Depends}, boinc-client
-@Recommends: libfglrx | fglrx-updates | fglrx
-@Description: metapackage for AMD/ATI fglrx-savvy BOINC client and manager
-@ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
-@ software platform for distributed computing: several initiatives of
-@ various scientific disciplines all compete for the idle time of
-@ desktop computers. The developers' web site at the University of
-@ Berkeley serves as a common portal to the otherwise independently run
-@ projects.
-@ .
-@ Regular users (righteously) often find it an unbearable nuisance to
-@ care for the configuration of BOINC for the fglrx-savvy AMD/ATI
-@ graphics cards.  This package adds a series of dependencies from the
-@ non-free section to the regular boinc package. This also meant this
-@ binary package to be redistributed in the contrib section of Debian.
-@
 @Package: boinc-client
 @Architecture: any
 @Depends: adduser,
@@ -134,7 +112,7 @@ Package: boinc
 @         ${misc:Depends},
 @         ${python:Depends},
 @         ${shlibs:Depends}
-@Suggests: boinc-client-opencl, boinc-client-fglrx, boinc-client-nvidia-cuda, boinc-manager, x11-xserver-utils
+@Suggests: boinc-client-opencl, boinc-client-nvidia-cuda, boinc-manager, x11-xserver-utils
 @Description: core client for the BOINC distributed computing infrastructure
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of

@@ -1,4 +1,4 @@
-boinc (7.6.33+dfsg-12) UNRELEASED; urgency=medium
+boinc (7.6.33+dfsg-12) unstable; urgency=medium
 
   [ Steffen Moeller ]
   * Added dependency on  lsb-base (>= 3.0-6) of boinc-client for the init
@@ -6,8 +6,10 @@ boinc (7.6.33+dfsg-12) UNRELEASED; urgency=medium
 
   [ Gianfranco Costamagna ]
   * Update the previous boinc-issue-1177.patch with the upstream merged patch.
+  * Remove boinc-client-fglrx: dead, depends on removed fglrx libraries.
+    (Closes: #863699)
 
- -- Steffen Moeller <moeller@debian.org>  Thu, 13 Apr 2017 11:37:11 +0200
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 30 May 2017 11:39:31 +0200
 
 boinc (7.6.33+dfsg-11exp1) experimental; urgency=medium
 
