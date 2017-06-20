@@ -989,6 +989,66 @@ function update_4_15_2015() {
     ");
 }
 
+// functions to change select ID types to 64-bit
+//
+function result_big_ids() {
+    do_query("alter table result
+        change column id id bigint not null auto_increment
+    ");
+    do_query("alter table workunit
+        change column canonical_resultid canonical_resultid bigint not null
+    ");
+    do_query("alter table assignment
+        change column resultid resultid bigint not null
+    ");
+}
+
+function workunit_big_ids() {
+    do_query("alter table workunit
+        change column id id bigint not null auto_increment
+    ");
+    do_query("alter table result
+        change column workunitid workunitid bigint not null
+    ");
+    do_query("alter table assignment
+        change column workunitid workunitid bigint not null
+    ");
+}
+
+// run this if your projects uses HTTPS, to patch up the gravatar URLs
+//
+function gravatar_update() {
+    do_query("update forum_preferences
+        SET avatar = REPLACE(avatar, 'http://www.gravatar.com', '//www.gravatar.com')
+    ");
+}
+
+function update_1_27_2016() {
+    do_query("alter table team add column mod_time timestamp default current_timestamp on update current_timestamp");
+}
+
+function update_2_17_2017() {
+    do_query("alter table job_file change md5 name varchar(255) not null");
+}
+
+function update_3_17_2017() {
+    do_query("alter table credit_user
+        add index cu_total(appid, total),
+        add index cu_avg(appid, expavg)
+    ");
+    do_query("alter table credit_team
+        add index ct_total(appid, total),
+        add index ct_avg(appid, expavg)
+    ");
+}
+
+function update_6_13_2017() {
+    do_query("alter table host
+        add column p_ngpus integer not null,
+        add column p_gpu_fpops double not null
+    ");
+}
+
 // Updates are done automatically if you use "upgrade".
 //
 // If you need to do updates manually,
@@ -1034,6 +1094,10 @@ $db_updates = array (
     array(27011, "update_8_15_2014"),
     array(27012, "update_10_8_2014"),
     array(27013, "update_4_15_2015"),
+    array(27014, "update_1_27_2016"),
+    array(27015, "update_2_17_2017"),
+    array(27016, "update_3_17_2017"),
+    array(27017, "update_6_13_2017"),
 );
 
 ?>

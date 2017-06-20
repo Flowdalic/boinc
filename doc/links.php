@@ -44,7 +44,7 @@ $info_sites = array(
         "(survey of volunteer computing, including non-BOINC projects)"
     ),
     array(
-        "http://www.rechenkraft.net/wiki/",
+        "https://www.rechenkraft.net/wiki/",
         "Rechenkraft.net wiki",
         "(German, English, Portuguese)"
     ),
@@ -57,9 +57,8 @@ $info_sites = array(
     //    "BOINC mini-FAQ"
     //),
     array(
-        "http://boincfaq.mundayweb.com/",
-        "The BOINC FAQ Service",
-        "(English, German, Dutch, Spanish and French)"
+        "https://boinc.mundayweb.com/wiki/index.php?title=BOINC_FAQs_Central",
+        "The BOINC FAQ Service"
     ),
     array(
         "http://www.seti-argentina.com.ar/instrucciones-boinc-manager",
@@ -88,19 +87,45 @@ $info_sites = array(
     ),
 );
 
+function show_social_media() {
+    echo "
+    <a name=misc></a>
+    <h3>Social media</h3>
+    ";
+    $misc_sites = array(
+        array("https://www.reddit.com/r/BOINC", "BOINC subreddit"),
+        //array("http://www.myboinc.com/", "BOINC Users of the Day"),
+        //array("http://groups.myspace.com/BOINConMYSPACE", "BOINC on MySpace"),
+        //array("http://www.boincuk.com/repository.php", "bunc", "(excellent newsletter produced by BOINC UK)"),
+        array("https://www.linkedin.com/groups/678497/profile", "BOINC group on LinkedIn"),
+        array("https://www.facebook.com/pages/Berkeley-Open-Infrastructure-for-Network-Computing/111781192172429", "BOINC on Facebook"),
+    );
+    echo "<ul>";
+    foreach ($misc_sites as $m) {
+        $u = $m[0];
+        $t1 = $m[1];
+        $t2 = $m[2];
+        echo "<li> <a href=$u>$t1</a> $t2
+        ";
+    }
+    echo "
+    </ul>
+    ";
+}
+
 page_head("Web resources for BOINC participants");
 
 echo "
 <h3>Contents</h3>
 <ul>
 <li> <a href=#info>Help and Information</a>
+<li> <a href=#misc>Social media</a>
 <li> <a href=#stats>Credit statistics</a>
 <li> <a href=#sigs>Signature images</a>
 <li> <a href=#team_stats>Team statistics</a>
 ";
 //<li> <a href=#status>Project status</a>
 echo "
-<li> <a href=#misc>Miscellaneous</a>
 <li> <a href=#skins>Skins for the BOINC Manager</a>
 <li> <a href=#sites>Other BOINC-related sites</a>
 (Information, message boards, and teams)
@@ -112,6 +137,9 @@ Sites with information and documentation about BOINC.
 ";
 shuffle($info_sites);
 site_list($info_sites);
+
+show_social_media();
+
 echo "
 <a name=stats></a>
 <h3>Credit statistics</h3>
@@ -119,7 +147,7 @@ echo "
 The following web sites show statistics for one or more BOINC projects.
 These sites use XML-format data exported by BOINC projects,
 as described
-<a href=http://boinc.berkeley.edu/trac/wiki/CreditStats>here</a>.
+<a href=trac/wiki/CreditStats>here</a>.
 If you're interested in running your own site or
 participating in the development efforts,
 please contact the people listed below.
@@ -157,32 +185,12 @@ if (0) {
     ";
 }
 echo "
-<a name=misc></a>
-<h3>Miscellaneous</h3>
-";
-$misc_sites = array(
-    //array("http://www.myboinc.com/", "BOINC Users of the Day"),
-    //array("http://groups.myspace.com/BOINConMYSPACE", "BOINC on MySpace"),
-    //array("http://www.boincuk.com/repository.php", "bunc", "(excellent newsletter produced by BOINC UK)"),
-    array("http://www.linkedin.com/groups?gid=678497", "BOINC group on LinkedIn"),
-    array("http://www.facebook.com/#!/pages/BOINC/109465765746025?ref=ts", "BOINC on Facebook"),
-);
-echo "<ul>";
-foreach ($misc_sites as $m) {
-    $u = $m[0];
-    $t1 = $m[1];
-    $t2 = $m[2];
-    echo "<li> <a href=$u>$t1</a> $t2
-    ";
-}
-echo "
-</ul>
 <a name=skins></a>
 <h3>Skins for the BOINC Manager</h3>
 <ul>
 <li> <a href=http://www.crunching-family.at/download-center/>Crunching Family Skin Download</a>
 <li> <a href=http://www.czechnationalteam.cz/view.php?cisloclanku=2007040003>Czech National Team skin</a> (in Czech)
-<li> <a href=http://www.grid-france.fr/tutos/boinc-personnaliser-aux-couleurs-equipe >Skin for Equipe France (WCG)</a>
+<li> <a href=http://www.grid-france.fr/tutos/boinc-personnaliser-aux-couleurs-equipe>Skin for Equipe France (WCG)</a>
 ";
 //<li> <a href=http://wcg.userfriendly.org/resources.jspx>Skin for team UserFriendly.org</a>
 echo "
@@ -268,6 +276,7 @@ language("French", array(
     //site("http://wwww.boinc-2tf.org", "2TF Asso"),
     //site("http://boincfrance.org", "BOINCFRANCE.ORG"),
     site("http://www.boinc-af.org", "L'Alliance Francophone"),
+    site("https://www.crunchersansfrontieres.org/", "CRUNCHERS SANS FRONTIERES"),
 ));
 language("German", array(
     site("http://www.crunchers-freiburg.de/", "crunchers@freiburg"),
@@ -367,8 +376,8 @@ If you'd like to add a web site to this list, please
 <h2>BOINC-related videos</h2>
 
 <ul>
-<li> <a href=http://www.youtube.com/watch?v=8iSRLIK-x6A>David Anderson talks about BOINC</a> (2006)
-<li> <a href=http://www.youtube.com/watch?v=GzATbET3g54>David Baker talks about Rosetta@home</a>
+<li> <a href=https://www.youtube.com/watch?v=8iSRLIK-x6A>David Anderson talks about BOINC</a> (2006)
+<li> <a href=https://www.youtube.com/watch?v=GzATbET3g54>David Baker talks about Rosetta@home</a>
 </ul>
 ";
 page_tail();

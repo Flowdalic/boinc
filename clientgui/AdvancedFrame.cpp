@@ -1,6 +1,6 @@
 // This file is part of BOINC.
 // http://boinc.berkeley.edu
-// Copyright (C) 2008 University of California
+// Copyright (C) 2016 University of California
 //
 // BOINC is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License
@@ -21,6 +21,7 @@
 
 #ifdef __APPLE__
 #include "mac/MacGUI.pch"
+#include "mac_util.h"
 #endif
 
 #include "stdwx.h"
@@ -195,6 +196,7 @@ BEGIN_EVENT_TABLE (CAdvancedFrame, CBOINCBaseFrame)
     EVT_MENU(ID_HELPBOINCMANAGER, CAdvancedFrame::OnHelpBOINC)
     EVT_MENU(ID_HELPBOINCWEBSITE, CAdvancedFrame::OnHelpBOINC)
     EVT_MENU(wxID_ABOUT, CAdvancedFrame::OnHelpAbout)
+    EVT_MENU(ID_CHECK_VERSION, CAdvancedFrame::OnCheckVersion)
     EVT_HELP(wxID_ANY, CAdvancedFrame::OnHelp)
     // Custom Events & Timers
     EVT_FRAME_CONNECT(CAdvancedFrame::OnConnect)
@@ -340,7 +342,7 @@ bool CAdvancedFrame::CreateMenu() {
 
     menuFile->Append(
         ID_SELECTCOMPUTER, 
-        _("Select computer..."),
+        _("Select computer...\tCtrl+Shift+I"),
         _("Connect to a BOINC client on another computer")
     );
     menuFile->Append(
@@ -686,6 +688,21 @@ bool CAdvancedFrame::CreateMenu() {
     menuHelp->AppendSeparator();
 
     strMenuName.Printf(
+        _("Check for new %s version"),
+        pSkinAdvanced->GetApplicationShortName().c_str()
+    );
+    strMenuDescription.Printf(
+        _("Check for new %s version"),
+        pSkinAdvanced->GetApplicationShortName().c_str()
+    );
+    menuHelp->Append(
+        ID_CHECK_VERSION,
+        strMenuName,
+        strMenuDescription
+    );
+    menuHelp->AppendSeparator();
+
+    strMenuName.Printf(
         _("&About %s..."), 
         pSkinAdvanced->GetApplicationName().c_str()
     );
@@ -737,7 +754,7 @@ bool CAdvancedFrame::CreateMenu() {
     m_Shortcuts[0].Set(wxACCEL_NORMAL, WXK_HELP, ID_HELPBOINCMANAGER);
     m_pAccelTable = new wxAcceleratorTable(1, m_Shortcuts);
     SetAcceleratorTable(*m_pAccelTable);
- #endif
+#endif
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::CreateMenu - Function End"));
     return true;
@@ -896,7 +913,6 @@ bool CAdvancedFrame::SaveState() {
     CBOINCBaseView* pView = NULL;
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
-    wxString        strBuffer;
     int             iIndex = 0;
     int             iItemCount = 0;
 
@@ -958,8 +974,6 @@ bool CAdvancedFrame::RestoreState() {
     CBOINCBaseView* pView = NULL;
     wxString        strConfigLocation;
     wxString        strPreviousLocation;
-    wxString        strBuffer;
-    wxString        strValue;
     long            iIndex;
     long            iPageCount;
     long            iCurrentPage;
@@ -1260,13 +1274,7 @@ void CAdvancedFrame::OnWizardDetach(wxCommandEvent& WXUNUSED(event)) {
         );
 
         if (wxYES == iAnswer) {
-            std::string url, name, passwd;
-            pDoc->rpc.acct_mgr_rpc(
-                url.c_str(),
-                name.c_str(),
-                passwd.c_str(),
-                false
-            );
+            pDoc->rpc.acct_mgr_rpc("", "", "", false);
         }
 
         DeleteMenu();
@@ -1417,36 +1425,26 @@ void CAdvancedFrame::OnSelectComputer(wxCommandEvent& WXUNUSED(event)) {
     wxString            password = wxEmptyString;
     CMainDocument*      pDoc = wxGetApp().GetDocument();
     long                lRetVal = -1;
+    bool                bRetrievePasswordFromFile = FALSE;
 
     wxASSERT(pDoc);
     wxASSERT(wxDynamicCast(pDoc, CMainDocument));
 
-    if (SelectComputer(hostName, portNum, password, false)) { 
-        if (pDoc->IsComputerNameLocal(hostName)) {
-            lRetVal = pDoc->Connect(
-                wxT("localhost"),
-                GUI_RPC_PORT,
-                wxEmptyString,
-                TRUE,
-                TRUE
-            );
-        } else {
-            // Connect to the remote machine
-            long lPort = GUI_RPC_PORT; 
-            int iPos = hostName.Find(wxT(":")); 
-            if (iPos != wxNOT_FOUND) { 
-                wxString sPort = hostName.substr(iPos + 1); 
-                if (!sPort.ToLong(&lPort)) lPort = GUI_RPC_PORT; 
-                hostName.erase(iPos); 
-            } 
-            lRetVal = pDoc->Connect(
-                hostName.c_str(),
-                portNum,
-                password.c_str(),
-                TRUE,
-                FALSE
-            );
+    if (SelectComputer(hostName, portNum, password, false)) {
+        // possibly read password from file if local computername AND no password was entered
+        if (pDoc->IsComputerNameLocal(hostName) && password == wxEmptyString) {
+            hostName = wxT("localhost");
+            bRetrievePasswordFromFile = TRUE;
         }
+        // Connect to the specified host
+        lRetVal = pDoc->Connect(
+            hostName.c_str(),
+            portNum,
+            password.c_str(),
+            TRUE,
+            bRetrievePasswordFromFile
+        );
+
         if (lRetVal) {
             ShowConnectionFailedAlert();
         }
@@ -1458,6 +1456,7 @@ void CAdvancedFrame::OnClientShutdown(wxCommandEvent& WXUNUSED(event)) {
     wxCommandEvent     evtSelectNewComputer(wxEVT_COMMAND_MENU_SELECTED, ID_SELECTCOMPUTER);
     CMainDocument*     pDoc = wxGetApp().GetDocument();
     CSkinAdvanced*     pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
+    int                showDialog = wxGetApp().GetBOINCMGRDisplayShutdownConnectedClientMessage();
     CDlgGenericMessage dlg(this);
     wxString           strDialogTitle = wxEmptyString;
     wxString           strDialogMessage = wxEmptyString;
@@ -1472,29 +1471,31 @@ void CAdvancedFrame::OnClientShutdown(wxCommandEvent& WXUNUSED(event)) {
     // Stop all timers
     StopTimers();
 
+    if (showDialog) {
+        // %s is the application name
+        //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+        strDialogTitle.Printf(
+            _("%s - Shut down the current client..."),
+            pSkinAdvanced->GetApplicationName().c_str()
+        );
 
-    // %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    strDialogTitle.Printf(
-        _("%s - Shut down the current client..."),
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
+        // 1st %s is the application name
+        //    i.e. 'BOINC Manager', 'GridRepublic Manager'
+        // 2nd %s is the project name
+        //    i.e. 'BOINC', 'GridRepublic'
+        strDialogMessage.Printf(
+            _("%s will shut down the current client\nand prompt you for another host to connect to."),
+            pSkinAdvanced->GetApplicationName().c_str()
+        );
 
-    // 1st %s is the application name
-    //    i.e. 'BOINC Manager', 'GridRepublic Manager'
-    // 2nd %s is the project name
-    //    i.e. 'BOINC', 'GridRepublic'
-    strDialogMessage.Printf(
-        _("%s will shut down the current client\nand prompt you for another host to connect to."),
-        pSkinAdvanced->GetApplicationName().c_str()
-    );
+        dlg.SetTitle(strDialogTitle);
+        dlg.m_DialogMessage->SetLabel(strDialogMessage);
+        dlg.Fit();
+        dlg.Centre();
+    }
 
-    dlg.SetTitle(strDialogTitle);
-    dlg.m_DialogMessage->SetLabel(strDialogMessage);
-    dlg.Fit();
-    dlg.Centre();
-
-    if (wxID_OK == dlg.ShowModal()) {
+    if (!showDialog || wxID_OK == dlg.ShowModal()) {
+        wxGetApp().SetBOINCMGRDisplayShutdownConnectedClientMessage(!dlg.m_DialogDisableMessage->GetValue());
         pDoc->CoreClientQuit();
         pDoc->ForceDisconnect();
         
@@ -1602,22 +1603,12 @@ void CAdvancedFrame::OnLaunchNewInstance(wxCommandEvent& WXUNUSED(event)) {
         prog
     );
 #else
-    char s[512];
-    unsigned char procName[256];
-    ProcessSerialNumber myPSN;
-    GetCurrentProcess(&myPSN);
-    ProcessInfoRec pInfo;
-    OSStatus err;
-    
-    memset(&pInfo, 0, sizeof(pInfo));
-    pInfo.processInfoLength = sizeof( ProcessInfoRec );
-    pInfo.processName = procName;
-    err = GetProcessInformation(&myPSN, &pInfo);
-    if (!err) {
-        procName[procName[0]+1] = '\0'; // Convert pascal string to C string
-        snprintf(s, sizeof(s), "open -n \"/Applications/%s.app\" --args --multiple", procName+1);
-        system(s);
-    }
+    char s[MAXPATHLEN];
+    char path[MAXPATHLEN];
+
+    getPathToThisApp(path, sizeof(path));
+    snprintf(s, sizeof(s), "open -n \"%s\" --args --multiple", path);
+    system(s);
 #endif
 
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnLaunchNewInstance - Function End"));
@@ -1675,6 +1666,13 @@ void CAdvancedFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnHelpAbout - Function End"));
 }
 
+void CAdvancedFrame::OnCheckVersion(wxCommandEvent& WXUNUSED(event)) {
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnCheckVersion - Function Begin"));
+
+    wxGetApp().GetDocument()->CheckForVersionUpdate(true);
+
+    wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnCheckVersion - Function End"));
+}
 
 void CAdvancedFrame::OnRefreshView(CFrameEvent& WXUNUSED(event)) {
     wxLogTrace(wxT("Function Start/End"), wxT("CAdvancedFrame::OnRefreshView - Function Begin"));
@@ -1742,9 +1740,6 @@ void CAdvancedFrame::OnConnect(CFrameEvent& WXUNUSED(event)) {
     CSkinAdvanced* pSkinAdvanced = wxGetApp().GetSkinManager()->GetAdvanced();
     CWizardAttach* pWizard = NULL;
     wxString strComputer = wxEmptyString;
-    wxString strName = wxEmptyString;
-    wxString strURL = wxEmptyString;
-    wxString strTeamName = wxEmptyString;
     wxString strDialogTitle = wxEmptyString;
     wxString strDialogDescription = wxEmptyString;
     std::string strProjectName;
@@ -2008,7 +2003,6 @@ void CAdvancedFrame::OnFrameRender(wxTimerEvent& WXUNUSED(event)) {
                     m_pStatusbar->m_pbmpDisconnect->Hide();
                     m_pStatusbar->m_ptxtDisconnect->Hide();
 
-                    wxString strBuffer = wxEmptyString;
                     wxString strComputerName = wxEmptyString;
                     wxString strComputerVersion = wxEmptyString;
                     wxString strStatusText = wxEmptyString;

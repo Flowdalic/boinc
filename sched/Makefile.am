@@ -15,7 +15,6 @@ libsched_sources = \
     sched_util_basic.cpp \
     sched_config.cpp \
     sched_limit.cpp \
-    sched_msgs.cpp \
     ../db/boinc_db.cpp \
     ../db/db_base.cpp \
     ../tools/process_result_template.cpp \
@@ -26,7 +25,7 @@ lib_LTLIBRARIES = libsched.la
 libsched_la_SOURCES = $(libsched_sources)
 libsched_la_CFLAGS = $(AM_CPPFLAGS)
 libsched_la_CXXFLAGS = $(AM_CPPFLAGS)
-libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+libsched_la_LDFLAGS= -version-number $(LIBBOINC_VERSION)
 libsched_la_LIBADD= $(SSL_LIBS)
 
 ## install only headers that are meant for exporting the API !!
@@ -35,8 +34,8 @@ pkginclude_HEADERS = \
 	credit.h \
 	sched_config.h \
 	sched_limit.h \
-	sched_msgs.h \
 	sched_util.h \
+	sched_util_basic.h \
 	../tools/backend_lib.h \
 	validate_util.h
 endif
@@ -48,7 +47,7 @@ lib_LTLIBRARIES += libsched_fcgi.la
 libsched_fcgi_la_SOURCES = $(libsched_sources)
 libsched_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
 libsched_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
-libsched_fcgi_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+libsched_fcgi_la_LDFLAGS= -version-number $(LIBBOINC_VERSION)
 libsched_fcgi_la_LIBADD=
 
 endif
@@ -277,7 +276,7 @@ trickle_echo_LDADD = $(SERVERLIBS)
 update_stats_SOURCES = update_stats.cpp
 update_stats_LDADD = $(SERVERLIBS)
 
-file_upload_handler_SOURCES = file_upload_handler.cpp sched_msgs.cpp sched_config.cpp sched_util_basic.cpp sched_limit.cpp
+file_upload_handler_SOURCES = file_upload_handler.cpp sched_config.cpp sched_util_basic.cpp sched_limit.cpp
 file_upload_handler_LDADD = $(FUHLIBS)
 
 make_work_SOURCES = make_work.cpp
@@ -317,8 +316,7 @@ fcgi_LDADD = $(SERVERLIBS_FCGI)
 
 fcgi_file_upload_handler_SOURCES = \
     file_upload_handler.cpp \
-    sched_config.cpp \
-    sched_msgs.cpp 
+    sched_config.cpp
 fcgi_file_upload_handler_CPPFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
 fcgi_file_upload_handler_LDADD = $(SERVERLIBS_FCGI)
 

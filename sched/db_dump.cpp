@@ -308,7 +308,7 @@ void write_host(HOST& host, FILE* f, bool detail) {
     xml_escape(host.os_version, os_version, sizeof(os_version));
     fprintf(f,
         "<host>\n"
-        "    <id>%d</id>\n",
+        "    <id>%lu</id>\n",
         host.id
     );
     if (detail) {
@@ -316,13 +316,13 @@ void write_host(HOST& host, FILE* f, bool detail) {
         retval = user.lookup_id(host.userid);
         if (retval) {
             log_messages.printf(MSG_CRITICAL,
-                "user lookup of user %d for host %d: %s\n",
+                "user lookup of user %lu for host %lu: %s\n",
                 host.userid, host.id, boincerror(retval)
             );
         } else {
             if (user.show_hosts) {
                 fprintf(f,
-                    "    <userid>%d</userid>\n",
+                    "    <userid>%lu</userid>\n",
                     host.userid
                 );
             }
@@ -427,7 +427,7 @@ void write_user(USER& user, FILE* f, bool /*detail*/) {
 
     fprintf(f,
         "<user>\n"
-        " <id>%d</id>\n"
+        " <id>%lu</id>\n"
         " <name>%s</name>\n"
         " <country>%s</country>\n"
         " <create_time>%d</create_time>\n"
@@ -452,7 +452,7 @@ void write_user(USER& user, FILE* f, bool /*detail*/) {
     }
     if (user.teamid) {
         fprintf(f,
-            " <teamid>%d</teamid>\n",
+            " <teamid>%lu</teamid>\n",
             user.teamid
         );
     }
@@ -492,8 +492,8 @@ void write_badge_user(char* output_dir) {
     while (!bu.enumerate("")) {
         fprintf(zf.f,
             " <badge_user>\n"
-            "    <user_id>%d</user_id>\n"
-            "    <badge_id>%d</badge_id>\n"
+            "    <user_id>%lu</user_id>\n"
+            "    <badge_id>%lu</badge_id>\n"
             "    <create_time>%.0f</create_time>\n"
             " </badge_user>\n",
             bu.user_id,
@@ -513,8 +513,8 @@ void write_badge_team(char* output_dir) {
     while (!bt.enumerate("")) {
         fprintf(zf.f,
             " <badge_team>\n"
-            "    <team_id>%d</team_id>\n"
-            "    <badge_id>%d</badge_id>\n"
+            "    <team_id>%lu</team_id>\n"
+            "    <badge_id>%lu</badge_id>\n"
             "    <create_time>%.0f</create_time>\n"
             " </badge_team>\n",
             bt.team_id,
@@ -537,10 +537,10 @@ void write_team(TEAM& team, FILE* f, bool detail) {
 
     fprintf(f,
         "<team>\n"
-        " <id>%d</id>\n"
+        " <id>%lu</id>\n"
         " <type>%d</type>\n"
         " <name>%s</name>\n"
-        " <userid>%d</userid>\n"
+        " <userid>%lu</userid>\n"
         " <total_credit>%f</total_credit>\n"
         " <expavg_credit>%f</expavg_credit>\n"
         " <expavg_time>%f</expavg_time>\n",
@@ -597,7 +597,7 @@ void write_team(TEAM& team, FILE* f, bool detail) {
         team.country
     );
     if (detail) {
-        sprintf(buf, "where teamid=%d", team.id);
+        sprintf(buf, "where teamid=%lu", team.id);
         while (1) {
             retval = user.enumerate(buf);
             if (retval) break;
@@ -665,7 +665,7 @@ void print_badges(FILE* f) {
         have_badges = true;
         fprintf(f,
             "       <badge>\n"
-            "           <id>%d</id>\n"
+            "           <id>%lu</id>\n"
             "           <name>%s</name>\n"
             "           <title>%s</title>\n"
             "           <image_url>%s</image_url>\n"

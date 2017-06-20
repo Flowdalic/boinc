@@ -21,6 +21,7 @@
 #else
 #include "stdwx.h"
 #endif
+#include "str_replace.h"
 #include "win_util.h"
 #endif
 
@@ -319,7 +320,11 @@ void boinc_crash() {
 
 // read file (at most max_len chars, if nonzero) into malloc'd buf
 //
+#ifdef _USING_FCGI_
+int read_file_malloc(const char* path, char*& buf, size_t, bool) {
+#else
 int read_file_malloc(const char* path, char*& buf, size_t max_len, bool tail) {
+#endif
     int retval;
     double size;
 
@@ -593,6 +598,9 @@ int wait_client_mutex(const char* dir, double timeout) {
 bool boinc_is_finite(double x) {
 #if defined (HPUX_SOURCE)
     return _Isfinite(x);
+#elif defined (__APPLE__)
+    // finite() is deprecated in OS 10.9
+    return std::isfinite(x) != 0;
 #else
     return finite(x) != 0;
 #endif
@@ -616,4 +624,25 @@ double rand_normal() {
     cached_value = z*sin(PI2*u2);
     cached = true;
     return z*cos(PI2*u2);
+}
+
+// determines the real path and filename of the current process
+// not the current working directory
+//
+int get_real_executable_path(char* path, size_t max_len) {
+#ifdef HAVE__PROC_SELF_EXE
+    int ret = readlink("/proc/self/exe", path, max_len);
+    if ( ret >= 0) {
+        path[ret] = '\0'; // readlink does not null terminate
+        return 0;
+    } else {
+#ifdef _USING_FCGI_
+        FCGI::perror("readlink");
+#else
+        perror("readlink");
+#endif
+        return ERR_PROC_PARSE;
+    }
+#endif
+    return ERR_NOT_IMPLEMENTED;
 }

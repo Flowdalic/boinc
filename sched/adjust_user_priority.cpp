@@ -15,11 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-// adjust_user_priority [--no_update] --user userid --flops flop_count --app app_name
+// adjust_user_priority [--no_update] --user userid --flops N --app app_name
 //
 // adjust user priority (i.e. logical start time)
 // to reflect a certain amount of computing
-// and write the new value to stdout
+// and write the new value to stdout.
+// For use by multi-user projects quotas.
 //
 // --no_update: don't update DB
 
@@ -129,7 +130,7 @@ int main(int argc, char** argv) {
     if (!no_update) {
         char set_clause[256], where_clause[256];
         sprintf(set_clause, "logical_start_time=%f", x);
-        sprintf(where_clause, "user_id=%d", us.user_id);
+        sprintf(where_clause, "user_id=%lu", us.user_id);
         retval = us.update_fields_noid(set_clause, where_clause);
         if (retval) {
             fprintf(stderr, "update_fields_noid() failed: %d\n", retval);

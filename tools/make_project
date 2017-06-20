@@ -5,7 +5,7 @@
 
 import boinc_path_config
 from Boinc.setup_project import *
-from Boinc import database, db_mid, configxml, tools
+from Boinc import database, db_mid, configxml, tools, projectxml
 import sys, os, getopt, re, socket
 
 def getfqdn():
@@ -35,12 +35,14 @@ Misc options:
    --drop_db_first      drop database first (from prev installation)
    --test_app           install example application
    --web_only           install web files, no executables (for Bossa, Bolt)
+   --no_db              don't create the database
    --srcdir             where to find the source files (default: current directory)
 
 Dir-options:
    --project_root       default: HOME/projects/PROJECT
    --key_dir            default: PROJECT_ROOT/keys
-   --url_base           default: http://$NODENAME/ (http://%(NODENAME)s/)
+   --project_host       default: $HOSTNAME (%(NODENAME)s)
+   --url_base           default: http://PROJECT_HOST/
 
    --html_user_url      default: URL_BASE/PROJECT/
    --html_ops_url       default: URL_BASE/PROJECT_ops/
@@ -71,25 +73,27 @@ def usage():
 try:
     opts, args = getopt.getopt(sys.argv[1:],
         'hv', [
-            'help',
-            'verbose=',
-            'no_query',
-            'test_app',
-            'web_only',
-            'srcdir=',
-            'user_name=',
-            'drop_db_first',
-            'delete_prev_inst',
             'base=',
-            'key_dir=',
-            'project_root=',
-            'url_base=',
-            'html_user_url=',
-            'html_ops_url=',
-            'db_name=',
-            'db_user=',
-            'db_passwd=',
             'db_host=',
+            'db_name=',
+            'db_passwd=',
+            'db_user=',
+            'delete_prev_inst',
+            'drop_db_first',
+            'help',
+            'html_ops_url=',
+            'html_user_url=',
+            'key_dir=',
+            'no_db',
+            'no_query',
+            'project_host=',
+            'project_root=',
+            'srcdir=',
+            'test_app',
+            'url_base=',
+            'user_name=',
+            'verbose=',
+            'web_only',
             ]
         )
 except getopt.GetoptError, e:
@@ -99,29 +103,32 @@ options.url_base = None
 options.no_query = False
 options.test_app = False
 options.web_only = False
+options.no_db = False
 options.delete_prev_inst = False
 options.srcdir = None
 
 for o,a in opts:
     if o == '-h' or o == '--help':        usage()
-    elif o == '-v':              options.echo_verbose   = 2
-    elif o == '--verbose':       options.echo_verbose   = int(a)
-    elif o == '--no_query':      options.no_query       = True
-    elif o == '--test_app':      options.test_app       = True
-    elif o == '--web_only':      options.web_only       = True
-    elif o == '--srcdir':        options.srcdir         = a
-    elif o == '--user_name':     options.user_name      = a
-    elif o == '--drop_db_first': options.drop_db_first  = True
-    elif o == '--delete_prev_inst': options.delete_prev_inst  = True
-    elif o == '--key_dir':       options.key_dir        = a
-    elif o == '--project_root':  options.project_root   = a
-    elif o == '--url_base':      options.url_base       = a
-    elif o == '--html_user_url': options.html_user_url  = a
-    elif o == '--html_ops_url':  options.html_ops_url   = a
-    elif o == '--db_name':       options.db_name        = a
-    elif o == '--db_user':       options.db_user        = a
-    elif o == '--db_passwd':     options.db_passwd      = a
     elif o == '--db_host':       options.db_host        = a
+    elif o == '--db_name':       options.db_name        = a
+    elif o == '--db_passwd':     options.db_passwd      = a
+    elif o == '--db_user':       options.db_user        = a
+    elif o == '--delete_prev_inst': options.delete_prev_inst  = True
+    elif o == '--drop_db_first': options.drop_db_first  = True
+    elif o == '--html_ops_url':  options.html_ops_url   = a
+    elif o == '--html_user_url': options.html_user_url  = a
+    elif o == '--key_dir':       options.key_dir        = a
+    elif o == '--no_db':         options.no_db          = True
+    elif o == '--no_query':      options.no_query       = True
+    elif o == '--project_host':  options.project_host   = a
+    elif o == '--project_root':  options.project_root   = a
+    elif o == '--srcdir':        options.srcdir         = a
+    elif o == '--test_app':      options.test_app       = True
+    elif o == '--url_base':      options.url_base       = a
+    elif o == '--user_name':     options.user_name      = a
+    elif o == '--verbose':       options.echo_verbose   = int(a)
+    elif o == '--web_only':      options.web_only       = True
+    elif o == '-v':              options.echo_verbose   = 2
     else:
         raise SystemExit('internal error o=%s'%o)
 
@@ -157,7 +164,10 @@ def replopt(str):
 def defopt(name, v, isdir=True):
     options.__dict__[name] = opt_repls[name.upper()] = add_slash(replopt(options.__dict__.get(name) or v), isdir)
 
-defopt('url_base'      , 'http://%s/'%NODENAME)
+defopt('project_host'  , NODENAME, isdir=False)
+defopt('url_base'      , 'http://%s/'%options.project_host)
+# strip project_host to get short hostname
+options.project_host=options.project_host.split('.')[0]
 
 if not isurl(options.url_base):
     syntax_error('url_base needs to be an URL')
@@ -177,6 +187,7 @@ defopt('db_host'       , '', isdir=False)
 print "Creating project '%s' (short name '%s'):" %(project_longname, project_shortname)
 for k in [
     'project_root',
+    'project_host',
     'url_base',
     'html_user_url',
     'html_ops_url',
@@ -214,7 +225,9 @@ project = Project(
     master_url = options.html_user_url,
     key_dir = options.key_dir,
     db_name = options.db_name,
+    host = options.project_host,
     web_only = options.web_only,
+    no_db = options.no_db,
     production = True
     )
 
@@ -242,7 +255,7 @@ t = project.config.tasks.make_node_and_append("task")
 t.period = '24 hours'
 t.output = 'db_dump.out'
 t.cmd = 'db_dump -d 2 --dump_spec ../db_dump_spec.xml'
-t.disabled = 0
+t.disabled = 1
 
 t = project.config.tasks.make_node_and_append("task")
 t.period = '1 days'
@@ -288,10 +301,11 @@ t.disabled = 0
 
 project.config.write()
 
-try:
-    os.system('cd '+proot+'/html/ops; ./db_schemaversion.php > '+proot+'/db_revision')
-except:
-    print '''Couldn't set db schema version number'''
+if not options.no_db:
+    try:
+        os.system('cd '+proot+'/html/ops; ./db_schemaversion.php > '+proot+'/db_revision')
+    except:
+        print '''Couldn't set db schema version number'''
 
 try:
     os.system('cd '+proot+'/html/ops; ./update_translations.php -d 1')
@@ -309,6 +323,14 @@ if options.test_app:
     shutil.copy('example_app_out', proot+'/templates/')
     shutil.copy('../tools/create_work_example', proot+'/bin/')
 
+    #add app to project.xml
+    pf = projectxml.ProjectFile(os.path.join(proot,'project.xml')).read()
+    a = pf.elements.make_node_and_append('app')
+    a.name = 'example_app'
+    a.user_friendly_name = 'Example Application'
+    pf.write()
+
+
 httpd_conf_template_filename = os.path.join(
     options.project_root,
     project_shortname+'.httpd.conf'
@@ -318,29 +340,63 @@ print >>open(httpd_conf_template_filename,'w'), '''
 
     ## Settings for BOINC project %(project_longname)s
 
+    Alias /%(project_shortname)s/download %(proot)s/download
+    Alias /%(project_shortname)s/stats %(proot)s/html/stats
+    Alias /%(project_shortname)s/user_profile %(proot)s/html/user_profile
     Alias /%(project_shortname)s %(proot)s/html/user
+
     Alias /%(project_shortname)s_ops %(proot)s/html/ops
     ScriptAlias /%(project_shortname)s_cgi %(proot)s/cgi-bin
 
-    # Note: projects/*/keys/ should NOT be readable!
-
     # in the following, the "Order" and "Allow" lines are for Apache 2.2;
     # for Apache 2.4, replace them with the single line
-    * Require all granted
+    # Require all granted
+    #        or
+    # Require all denied
 
+    # NOTE: Turn off access to certain default directories
+    <Directory "%(proot)s/keys">
+        Order deny,allow
+        Deny from all
+    </Directory>
+    <Directory "%(proot)s/upload">
+        Order deny,allow
+        Deny from all
+    </Directory>
+
+    # NOTE: Allow access but disable PHP script execution
+    <Directory "%(proot)s/download">
+        RemoveType .php .phtml
+        Order allow,deny
+        Allow from all
+    </Directory>
+    <Directory "%(proot)s/html/stats">
+        RemoveType .php .phtml
+        Order allow,deny
+        Allow from all
+    </Directory>
+    <Directory "%(proot)s/html/user_profile">
+        RemoveType .php .phtml
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    # NOTE: Allow access and allow PHP script execution
     <Directory "%(proot)s/html">
-        Options Indexes FollowSymlinks MultiViews
+        Options Indexes MultiViews
         AllowOverride AuthConfig
         Order allow,deny
         Allow from all
     </Directory>
 
+    # NOTE: Allow access and allow CGI execution
     <Directory "%(proot)s/cgi-bin">
         Options ExecCGI
         AllowOverride AuthConfig
         Order allow,deny
         Allow from all
     </Directory>
+
 ''' %locals()
 
 htaccess_filename = options.project_root+'/html/ops/.htaccess'
@@ -400,9 +456,13 @@ print >>open(readme_filename,'w'), '''Steps to complete installation:
 
 -  Change Apache configuration (as root):
 
+   If you are using Apache 2.4, edit the %(httpd_conf_template_filename)s
+   (see file for specific instructions).
+
    cat %(httpd_conf_template_filename)s >> /etc/apache/httpd.conf
 
    (path to httpd.conf varies; try /etc/httpd/ or /etc/apache2)
+
    Then restart the web server:
 
    /usr/sbin/apache2ctl restart
@@ -422,6 +482,11 @@ print >>open(readme_filename,'w'), '''Steps to complete installation:
 
     htpasswd -c .htpasswd username
 
+-  Add the project name and copyright holder for the boinc Web site:
+
+    edit html/project/project.inc
+
+    change PROJECT and COPYRIGHT_HOLDER
 ----------------------------
 
 To start, show status, and stop the project, run:

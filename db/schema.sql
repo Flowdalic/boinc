@@ -132,6 +132,7 @@ create table team (
     ping_user               integer         not null default 0,
     ping_time               integer unsigned not null default 0,
     joinable                tinyint         not null default 1,
+    mod_time                timestamp default current_timestamp on update current_timestamp,
     primary key (id)
 ) engine=MyISAM;  
 
@@ -148,6 +149,7 @@ create table host (
     timezone                integer         not null,
     domain_name             varchar(254),
     serialnum               varchar(254),
+        /* now used to encode stuff related to GPUs and VBox */
     last_ip_addr            varchar(254),
     nsame_ip_addr           integer         not null,
 
@@ -189,6 +191,8 @@ create table host (
     error_rate              double          not null default 0,
     product_name            varchar(254)    not null,
     gpu_active_frac         double          not null,
+    p_ngpus                 integer         not null,
+    p_gpu_fpops             double          not null,
 
     primary key (id)
 ) engine=InnoDB;
@@ -348,12 +352,11 @@ create table user_submit_app (
     primary key (user_id, app_id)
 ) engine = InnoDB;
 
--- Record files present on server.
--- Files are named jf_(md5)
+-- Record files (created by remote file mgt) present on server.
 --
 create table job_file (
     id                      integer         not null auto_increment,
-    md5                     char(64)        not null,
+    name                    varchar(255)    not null,
     create_time             double          not null,
     delete_time             double          not null,
     primary key (id)

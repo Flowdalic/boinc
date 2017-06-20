@@ -219,25 +219,13 @@ void CLIENT_STATE::show_host_info() {
         "Processor features: %s", host_info.p_features
     );
 #ifdef __APPLE__
-    SInt32 temp;
-    int major, minor, rev;
-    OSStatus err = noErr;
-    
-    err = Gestalt(gestaltSystemVersionMajor, &temp);
-    major = temp;
-    if (!err) {
-    err = Gestalt(gestaltSystemVersionMinor, &temp);
-    minor = temp;
-    }
-    if (!err) {
-    err = Gestalt(gestaltSystemVersionBugFix, &temp);
-    rev = temp;
-    }
-    if (err) {
-        sscanf(host_info.os_version, "%d.%d.%d", &major, &minor, &rev);
-    }
+    buf[0] = '\0';
+    FILE *f = popen("sw_vers -productVersion", "r");
+    fgets(buf, sizeof(buf), f);
+    strip_whitespace(buf);
+    pclose(f);
     msg_printf(NULL, MSG_INFO,
-        "OS: Mac OS X %d.%d.%d (%s %s)", major, minor, rev, 
+        "OS: Mac OS X %s (%s %s)", buf,
         host_info.os_name, host_info.os_version
     );
 #else
@@ -304,6 +292,7 @@ const char* rsc_name_long(int i) {
 
 #ifndef SIM
 // alert user if any jobs need more RAM than available
+// (based on RAM estimate, not measured size)
 //
 static void check_too_large_jobs() {
     unsigned int i, j;
@@ -530,6 +519,9 @@ int CLIENT_STATE::init() {
 #if 0
         msg_printf(NULL, MSG_INFO, "Faking an Intel GPU");
         coprocs.intel_gpu.fake(512*MEGA, 256*MEGA, 2);
+#endif
+#if 0
+        fake_opencl_gpu("Mali-T628");
 #endif
     }
 
@@ -808,22 +800,27 @@ FDSET_GROUP all_fds;
 
 // Spend x seconds either doing I/O (if possible) or sleeping.
 //
-void CLIENT_STATE::do_io_or_sleep(double x) {
+void CLIENT_STATE::do_io_or_sleep(double max_time) {
     int n;
     struct timeval tv;
     set_now();
-    double end_time = now + x;
-    //int loops = 0;
+    double end_time = now + max_time;
+    double time_remaining = max_time;
 
     while (1) {
-        bool action = do_async_file_ops();
-
         curl_fds.zero();
         gui_rpc_fds.zero();
         http_ops->get_fdset(curl_fds);
         all_fds = curl_fds;
         gui_rpcs.get_fdset(gui_rpc_fds, all_fds);
-        double_to_timeval(action?0:x, tv);
+
+        bool have_async = have_async_file_op();
+
+        // prioritize network (including GUI RPC) over async file ops.
+        // if there's a pending asynch file op, do the select with zero timeout;
+        // otherwise do it for the remaining amount of time.
+
+        double_to_timeval(have_async?0:time_remaining, tv);
 #ifdef NEW_CPU_THROTTLE
         client_mutex.unlock();
 #endif
@@ -842,28 +839,24 @@ void CLIENT_STATE::do_io_or_sleep(double x) {
         // called pretty often, even if no descriptors are enabled.
         // So do the "if (n==0) break" AFTER the got_selects().
 
-        http_ops->got_select(all_fds, x);
+        http_ops->got_select(all_fds, time_remaining);
         gui_rpcs.got_select(all_fds);
 
-        if (!action && n==0) break;
-
-#if 0
-        // Limit number of times thru this loop.
-        // Can get stuck in while loop, if network isn't available,
-        // DNS lookups tend to eat CPU cycles.
-        //
-        if (loops++ > 99) {
-            boinc_sleep(.01);
-#ifdef __EMX__
-            DosSleep(0);
-#endif
-            break;
+        if (have_async) {
+            // do the async file op only if no network activity
+            //
+            if (n == 0) {
+                do_async_file_op();
+            }
+        } else {
+            if (n == 0) {
+                break;
+            }
         }
-#endif
 
         set_now();
         if (now > end_time) break;
-        x = end_time - now;
+        time_remaining = end_time - now;
     }
 }
 
@@ -1423,11 +1416,27 @@ bool CLIENT_STATE::garbage_collect() {
     // because detach_project() calls garbage_collect_always(),
     // and we need to avoid infinite recursion
     //
-    for (unsigned i=0; i<projects.size(); i++) {
-        PROJECT* p = projects[i];
-        if (p->detach_when_done && !nresults_for_project(p)) {
-            detach_project(p);
-            action = true;
+    if (acct_mgr_info.using_am()) {
+        // If we're using an AM,
+        // start an AM RPC rather than detaching the projects;
+        // the RPC completion handler will detach them.
+        // This way the AM will be informed of their work done.
+        //
+        for (unsigned i=0; i<projects.size(); i++) {
+            PROJECT* p = projects[i];
+            if (p->detach_when_done && !nresults_for_project(p)) {
+                acct_mgr_info.next_rpc_time = 0;
+                acct_mgr_info.poll();
+                break;
+            }
+        }
+    } else {
+        for (unsigned i=0; i<projects.size(); i++) {
+            PROJECT* p = projects[i];
+            if (p->detach_when_done && !nresults_for_project(p)) {
+                detach_project(p);
+                action = true;
+            }
         }
     }
 #endif

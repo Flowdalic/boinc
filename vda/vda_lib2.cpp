@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/resource.h>
 #include <vector>
 #include <unistd.h>
 
@@ -416,7 +417,7 @@ int CHUNK::start_upload_from_host(VDA_CHUNK_HOST& ch) {
     char set_clause[256], where_clause[256];
 
     log_messages.printf(MSG_NORMAL,
-        "   requesting upload of %s from host %d\n", name, ch.host_id
+        "   requesting upload of %s from host %lu\n", name, ch.host_id
     );
 
     sprintf(set_clause,
@@ -424,7 +425,7 @@ int CHUNK::start_upload_from_host(VDA_CHUNK_HOST& ch) {
         dtime()
     );
     sprintf(where_clause,
-        "vda_file_id=%d and host_id=%d and physical_file_name='%s'",
+        "vda_file_id=%lu and host_id=%lu and physical_file_name='%s'",
         ch.vda_file_id,
         ch.host_id,
         ch.physical_file_name
@@ -474,7 +475,7 @@ int CHUNK::upload_all() {
 // leaving only the bottom-level chunks
 //
 int VDA_FILE_AUX::init() {
-    char buf[1024], buf2[1024];
+    char buf[MAXPATHLEN], buf2[MAXPATHLEN];
     sprintf(buf, "%s/%s", dir, DATA_FILENAME);
     sprintf(buf2, "%s/%s", dir, file_name);
     int retval = symlink(buf2, buf);
@@ -531,7 +532,7 @@ int VDA_FILE_AUX::get_state() {
     // enumerate the VDA_CHUNK_HOST records from DB and store in memory
     //
     DB_VDA_CHUNK_HOST vch;
-    sprintf(buf, "where vda_file_id=%d", id);
+    sprintf(buf, "where vda_file_id=%lu", id);
     while (1) {
         retval = vch.enumerate(buf);
         if (retval == ERR_DB_NOT_FOUND) break;
@@ -652,8 +653,8 @@ int VDA_FILE_AUX::choose_host() {
         // see whether it satisfies max_chunks
         //
         DB_VDA_CHUNK_HOST ch;
-        int count;
-        sprintf(buf, "where vda_file_id=%d and host_id=%d", id, enum_host.id);
+        long count;
+        sprintf(buf, "where vda_file_id=%lu and host_id=%lu", id, enum_host.id);
         retval = ch.count(count, buf);
         if (retval) {
             log_messages.printf(MSG_CRITICAL, "ch.count failed\n");

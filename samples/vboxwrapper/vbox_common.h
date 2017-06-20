@@ -18,8 +18,8 @@
 
 // Provide cross-platform interfaces for making changes to VirtualBox
 
-#ifndef _VBOX_COMMON_H_
-#define _VBOX_COMMON_H_
+#ifndef BOINC_VBOX_COMMON_H
+#define BOINC_VBOX_COMMON_H
 
 #include "vboxjob.h"
 
@@ -77,6 +77,7 @@
 
 // Vboxwrapper diagnostics
 //
+#define SCREENSHOT_FILENAME "vbox_screenshot.png"
 #define REPLAYLOG_FILENAME "vbox_replay.txt"
 #define TRACELOG_FILENAME "vbox_trace.txt"
 
@@ -101,9 +102,11 @@ public:
     virtual ~VBOX_BASE();
 
     std::string virtualbox_home_directory;
+    std::string virtualbox_scratch_directory;
     std::string virtualbox_install_directory;
     std::string virtualbox_guest_additions;
-    std::string virtualbox_version;
+    std::string virtualbox_version_raw;
+    std::string virtualbox_version_display;
 
     FloppyIONS::FloppyIO* pFloppy;
 
@@ -176,6 +179,7 @@ public:
     virtual int poweroff() = 0;
     virtual int pause() = 0;
     virtual int resume() = 0;
+	virtual int capture_screenshot() = 0;
     virtual int create_snapshot(double elapsed_time) = 0;
     virtual int cleanup_snapshots(bool delete_active) = 0;
     virtual int restore_snapshot() = 0;
@@ -186,6 +190,7 @@ public:
     virtual void dump_hypervisor_logs(bool include_error_logs);
     virtual void dump_hypervisor_status_reports() = 0;
     virtual void dump_vmguestlog_entries();
+	virtual int dump_screenshot();
 
     virtual int is_registered() = 0;
     virtual bool is_system_ready(std::string& message) = 0;
@@ -201,7 +206,8 @@ public:
     virtual bool is_virtualbox_version_newer(int maj, int min, int rel);
 
     static int get_install_directory(std::string& dir);
-    static int get_version_information(std::string& version);
+    static int get_scratch_directory(std::string& dir);
+    static int get_version_information(std::string& version_raw, std::string& version_display);
     virtual int get_guest_additions(std::string& dir) = 0;
     virtual int get_slot_directory(std::string& dir);
     virtual int get_default_network_interface(std::string& iface) = 0;
@@ -226,6 +232,7 @@ public:
     virtual void lower_vm_process_priority() = 0;
     virtual void reset_vm_process_priority() = 0;
 
+    static void sanitize_format(std::string& output);
     static void sanitize_output(std::string& output);
 
     virtual int launch_vboxsvc();
@@ -242,6 +249,7 @@ public:
 };
 
 class VBOX_VM : public VBOX_BASE {
+public:
     VBOX_VM();
     ~VBOX_VM();
 };

@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <set>
+#include <sys/resource.h>
 
 #include "boinc_db.h"
 #include "filesys.h"
@@ -78,7 +79,7 @@ void CHUNK::print_status(int level) {
 }
 
 void VDA_CHUNK_HOST::print_status(int level) {
-    printf("%shost %d\n", indent(level), host_id);
+    printf("%shost %lu\n", indent(level), host_id);
     level++;
     printf("%spresent on host: %s\n",
         indent(level), present_on_host?"yes":"no"
@@ -149,7 +150,7 @@ int handle_add(const char* path) {
 
 int handle_remove(const char* name) {
     DB_VDA_FILE vf;
-    char buf[1024];
+    char buf[MAXPATHLEN];
     snprintf(buf, sizeof(buf), "where file_name='%s'", name);
     int retval = vf.lookup(buf);
     if (retval) return retval;
@@ -157,7 +158,7 @@ int handle_remove(const char* name) {
     // delete DB records
     //
     DB_VDA_CHUNK_HOST ch;
-    sprintf(buf, "vda_file_id=%d", vf.id);
+    sprintf(buf, "vda_file_id=%lu", vf.id);
     ch.delete_from_db_multi(buf);
     vf.delete_from_db();
 

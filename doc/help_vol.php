@@ -10,7 +10,7 @@ $volid = get_int('volid');
 $vol = vol_lookup($volid);
 
 function show_info($vol) {
-    $x = "<span class=note> Country: $vol->country\n";
+    $x = "Country: $vol->country\n";
     if ($vol->availability) {
         $x .= "<br>Usual hours: $vol->availability";
     }
@@ -24,14 +24,13 @@ function show_info($vol) {
         $x .= "<br>Primary language: $vol->lang1";
         $x .= "<br>Secondary language: $vol->lang2";
     }
-    $x .= "</span><p>";
+    $x .= "<p>";
     return $x;
 }
 
 function live_contact($vol) {
     $skypeid = $vol->skypeid;
     echo "
-    <font size=+2><b>Contact $vol->name on Skype</b></font>
     <script>
         if (navigator.userAgent.indexOf('MSIE') != -1) {
             document.write(
@@ -92,7 +91,7 @@ function email_contact($vol) {
             
         Please include a detailed description of the problem
         you're experiencing.
-        If possible, include the contents of BOINC's message log.
+        If possible, include the contents of BOINC's event log.
         </span>",
         textarea("message", "")
     );
@@ -104,9 +103,10 @@ function email_contact($vol) {
 
 $send_email = get_str2('send_email');
 $rate = get_str2('rate');
-session_set_cookie_params(86400*365);
-session_start();
-$uid = session_id();
+//session_set_cookie_params(86400*365);
+//@session_start();
+//$uid = @session_id();
+$uid = false;
 
 if ($send_email) {
     $volid = $_GET['volid'];
@@ -178,7 +178,9 @@ if ($send_email) {
     page_tail();
 } else {
     page_head("Help Volunteer: $vol->name");
+    skype_script();
     echo show_info($vol);
+if (false) {
     $status = skype_status($vol->skypeid);
     if ($status != $vol->status) {
         $vol->status = $status;
@@ -197,6 +199,9 @@ if ($send_email) {
     if (online($status)) {
         live_contact($vol);
     }
+}
+    echo "<h2>Contact $vol->name by Skype</h2>\n";
+    skype_call_button($vol);
     email_contact($vol);
     echo "</td></tr></table><p>\n";
     echo "<table class=box cellpadding=8 width=100%><tr><td>";

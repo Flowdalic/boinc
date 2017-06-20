@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _BROWSER_
-#define _BROWSER_
+#ifndef BOINC_BROWSER_H
+#define BOINC_BROWSER_H
 
 //
 // The BOINC client now supports the ability to lookup a users
@@ -49,7 +49,6 @@ bool detect_cookie_safari(std::string& project_url, std::string& name, std::stri
 
 // Cross-platform browsers
 //
-bool detect_cookie_firefox_2(std::string& project_url, std::string& name, std::string& value);
 bool detect_cookie_firefox_3(std::string& project_url, std::string& name, std::string& value);
 bool detect_cookie_chrome(std::string& project_url, std::string& name, std::string& value);
 

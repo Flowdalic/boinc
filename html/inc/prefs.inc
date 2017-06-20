@@ -40,6 +40,12 @@
 // and also to/from HTML form elements
 
 include_once("../inc/prefs_util.inc");
+include_once("../inc/translation.inc");
+
+global $cpu_prefs;
+global $disk_prefs;
+global $mem_prefs;
+global $net_prefs;
 
 $cpu_prefs = array(
     tra("Usage limits"),
@@ -116,14 +122,14 @@ $cpu_prefs = array(
         new NUM_SPEC(tra("days of work"), 0, 10, .5)
     ),
     new PREF_NUM(
-        tra("Switch between tasks about every"),
+        tra("Switch between tasks every"),
         tra("If you run several projects, BOINC may switch between them this often."),
         "cpu_scheduling_period_minutes",
         new NUM_SPEC(tra("minutes"), 1, 9999, 60)
     ),
     new PREF_NUM(
         tra("Request tasks to checkpoint at most every"),
-        tra("This controls how often tasks save their state to disk, so that they can be restarted later."),
+        tra("This controls how often tasks save their state to disk, so that later they can be continued from that point."),
         "disk_interval",
         new NUM_SPEC(tra("seconds"), 0, 9999999, 60)
     ),
@@ -189,13 +195,13 @@ $net_prefs = array(
         tra("Limit download rate to"),
         tra("Limit the download rate of file transfers."),
         "max_bytes_sec_down",
-        new NUM_SPEC(tra("KB/second"), 0, 9999999, 0, 1000, 100)
+        new NUM_SPEC(tra("KB/second"), 0, 9999999, 0, 1024, 100)
     ),
     new PREF_OPT_NUM(
         tra("Limit upload rate to"),
         tra("Limit the upload rate of file transfers."),
         "max_bytes_sec_up",
-        new NUM_SPEC(tra("KB/second"), 0, 9999999, 0, 1000, 100)
+        new NUM_SPEC(tra("KB/second"), 0, 9999999, 0, 1024, 100)
     ),
     new PREF_NUM2(
         tra("Limit usage to"),
@@ -286,7 +292,7 @@ function get_disk_space_config() {
 }
 
 function group_header($t) {
-    echo "<tr><th class=subheading>$t</th><td colspan=4><br></td></tr>\n";
+    echo "<tr><th class=\"bg-info\">$t</th><td class=\"bg-info\" colspan=4><br></td></tr>\n";
 }
 
 // functions to parse preferences XML into a struct
@@ -300,7 +306,11 @@ function element_start_global($parser, $name, $attrs) {
 
     switch($name) {
     case "venue":
-        $venue_name = $attrs["name"];
+        if (array_key_exists("name", $attrs)) {
+            $venue_name = $attrs["name"];
+        } else {
+            $venue_name = "home";
+        }
         $top_parse_result = $parse_result;
         $parse_result = default_prefs_global();
         break;
@@ -469,7 +479,7 @@ function prefs_show_global($prefs) {
 }
 
 function subset_name($subset) {
-    if ($subset == "global") return tra("computing");
+    if ($subset == "global") return tra("Computing");
     return PROJECT;
 }
 
@@ -480,9 +490,8 @@ function prefs_display_venue($prefs, $venue, $subset) {
     if (isset($prefs->$venue)) $x = $prefs->$venue;
 
     if ($x) {
-        echo "<h2>".tra("Separate preferences for %1", $venue)."</h2>";
-        echo "<tr><td colspan=2>";
         start_table();
+        row_heading(tra("Separate preferences for %1", $venue));
         if ($subset == "global") {
             prefs_show_global($x);
         } else {
@@ -512,14 +521,14 @@ function print_prefs_display_global($user, $columns=false) {
     ";
     $switch_link = " <font size=\"-1\"><a href=prefs.php?subset=global&cols=". (int)!$columns .">".tra("(Switch view)")."</a></font>";
     if ($columns) {
-        echo "<h2>".tra("Combined preferences").$switch_link."</h2>";
+        echo "<h3>".tra("Combined preferences").$switch_link."</h3>";
         start_table();
         prefs_show_columns_global($global_prefs);
         end_table();
 
     } else {
         if (isset($global_prefs->home) || isset($global_prefs->work) || isset($global_prefs->school)) {
-            echo "<h2>".tra("Primary (default) preferences").$switch_link."</h2>";
+            echo "<h3>".tra("Primary (default) preferences").$switch_link."</h3>";
         }
         start_table();
         prefs_show_global($global_prefs);
@@ -556,7 +565,7 @@ function print_prefs_form(
         $script = "prefs_edit.php";
         $submit_value = tra("Update preferences");
     }
-    echo "<form action=$script><input type=hidden name=subset value=$subset>
+    echo "<form class=\"form-inline\" action=$script><input type=hidden name=subset value=$subset>
         ".form_tokens($user->authenticator);
     if ($venue) {
         echo "<input type=hidden name=venue value=$venue>\n";
@@ -640,8 +649,8 @@ define('VENUE_TOOLTIP', tra('New computers will use this location for computing 
 
 function tooltip_row2($t, $x, $y) {
     echo "<tr title=\"$t\">
-        <td class=fieldname>$x</td>
-        <td>$y</td>
+        <td ".NAME_ATTRS.">$x</td>
+        <td ".VALUE_ATTRS.">$y</td>
         </tr>
     ";
 }
@@ -660,7 +669,7 @@ function venue_form($user) {
     tooltip_row2(
         VENUE_TOOLTIP,
         VENUE_DESC,
-        "<select name=default_venue>
+        "<select class=\"form-control input-sm\" name=default_venue>
         <option value=\"\" $n>---
         <option value=home $h>".tra("Home")."
         <option value=work $w>".tra("Work")."

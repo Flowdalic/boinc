@@ -110,14 +110,14 @@ int return_success(const char* text) {
 #define BLOCK_SIZE  (256*1024)
 double bytes_left=-1;
 
-int accept_empty_file(char* path) {
+int accept_empty_file(char* name, char* path) {
     int fd = open(path,
         O_WRONLY|O_CREAT,
         S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH
     );
     if (fd<0) {
         return return_error(ERR_TRANSIENT,
-            "can't open file %s: %s\n", path, strerror(errno)
+            "can't open file %s: %s\n", name, strerror(errno)
         );
     }
     close(fd);
@@ -127,7 +127,7 @@ int accept_empty_file(char* path) {
 // read from socket, write to file
 // ALWAYS returns an HTML reply
 //
-int copy_socket_to_file(FILE* in, char* path, double offset, double nbytes) {
+int copy_socket_to_file(FILE* in, char* name, char* path, double offset, double nbytes) {
     unsigned char buf[BLOCK_SIZE];
     struct stat sbuf;
     int pid, fd=0;
@@ -161,7 +161,7 @@ int copy_socket_to_file(FILE* in, char* path, double offset, double nbytes) {
             );
             if (fd<0) {
                 return return_error(ERR_TRANSIENT,
-                    "can't open file %s: %s\n", path, strerror(errno)
+                    "can't open file %s: %s\n", name, strerror(errno)
                 );
             }
 
@@ -175,11 +175,11 @@ int copy_socket_to_file(FILE* in, char* path, double offset, double nbytes) {
                 close(fd);
                 return return_error(ERR_TRANSIENT,
                     "can't lock file %s: %s locked by PID=%d\n",
-                    path, strerror(errno), pid
+                    name, strerror(errno), pid
                 );
             } else if (pid < 0) {
                 close(fd);
-                return return_error(ERR_TRANSIENT, "can't lock file %s\n", path);
+                return return_error(ERR_TRANSIENT, "can't lock file %s\n", name);
             }
 #endif
 
@@ -189,25 +189,26 @@ int copy_socket_to_file(FILE* in, char* path, double offset, double nbytes) {
             if (stat(path, &sbuf)) {
                 close(fd);
                 return return_error(ERR_TRANSIENT,
-                    "can't stat file %s: %s\n", path, strerror(errno)
+                    "can't stat file %s: %s\n", name, strerror(errno)
                 );
             }
             if (sbuf.st_size < offset) {
                 close(fd);
                 return return_error(ERR_TRANSIENT,
                     "length of file %s %d bytes < offset %.0f bytes",
-                    path, (int)sbuf.st_size, offset
+                    name, (int)sbuf.st_size, offset
                 );
             }
             if (offset) {
                 if (-1 == lseek(fd, offset, SEEK_SET)) {
+                    int err = errno; // make a copy to report the lseek() error and not printf() or close() errors.
                     log_messages.printf(MSG_CRITICAL,
                         "lseek(%s, %.0f) failed: %s (%d).\n",
-                        this_filename, offset, strerror(errno), errno
+                        this_filename, offset, strerror(err), err
                     );
                     close(fd);
                     return return_error(ERR_TRANSIENT,
-                        "can't resume partial file %s: %s\n", path, strerror(errno)
+                        "can't resume partial file %s: %s\n", name, strerror(err)
                 );
                 }
             }
@@ -233,7 +234,7 @@ int copy_socket_to_file(FILE* in, char* path, double offset, double nbytes) {
                     errmsg = strerror(errno);
                 }
                 return return_error(ERR_TRANSIENT,
-                    "can't write file %s: %s\n", path, errmsg
+                    "can't write file %s: %s\n", name, errmsg
                 );
             }
             to_write -= ret;
@@ -288,7 +289,7 @@ int handle_file_upload(FILE* in, R_RSA_PUBLIC_KEY& key) {
     double max_nbytes=-1;
     char xml_signature[1024];
     int retval;
-    double offset=0, nbytes = -1;
+    double offset=0, nbytes = -1, size;
     bool is_valid, btemp;
 
     strcpy(name, "");
@@ -323,7 +324,7 @@ int handle_file_upload(FILE* in, R_RSA_PUBLIC_KEY& key) {
             found_data = true;
             break;
         }
-        log_messages.printf(MSG_CRITICAL, "unrecognized: %s", buf);
+        log_messages.printf(MSG_NORMAL, "unrecognized: %s", buf);
     }
     if (strlen(name) == 0) {
         return return_error(ERR_PERMANENT, "Missing name");
@@ -375,9 +376,9 @@ int handle_file_upload(FILE* in, R_RSA_PUBLIC_KEY& key) {
 
     // make sure filename is legit
     //
-    if (strstr(name, "..")) {
+    if (!is_valid_filename(name)) {
         return return_error(ERR_PERMANENT,
-            "file_upload_handler: .. found in filename: %s",
+            "file_upload_handler: invalid filename: %s",
             name
         );
     }
@@ -401,6 +402,17 @@ int handle_file_upload(FILE* in, R_RSA_PUBLIC_KEY& key) {
             name, boincerror(retval)
         );
     }
+
+    // if file already exists and is full size, don't upload again.
+    //
+    if (!file_size(path, size) && (size == nbytes)) {
+        log_messages.printf(MSG_NORMAL,
+            "file %s exists and is right size - skipping\n", name
+        );
+        copy_socket_to_null(in);
+        return return_success(0);
+    }
+
     log_messages.printf(MSG_NORMAL,
         "Starting upload of %s from %s [offset=%.0f, nbytes=%.0f]\n",
         name,
@@ -411,7 +423,7 @@ int handle_file_upload(FILE* in, R_RSA_PUBLIC_KEY& key) {
     fflush(stderr);
 #endif
     if (nbytes == 0) {
-        retval = accept_empty_file(path);
+        retval = accept_empty_file(name, path);
         log_messages.printf(MSG_NORMAL,
             "accepted empty file %s from %s\n", name, get_remote_addr()
         );
@@ -422,7 +434,7 @@ int handle_file_upload(FILE* in, R_RSA_PUBLIC_KEY& key) {
             );
             return return_success(0);
         }
-        retval = copy_socket_to_file(in, path, offset, nbytes);
+        retval = copy_socket_to_file(in, name, path, offset, nbytes);
         log_messages.printf(MSG_NORMAL,
             "Ended upload of %s from %s; retval %d\n",
             name,
@@ -720,6 +732,12 @@ int main(int argc, char *argv[]) {
             return_error(ERR_TRANSIENT, "can't read key file");
             exit(1);
         }
+    }
+
+    if (access(config.upload_dir, W_OK)) {
+        log_messages.printf(MSG_CRITICAL, "can't write to upload_dir\n");
+        return_error(ERR_TRANSIENT, "can't write to upload_dir");
+        exit(1);
     }
 
 #ifdef _USING_FCGI_

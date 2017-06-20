@@ -16,14 +16,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('../inc/sanitize_html.inc');
-
 // Functions that process user-supplied text (e.g. messages)
 // prior to displaying it to users.
 // Goals:
 // - Security (don't send evil javascript)
 // - obey user preferences
 // - improve formatting (e.g., convert newlines to <br> tags)
+
+require_once('../inc/sanitize_html.inc');
 
 class output_options {
     var $bb2html;            // BBCode as HTML? (on)
@@ -36,7 +36,7 @@ class output_options {
 
     // Constructor - set the defaults.
 
-    function output_options() {
+    function __construct() {
         $this->bb2html = 1;
         $this->images_as_links = 0;
         $this->link_popup = 0;
@@ -134,7 +134,7 @@ function replace_pre_code($text, $export) {
                 $x = remove_br(substr($matches[0], 5, -6));
                 $x = htmlspecialchars($x, ENT_COMPAT, "UTF-8", false);
                 $x = str_replace("[", "&#91;", $x);
-                return "<div class=\"pre\">$x</div>";
+                return "<pre>$x</pre>";
             },
             $text
         );
@@ -144,7 +144,7 @@ function replace_pre_code($text, $export) {
                 $x = remove_br(substr($matches[0], 6, -7));
                 $x = htmlspecialchars($x, ENT_COMPAT, "UTF-8", false);
                 $x = str_replace("[", "&#91;", $x);
-                return "<div class=\"code\">$x</div>";
+                return "<pre style=\"white-space:pre-wrap; \">$x</pre>";
             },
             $text
         );
@@ -153,6 +153,22 @@ function replace_pre_code($text, $export) {
 
 function bb2html($text, $export=false) {
     $urlregex = "(?:\"?)(?:(http\:\/\/)?)([^\[\"<\ ]+)(?:\"?)";
+    // NOTE:
+    // This matches https:// too; I don't understand why.
+    // sample results:
+    // Array
+    // (
+    //     [0] => [img]https://a.b.c[/img]
+    //     [1] =>
+    //     [2] => https://a.b.c
+    // )
+    // Array
+    // (
+    //     [0] => [img]http://a.b.c[/img]
+    //     [1] => http://
+    //     [2] => a.b.c
+    // )
+
     $httpsregex = "(?:\"?)https\:\/\/([^\[\"<\ ]+)(?:\"?)";
     // List of allowable tags
     $bbtags = array (
@@ -172,17 +188,14 @@ function bb2html($text, $export=false) {
         "@\[list\](.*?)\[/list\]@is",
         "@\[list=1\](.*?)\[/list\]@is",  
         "@\[img\]$urlregex\[/img\]@is",
+        "@\[sm_img\]$urlregex\[/sm_img\]@is",
         "@\[color=(?:\"?)(.{3,8})(?:\"?)\](.*?)\[/color\]@is",
         "@((?:<ol>|<ul>).*?)\n\*([^\n]+)\n(.*?(</ol>|</ul>))@is",
         "@\[size=([1-9]|[0-2][0-9])\](.*?)\[/size\]@is",
         "@\[mailto\](.*?)\[/mailto\]@is",
         "@\[email\](.*?)\[/email\]@is",
-        "@\[trac\](?:\#|ticket:)(\d+)\[/trac\]@is",
-        "@\[trac\]wiki:(.*?)\[/trac\]@is",
-        "@\[trac\]changeset:(\d+)\[/trac\]@is"
-        //Note:    The above list array member ensures we're within a list
-        //when doing list item transformations.
-        //TODO: Make sure we're not between two lists
+        "@\[github\](?:\#|ticket:)(\d+)\[/github\]@is",
+        "@\[github\]wiki:(.*?)\[/github\]@is",
     );
     
     // What the above tags are turned in to
@@ -203,15 +216,15 @@ function bb2html($text, $export=false) {
             "<blockquote>\\1</blockquote>",
             "<ul>\\1</ul><p>",
             "<ol>\\1</ol><p>",
-            "<img hspace=\"8\" src=\"http://\\2\"> ",
+            "<img hspace=\"8\" src=\"\\1\\2\"> ",
+            "<img hspace=\"8\" width=400 src=\"\\1\\2\"> ",
             "<font color=\"\\1\">\\2</font>",
             "\\1<li>\\2\n\\3",
             "<span style=\"font-size: \\1px;\">\\2</span>",
             "<a href=\"mailto:\\1\">\\1</a>",
             "<a href=\"mailto:\\1\">\\1</a>",
-            "<a href=\"http://boinc.berkeley.edu/trac/ticket/\\1\">#\\1</a>",
-            "<a href=\"http://boinc.berkeley.edu/trac/wiki/\\1\">\\1</a>",
-            "<a href=\"http://boinc.berkeley.edu/trac/changeset/\\1\">[\\1]</a>"
+            "<a href=\"https://github.com/BOINC/boinc/issues/\\1\">#\\1</a>",
+            "<a href=\"https://github.com/BOINC/boinc-dev-doc/wiki/\\1\">\\1</a>",
         );
     } else {
         $htmltags = array (
@@ -226,19 +239,19 @@ function bb2html($text, $export=false) {
             "<a href=\"http://\\2\" rel=\"nofollow\">http://\\2</a>",
             "<a href=\"http://\\2\" rel=\"nofollow\">\\3</a>",
             "<a href=\"http://\\2\" rel=\"nofollow\">http://\\2</a>",
-            "<div style='font-style: oblique'>\\1 wrote:</div><blockquote class='postbody'>\\2</blockquote>",
-            "<blockquote class='postbody'>\\1</blockquote>",
+            "<em>\\1 wrote:</em><blockquote>\\2</blockquote>",
+            "<blockquote>\\1</blockquote>",
             "<ul>\\1</ul><p>",
             "<ol>\\1</ol><p>",
-            "<img hspace=\"8\" src=\"http://\\2\"> ",
+            "<img hspace=\"8\" class=\"img-responsive\" src=\"\\1\\2\"> ",
+            "<img hspace=\"8\" width=400 src=\"\\1\\2\"> ",
             "<font color=\"\\1\">\\2</font>",
             "\\1<li>\\2\n\\3",
             "<span style=\"font-size: \\1px;\">\\2</span>",
             "<a href=\"mailto:\\1\">\\1</a>",
             "<a href=\"mailto:\\1\">\\1</a>",
-            "<a href=\"http://boinc.berkeley.edu/trac/ticket/\\1\">#\\1</a>",
-            "<a href=\"http://boinc.berkeley.edu/trac/wiki/\\1\">\\1</a>",
-            "<a href=\"http://boinc.berkeley.edu/trac/changeset/\\1\">[\\1]</a>"
+            "<a href=\"https://github.com/BOINC/boinc/issues/\\1\">#\\1</a>",
+            "<a href=\"https://github.com/BOINC/boinc-dev-doc/wiki/\\1\">\\1</a>",
         );
     }
     
@@ -303,7 +316,7 @@ function highlight_terms($text, $terms) {
     $replace = array();
 
     foreach ($search as $key => $value) {
-        $replace[$key] = "<span class=\"highlight\">".$value."</span>";
+        $replace[$key] = "<span class=\"mark\">".$value."</span>";
     }
     if (substr(phpversion(), 0, 1) > 4) {   // PHP 4.x doesn't support str_ireplace
         return str_ireplace($search, $replace, $text);

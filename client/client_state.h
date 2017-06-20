@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _CLIENT_STATE_
-#define _CLIENT_STATE_
+#ifndef BOINC_CLIENT_STATE_H
+#define BOINC_CLIENT_STATE_H
 
 #define NEW_CPU_THROTTLE
 // do CPU throttling using a separate thread.
@@ -238,7 +238,7 @@ struct CLIENT_STATE {
 // --------------- acct_setup.cpp:
     PROJECT_INIT project_init;
     PROJECT_ATTACH project_attach;
-    void new_version_check();
+    void new_version_check(bool force = false);
     void all_projects_list_check();
     double new_version_check_time;
     double all_projects_list_check_time;
