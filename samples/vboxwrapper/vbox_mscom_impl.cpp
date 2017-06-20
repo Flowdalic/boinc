@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4706)
+#endif
+
 #ifdef _VIRTUALBOX_IMPORT_FUNCTIONS_
 
 const char *MachineStateToName(MachineState State) 
@@ -205,12 +209,12 @@ int VBOX_VM::initialize() {
     int rc = BOINC_SUCCESS;
     string old_path;
     string new_path;
-    string version;
     APP_INIT_DATA aid;
     bool force_sandbox = false;
 
     boinc_get_init_data_p(&aid);
     get_install_directory(virtualbox_install_directory);
+    get_scratch_directory(virtualbox_scratch_directory);
 
     // Prep the environment so we can execute the vboxmanage application
     //
@@ -272,11 +276,8 @@ int VBOX_VM::initialize() {
         return rc;
     }
 
-    rc = get_version_information(version);
+    rc = get_version_information(virtualbox_version_raw, virtualbox_version_display);
     if (rc) return rc;
-
-    // Fix-up version string
-    virtualbox_version = "VirtualBox COM Interface (Version: " + version + ")";
 
     // Get the guest addition information
     get_guest_additions(virtualbox_guest_additions);
@@ -289,7 +290,6 @@ int VBOX_VM::create_vm() {
     HRESULT rc;
     char buf[256];
     APP_INIT_DATA aid;
-    CComBSTR vm_machine_uuid;
     CComPtr<IMachine> pMachineRO;
     CComPtr<IMachine> pMachine;
     CComPtr<ISession> pSession;
@@ -410,10 +410,10 @@ int VBOX_VM::create_vm() {
     // Tweak the VM's Boot Options
     //
     vboxlog_msg("Setting Boot Options for VM.");
-    rc = pMachine->SetBootOrder(1, DeviceType_HardDisk);
+    rc = pMachine->SetBootOrder(boot_iso ? 2 : 1, DeviceType_HardDisk);
     if (CHECK_ERROR(rc)) goto CLEANUP;
     
-    rc = pMachine->SetBootOrder(2, DeviceType_DVD);
+    rc = pMachine->SetBootOrder(boot_iso ? 1 : 2, DeviceType_DVD);
     if (CHECK_ERROR(rc)) goto CLEANUP;
 
     pMachine->SetBootOrder(3, DeviceType_Null);
@@ -822,7 +822,7 @@ int VBOX_VM::create_vm() {
         }
     }
 
-    // Enable the shared folder if a shared folder is specified.
+    // Enable the shared folders if a shared folder is specified.
     //
     if (enable_shared_directory) {
         vboxlog_msg("Enabling shared directory for VM.");
@@ -834,6 +834,20 @@ int VBOX_VM::create_vm() {
         );
         if (CHECK_ERROR(rc)) goto CLEANUP;
     }
+
+    // Enable the scratch folder if a scratch folder is specified.
+    //
+    if (enable_scratch_directory) {
+        vboxlog_msg("Enabling scratch shared directory for VM.");
+        rc = pMachine->CreateSharedFolder(
+            CComBSTR("scratch"),
+            CComBSTR(virtualbox_scratch_directory.c_str()),
+            TRUE,
+            TRUE
+        );
+        if (CHECK_ERROR(rc)) goto CLEANUP;
+    }
+
 
 CLEANUP:
     if (pMachine) {
@@ -892,7 +906,6 @@ int VBOX_VM::deregister_vm(bool delete_media) {
     CComPtr<IProgress> pProgress;
     CComPtr<IBandwidthControl> pBandwidthControl;
     CComPtr<ISnapshot> pRootSnapshot;
-    std::vector<CComPtr<IMedium>> clean_mediums;
     std::vector<CComPtr<IMedium>> mediums;
     std::vector<std::string> snapshots;
     DeviceType device_type; 
@@ -929,12 +942,17 @@ int VBOX_VM::deregister_vm(bool delete_media) {
             //
             rc = pMachine->FindSnapshot(CComBSTR(""), &pRootSnapshot);
             if (SUCCEEDED(rc) && pRootSnapshot) {
-                TraverseSnapshots(string(""), snapshots, pRootSnapshot);
+                string s = string("");
+                TraverseSnapshots(s, snapshots, pRootSnapshot);
             }
             if (snapshots.size()) {
                 for (size_t i = 0; i < snapshots.size(); i++) {
                     CComPtr<IProgress> pProgress;
+#if defined(_VIRTUALBOX42_) || defined(_VIRTUALBOX43_)
                     rc = pConsole->DeleteSnapshot(CComBSTR(snapshots[i].c_str()), &pProgress);
+#else
+                    rc = pMachine->DeleteSnapshot(CComBSTR(snapshots[i].c_str()), &pProgress);
+#endif
                     if (SUCCEEDED(rc)) {
                         pProgress->WaitForCompletion(-1);
                     } else {
@@ -1329,9 +1347,7 @@ int VBOX_VM::poll(bool log_state) {
     // Grab a snapshot of the latest log file.  Avoids multiple queries across several
     // functions.
     //
-    if (online) {
-        get_vm_log(vm_log);
-    }
+    get_vm_log(vm_log);
 
     //
     // Dump any new VM Guest Log entries
@@ -1416,12 +1432,14 @@ int VBOX_VM::stop() {
     int retval = ERR_EXEC;
     HRESULT rc;
     double timeout;
-    CComPtr<IConsole> pConsole;
     CComPtr<IProgress> pProgress;
 
 
     vboxlog_msg("Stopping VM.");
     if (online) {
+
+#if defined(_VIRTUALBOX42_) || defined(_VIRTUALBOX43_)
+        CComPtr<IConsole> pConsole;
         // Get console object. 
         rc = m_pPrivate->m_pSession->get_Console(&pConsole);
         if (CHECK_ERROR(rc)) goto CLEANUP;
@@ -1429,10 +1447,15 @@ int VBOX_VM::stop() {
         // Save the state of the machine.
         rc = pConsole->SaveState(&pProgress);
         if (CHECK_ERROR(rc)) goto CLEANUP;
+#else
+        rc = m_pPrivate->m_pMachine->SaveState(&pProgress);
+        if (CHECK_ERROR(rc)) goto CLEANUP;
+#endif
 
         // Wait until VM is powered down.
         rc = pProgress->WaitForCompletion(-1);
         if (CHECK_ERROR(rc)) goto CLEANUP;
+
 
         // Wait for up to 5 minutes for the VM to switch states.  A system
         // under load can take a while.  Since the poll function can wait for up
@@ -1582,6 +1605,83 @@ CLEANUP:
     return retval;
 }
 
+
+int VBOX_VM::capture_screenshot() {
+    if (enable_screenshots_on_error) {
+
+#if defined(_VIRTUALBOX50_) || defined(_VIRTUALBOX51_)
+
+        int retval = ERR_EXEC;
+        ULONG width, height, bpp;
+        LONG xOrigin, yOrigin;
+	    GuestMonitorStatus monitorStatus;
+        string virtual_machine_slot_directory;
+	    string screenshot_location;
+        HRESULT rc;
+	    FILE* f = NULL;
+        SAFEARRAY* pScreenshot = NULL;
+        CComSafeArray<BYTE> aScreenshot;
+        CComPtr<IConsole> pConsole;
+        CComPtr<IDisplay> pDisplay;
+        CComPtr<IKeyboard> pKeyboard;
+
+        get_slot_directory(virtual_machine_slot_directory);
+
+        vboxlog_msg("Capturing screenshot.");
+
+        rc = m_pPrivate->m_pSession->get_Console(&pConsole);
+        if (CHECK_ERROR(rc)) {
+        } else {
+            rc = pConsole->get_Display(&pDisplay);
+            if (CHECK_ERROR(rc)) {
+            } else {
+                // Due to a recently fixed bug in VirtualBox we are going to attempt to prevent receiving garbage
+                // by waking up the console.  We'll attempt to virtually tap the 'spacebar'.
+                rc = pConsole->get_Keyboard(&pKeyboard);
+                if (CHECK_ERROR(rc)) {
+                } else {
+                    pKeyboard->PutScancode(0x39);
+                    boinc_sleep(1);
+                }
+
+			    rc = pDisplay->GetScreenResolution(0, &width, &height, &bpp, &xOrigin, &yOrigin, &monitorStatus);
+			    if (CHECK_ERROR(rc)) {
+			    } else {
+                    vboxlog_msg("Retrieving screenshot from VirtualBox.");
+				    rc = pDisplay->TakeScreenShotToArray(0, width, height, BitmapFormat_PNG, &pScreenshot);
+				    if (SUCCEEDED(rc)) {
+					    aScreenshot.Attach(pScreenshot);
+
+                        vboxlog_msg("Writing screenshot to disk.");
+
+					    screenshot_location = virtual_machine_slot_directory;
+					    screenshot_location += "/";
+					    screenshot_location += SCREENSHOT_FILENAME;
+
+					    f = fopen(screenshot_location.c_str(), "wb");
+					    if (f) {
+						    fwrite(aScreenshot.GetSafeArrayPtr(), sizeof(BYTE), aScreenshot.GetCount(), f);
+						    fclose(f);
+					    } else {
+                            vboxlog_msg("Failed to write screenshot to disk.");
+					    }
+				    } else {
+                        vboxlog_msg("Failed to retrieving screenshot from VirtualBox.");
+                    }
+			    }
+
+		    }
+	    }
+
+        vboxlog_msg("Screenshot completed.");
+
+#endif
+
+    }
+	return 0;
+}
+
+
 int VBOX_VM::create_snapshot(double elapsed_time) {
     int retval = ERR_EXEC;
     char buf[256];
@@ -1598,10 +1698,12 @@ int VBOX_VM::create_snapshot(double elapsed_time) {
     pause();
 
     // Create new snapshot
+    sprintf(buf, "%d", (int)elapsed_time);
+
+#if defined(_VIRTUALBOX42_) || defined(_VIRTUALBOX43_)
     rc = m_pPrivate->m_pSession->get_Console(&pConsole);
     if (CHECK_ERROR(rc)) {
     } else {
-        sprintf(buf, "%d", (int)elapsed_time);
         rc = pConsole->TakeSnapshot(CComBSTR(string(string("boinc_") + buf).c_str()), CComBSTR(""), &pProgress);
         if (CHECK_ERROR(rc)) {
         } else {
@@ -1610,6 +1712,16 @@ int VBOX_VM::create_snapshot(double elapsed_time) {
             }
         }
     }
+#else
+    CComBSTR strUUID;
+    rc = m_pPrivate->m_pMachine->TakeSnapshot(CComBSTR(string(string("boinc_") + buf).c_str()), CComBSTR(""), true, &strUUID, &pProgress);
+    if (CHECK_ERROR(rc)) {
+    } else {
+        rc = pProgress->WaitForCompletion(-1);
+        if (CHECK_ERROR(rc)) {
+        }
+    }
+#endif
 
     // Resume VM
     resume();
@@ -1667,8 +1779,11 @@ int VBOX_VM::cleanup_snapshots(bool delete_active) {
             CComPtr<IProgress> pProgress;
 
             vboxlog_msg("Deleting stale snapshot.");
-
+#if defined(_VIRTUALBOX42_) || defined(_VIRTUALBOX43_)
             rc = pConsole->DeleteSnapshot(CComBSTR(snapshots[i].c_str()), &pProgress);
+#else
+            rc = m_pPrivate->m_pMachine->DeleteSnapshot(CComBSTR(snapshots[i].c_str()), &pProgress);
+#endif
             if (SUCCEEDED(rc)) {
                 pProgress->WaitForCompletion(-1);
             } else {
@@ -1712,7 +1827,11 @@ int VBOX_VM::restore_snapshot() {
         rc = pMachine->get_CurrentSnapshot(&pSnapshot);
         if (SUCCEEDED(rc)) {
             vboxlog_msg("Restore from previously saved snapshot.");
+#if defined(_VIRTUALBOX42_) || defined(_VIRTUALBOX43_)
             rc = pConsole->RestoreSnapshot(pSnapshot, &pProgress);
+#else
+            rc = pMachine->RestoreSnapshot(pSnapshot, &pProgress);
+#endif
             if (CHECK_ERROR(rc)) goto CLEANUP;
 
             rc = pProgress->WaitForCompletion(-1);
@@ -1779,7 +1898,7 @@ int VBOX_VM::is_registered() {
     return retval;
 }
 
-bool VBOX_VM::is_system_ready(std::string& message) {
+bool VBOX_VM::is_system_ready(std::string& ) {
     return true;
 }
 
@@ -1917,25 +2036,26 @@ int VBOX_VM::get_install_directory(string& install_directory ) {
     return BOINC_SUCCESS;
 }
 
-int VBOX_VM::get_version_information(string& version) {
+int VBOX_VM::get_version_information(string& version_raw, string& version_display) {
     LONG    lReturnValue;
     HKEY    hkSetupHive;
-    LPTSTR  lpszRegistryValue = NULL;
+    LPSTR   lpszRegistryValue = NULL;
     DWORD   dwSize = 0;
+    char    buf[256];
 
     // change the current directory to the boinc data directory if it exists
-    lReturnValue = RegOpenKeyEx(
+    lReturnValue = RegOpenKeyExA(
         HKEY_LOCAL_MACHINE, 
-        _T("SOFTWARE\\Oracle\\VirtualBox"),  
+        "SOFTWARE\\Oracle\\VirtualBox",  
         0, 
         KEY_READ,
         &hkSetupHive
     );
     if (lReturnValue == ERROR_SUCCESS) {
         // How large does our buffer need to be?
-        lReturnValue = RegQueryValueEx(
+        lReturnValue = RegQueryValueExA(
             hkSetupHive,
-            _T("VersionExt"),
+            "VersionExt",
             NULL,
             NULL,
             NULL,
@@ -1947,23 +2067,30 @@ int VBOX_VM::get_version_information(string& version) {
             (*lpszRegistryValue) = NULL;
 
             // Now get the data
-            lReturnValue = RegQueryValueEx( 
+            lReturnValue = RegQueryValueExA( 
                 hkSetupHive,
-                _T("VersionExt"),
+                "VersionExt",
                 NULL,
                 NULL,
                 (LPBYTE)lpszRegistryValue,
                 &dwSize
             );
+            version_raw = lpszRegistryValue;
 
-            version = lpszRegistryValue;
+			snprintf(
+                buf, sizeof(buf),
+                "VirtualBox COM Interface (Version: %s)",
+                lpszRegistryValue
+            );
+            version_display = buf;
         }
     }
 
     if (hkSetupHive) RegCloseKey(hkSetupHive);
     if (lpszRegistryValue) free(lpszRegistryValue);
-    if (version.empty()) {
-        return ERR_FREAD;
+    if (version_raw.empty()) {
+		version_raw = "Unknown";
+        version_display = "VirtualBox COM Interface (Version: Unknown)";
     }
     return BOINC_SUCCESS;
 }

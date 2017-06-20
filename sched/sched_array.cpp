@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-// The "old style" scheduler, where we make multiple scans through
-// the job cache.
-// This will soon be deprecated in favor of score-based scheduling.
+// The "old style" scheduler,
+// where we make multiple scans through the job cache.
+// DEPRECATED - replaced by score-based scheduling.
 
 #include <cstdlib>
 #include <string>
@@ -68,7 +68,7 @@ static bool quick_check(
         }
         if (config.debug_send_job) {
             log_messages.printf(MSG_NORMAL,
-                "[send_job] [HOST#%d] beta work found: [RESULT#%u]\n",
+                "[send_job] [HOST#%lu] beta work found: [RESULT#%lu]\n",
                 g_reply->host.id, wu_result.resultid
             );
         }
@@ -168,7 +168,7 @@ static bool quick_check(
             g_wreq->no_allowed_apps_available = true;
             if (config.debug_send_job) {
                 log_messages.printf(MSG_NORMAL,
-                    "[send_job] [USER#%d] [WU#%u] user doesn't want work for app %s\n",
+                    "[send_job] [USER#%lu] [WU#%lu] user doesn't want work for app %s\n",
                     g_reply->user.id, wu.id, app->name
                 );
             }
@@ -188,7 +188,7 @@ static bool quick_check(
     if (retval) {
         if (retval != last_retval && config.debug_send_job) {
             log_messages.printf(MSG_NORMAL,
-                "[send_job] [HOST#%d] [WU#%u %s] WU is infeasible: %s\n",
+                "[send_job] [HOST#%lu] [WU#%lu %s] WU is infeasible: %s\n",
                 g_reply->host.id, wu.id, wu.name, infeasible_string(retval)
             );
         }
@@ -259,7 +259,7 @@ recheck:
         app = ssp->lookup_app(wu_result.workunit.appid);
         if (app == NULL) {
             log_messages.printf(MSG_CRITICAL,
-                "[WU#%u] no app\n",
+                "[WU#%lu] no app\n",
                 wu_result.workunit.id
             );
             continue; // this should never happen
@@ -381,7 +381,7 @@ void send_work_old() {
     // (projects should load beta work with care,
     // otherwise your users won't get production work done!
     //
-    if (g_wreq->allow_beta_work) {
+    if (g_wreq->project_prefs.allow_beta_work) {
         g_wreq->beta_only = true;
         if (config.debug_send_scan) {
             log_messages.printf(MSG_NORMAL,
@@ -429,12 +429,12 @@ void send_work_old() {
     // If user has selected apps but will accept any,
     // and we haven't found any jobs for selected apps, try others
     //
-    if (!g_wreq->njobs_sent && g_wreq->allow_non_preferred_apps ) {
+    if (!g_wreq->njobs_sent && g_wreq->project_prefs.allow_non_selected_apps ) {
         g_wreq->user_apps_only = false;
-        preferred_app_message_index = g_wreq->no_work_messages.size();
+        selected_app_message_index = g_wreq->no_work_messages.size();
         if (config.debug_send_scan) {
             log_messages.printf(MSG_NORMAL,
-                "[send_scan] scanning for jobs from non-preferred applications\n"
+                "[send_scan] scanning for jobs from non-selected applications\n"
             );
         }
         if (scan_work_array()) return;

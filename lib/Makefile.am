@@ -29,6 +29,7 @@ libfcgi_sources = \
     msg_log.cpp \
     opencl_boinc.cpp \
     parse.cpp \
+	sched_msgs.cpp \
     shmem.cpp \
     str_util.cpp \
     synch.cpp \
@@ -62,6 +63,7 @@ generic_sources = \
     proc_control.cpp \
     project_init.cpp \
     proxy_info.cpp \
+	sched_msgs.cpp \
     shmem.cpp \
     str_util.cpp \
     url.cpp \
@@ -151,6 +153,7 @@ pkginclude_HEADERS = \
     prefs.h \
     procinfo.h \
     proxy_info.h \
+	sched_msgs.h \
     stackwalker_imports.h \
     str_util.h \
     url.h \
@@ -173,7 +176,7 @@ lib_LTLIBRARIES = libboinc.la
 libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
 libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
-libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
+libboinc_la_LDFLAGS = -static -version-number $(LIBBOINC_VERSION)
 libboinc_la_LIBADD =
 
 if ENABLE_BOINCCRYPT
@@ -181,7 +184,7 @@ lib_LTLIBRARIES += libboinc_crypt.la
 libboinc_crypt_la_SOURCES = crypt.cpp
 libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
 libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
-libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -static -version-number $(LIBBOINC_VERSION)
+libboinc_crypt_la_LDFLAGS = -static -version-number $(LIBBOINC_VERSION)
 libboinc_crypt_la_LIBADD =
 endif
 
@@ -190,7 +193,7 @@ lib_LTLIBRARIES += libboinc_fcgi.la
 libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
 libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
-libboinc_fcgi_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+libboinc_fcgi_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
 libboinc_fcgi_la_LIBADD =
 endif 
 # end of "if ENABLE_FCGI"

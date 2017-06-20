@@ -1,3 +1,20 @@
+// This file is part of BOINC.
+// http://boinc.berkeley.edu
+// Copyright (C) 2016 University of California
+//
+// BOINC is free software; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License
+// as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// BOINC is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
+
 // credit_test
 //
 // Simulate the new credit system for the N most recent jobs
@@ -115,7 +132,7 @@ void print_avs() {
         APP_VERSION& av = app_versions[i];
         if (!av.pfc.n) continue;
         PLATFORM* p = lookup_platform(av.platformid);
-        printf("app %d vers %d (%s %s)\n scale %f ",
+        printf("app %lu vers %lu (%s %s)\n scale %f ",
             av.appid, av.id, p->name, av.plan_class, av.pfc_scale
         );
         print_average(av.pfc);
@@ -185,7 +202,7 @@ void update_av_scales() {
     printf("----- updating scales --------\n");
     for (i=0; i<apps.size(); i++) {
         APP& app = apps[i];
-        printf("app %d\n", app.id);
+        printf("app %lu\n", app.id);
         RSC_INFO cpu_info, gpu_info;
 
         // find the average PFC of CPU and GPU versions
@@ -194,10 +211,10 @@ void update_av_scales() {
             APP_VERSION& av = app_versions[j];
             if (av.appid != app.id) continue;
             if (strstr(av.plan_class, "cuda") || strstr(av.plan_class, "ati")) {
-                printf("gpu update: %d %s %f\n", av.id, av.plan_class, av.pfc.get_avg());
+                printf("gpu update: %lu %s %f\n", av.id, av.plan_class, av.pfc.get_avg());
                 gpu_info.update(av);
             } else {
-                printf("cpu update: %d %s %f\n", av.id, av.plan_class, av.pfc.get_avg());
+                printf("cpu update: %lu %s %f\n", av.id, av.plan_class, av.pfc.get_avg());
                 cpu_info.update(av);
             }
         }
@@ -357,13 +374,13 @@ int main(int argc, char** argv) {
     }
     printf("min credit: %f\n", min_credit);
     while (!feof(in)) {
-        int c = fscanf(in, "%d %d %d %d %lf %d %lf %lf %lf %lf",
+        int c = fscanf(in, "%lu %lu %lu %lu %lf %lu %lf %lf %lf %lf",
             &r.id, &r.workunitid, &r.appid, &r.hostid,
             &r.claimed_credit, &r.app_version_id, &r.elapsed_time,
             &r.flops_estimate, &r.cpu_time, &wu.rsc_fpops_est
         );
         if (c != 10) break;
-        printf("%d) result %d WU %d host %d old credit %f\n",
+        printf("%d) result %lu WU %lu host %lu old credit %f\n",
             n, r.id, r.workunitid, r.hostid, r.claimed_credit
         );
         n++;
@@ -383,7 +400,7 @@ int main(int argc, char** argv) {
                 total_old_credit += r.claimed_credit;
                 total_new_credit += new_claimed_credit;
                 nstats++;
-                fprintf(f, "%d %d %.2f %.2f\n",
+                fprintf(f, "%lu %lu %.2f %.2f\n",
                     r.workunitid, r.id, new_claimed_credit, r.claimed_credit
                 );
             } else {

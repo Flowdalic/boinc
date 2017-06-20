@@ -15,12 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-// A very crude interface for parsing XML files;
-// assumes all elements are either single-line or
+// This file contains two XML parsers:
+//
+// 1) a very crude one, which assumes all elements are either single-line or
 // have start and end tags on separate lines.
 // This is meant to be used ONLY for parsing XML files produced
 // by the BOINC scheduling server or client.
-// Could replace this with a more general parser.
+//
+// 2) a better one (class XML_PARSER) which parses arbitrary XML
 
 #if   defined(_WIN32) && !defined(__STDWX_H__)
 #include "boinc_win.h"
@@ -37,14 +39,6 @@
 #if HAVE_IEEEFP_H
 #include <ieeefp.h>
 #endif
-#endif
-
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#endif
-
-#if !defined(HAVE_STRDUP) && defined(HAVE__STRDUP)
-#define strdup _strdup
 #endif
 
 #ifdef _USING_FCGI_
@@ -152,12 +146,15 @@ int copy_stream(FILE* in, FILE* out) {
 }
 
 // append to a malloc'd string
+// If reallocation fails, the pointer p remains unchanged, and the data will
+// not be freed. (strong exception safety)
 //
 int strcatdup(char*& p, char* buf) {
-    p = (char*)realloc(p, strlen(p) + strlen(buf)+1);
-    if (!p) {
+    char* new_p = (char*)realloc(p, strlen(p) + strlen(buf)+1);
+    if (!new_p) {
         return ERR_MALLOC;
     }
+    p = new_p;
     strcat(p, buf);
     return 0;
 }
@@ -210,12 +207,18 @@ int dup_element(FILE* in, const char* tag_name, char** pp) {
         if (strstr(buf, end_tag)) {
             snprintf(buf, sizeof(buf), "</%s>\n", tag_name);
             retval = strcatdup(p, buf);
-            if (retval) return retval;
+            if (retval) {
+                free(p);
+                return retval;
+            }
             *pp = p;
             return 0;
         }
         retval = strcatdup(p, buf);
-        if (retval) return retval;
+        if (retval) {
+            free(p);
+            return retval;
+        }
     }
     free(p);
     return ERR_XML_PARSE;
@@ -902,7 +905,7 @@ void XML_PARSER::skip_unexpected(
 // copy this entire element, including start and end tags, to the buffer
 //
 int XML_PARSER::copy_element(string& out) {
-    char end_tag[TAG_BUF_LEN], buf[1024];
+    char end_tag[TAG_BUF_LEN], buf[ELEMENT_BUF_LEN];
 
     // handle <foo/> case
     //

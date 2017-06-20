@@ -36,7 +36,7 @@ static bool can_send_nci(
     if (!bavp) {
         if (config.debug_send_job) {
             log_messages.printf(MSG_NORMAL,
-                "[send_job] [WU#%u] No app version for NCI job; skipping\n",
+                "[send_job] [WU#%lu] No app version for NCI job; skipping\n",
                 wu.id
             );
         }
@@ -51,7 +51,7 @@ static bool can_send_nci(
     if (retval) {
         if (config.debug_send_job) {
             log_messages.printf(MSG_NORMAL,
-                "[send_job] [WU#%u] wu_is_infeasible_fast() failed for NCI job; skipping\n",
+                "[send_job] [WU#%lu] wu_is_infeasible_fast() failed for NCI job; skipping\n",
                 wu.id
             );
         }
@@ -163,14 +163,14 @@ int send_nci() {
             }
             continue;
         }
-        if (app.beta  && !g_wreq->allow_beta_work) {
+        if (app.beta  && !g_wreq->project_prefs.allow_beta_work) {
             if (config.debug_send) {
                 log_messages.printf(MSG_NORMAL, "%s is beta\n", app.name);
             }
             continue;
         }
         if (app_not_selected(app.id)) {
-            if (!g_wreq->allow_non_preferred_apps) {
+            if (!g_wreq->project_prefs.allow_non_selected_apps) {
                 if (config.debug_send) {
                     log_messages.printf(MSG_NORMAL,
                         "%s is not selected\n", app.name

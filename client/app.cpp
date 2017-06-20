@@ -985,7 +985,7 @@ void MSG_QUEUE::msg_queue_poll(MSG_CHANNEL& channel) {
     for (unsigned int i=0; i<msgs.size(); i++) {
         if (log_flags.app_msg_send) {
             msg_printf(NULL, MSG_INFO,
-                "[app_msg_send] poll: deferred: %s", msgs[0].c_str()
+                "[app_msg_send] poll: deferred: %s", msgs[i].c_str()
             );
         }
     }
@@ -1177,6 +1177,7 @@ void* throttler(void*) {
         double on, off, on_frac = gstate.global_prefs.cpu_usage_limit / 100;
 #if 0
 // sub-second CPU throttling
+// DOESN'T WORK BECAUSE OF 1-SEC API POLL
 #define THROTTLE_PERIOD 1.
         on = THROTTLE_PERIOD * on_frac;
         off = THROTTLE_PERIOD - on;

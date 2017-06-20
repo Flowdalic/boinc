@@ -18,7 +18,6 @@
 #ifdef _WIN32
 #include "boinc_win.h"
 #else
-#include "config.h"
 #include <cstring>
 #include <string>
 #endif
@@ -67,9 +66,11 @@ MSG_LOG::MSG_LOG(FILE* output_) {
     debug_level = 0;
     output = output_;
     indent_level = 0;
-    spaces[0] = 0;
     pid = 0;
-    safe_strcpy(spaces+1, "                                                                              ");
+    spaces[0] = 0;
+    for (int i=1; i<80; i++) {
+        spaces[i] = 0;
+    }
 }
 
 void MSG_LOG::enter_level(int diff) {
@@ -80,6 +81,15 @@ void MSG_LOG::enter_level(int diff) {
 
     spaces[indent_level] = ' ';
     indent_level += diff*2;
+    spaces[indent_level] = 0;
+}
+
+void MSG_LOG::set_indent_level(const int new_indent_level) {
+    if (new_indent_level < 0) indent_level = 0;
+    else if (new_indent_level > 39) indent_level = 39;
+    else indent_level = new_indent_level;
+
+    memset(spaces, ' ', sizeof(spaces));
     spaces[indent_level] = 0;
 }
 

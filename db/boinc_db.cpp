@@ -56,6 +56,17 @@ static struct random_init {
 #define ESCAPE(x) escape_string(x, sizeof(x))
 #define UNESCAPE(x) unescape_string(x, sizeof(x))
 
+#define strcpy2(x, y) \
+    { \
+        const char* z = y; \
+        if (!z) { \
+            x[0]=0; \
+        } else { \
+            strlcpy(x, z, sizeof(x)); \
+        } \
+    }
+
+
 void PLATFORM::clear() {memset(this, 0, sizeof(*this));}
 void APP::clear() {memset(this, 0, sizeof(*this));}
 void APP_VERSION::clear() {memset(this, 0, sizeof(*this));}
@@ -177,22 +188,22 @@ DB_CREDIT_USER::DB_CREDIT_USER(DB_CONN* dc) :
 DB_CREDIT_TEAM::DB_CREDIT_TEAM(DB_CONN* dc) :
     DB_BASE("credit_team", dc?dc:&boinc_db){}
 
-int DB_PLATFORM::get_id() {return id;}
-int DB_APP::get_id() {return id;}
-int DB_APP_VERSION::get_id() {return id;}
-int DB_USER::get_id() {return id;}
-int DB_TEAM::get_id() {return id;}
-int DB_HOST::get_id() {return id;}
-int DB_WORKUNIT::get_id() {return id;}
-int DB_RESULT::get_id() {return id;}
-int DB_MSG_FROM_HOST::get_id() {return id;}
-int DB_MSG_TO_HOST::get_id() {return id;}
-int DB_ASSIGNMENT::get_id() {return id;}
-int DB_STATE_COUNTS::get_id() {return appid;}
-int DB_FILE::get_id() {return id;}
-int DB_FILESET::get_id() {return id;}
-int DB_SCHED_TRIGGER::get_id() {return id;}
-int DB_VDA_FILE::get_id() {return id;}
+DB_ID_TYPE DB_PLATFORM::get_id() {return id;}
+DB_ID_TYPE DB_APP::get_id() {return id;}
+DB_ID_TYPE DB_APP_VERSION::get_id() {return id;}
+DB_ID_TYPE DB_USER::get_id() {return id;}
+DB_ID_TYPE DB_TEAM::get_id() {return id;}
+DB_ID_TYPE DB_HOST::get_id() {return id;}
+DB_ID_TYPE DB_WORKUNIT::get_id() {return id;}
+DB_ID_TYPE DB_RESULT::get_id() {return id;}
+DB_ID_TYPE DB_MSG_FROM_HOST::get_id() {return id;}
+DB_ID_TYPE DB_MSG_TO_HOST::get_id() {return id;}
+DB_ID_TYPE DB_ASSIGNMENT::get_id() {return id;}
+DB_ID_TYPE DB_STATE_COUNTS::get_id() {return appid;}
+DB_ID_TYPE DB_FILE::get_id() {return id;}
+DB_ID_TYPE DB_FILESET::get_id() {return id;}
+DB_ID_TYPE DB_SCHED_TRIGGER::get_id() {return id;}
+DB_ID_TYPE DB_VDA_FILE::get_id() {return id;}
 
 void DB_PLATFORM::db_print(char* buf){
     sprintf(buf,
@@ -206,7 +217,7 @@ void DB_PLATFORM::db_print(char* buf){
 void DB_PLATFORM::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
     strcpy2(name, r[i++]);
     strcpy2(user_friendly_name, r[i++]);
@@ -253,7 +264,7 @@ void DB_APP::db_print(char* buf){
 void DB_APP::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
     strcpy2(name, r[i++]);
     min_version = atoi(r[i++]);
@@ -275,9 +286,9 @@ void DB_APP::db_parse(MYSQL_ROW &r) {
 void DB_APP_VERSION::db_print(char* buf){
     sprintf(buf,
         "create_time=%d, "
-        "appid=%d, "
+        "appid=%lu, "
         "version_num=%d, "
-        "platformid=%d, "
+        "platformid=%lu, "
         "xml_doc='%s', "
         "min_core_version=%d, "
         "max_core_version=%d, "
@@ -310,11 +321,11 @@ void DB_APP_VERSION::db_print(char* buf){
 void DB_APP_VERSION::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    appid = atoi(r[i++]);
+    appid = atol(r[i++]);
     version_num = atoi(r[i++]);
-    platformid = atoi(r[i++]);
+    platformid = atol(r[i++]);
     strcpy2(xml_doc, r[i++]);
     min_core_version = atoi(r[i++]);
     max_core_version = atoi(r[i++]);
@@ -343,7 +354,7 @@ void DB_USER::db_print(char* buf){
         "country='%s', postal_code='%s', "
         "total_credit=%.15e, expavg_credit=%.15e, expavg_time=%.15e, "
         "global_prefs='%s', project_prefs='%s', "
-        "teamid=%d, venue='%s', url='%s', send_email=%d, show_hosts=%d, "
+        "teamid=%lu, venue='%s', url='%s', send_email=%d, show_hosts=%d, "
         "posts=%d, "
         "seti_id=%d, seti_nresults=%d, seti_last_result_time=%d, "
         "seti_total_cpu=%.15e, signature='%s', has_profile=%d, "
@@ -374,7 +385,7 @@ void DB_USER::db_print(char* buf){
 void DB_USER::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
     strcpy2(email_addr, r[i++]);
     strcpy2(name, r[i++]);
@@ -386,7 +397,7 @@ void DB_USER::db_parse(MYSQL_ROW &r) {
     expavg_time = atof(r[i++]);
     strcpy2(global_prefs, r[i++]);
     strcpy2(project_prefs, r[i++]);
-    teamid = atoi(r[i++]);
+    teamid = atol(r[i++]);
     strcpy2(venue, r[i++]);
     strcpy2(url, r[i++]);
     send_email = atoi(r[i++]);
@@ -411,7 +422,7 @@ void DB_TEAM::db_print(char* buf){
     ESCAPE(name_html);
     ESCAPE(description);
     sprintf(buf,
-        "create_time=%d, userid=%d, name='%s', "
+        "create_time=%d, userid=%lu, name='%s', "
         "name_lc='%s', url='%s', "
         "type=%d, name_html='%s', description='%s', nusers=%d, "
         "country='%s', "
@@ -444,9 +455,9 @@ void DB_TEAM::db_print(char* buf){
 void DB_TEAM::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    userid = atoi(r[i++]);
+    userid = atol(r[i++]);
     strcpy2(name, r[i++]);
     strcpy2(name_lc, r[i++]);
     strcpy2(url, r[i++]);
@@ -492,7 +503,7 @@ void DB_HOST::db_print(char* buf){
     ESCAPE(os_version);
     ESCAPE(product_name);
     sprintf(buf,
-        "create_time=%d, userid=%d, "
+        "create_time=%d, userid=%lu, "
         "rpc_seqno=%d, rpc_time=%d, "
         "total_credit=%.12e, expavg_credit=%.12e, expavg_time=%.15e, "
         "timezone=%d, domain_name='%s', serialnum='%s', "
@@ -551,9 +562,9 @@ void DB_HOST::db_print(char* buf){
 void DB_HOST::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    userid = atoi(r[i++]);
+    userid = atol(r[i++]);
     rpc_seqno = atoi(r[i++]);
     rpc_time = atoi(r[i++]);
     total_credit = atof(r[i++]);
@@ -635,7 +646,7 @@ int DB_HOST::update_diff_validator(HOST& h) {
     int n = strlen(updates);
     if (n == 0) return 0;
     updates[n-1] = 0;        // trim the final comma
-    sprintf(query, "update host set %s where id=%d", updates, id);
+    sprintf(query, "update host set %s where id=%lu", updates, id);
     return db->do_query(query);
 }
 
@@ -822,17 +833,26 @@ int DB_HOST::update_diff_sched(HOST& h) {
         sprintf(buf, " gpu_active_frac=%.15e,", gpu_active_frac);
         strcat(updates, buf);
     }
+    if (p_ngpus != h.p_ngpus) {
+        sprintf(buf, " p_ngpus=%d,", p_ngpus);
+        strcat(updates, buf);
+    }
+    if (p_gpu_fpops != h.p_gpu_fpops) {
+        sprintf(buf, " p_gpu_fpops=%.15e,", p_gpu_fpops);
+        strcat(updates, buf);
+    }
 
     int n = strlen(updates);
     if (n == 0) return 0;
     updates[n-1] = 0;        // trim the final comma
-    sprintf(query, "update host set %s where id=%d", updates, id);
+    sprintf(query, "update host set %s where id=%lu", updates, id);
     return db->do_query(query);
 }
 
 int DB_HOST::fpops_percentile(double percentile, double& fpops) {
     char query[256];
-    int n, retval;
+    int retval;
+    long n;
 
     sprintf(query, "where expavg_credit>10");
     retval = count(n, query);
@@ -864,12 +884,12 @@ int DB_HOST::fpops_stddev(double& stddev) {
 
 void DB_WORKUNIT::db_print(char* buf){
     sprintf(buf,
-        "create_time=%d, appid=%d, "
+        "create_time=%d, appid=%lu, "
         "name='%s', xml_doc='%s', batch=%d, "
         "rsc_fpops_est=%.15e, rsc_fpops_bound=%.15e, "
         "rsc_memory_bound=%.15e, rsc_disk_bound=%.15e, "
         "need_validate=%d, "
-        "canonical_resultid=%u, canonical_credit=%.15e, "
+        "canonical_resultid=%lu, canonical_credit=%.15e, "
         "transition_time=%d, delay_bound=%d, "
         "error_mask=%d, file_delete_state=%d, assimilate_state=%d, "
         "hr_class=%d, opaque=%.15e, "
@@ -878,8 +898,8 @@ void DB_WORKUNIT::db_print(char* buf){
         "result_template_file='%s', "
         "priority=%d, "
         "rsc_bandwidth_bound=%.15e, "
-        "fileset_id=%d, "
-        "app_version_id=%d, "
+        "fileset_id=%lu, "
+        "app_version_id=%ld, "
         "transitioner_flags=%d, "
         "size_class=%d ",
         create_time, appid,
@@ -907,12 +927,12 @@ void DB_WORKUNIT::db_print(char* buf){
 
 void DB_WORKUNIT::db_print_values(char* buf) {
     sprintf(buf,
-        "(0, %d, %d, "
+        "(0, %d, %lu, "
         "'%s', '%s', %d, "
         "%f, %f, "
         "%f, %f, "
         "%d, "
-        "%u, %f, "
+        "%lu, %f, "
         "%d, %d, "
         "%d, %d, %d, "
         "%d, %f, "
@@ -921,13 +941,14 @@ void DB_WORKUNIT::db_print_values(char* buf) {
         "'%s', "
         "%d, NOW(), "
         "%f, "
-        "%d, "
-        "%d, "
+        "%lu, "
+        "%ld, "
         "%d, "
         "%d)",
         create_time, appid,
         name, xml_doc, batch,
-        rsc_fpops_est, rsc_fpops_bound, rsc_memory_bound, rsc_disk_bound,
+        rsc_fpops_est, rsc_fpops_bound,
+        rsc_memory_bound, rsc_disk_bound,
         need_validate,
         canonical_resultid, canonical_credit,
         transition_time, delay_bound,
@@ -951,9 +972,9 @@ void DB_WORKUNIT::db_print_values(char* buf) {
 void DB_WORKUNIT::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    appid = atoi(r[i++]);
+    appid = atol(r[i++]);
     strcpy2(name, r[i++]);
     strcpy2(xml_doc, r[i++]);
     batch = atoi(r[i++]);
@@ -962,7 +983,7 @@ void DB_WORKUNIT::db_parse(MYSQL_ROW &r) {
     rsc_memory_bound = atof(r[i++]);
     rsc_disk_bound = atof(r[i++]);
     need_validate = atoi(r[i++]);
-    canonical_resultid = atoi(r[i++]);
+    canonical_resultid = atol(r[i++]);
     canonical_credit = atof(r[i++]);
     transition_time = atoi(r[i++]);
     delay_bound = atoi(r[i++]);
@@ -980,15 +1001,15 @@ void DB_WORKUNIT::db_parse(MYSQL_ROW &r) {
     priority = atoi(r[i++]);
     strcpy2(mod_time, r[i++]);
     rsc_bandwidth_bound = atof(r[i++]);
-    fileset_id = atoi(r[i++]);
-    app_version_id = atoi(r[i++]);
+    fileset_id = atol(r[i++]);
+    app_version_id = atol(r[i++]);
     transitioner_flags = atoi(r[i++]);
     size_class = atoi(r[i++]);
 }
 
 void DB_CREDITED_JOB::db_print(char* buf){
     sprintf(buf,
-        "userid=%d, workunitid=%f",
+        "userid=%lu, workunitid=%lu",
         userid, workunitid
     );
 }
@@ -996,8 +1017,8 @@ void DB_CREDITED_JOB::db_print(char* buf){
 void DB_CREDITED_JOB::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    userid = atoi(r[i++]);
-    workunitid = atof(r[i++]);
+    userid = atol(r[i++]);
+    workunitid = atol(r[i++]);
 };
 
 void DB_RESULT::db_print(char* buf){
@@ -1005,17 +1026,17 @@ void DB_RESULT::db_print(char* buf){
     ESCAPE(stderr_out);
     sprintf(
         buf,
-        "create_time=%d, workunitid=%d, "
+        "create_time=%d, workunitid=%lu, "
         "server_state=%d, outcome=%d, client_state=%d, "
-        "hostid=%d, userid=%d, "
+        "hostid=%lu, userid=%lu, "
         "report_deadline=%d, sent_time=%d, received_time=%d, "
         "name='%s', cpu_time=%.15e, "
         "xml_doc_in='%s', xml_doc_out='%s', stderr_out='%s', "
         "batch=%d, file_delete_state=%d, validate_state=%d, "
         "claimed_credit=%.15e, granted_credit=%.15e, opaque=%.15e, random=%d, "
-        "app_version_num=%d, appid=%d, exit_status=%d, teamid=%d, "
+        "app_version_num=%d, appid=%lu, exit_status=%d, teamid=%lu, "
         "priority=%d, elapsed_time=%.15e, flops_estimate=%.15e, "
-        "app_version_id=%d, runtime_outlier=%d, size_class=%d, "
+        "app_version_id=%ld, runtime_outlier=%d, size_class=%d, "
         "peak_working_set_size=%.0f, "
         "peak_swap_size=%.0f, "
         "peak_disk_usage=%.0f ",
@@ -1047,15 +1068,15 @@ void DB_RESULT::db_print_values(char* buf){
     ESCAPE(stderr_out);
     sprintf(
         buf,
-        "(0, %d, %d, "
+        "(0, %d, %lu, "
         "%d, %d, %d, "
-        "%d, %d, "
+        "%lu, %lu, "
         "%d, %d, %d, "
         "'%s', %.15e, "
         "'%s', '%s', '%s', "
         "%d, %d, %d, "
         "%.15e, %.15e, %.15e, %d, "
-        "%d, %d, %d, %d, %d, NOW(), 0, 0, 0, 0, %d, 0, 0, 0)",
+        "%d, %lu, %d, %lu, %d, NOW(), 0, 0, 0, 0, %d, 0, 0, 0)",
         create_time, workunitid,
         server_state, outcome, client_state,
         hostid, userid,
@@ -1079,7 +1100,7 @@ int DB_RESULT::mark_as_sent(int old_server_state, int report_grace_period) {
     int retval;
 
     sprintf(query,
-        "update result set server_state=%d, hostid=%d, userid=%d, sent_time=%d, report_deadline=%d, flops_estimate=%.15e, app_version_id=%d  where id=%u and server_state=%d",
+        "update result set server_state=%d, hostid=%lu, userid=%lu, sent_time=%d, report_deadline=%d, flops_estimate=%.15e, app_version_id=%ld  where id=%lu and server_state=%d",
         server_state,
         hostid,
         userid,
@@ -1099,14 +1120,14 @@ int DB_RESULT::mark_as_sent(int old_server_state, int report_grace_period) {
 void DB_RESULT::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    workunitid = atoi(r[i++]);
+    workunitid = atol(r[i++]);
     server_state = atoi(r[i++]);
     outcome = atoi(r[i++]);
     client_state = atoi(r[i++]);
-    hostid = atoi(r[i++]);
-    userid = atoi(r[i++]);
+    hostid = atol(r[i++]);
+    userid = atol(r[i++]);
     report_deadline = atoi(r[i++]);
     sent_time = atoi(r[i++]);
     received_time = atoi(r[i++]);
@@ -1123,14 +1144,14 @@ void DB_RESULT::db_parse(MYSQL_ROW &r) {
     opaque = atof(r[i++]);
     random = atoi(r[i++]);
     app_version_num = atoi(r[i++]);
-    appid = atoi(r[i++]);
+    appid = atol(r[i++]);
     exit_status = atoi(r[i++]);
-    teamid = atoi(r[i++]);
+    teamid = atol(r[i++]);
     priority = atoi(r[i++]);
     strcpy2(mod_time, r[i++]);
     elapsed_time = atof(r[i++]);
     flops_estimate = atof(r[i++]);
-    app_version_id = atoi(r[i++]);
+    app_version_id = atol(r[i++]);
     runtime_outlier = (atoi(r[i++]) != 0);
     size_class = atoi(r[i++]);
     peak_working_set_size = atof(r[i++]);
@@ -1138,6 +1159,38 @@ void DB_RESULT::db_parse(MYSQL_ROW &r) {
     peak_disk_usage = atof(r[i++]);
 }
 
+// faster version.
+// return unsent count up to a max of "count_max"
+//
+int DB_RESULT::get_unsent_counts(APP& app, int* unsent_count, int count_max) {
+    char query[1024];
+    int retval;
+    MYSQL_RES *rp;
+
+    for (int i=0; i<app.n_size_classes; i++) {
+        sprintf(query,
+            "select id from result where appid=%lu and server_state=%d and size_class=%d limit %d",
+            app.id, RESULT_SERVER_STATE_UNSENT, i, count_max
+        );
+        retval = db->do_query(query);
+        if (retval) return mysql_errno(db->mysql);
+        rp = mysql_store_result(db->mysql);
+        if (!rp) return mysql_errno(db->mysql);
+        int count = 0;
+        while (1) {
+            MYSQL_ROW row = mysql_fetch_row(rp);
+            if (!row) break;
+            count++;
+        }
+        mysql_free_result(rp);
+        unsent_count[i] = count;
+    }
+    return 0;
+}
+
+#if 0
+// the following is too slow if result table is large.
+//
 int DB_RESULT::get_unsent_counts(APP& app, int* unsent_count) {
     char query[1024];
     MYSQL_RES *rp;
@@ -1147,7 +1200,7 @@ int DB_RESULT::get_unsent_counts(APP& app, int* unsent_count) {
     }
 
     sprintf(query,
-        "select size_class, count(size_class) from result where appid=%d and server_state=%d group by size_class",
+        "select size_class, count(size_class) from result where appid=%lu and server_state=%d group by size_class",
         app.id, RESULT_SERVER_STATE_UNSENT
     );
     int retval = db->do_query(query);
@@ -1169,13 +1222,14 @@ int DB_RESULT::get_unsent_counts(APP& app, int* unsent_count) {
     mysql_free_result(rp);
     return retval;
 }
+#endif
 
 int DB_RESULT::make_unsent(
     APP& app, int size_class, int n, const char* order_clause, int& nchanged
 ) {
     char query[1024];
     sprintf(query,
-        "update result set server_state=%d where appid=%d and server_state=%d and size_class=%d %s limit %d",
+        "update result set server_state=%d where appid=%lu and server_state=%d and size_class=%d %s limit %d",
         RESULT_SERVER_STATE_UNSENT,
         app.id,
         RESULT_SERVER_STATE_INACTIVE,
@@ -1194,7 +1248,7 @@ void DB_MSG_FROM_HOST::db_print(char* buf) {
     ESCAPE(variety);
     sprintf(buf,
         "create_time=%d, "
-        "hostid=%d, variety='%s', "
+        "hostid=%lu, variety='%s', "
         "handled=%d, xml='%s'",
 
         create_time,
@@ -1209,9 +1263,9 @@ void DB_MSG_FROM_HOST::db_print(char* buf) {
 void DB_MSG_FROM_HOST::db_parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    hostid = atoi(r[i++]);
+    hostid = atol(r[i++]);
     strcpy2(variety, r[i++]);
     handled = atoi(r[i++]);
     strcpy2(xml, r[i++]);
@@ -1222,7 +1276,7 @@ void DB_MSG_TO_HOST::db_print(char* buf) {
     ESCAPE(variety);
     sprintf(buf,
         "create_time=%d, "
-        "hostid=%d, variety='%s', "
+        "hostid=%lu, variety='%s', "
         "handled=%d, xml='%s'",
         create_time,
         hostid, variety,
@@ -1235,9 +1289,9 @@ void DB_MSG_TO_HOST::db_print(char* buf) {
 void DB_MSG_TO_HOST::db_parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    hostid = atoi(r[i++]);
+    hostid = atol(r[i++]);
     strcpy2(variety, r[i++]);
     handled = atoi(r[i++]);
     strcpy2(xml, r[i++]);
@@ -1246,11 +1300,11 @@ void DB_MSG_TO_HOST::db_parse(MYSQL_ROW& r) {
 void DB_ASSIGNMENT::db_print(char* buf) {
     sprintf(buf,
         "create_time=%d, "
-        "target_id=%d, "
+        "target_id=%lu, "
         "target_type=%d, "
         "multi=%d, "
-        "workunitid=%d, "
-        "resultid=%u",
+        "workunitid=%lu, "
+        "resultid=%lu",
         create_time,
         target_id,
         target_type,
@@ -1263,13 +1317,13 @@ void DB_ASSIGNMENT::db_print(char* buf) {
 void DB_ASSIGNMENT::db_parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atoi(r[i++]);
-    target_id = atoi(r[i++]);
+    target_id = atol(r[i++]);
     target_type = atoi(r[i++]);
     multi = atoi(r[i++]);
-    workunitid = atoi(r[i++]);
-    _resultid = atoi(r[i++]);
+    workunitid = atol(r[i++]);
+    _resultid = atol(r[i++]);
 }
 
 int DB_HOST_APP_VERSION::update_scheduler(DB_HOST_APP_VERSION& orig) {
@@ -1287,7 +1341,10 @@ int DB_HOST_APP_VERSION::update_scheduler(DB_HOST_APP_VERSION& orig) {
         max_jobs_per_day,
         n_jobs_today
     );
-    sprintf(clause, "host_id=%d and app_version_id=%d", host_id, app_version_id);
+    sprintf(clause,
+        "host_id=%lu and app_version_id=%ld",
+        host_id, app_version_id
+    );
     return update_fields_noid(query, clause);
 }
 
@@ -1336,7 +1393,7 @@ int DB_HOST_APP_VERSION::update_validator(DB_HOST_APP_VERSION& orig) {
         max_jobs_per_day
     );
     sprintf(clause,
-        "host_id=%d and app_version_id=%d ",
+        "host_id=%lu and app_version_id=%ld ",
         host_id, app_version_id
     );
     return update_fields_noid(query, clause);
@@ -1344,8 +1401,8 @@ int DB_HOST_APP_VERSION::update_validator(DB_HOST_APP_VERSION& orig) {
 
 void DB_HOST_APP_VERSION::db_print(char* buf) {
     sprintf(buf,
-        "host_id=%d, "
-        "app_version_id=%d, "
+        "host_id=%lu, "
+        "app_version_id=%ld, "
         "pfc_n=%.15e, "
         "pfc_avg=%.15e, "
         "et_n=%.15e, "
@@ -1380,8 +1437,8 @@ void DB_HOST_APP_VERSION::db_print(char* buf) {
 void DB_HOST_APP_VERSION::db_parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    host_id = atoi(r[i++]);
-    app_version_id = atoi(r[i++]);
+    host_id = atol(r[i++]);
+    app_version_id = atol(r[i++]);
     pfc.n = atof(r[i++]);
     pfc.avg = atof(r[i++]);
     et.n = atof(r[i++]);
@@ -1399,7 +1456,7 @@ void DB_HOST_APP_VERSION::db_parse(MYSQL_ROW& r) {
 
 void DB_USER_SUBMIT::db_print(char* buf) {
     sprintf(buf,
-        "user_id=%d, "
+        "user_id=%lu, "
         "quota=%.15e, "
         "logical_start_time=%.15e, "
         "submit_all=%d, "
@@ -1415,7 +1472,7 @@ void DB_USER_SUBMIT::db_print(char* buf) {
 void DB_USER_SUBMIT::db_parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    user_id = atoi(r[i++]);
+    user_id = atol(r[i++]);
     quota = atof(r[i++]);
     logical_start_time = atof(r[i++]);
     submit_all = (atoi(r[i++]) != 0);
@@ -1424,7 +1481,7 @@ void DB_USER_SUBMIT::db_parse(MYSQL_ROW& r) {
 
 void DB_STATE_COUNTS::db_print(char* buf) {
     sprintf(buf,
-        "appid=%d, "
+        "appid=%lu, "
         "last_update_time=%d, "
         "result_server_state_2=%d, "
         "result_server_state_4=%d, "
@@ -1468,12 +1525,12 @@ void DB_STATE_COUNTS::db_parse(MYSQL_ROW& r) {
 void TRANSITIONER_ITEM::parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     strcpy2(name, r[i++]);
-    appid = atoi(r[i++]);
+    appid = atol(r[i++]);
     min_quorum = atoi(r[i++]);
     need_validate = atoi(r[i++]);
-    canonical_resultid = atoi(r[i++]);
+    canonical_resultid = atol(r[i++]);
     transition_time = atoi(r[i++]);
     delay_bound = atoi(r[i++]);
     error_mask = atoi(r[i++]);
@@ -1486,13 +1543,13 @@ void TRANSITIONER_ITEM::parse(MYSQL_ROW& r) {
     priority = atoi(r[i++]);
     hr_class = atoi(r[i++]);
     batch = atoi(r[i++]);
-    app_version_id = atoi(r[i++]);
+    app_version_id = atol(r[i++]);
     transitioner_flags = atoi(r[i++]);
     size_class = atoi(r[i++]);
 
     // use safe_atoi() from here on cuz they might not be there
     //
-    res_id = safe_atoi(r[i++]);
+    res_id = safe_atol(r[i++]);
     strcpy2(res_name, r[i++]);
     res_report_deadline = safe_atoi(r[i++]);
     res_server_state = safe_atoi(r[i++]);
@@ -1500,9 +1557,9 @@ void TRANSITIONER_ITEM::parse(MYSQL_ROW& r) {
     res_validate_state = safe_atoi(r[i++]);
     res_file_delete_state = safe_atoi(r[i++]);
     res_sent_time = safe_atoi(r[i++]);
-    res_hostid = safe_atoi(r[i++]);
+    res_hostid = safe_atol(r[i++]);
     res_received_time = safe_atoi(r[i++]);
-    res_app_version_id = safe_atoi(r[i++]);
+    res_app_version_id = safe_atol(r[i++]);
     res_exit_status = safe_atoi(r[i++]);
 }
 
@@ -1637,7 +1694,7 @@ int DB_TRANSITIONER_ITEM_SET::update_result(TRANSITIONER_ITEM& ti) {
 
     sprintf(query,
         "update result set server_state=%d, outcome=%d, "
-        "validate_state=%d, file_delete_state=%d where id=%u",
+        "validate_state=%d, file_delete_state=%d where id=%lu",
         ti.res_server_state,
         ti.res_outcome,
         ti.res_validate_state,
@@ -1681,7 +1738,7 @@ int DB_TRANSITIONER_ITEM_SET::update_workunit(
         strcat(updates, buf);
     }
     if (ti.app_version_id != ti_original.app_version_id) {
-        sprintf(buf, " app_version_id=%d,", ti.app_version_id);
+        sprintf(buf, " app_version_id=%lu,", ti.app_version_id);
         strcat(updates, buf);
     }
     int n = strlen(updates);
@@ -1693,16 +1750,16 @@ int DB_TRANSITIONER_ITEM_SET::update_workunit(
     //
     updates[n-1] = 0;
 
-    sprintf(query, "update workunit set %s where id=%d", updates, ti.id);
+    sprintf(query, "update workunit set %s where id=%lu", updates, ti.id);
     return db->do_query(query);
 }
 
 void VALIDATOR_ITEM::parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    wu.id = atoi(r[i++]);
+    wu.id = atol(r[i++]);
     strcpy2(wu.name, r[i++]);
-    wu.canonical_resultid = atoi(r[i++]);
+    wu.canonical_resultid = atol(r[i++]);
     wu.canonical_credit = atof(r[i++]);
     wu.min_quorum = atoi(r[i++]);
     wu.assimilate_state = atoi(r[i++]);
@@ -1715,7 +1772,8 @@ void VALIDATOR_ITEM::parse(MYSQL_ROW& r) {
     wu.rsc_fpops_est = atof(r[i++]);
     wu.rsc_fpops_bound = atof(r[i++]);
 
-    res.id = atoi(r[i++]);
+    res.id = atol(r[i++]);
+    res.workunitid = atol(r[i++]);
     strcpy2(res.name, r[i++]);
     res.validate_state = atoi(r[i++]);
     res.server_state = atoi(r[i++]);
@@ -1728,24 +1786,24 @@ void VALIDATOR_ITEM::parse(MYSQL_ROW& r) {
     res.batch = atoi(r[i++]);
     res.opaque = atof(r[i++]);
     res.exit_status = atoi(r[i++]);
-    res.hostid = atoi(r[i++]);
-    res.userid = atoi(r[i++]);
-    res.teamid = atoi(r[i++]);
+    res.hostid = atol(r[i++]);
+    res.userid = atol(r[i++]);
+    res.teamid = atol(r[i++]);
     res.sent_time = atoi(r[i++]);
     res.received_time = atoi(r[i++]);
-    res.appid = atoi(r[i++]);
-    res.app_version_id = atoi(r[i++]);
+    res.appid = atol(r[i++]);
+    res.app_version_id = atol(r[i++]);
     res.app_version_num = atoi(r[i++]);
     res.elapsed_time = atof(r[i++]);
     res.flops_estimate = atof(r[i++]);
-    res.app_version_id = atoi(r[i++]);
+    res.app_version_id = atol(r[i++]);
     res.runtime_outlier = (atoi(r[i++]) != 0);
 }
 
 int DB_VALIDATOR_ITEM_SET::enumerate(
-    int appid, int nresult_limit,
+    DB_ID_TYPE appid, int nresult_limit,
     int wu_id_modulus, int wu_id_remainder,
-    int wu_id_min, int wu_id_max,
+    DB_ID_TYPE wu_id_min, DB_ID_TYPE wu_id_max,
     std::vector<VALIDATOR_ITEM>& items
 ) {
     int retval;
@@ -1756,7 +1814,7 @@ int DB_VALIDATOR_ITEM_SET::enumerate(
 
     if (!cursor.active) {
         sprintf(main_clause,
-            " and wu.appid = %d and wu.need_validate > 0 ", appid
+            " and wu.appid = %lu and wu.need_validate > 0 ", appid
         );
         if (wu_id_modulus) {
             // terrible kludge: if rem >= mod, treat it as a WU ID
@@ -1775,10 +1833,10 @@ int DB_VALIDATOR_ITEM_SET::enumerate(
             strcpy(mod_clause, "");
         }
         if (wu_id_min) {
-          sprintf(mod_clause+(strlen(mod_clause)), " and wu.id >= %d", wu_id_min);
+          sprintf(mod_clause+(strlen(mod_clause)), " and wu.id >= %lu", wu_id_min);
         }
         if (wu_id_max) {
-          sprintf(mod_clause+(strlen(mod_clause)), " and wu.id <= %d", wu_id_max);
+          sprintf(mod_clause+(strlen(mod_clause)), " and wu.id <= %lu", wu_id_max);
         }
 
         sprintf(query,
@@ -1798,6 +1856,7 @@ int DB_VALIDATOR_ITEM_SET::enumerate(
             "   wu.rsc_fpops_est, "
             "   wu.rsc_fpops_bound, "
             "   res.id, "
+            "   res.workunitid, "
             "   res.name, "
             "   res.validate_state, "
             "   res.server_state, "
@@ -1884,7 +1943,7 @@ int DB_VALIDATOR_ITEM_SET::update_result(RESULT& res) {
     sprintf(query,
         "update result set validate_state=%d, granted_credit=%.15e, "
         "server_state=%d, outcome=%d, opaque=%lf, runtime_outlier=%d "
-        "where id=%u",
+        "where id=%lu",
         res.validate_state,
         res.granted_credit,
         res.server_state,
@@ -1906,8 +1965,8 @@ int DB_VALIDATOR_ITEM_SET::update_workunit(WORKUNIT& wu) {
         "update workunit set need_validate=0, error_mask=%d, "
         "assimilate_state=%d, transition_time=%d, "
         "target_nresults=%d, "
-        "canonical_resultid=%u, canonical_credit=%.15e "
-        "where id=%d",
+        "canonical_resultid=%lu, canonical_credit=%.15e "
+        "where id=%lu",
         wu.error_mask,
         wu.assimilate_state,
         wu.transition_time,
@@ -1924,13 +1983,13 @@ int DB_VALIDATOR_ITEM_SET::update_workunit(WORKUNIT& wu) {
 void WORK_ITEM::parse(MYSQL_ROW& r) {
     int i=0;
     memset(this, 0, sizeof(WORK_ITEM));
-    res_id = atoi(r[i++]);
+    res_id = atol(r[i++]);
     res_priority = atoi(r[i++]);
     res_server_state = atoi(r[i++]);
     res_report_deadline = atof(r[i++]);
-    wu.id = atoi(r[i++]);
+    wu.id = atol(r[i++]);
     wu.create_time = atoi(r[i++]);
-    wu.appid = atoi(r[i++]);
+    wu.appid = atol(r[i++]);
     strcpy2(wu.name, r[i++]);
     strcpy2(wu.xml_doc, r[i++]);
     wu.batch = atoi(r[i++]);
@@ -1939,7 +1998,7 @@ void WORK_ITEM::parse(MYSQL_ROW& r) {
     wu.rsc_memory_bound = atof(r[i++]);
     wu.rsc_disk_bound = atof(r[i++]);
     wu.need_validate = atoi(r[i++]);
-    wu.canonical_resultid = atoi(r[i++]);
+    wu.canonical_resultid = atol(r[i++]);
     wu.canonical_credit = atof(r[i++]);
     wu.transition_time = atoi(r[i++]);
     wu.delay_bound = atoi(r[i++]);
@@ -1957,8 +2016,8 @@ void WORK_ITEM::parse(MYSQL_ROW& r) {
     wu.priority = atoi(r[i++]);
     strcpy2(wu.mod_time, r[i++]);
     wu.rsc_bandwidth_bound = atof(r[i++]);
-    wu.fileset_id = atoi(r[i++]);
-    wu.app_version_id = atoi(r[i++]);
+    wu.fileset_id = atol(r[i++]);
+    wu.app_version_id = atol(r[i++]);
     wu.transitioner_flags = atoi(r[i++]);
     wu.size_class = atoi(r[i++]);
 }
@@ -2019,7 +2078,7 @@ int DB_WORK_ITEM::enumerate_all(
         //
         sprintf(query,
             "select high_priority r1.id, r1.priority, r1.server_state, r1.report_deadline, workunit.* from result r1 force index(ind_res_st), workunit force index(primary), app"
-            " where r1.server_state=%d and r1.workunitid=workunit.id and r1.id>%d "
+            " where r1.server_state=%d and r1.workunitid=workunit.id and r1.id>%lu "
             " and workunit.appid=app.id and app.deprecated=0 "
             " and workunit.transitioner_flags=0 "
             " %s "
@@ -2068,7 +2127,7 @@ void IN_PROGRESS_RESULT::parse(MYSQL_ROW& r) {
     outcome = atoi(r[i++]);
 }
 
-int DB_IN_PROGRESS_RESULT::enumerate(int hostid, const char* result_names) {
+int DB_IN_PROGRESS_RESULT::enumerate(DB_ID_TYPE hostid, const char* result_names) {
     char query[MAX_QUERY_LEN];
     int retval;
     MYSQL_ROW row;
@@ -2076,7 +2135,7 @@ int DB_IN_PROGRESS_RESULT::enumerate(int hostid, const char* result_names) {
         sprintf(query,
             "select high_priority result.name, workunit.error_mask, workunit.assimilate_state, result.server_state, result.outcome "
             " from result, workunit "
-            " where result.hostid = %d and workunit.id = result.workunitid "
+            " where result.hostid = %lu and workunit.id = result.workunitid "
             " and (result.server_state=%d or ( result.server_state = %d and result.outcome = %d ) ) "
             " and result.name in (%s) ",
             hostid,
@@ -2110,20 +2169,20 @@ int DB_IN_PROGRESS_RESULT::enumerate(int hostid, const char* result_names) {
 void SCHED_RESULT_ITEM::parse(MYSQL_ROW& r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     strcpy2(name, r[i++]);
-    workunitid = atoi(r[i++]);
-    appid = atoi(r[i++]);
+    workunitid = atol(r[i++]);
+    appid = atol(r[i++]);
     server_state = atoi(r[i++]);
-    hostid = atoi(r[i++]);
-    userid = atoi(r[i++]);
+    hostid = atol(r[i++]);
+    userid = atol(r[i++]);
     sent_time = atoi(r[i++]);
     received_time = atoi(r[i++]);
     validate_state = atoi(r[i++]);
     outcome = atoi(r[i++]);
     client_state = atoi(r[i++]);
     file_delete_state = atoi(r[i++]);
-    app_version_id = atoi(r[i++]);
+    app_version_id = atol(r[i++]);
 }
 
 int DB_SCHED_RESULT_ITEM_SET::add_result(char* result_name) {
@@ -2217,7 +2276,7 @@ int DB_SCHED_RESULT_ITEM_SET::update_result(SCHED_RESULT_ITEM& ri) {
     ESCAPE(ri.stderr_out);
     sprintf(query,
         "UPDATE result SET "
-        "    hostid=%d, "
+        "    hostid=%lu, "
         "    received_time=%d, "
         "    client_state=%d, "
         "    cpu_time=%.15e, "
@@ -2228,13 +2287,13 @@ int DB_SCHED_RESULT_ITEM_SET::update_result(SCHED_RESULT_ITEM& ri) {
         "    stderr_out='%s', "
         "    xml_doc_out='%s', "
         "    validate_state=%d, "
-        "    teamid=%d, "
+        "    teamid=%lu, "
         "    elapsed_time=%.15e, "
         "    peak_working_set_size=%.0f, "
         "    peak_swap_size=%.0f, "
         "    peak_disk_usage=%.0f "
         "WHERE "
-        "    id=%u",
+        "    id=%lu",
         ri.hostid,
         ri.received_time,
         ri.client_state,
@@ -2278,7 +2337,7 @@ int DB_SCHED_RESULT_ITEM_SET::update_workunits() {
             // skip non-updated results
         if (!first) strcat(query, ",");
         first = false;
-        sprintf(buf, "%d", results[i].workunitid);
+        sprintf(buf, "%lu", results[i].workunitid);
         strcat(query, buf);
     }
     strcat(query, ")");
@@ -2299,7 +2358,7 @@ void DB_FILE::db_print(char* buf){
 void DB_FILE::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     strcpy2(name, r[i++]);
     strcpy2(md5sum, r[i++]);
     size = atof(r[i++]);
@@ -2312,7 +2371,7 @@ void DB_FILESET::db_print(char* buf){
 void DB_FILESET::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     strcpy2(name, r[i++]);
 }
 
@@ -2326,7 +2385,7 @@ int DB_FILESET::select_by_name(const char* _name) {
 
 void DB_FILESET_FILE::db_print(char* buf){
     snprintf(buf, MAX_QUERY_LEN,
-        "fileset_id=%d, file_id=%d",
+        "fileset_id=%lu, file_id=%lu",
         fileset_id, file_id
     );
 }
@@ -2334,13 +2393,13 @@ void DB_FILESET_FILE::db_print(char* buf){
 void DB_FILESET_FILE::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    fileset_id = atoi(r[i++]);
-    file_id = atoi(r[i++]);
+    fileset_id = atol(r[i++]);
+    file_id = atol(r[i++]);
 }
 
 void DB_SCHED_TRIGGER::db_print(char* buf){
     snprintf(buf, MAX_QUERY_LEN,
-        "fileset_id=%d, need_work=%d, work_available=%d, no_work_available=%d, working_set_removal=%d",
+        "fileset_id=%lu, need_work=%d, work_available=%d, no_work_available=%d, working_set_removal=%d",
         fileset_id, need_work?1:0, work_available?1:0, no_work_available?1:0, working_set_removal?1:0
     );
 }
@@ -2348,8 +2407,8 @@ void DB_SCHED_TRIGGER::db_print(char* buf){
 void DB_SCHED_TRIGGER::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
-    fileset_id = atoi(r[i++]);
+    id = atol(r[i++]);
+    fileset_id = atol(r[i++]);
     need_work = atoi(r[i++]);
     work_available = atoi(r[i++]);
     no_work_available = atoi(r[i++]);
@@ -2454,10 +2513,10 @@ int DB_SCHED_TRIGGER::update_single_state(const DB_SCHED_TRIGGER::STATE state, c
 void DB_FILESET_SCHED_TRIGGER_ITEM::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    fileset.id = atoi(r[i++]);
+    fileset.id = atol(r[i++]);
     strcpy2(fileset.name, r[i++]);
-    trigger.id = atoi(r[i++]);
-    trigger.fileset_id = atoi(r[i++]);
+    trigger.id = atol(r[i++]);
+    trigger.fileset_id = atol(r[i++]);
     trigger.need_work = atoi(r[i++]);
     trigger.work_available = atoi(r[i++]);
     trigger.no_work_available = atoi(r[i++]);
@@ -2600,7 +2659,7 @@ void DB_VDA_FILE::db_print(char* buf){
 void DB_VDA_FILE::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atof(r[i++]);
     strcpy2(dir, r[i++]);
     strcpy2(file_name, r[i++]);
@@ -2615,8 +2674,8 @@ void DB_VDA_FILE::db_parse(MYSQL_ROW &r) {
 void DB_VDA_CHUNK_HOST::db_print(char* buf) {
     sprintf(buf,
         "create_time=%f, "
-        "vda_file_id=%d, "
-        "host_id=%d, "
+        "vda_file_id=%lu, "
+        "host_id=%lu, "
         "physical_file_name='%s', "
         "present_on_host=%d, "
         "transfer_in_progress=%d, "
@@ -2639,8 +2698,8 @@ void DB_VDA_CHUNK_HOST::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
     create_time = atof(r[i++]);
-    vda_file_id = atoi(r[i++]);
-    host_id = atoi(r[i++]);
+    vda_file_id = atol(r[i++]);
+    host_id = atol(r[i++]);
     strcpy2(physical_file_name, r[i++]);
     present_on_host = (atoi(r[i++]) != 0);
     transfer_in_progress = (atoi(r[i++]) != 0);
@@ -2652,7 +2711,7 @@ void DB_VDA_CHUNK_HOST::db_parse(MYSQL_ROW &r) {
 void DB_BADGE::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    id = atoi(r[i++]);
+    id = atol(r[i++]);
     create_time = atof(r[i++]);
     type = atoi(r[i++]);
     strcpy2(name, r[i++]);
@@ -2667,8 +2726,8 @@ void DB_BADGE::db_parse(MYSQL_ROW &r) {
 void DB_BADGE_USER::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    badge_id = atoi(r[i++]);
-    user_id = atoi(r[i++]);
+    badge_id = atol(r[i++]);
+    user_id = atol(r[i++]);
     create_time = atof(r[i++]);
     reassign_time = atof(r[i++]);
 }
@@ -2676,16 +2735,16 @@ void DB_BADGE_USER::db_parse(MYSQL_ROW &r) {
 void DB_BADGE_TEAM::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    badge_id = atoi(r[i++]);
-    team_id = atoi(r[i++]);
+    badge_id = atol(r[i++]);
+    team_id = atol(r[i++]);
     create_time = atof(r[i++]);
     reassign_time = atof(r[i++]);
 }
 
 void DB_CREDIT_USER::db_print(char* buf) {
     sprintf(buf,
-        "userid=%d, "
-        "appid=%d, "
+        "userid=%lu, "
+        "appid=%lu, "
         "njobs=%d, "
         "total=%.15e, "
         "expavg=%.15e, "
@@ -2704,8 +2763,8 @@ void DB_CREDIT_USER::db_print(char* buf) {
 void DB_CREDIT_USER::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    userid = atoi(r[i++]);
-    appid = atoi(r[i++]);
+    userid = atol(r[i++]);
+    appid = atol(r[i++]);
     njobs = atoi(r[i++]);
     total = atof(r[i++]);
     expavg = atof(r[i++]);
@@ -2715,8 +2774,8 @@ void DB_CREDIT_USER::db_parse(MYSQL_ROW &r) {
 
 void DB_CREDIT_TEAM::db_print(char* buf) {
     sprintf(buf,
-        "teamid=%d, "
-        "appid=%d, "
+        "teamid=%lu, "
+        "appid=%lu, "
         "njobs=%d, "
         "total=%.15e, "
         "expavg=%.15e, "
@@ -2735,8 +2794,8 @@ void DB_CREDIT_TEAM::db_print(char* buf) {
 void DB_CREDIT_TEAM::db_parse(MYSQL_ROW &r) {
     int i=0;
     clear();
-    teamid = atoi(r[i++]);
-    appid = atoi(r[i++]);
+    teamid = atol(r[i++]);
+    appid = atol(r[i++]);
     njobs = atoi(r[i++]);
     total = atof(r[i++]);
     expavg = atof(r[i++]);

@@ -17,11 +17,14 @@
 
 // declare replacement string functions for platforms that lack themn
 
-#ifndef STR_REPLACE_H
-#define STR_REPLACE_H
+#ifndef BOINC_STR_REPLACE_H
+#define BOINC_STR_REPLACE_H
+
+#if (defined(HAVE_CONFIG_H) || defined(__APPLE__))
+#include "config.h"
+#endif
 
 #ifndef _WIN32
-#include "config.h"
 #include <sys/types.h>
 #endif
 
@@ -58,7 +61,11 @@ inline int strcasecmp(const char* s1, const char* s2) {
 }
 #endif
 
-#define safe_strcpy(x, y) strlcpy(x, y, sizeof(x))
-#define safe_strcat(x, y) strlcat(x, y, sizeof(x))
+#ifdef _WIN32
+#define snprintf _snprintf
+    // Yucky!  _snprintf() is not the same as snprintf();
+    // it doesn't null-terminate if buffer is too small.
+    // This is a workaround until we switch to VS2015, which has sprintf()
+#endif
 
 #endif

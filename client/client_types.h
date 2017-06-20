@@ -20,8 +20,8 @@
 // client_state.C  (to cross-link objects)
 //
 
-#ifndef _CLIENT_TYPES_
-#define _CLIENT_TYPES_
+#ifndef BOINC_CLIENT_TYPES_H
+#define BOINC_CLIENT_TYPES_H
 
 #include "cpp.h"
 
@@ -255,6 +255,7 @@ struct APP {
     bool non_cpu_intensive;
     bool fraction_done_exact;
     PROJECT* project;
+    bool report_results_immediately;
     int max_concurrent;
         // Limit on # of concurrent jobs of this app; 0 if none
         // Specified in app_config.xml

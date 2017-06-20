@@ -8,7 +8,7 @@
 import boinc_path_config
 from Boinc import database, db_mid, configxml, tools
 from Boinc.boinc_db import *
-import os, sys, glob, time, shutil, re, random, socket
+import os, sys, glob, time, shutil, re, random
 
 class Options:
     pass
@@ -247,9 +247,10 @@ def create_project_dirs(dest_dir):
         return apply(os.path.join,(dest_dir,)+d)
     def mkdir2(d):
         try:
-            os.mkdir(d);
-        except:
-            pass
+            os.makedirs(d)
+        except OSError as e:
+            if not os.path.isdir(d):
+                raise SystemExit(e)
     map(lambda d: mkdir2(dir(d)),
         [   '',
             'cgi-bin',
@@ -263,6 +264,8 @@ def create_project_dirs(dest_dir):
             'html',
             'html/cache',
             'html/inc',
+            'html/inc/ReCaptcha',
+            'html/inc/ReCaptcha/RequestMethod',
             'html/languages',
             'html/languages/compiled',
             'html/languages/translations',
@@ -271,7 +274,6 @@ def create_project_dirs(dest_dir):
             'html/ops/ffmail',
             'html/ops/mass_email',
             'html/ops/remind_email',
-            'html/ops',
             'html/project',
             'html/stats',
             'html/user',
@@ -305,12 +307,6 @@ def install_boinc_files(dest_dir, install_web_files, install_server_files):
 
     create_project_dirs(dest_dir);
 
-    # make a symbolic link from html/user/user_profile to html/user_profile
-    try:
-        my_symlink(dir('html/user_profile'), dir('html/user/user_profile'));
-    except:
-        pass
-
     # copy html/ops files in all cases.
     # The critical one is db_update.php,
     # which is needed even for a server_only upgrade
@@ -320,6 +316,8 @@ def install_boinc_files(dest_dir, install_web_files, install_server_files):
     if install_web_files:
         install_glob(srcdir('html/inc/*.inc'), dir('html/inc/'))
         install_glob(srcdir('html/inc/*.php'), dir('html/inc/'))
+        install_glob(srcdir('html/inc/ReCaptcha/*.php'), dir('html/inc/ReCaptcha/'))
+        install_glob(srcdir('html/inc/ReCaptcha/RequestMethod/*.php'), dir('html/inc/ReCaptcha/RequestMethod'))
         install_glob(srcdir('html/inc/*.dat'), dir('html/inc/'))
         install_glob(srcdir('html/ops/*.css'), dir('html/ops/'))
         install_glob(srcdir('html/ops/ffmail/sample*'), dir('html/ops/ffmail/'))
@@ -454,13 +452,16 @@ class Project:
                  project_dir=None, key_dir=None,
                  master_url=None,
                  db_name=None,
+                 host=None,
                  web_only=False,
+                 no_db=False,
                  production=False
                  ):
         init()
 
         self.production     = production
         self.web_only       = web_only
+        self.no_db          = no_db
         self.short_name     = short_name
         self.long_name      = long_name or 'Project ' + self.short_name.replace('_',' ').capitalize()
 
@@ -478,12 +479,12 @@ class Project:
         config.db_host = options.db_host
         config.shmem_key = generate_shmem_key()
         config.uldl_dir_fanout = 1024
-        local_host = socket.gethostname()
-        config.host = local_host.split('.')[0]
+        config.host = host
         config.min_sendwork_interval = 0
         config.max_wus_to_send = 50
         config.daily_result_quota = 500
         config.disable_account_creation = 0
+        config.disable_web_account_creation = 0
         config.show_results = 1
         config.cache_md5_info = 1
         config.sched_debug_level = 3
@@ -558,6 +559,12 @@ class Project:
         # copy sample web files to final names
         install(srcdir('html/user/sample_index.php'),
             self.dir('html/user/index.php'))
+        install(srcdir('html/user/sample_bootstrap.min.css'),
+            self.dir('html/user/bootstrap.min.css'))
+        install(srcdir('html/user/sample_bootstrap.min.js'),
+            self.dir('html/user/bootstrap.min.js'))
+        install(srcdir('html/user/sample_jquery.min.js'),
+            self.dir('html/user/jquery.min.js'))
         install(srcdir('html/project.sample/project.inc'),
             self.dir('html/project/project.inc'))
         install(srcdir('html/project.sample/project_specific_prefs.inc'),
@@ -570,20 +577,20 @@ class Project:
             install(srcdir('test/uc_result'), self.dir('templates/uc_result'))
             install(srcdir('test/uc_wu_nodelete'), self.dir('templates/uc_wu'))
 
-        my_symlink(self.config.config.download_dir, self.dir('html', 'user', 'download'))
-        my_symlink('../stats', self.dir('html/user/stats'))
-
         f = open(self.dir('html/user', 'schedulers.txt'), 'w')
         print >>f, "<!-- <scheduler>" + self.scheduler_url.strip() + "</scheduler> -->"
         print >>f, "<link rel=\"boinc_scheduler\" href=\"" + self.scheduler_url.strip()+ "\">"
         f.close()
 
-        verbose_echo(1, "Setting up database")
-        database.create_database(
-            srcdir = options.srcdir,
-            config = self.config.config,
-            drop_first = options.drop_db_first
-            )
+        if self.no_db:
+            verbose_echo(1, "Not setting up database (--no_db was specified)")
+        else:
+            verbose_echo(1, "Setting up database")
+            database.create_database(
+                srcdir = options.srcdir,
+                config = self.config.config,
+                drop_first = options.drop_db_first
+                )
 
         verbose_echo(1, "Writing config files")
 

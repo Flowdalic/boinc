@@ -10,9 +10,15 @@ pre, code {
     font-size: medium;
 }
 
-.emphasize {
-	font-weight: bold;
+.lead {
+    font-size: 17px;
+    font-weight: bold;
 }
+
+.emphasize {
+    font-weight: bold;
+}
+
 .emphasize2 {
 	color: red;
 }
@@ -106,6 +112,12 @@ td.indent {
 td.button{
     background-color: rgb(223, 240, 255);
     border: 1px solid lightblue;
+    border-radius: 10px;
+}
+
+td.button_green{
+    background-color: rgb(200, 255, 230);
+    border: 1px solid lightgreen;
     border-radius: 10px;
 }
 

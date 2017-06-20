@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef OPENCL_BOINC_H
-#define OPENCL_BOINC_H
+#ifndef BOINC_OPENCL_BOINC_H
+#define BOINC_OPENCL_BOINC_H
 
 #include "cl_boinc.h"
 #include "miofile.h"
@@ -83,6 +83,9 @@ struct OPENCL_DEVICE_PROP {
     void write_xml(MIOFILE&, const char* tag, bool temp_file=false);
     int parse(XML_PARSER&, const char* end_tag);
     void description(char* buf, int buflen, const char* type);
+    void clear() {
+        memset(this, 0, sizeof(*this));
+    }
 };
 
 // NOTE: OpenCL has only 32 bits for global_mem_size, so
