@@ -5,7 +5,7 @@ Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 Uploaders: Steffen Moeller <moeller@debian.org>,
            Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
            Gianfranco Costamagna <locutusofborg@debian.org>
-Standards-Version: 3.9.8
+Standards-Version: 4.0.0
 Build-Depends: debhelper (>= 9.20160114),
                default-libmysqlclient-dev,
                dh-autoreconf,
@@ -251,69 +251,3 @@ Description: libraries of BOINC the client depends on
  commonly started for every core, it is essential to have memory
  shared as much as possible between binaries of all projects.
 
-Package: boinc-server-maker
-Architecture: any
-Provides: boinc-server
-Depends: adduser,
-         apache2 | httpd-cgi,
-         libfcgi0ldbl,
-         default-mysql-server | virtual-mysql-server,
-         openssl,
-         php,
-         php-cli,
-         php-mysql,
-         python,
-         python-mysqldb,
-         tcsh,
-         ${misc:Depends},
-         ${perl:Depends},
-         ${python:Depends},
-         ${shlibs:Depends}
-Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime
-Suggests: boinc-app-examples, boinc-cgi-stripchart
-Description: BOINC server applications and data files
- The Berkeley Open Infrastructure for Network Computing (BOINC) is a
- software platform for distributed computing using volunteered computer
- resources. For every scientific problem its own distinct project-server
- must be provided. The users only run a common client with project-specific
- additions (if not self-compiled or available as a Linux distribution's
- package itself) being downloaded from the server.
- .
- This package contains the daemons and tools to create and run BOINC
- projects.
-
-Package: boinc-app-examples
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Recommends: boinc-server-maker
-Description: example binaries for BOINC servers
- The Berkeley Open Infrastructure for Network Computing (BOINC) is a
- software platform for distributed computing using volunteered computer
- resources. For every scientific problem its own distinct project-server
- must be provided. The users only run a common client with project-specific
- additions (if not self-compiled or available as a Linux distribution's
- package itself) being downloaded from the server.
- .
- This package extends the boinc-server-maker package. It features a
- series of small applications that a newly installed environment may
- decide to use for testing purposes. Having them separated has the neat
- side effect that those binaries may be retrieved more easily for foreign
- platforms to feed the local servers with.
- .
- The package also features the wrapper application, which is likely
- to find its audience also in real projects.
-
-Package: boinc-cgi-stripchart
-Section: libs
-Priority: extra
-Architecture: all
-Depends: gnuplot-nox, ${misc:Depends}, ${perl:Depends}
-Recommends: apache2 | httpd-cgi
-Description: CGI script for plotting basic statistical graphs
- The Berkeley Open Infrastructure for Network Computing (BOINC) is a
- software platform for distributed computing using volunteered computer
- resources.
- .
- The BOINC developers have found their charting library to be of
- interest for a larger audience. It is isolated in the BOINC source
- tree and thus presented as a separate package.
