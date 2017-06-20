@@ -1,49 +1,36 @@
 Description: fixing some "de" typos, this should be addressed on other languages aswell.
 --- a/html/languages/translations/de.po
 +++ b/html/languages/translations/de.po
-@@ -1073,8 +1073,8 @@
+@@ -1201,8 +1201,8 @@
  
- #: ../inc/prefs.inc:158
- #, php-format
--msgid "% of the processors"
+ #: html/inc/prefs.inc:58
+ #, no-php-format
+-msgid "% of the CPUs"
 -msgstr "% der Prozessoren"
-+msgid "%% of the processors"
++msgid "%% of the CPUs"
 +msgstr "%% der Prozessoren"
  
- #: ../inc/prefs.inc:162
- msgid "Use at most %1 Can be used to reduce CPU heat %2"
-@@ -1083,8 +1083,8 @@
+ #: html/inc/prefs.inc:63
+ #, no-php-format
+@@ -1214,8 +1214,8 @@
  
- #: ../inc/prefs.inc:167
- #, php-format
+ #: html/inc/prefs.inc:66
+ #, no-php-format
 -msgid "% of CPU time"
 -msgstr "% der Prozessorzeit"
 +msgid "%% of CPU time"
 +msgstr "%% der Prozessorzeit"
  
- #: ../inc/prefs.inc:175 ../inc/prefs.inc:189
- msgid "Disk: use at most"
-@@ -1103,8 +1103,8 @@
- #: ../inc/prefs.inc:191 ../inc/prefs.inc:201 ../inc/prefs.inc:206
- #: ../inc/prefs.inc:211
- #, php-format
+ #: html/inc/prefs.inc:68 html/inc/prefs.inc:214
+ msgid "When to suspend"
+@@ -1369,8 +1369,8 @@
+ 
+ #: html/inc/prefs.inc:158
+ #, no-php-format
 -msgid "% of total"
 -msgstr "% von Gesamt"
 +msgid "%% of total"
 +msgstr "%% von Gesamt"
  
- #: ../inc/prefs.inc:194
- msgid "Tasks checkpoint to disk at most every"
-@@ -5338,9 +5338,10 @@
- "our message boards are moderated.\n"
- "Message board postings are subject to the following posting rules:\n"
- msgstr ""
-+"\n"
- "Um eine angenehme Diskussion und den bestmöglichen Informationsfluss zu "
--"gewährleisten wird dieses Forum moderiert. Forenbeiträge müssen den "
--"folgenden Regeln entsprechen:"
-+"gewährleisten, wird dieses Forum moderiert. Forenbeiträge müssen den "
-+"folgenden Regeln entsprechen:\n"
- 
- #: ../user/moderation.php:30
- msgid ""
+ #: html/inc/prefs.inc:164
+ msgid "When computer is in use, use at most"

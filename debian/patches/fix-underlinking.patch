@@ -10,23 +10,21 @@ Index: boinc/api/Makefile.am
  
  lib_LTLIBRARIES = libboinc_api.la
  libboinc_api_la_SOURCES = $(api_files)
--libboinc_api_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
-+libboinc_api_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -lpthread
+-libboinc_api_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
++libboinc_api_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -lpthread
 +libboinc_api_la_LIBADD = -L../lib/.libs $(LIBBOINC)
  
  if BUILD_GRAPHICS_API
  lib_LTLIBRARIES += libboinc_graphics2.la
  libboinc_graphics2_la_SOURCES = $(graphics2_files)
  libboinc_graphics2_la_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/samples/image_libs
--libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg
-+libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg
+ libboinc_graphics2_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -ljpeg
 +libboinc_graphics2_la_LIBADD = -L../lib/.libs $(APPLIBS)
  endif #BUILD_GRAPHICS_API
  
  lib_LTLIBRARIES += libboinc_opencl.la
  libboinc_opencl_la_SOURCES = $(opencl_files)
--libboinc_opencl_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
-+libboinc_opencl_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_opencl_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
 +libboinc_opencl_la_LIBADD = -L../lib/.libs $(APPLIBS)
  
  if INSTALL_HEADERS
@@ -35,13 +33,13 @@ Index: boinc/lib/Makefile.am
 ===================================================================
 --- boinc.orig/lib/Makefile.am
 +++ boinc/lib/Makefile.am
-@@ -181,8 +181,8 @@
+@@ -184,8 +184,8 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
--libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+-libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
 -libboinc_crypt_la_LIBADD =
-+libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
++libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
 +libboinc_crypt_la_LIBADD = $(LIBBOINC)
  endif
  
@@ -50,21 +48,21 @@ Index: boinc/sched/Makefile.am
 ===================================================================
 --- boinc.orig/sched/Makefile.am
 +++ boinc/sched/Makefile.am
-@@ -25,8 +25,8 @@
+@@ -24,8 +24,8 @@
  libsched_la_SOURCES = $(libsched_sources)
  libsched_la_CFLAGS = $(AM_CPPFLAGS)
  libsched_la_CXXFLAGS = $(AM_CPPFLAGS)
--libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+-libsched_la_LDFLAGS= -version-number $(LIBBOINC_VERSION)
 -libsched_la_LIBADD= $(SSL_LIBS)
-+libsched_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(MYSQL_LIBS) $(SSL_LIBS)
++libsched_la_LDFLAGS= -version-number $(LIBBOINC_VERSION) $(MYSQL_LIBS) $(SSL_LIBS)
 +libsched_la_LIBADD= $(LIBBOINC) $(LIBBOINC_CRYPT)
  
  ## install only headers that are meant for exporting the API !!
  if INSTALL_HEADERS
-@@ -48,7 +48,7 @@
+@@ -47,7 +47,7 @@
  libsched_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
  libsched_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
- libsched_fcgi_la_LDFLAGS= -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libsched_fcgi_la_LDFLAGS= -version-number $(LIBBOINC_VERSION)
 -libsched_fcgi_la_LIBADD=
 +libsched_fcgi_la_LIBADD= $(LIBBOINC_CRYPT)
  
@@ -77,7 +75,7 @@ Index: boinc/zip/Makefile.am
 @@ -62,7 +62,7 @@
  lib_LTLIBRARIES = libboinc_zip.la
  libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
- libboinc_zip_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_zip_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
 -libboinc_zip_la_LIBADD =
 +libboinc_zip_la_LIBADD = $(LIBBOINC)
  

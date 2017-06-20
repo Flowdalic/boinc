@@ -27,12 +27,5 @@ disable_svn_version.patch
 AdjustBoincTopdirPython.patch
 file_upload_handler_in_sched_linking.patch
 disable_silent_rules.patch
-envargs.patch
 fix-underlinking.patch
 static_scientific_apps.patch
-8416d8a1a423535fbc5d4e7416d6eac8ac5c050b.patch
-e965ea2e32d467e6937f206c96270cabd381df6e.patch
-1ec4be73d83d6041e4097b547a3fca297dd828db.patch
-056f788ea3a9ba1b45e17bcacea91a38c1ed8d73.patch
-7c2cb62aa3a119818e9ceab0d6358f4c910fb337.patch
-boinc-issue-1177.patch

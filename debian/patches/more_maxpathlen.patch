@@ -21,7 +21,7 @@ Description: use MAXPATHLEN and change sprintf to snprintf
  
 --- a/lib/filesys.cpp
 +++ b/lib/filesys.cpp
-@@ -581,7 +581,7 @@ int boinc_copy(const char* orig, const char* newf) {
+@@ -600,7 +600,7 @@ int boinc_copy(const char* orig, const char* newf) {
      }
      return 0;
  #elif defined(__EMX__)

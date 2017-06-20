@@ -2,7 +2,7 @@ Index: boinc/lib/Makefile.am
 ===================================================================
 --- boinc.orig/lib/Makefile.am
 +++ boinc/lib/Makefile.am
-@@ -173,6 +173,10 @@ lib_LTLIBRARIES = libboinc.la
+@@ -176,6 +176,10 @@ lib_LTLIBRARIES = libboinc.la
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -10,10 +10,10 @@ Index: boinc/lib/Makefile.am
 +libboinc_la_RANLIB = gcc-ranlib
 +libboinc_a_AR = gcc-ar
 +libboinc_a_RANLIB = gcc-ranlib
- libboinc_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_la_LIBADD =
  
-@@ -181,6 +185,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
+@@ -184,6 +188,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -21,10 +21,10 @@ Index: boinc/lib/Makefile.am
 +libboinc_crypt_la_RANLIB = gcc-ranlib
 +libboinc_crypt_a_AR = gcc-ar
 +libboinc_crypt_a_RANLIB = gcc-ranlib
- libboinc_crypt_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
+ libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
  libboinc_crypt_la_LIBADD = $(LIBBOINC)
  endif
-@@ -190,6 +198,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
+@@ -193,6 +201,10 @@lib_LTLIBRARIES += libboinc_fcgi.la
  libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
  libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -32,10 +32,10 @@ Index: boinc/lib/Makefile.am
 +libboinc_fcgi_la_RANLIB = gcc-ranlib
 +libboinc_fcgi_a_AR = gcc-ar
 +libboinc_fcgi_a_RANLIB = gcc-ranlib
- libboinc_fcgi_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_fcgi_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_fcgi_la_LIBADD =
  endif 
-@@ -253,7 +265,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
+@@ -256,7 +268,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp 
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -230,7 +230,7 @@ Index: boinc/api/Makefile.am
 +++ boinc/api/Makefile.am
 @@ -45,6 +45,10 @@ lib_LTLIBRARIES = libboinc_api.la
  libboinc_api_la_SOURCES = $(api_files)
- libboinc_api_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -lpthread
+ libboinc_api_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -lpthread
  libboinc_api_la_LIBADD = -L../lib/.libs $(LIBBOINC)
 +libboinc_api_la_AR = gcc-ar
 +libboinc_api_la_RANLIB = gcc-ranlib
@@ -241,7 +241,7 @@ Index: boinc/api/Makefile.am
  lib_LTLIBRARIES += libboinc_graphics2.la
 @@ -52,12 +56,20 @@ libboinc_graphics2_la_SOURCES = $(graphi
  libboinc_graphics2_la_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/samples/image_libs
- libboinc_graphics2_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION) -ljpeg
+ libboinc_graphics2_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -ljpeg
  libboinc_graphics2_la_LIBADD = -L../lib/.libs $(APPLIBS)
 +libboinc_graphics2_la_AR = gcc-ar
 +libboinc_graphics2_la_RANLIB = gcc-ranlib
@@ -251,7 +251,7 @@ Index: boinc/api/Makefile.am
  
  lib_LTLIBRARIES += libboinc_opencl.la
  libboinc_opencl_la_SOURCES = $(opencl_files)
- libboinc_opencl_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_opencl_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_opencl_la_LIBADD = -L../lib/.libs $(APPLIBS)
 +libboinc_opencl_la_AR = gcc-ar
 +libboinc_opencl_la_RANLIB = gcc-ranlib
@@ -266,7 +266,7 @@ Index: boinc/zip/Makefile.am
 +++ boinc/zip/Makefile.am
 @@ -63,6 +63,10 @@ lib_LTLIBRARIES = libboinc_zip.la
  libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
- libboinc_zip_la_LDFLAGS = -L$(libdir) -rpath $(libdir) -version-number $(LIBBOINC_VERSION)
+ libboinc_zip_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_zip_la_LIBADD = $(LIBBOINC)
 +libboinc_zip_la_AR = gcc-ar
 +libboinc_zip_la_RANLIB = gcc-ranlib
