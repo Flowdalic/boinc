@@ -1,6 +1,7 @@
-boinc (7.8.0+dfsg-1) unstable; urgency=medium
+boinc (7.8.1+dfsg-1) unstable; urgency=medium
 
   * New upstream major release, patch refresh.
+  * Update copyright file
   * Drop patches addressed upstream.
   * Upload to unstable.
   * Bump std-version to 4.0.0
