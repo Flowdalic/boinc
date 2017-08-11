@@ -325,6 +325,10 @@ Files: html/inc/recaptchalib.php
 Copyright: 2007 reCAPTCHA -- http://recaptcha.net
 License: MIT
 
+Files: html/inc/ReCaptcha/*
+Copyright: 2015 Google Inc.
+License: MIT
+
 Files: lib/md5.cpp
        lib/md5.h
 Copyright: 1999 Aladdin Enterprises
