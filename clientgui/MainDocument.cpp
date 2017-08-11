@@ -169,7 +169,6 @@ void CNetworkConnection::Poll() {
             if (!retval) {
                 wxLogTrace(wxT("Function Status"), wxT("CNetworkConnection::Poll - Connection Success"));
                 SetStateSuccess(m_strNewComputerName, m_strNewComputerPassword);
-                m_pDocument->CheckForVersionUpdate();
             } else if (ERR_AUTHENTICATOR == retval) {
                 wxLogTrace(wxT("Function Status"), wxT("CNetworkConnection::Poll - RPC Authorization - ERR_AUTHENTICATOR"));
                 SetStateErrorAuthentication();
@@ -1235,6 +1234,7 @@ int CMainDocument::CoreClientQuit() {
 bool CMainDocument::IsUserAuthorized() {
 #ifndef _WIN32
 #ifdef SANDBOX
+#ifndef __WXMAC__   // Currently unauthorized users can't run Manager, so this would be redundant
     static bool         sIsAuthorized = false;
     group               *grp;
     gid_t               rgid, boinc_master_gid;
@@ -1281,6 +1281,7 @@ bool CMainDocument::IsUserAuthorized() {
     }       // if (g_use_sandbox)
 #endif      // SANDBOX
 #endif      // #ifndef _WIN32
+#endif      // #ifndef __WXMAC__
 
     return true;
 }
