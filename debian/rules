@@ -384,15 +384,18 @@ ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
 	cp $(SAMPLES) $(CURDIR)/debian/tmp/samples || echo "W: Could not install samples ($(SAMPLES))"
-	for i in `ls $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/all/libraries/fonts/*.ttf`; do \
-		rm -r $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/all/libraries/fonts/$i ;\
-		ln -s /usr/share/fonts/truetype/dejavu/$i $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/all/libraries/fonts/$i ; \
-	done;
-
-	for i in `ls $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/*`; do \
-		rm -r $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/$i ;\
-		ln -s /usr/share/fonts-font-awesome/fonts/$i $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/$i; \
-	done;
+	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/all/libraries/fonts/ ; \
+	for i in `ls *.ttf`; do \
+		rm -r "$$i" ; \
+		ln -sf "/usr/share/fonts/truetype/dejavu/$$i" . ; \
+	done; \
+	cd -
+	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/ ; \
+	for i in `ls *`; do \
+		rm -r "$$i" ; \
+		ln -sf "/usr/share/fonts-font-awesome/fonts/$$i" . ; \
+	done; \
+	cd -
 
 endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
@@ -429,7 +432,7 @@ override_dh_fixperms:
 	  debian/boinc-client/usr/share/boinc-client/udev-cpu_share \
 	  debian/boinc-client/usr/share/bug/boinc-client/script \
 	  debian/boinc-manager/usr/share/doc/boinc-manager/examples/run-boincmgr || true
-	[ -d  debian/boinc-server-maker ] && chmod +x \
+	[ -d debian/boinc-server-maker ] && chmod +x \
 	  debian/boinc-server-maker/usr/share/boinc-server-maker/html/ops/delete_job_files || true
 
 override_dh_strip:
