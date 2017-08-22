@@ -49,7 +49,7 @@ case "$1" in
 	mkdir -p $BOINC_DIR
 	[ -x /sbin/restorecon ] && /sbin/restorecon $BOINC_DIR
 
-	chown -h boinc:boinc $BOINC_DIR 2>/dev/null || true
+	chown -hR boinc:boinc $BOINC_DIR 2>/dev/null || true
 
         # Move old configuration files to /etc/boinc-client/ and
         # create symlinks for the BOINC core client.
