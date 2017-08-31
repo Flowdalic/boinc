@@ -1,7 +1,7 @@
 Description: fixing some "de" typos, this should be addressed on other languages aswell.
 --- a/html/languages/translations/de.po
 +++ b/html/languages/translations/de.po
-@@ -1201,8 +1201,8 @@
+@@ -1209,8 +1209,8 @@
  
  #: html/inc/prefs.inc:58
  #, no-php-format
@@ -12,7 +12,7 @@ Description: fixing some "de" typos, this should be addressed on other languages
  
  #: html/inc/prefs.inc:63
  #, no-php-format
-@@ -1214,8 +1214,8 @@
+@@ -1222,8 +1222,8 @@
  
  #: html/inc/prefs.inc:66
  #, no-php-format
@@ -23,7 +23,7 @@ Description: fixing some "de" typos, this should be addressed on other languages
  
  #: html/inc/prefs.inc:68 html/inc/prefs.inc:214
  msgid "When to suspend"
-@@ -1369,8 +1369,8 @@
+@@ -1377,8 +1377,8 @@
  
  #: html/inc/prefs.inc:158
  #, no-php-format
