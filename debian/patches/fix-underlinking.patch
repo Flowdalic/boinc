@@ -54,7 +54,7 @@ Index: boinc/sched/Makefile.am
  libsched_la_CXXFLAGS = $(AM_CPPFLAGS)
 -libsched_la_LDFLAGS= -version-number $(LIBBOINC_VERSION)
 -libsched_la_LIBADD= $(SSL_LIBS)
-+libsched_la_LDFLAGS= -version-number $(LIBBOINC_VERSION) $(MYSQL_LIBS) $(SSL_LIBS)
++libsched_la_LDFLAGS= -version-number $(LIBBOINC_VERSION) $(SSL_LIBS)
 +libsched_la_LIBADD= $(LIBBOINC) $(LIBBOINC_CRYPT)
  
  ## install only headers that are meant for exporting the API !!

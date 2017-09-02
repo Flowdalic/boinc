@@ -384,19 +384,16 @@ ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
 	mkdir -p $(CURDIR)/debian/tmp/samples
 	cp $(SAMPLES) $(CURDIR)/debian/tmp/samples || echo "W: Could not install samples ($(SAMPLES))"
-	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/all/libraries/fonts/ ; \
+	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/all/libraries/fonts/ && \
 	for i in `ls *.ttf`; do \
 		rm -r "$$i" ; \
 		ln -sf "/usr/share/fonts/truetype/dejavu/$$i" . ; \
-	done; \
-	cd -
-	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/ ; \
+	done;
+	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/ && \
 	for i in `ls *`; do \
 		rm -r "$$i" ; \
 		ln -sf "/usr/share/fonts-font-awesome/fonts/$$i" . ; \
-	done; \
-	cd -
-
+	done;
 endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
 	do \
