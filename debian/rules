@@ -278,7 +278,7 @@ override_dh_auto_build-arch: update-boinc-applinks.1
 
 # we need to build zip because of the libboinc7 reference, until we split the dev packages or we move it in a new package
 #ifeq (,$(ENABLE_SERVER_TEST))
-	# FIXME For some reasons unzip build fails if hardening flags are enabled.
+	# TODO For some reasons unzip build fails if hardening flags are enabled.
 	$(MAKE) CC=$(CCorig) CXX=$(CXXorig) -C zip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
 	$(MAKE) CC=$(CCorig) CXX=$(CXXorig) -C zip/unzip CFLAGS="$(CFLAGS_plain) -fPIC" CXXFLAGS="$(CXXFLAGS_plain)"
 #endif
