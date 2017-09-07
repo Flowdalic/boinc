@@ -1,6 +1,8 @@
-boinc (7.8.2+dfsg-3) UNRELEASED; urgency=medium
+boinc (7.8.2+dfsg-3) unstable; urgency=medium
 
+  * Upload to unstable
   * Upgrade std-version to 4.1.0, remove priority extra.
+  * Fix build with new glibc.
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 06 Sep 2017 08:26:32 +0200
 
