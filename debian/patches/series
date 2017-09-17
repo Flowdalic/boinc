@@ -30,3 +30,4 @@ disable_silent_rules.patch
 fix-underlinking.patch
 static_scientific_apps.patch
 0001-Fix-build-with-new-glibc-2.26.patch
+hurd-fixes.patch

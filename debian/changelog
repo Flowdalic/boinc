@@ -1,3 +1,10 @@
+boinc (7.8.2+dfsg-4) unstable; urgency=medium
+
+  * Upload to unstable
+  * Fix build failure for hurd
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sun, 17 Sep 2017 17:40:47 +0200
+
 boinc (7.8.2+dfsg-3exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
