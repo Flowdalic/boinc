@@ -1,9 +1,13 @@
 boinc (7.8.2+dfsg-4) unstable; urgency=medium
 
   * Upload to unstable
+  * Ack NMU from Olly Betts, with a *great* thanks
   * Fix build failure for hurd
 
- -- Gianfranco Costamagna <locutusofborg@debian.org>  Sun, 17 Sep 2017 17:40:47 +0200
+  [ Olly Betts ]
+  * Switch to use wxHtmlWindow instead of wxWebView (Closes: #876940).
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 28 Sep 2017 08:52:47 +0200
 
 boinc (7.8.2+dfsg-3exp1) experimental; urgency=medium
 
