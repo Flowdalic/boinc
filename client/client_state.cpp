@@ -1416,28 +1416,24 @@ bool CLIENT_STATE::garbage_collect() {
     // because detach_project() calls garbage_collect_always(),
     // and we need to avoid infinite recursion
     //
-    if (acct_mgr_info.using_am()) {
-        // If we're using an AM,
-        // start an AM RPC rather than detaching the projects;
-        // the RPC completion handler will detach them.
-        // This way the AM will be informed of their work done.
-        //
+    while (1) {
+        bool found = false;
         for (unsigned i=0; i<projects.size(); i++) {
             PROJECT* p = projects[i];
             if (p->detach_when_done && !nresults_for_project(p)) {
-                acct_mgr_info.next_rpc_time = 0;
-                acct_mgr_info.poll();
-                break;
+                // If we're using an AM,
+                // wait until the next successful RPC to detach project,
+                // so the AM will be informed of its work done.
+                //
+                if (!p->attached_via_acct_mgr) {
+                    msg_printf(p, MSG_INFO, "Detaching - no more tasks");
+                    detach_project(p);
+                    action = true;
+                    found = true;
+                }
             }
         }
-    } else {
-        for (unsigned i=0; i<projects.size(); i++) {
-            PROJECT* p = projects[i];
-            if (p->detach_when_done && !nresults_for_project(p)) {
-                detach_project(p);
-                action = true;
-            }
-        }
+        if (!found) break;
     }
 #endif
     return action;
@@ -1545,14 +1541,12 @@ bool CLIENT_STATE::garbage_collect_always() {
             wup = rp->wup;
             if (wup->had_download_failure(failnum)) {
                 wup->get_file_errors(error_msgs);
-                report_result_error(
-                    *rp, "WU download error: %s", error_msgs.c_str()
-                );
+                string err_msg = "WU download error: " + error_msgs;
+                report_result_error(*rp, err_msg.c_str());
             } else if (rp->avp && rp->avp->had_download_failure(failnum)) {
                 rp->avp->get_file_errors(error_msgs);
-                report_result_error(
-                    *rp, "app_version download error: %s", error_msgs.c_str()
-                );
+                string err_msg = "app_version download error: " + error_msgs;
+                report_result_error(*rp, err_msg.c_str());
             }
         }
         bool found_error = false;
@@ -1585,7 +1579,8 @@ bool CLIENT_STATE::garbage_collect_always() {
                     atp->abort_task(ERR_RESULT_UPLOAD, "upload failure");
                 }
             }
-            report_result_error(*rp, "upload failure: %s", error_str.c_str());
+            string err_msg = "upload failure: " + error_str;
+            report_result_error(*rp, err_msg.c_str());
         }
 #endif
         rp->avp->ref_cnt++;
@@ -1835,10 +1830,8 @@ bool CLIENT_STATE::time_to_exit() {
 // - If result state is FILES_DOWNLOADED, change it to COMPUTE_ERROR
 //   so that we don't try to run it again.
 //
-int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
-    char buf[4096],  err_msg[4096];
-        // The above store 1-line messages and short XML snippets.
-        // Shouldn't exceed a few hundred bytes.
+int CLIENT_STATE::report_result_error(RESULT& res, const char* err_msg) {
+    char buf[1024];
     unsigned int i;
     int failnum;
 
@@ -1851,18 +1844,14 @@ int CLIENT_STATE::report_result_error(RESULT& res, const char* format, ...) {
     res.set_ready_to_report();
     res.completed_time = now;
 
-    va_list va;
-    va_start(va, format);
-    vsnprintf(err_msg, sizeof(err_msg), format, va);
-    va_end(va);
-
     sprintf(buf, "Unrecoverable error for task %s", res.name);
 #ifndef SIM
     scheduler_op->project_rpc_backoff(res.project, buf);
 #endif
 
-    sprintf( buf, "<message>\n%s\n</message>\n", err_msg);
-    res.stderr_out.append(buf);
+    res.stderr_out.append("<message>\n");
+    res.stderr_out.append(err_msg);
+    res.stderr_out.append("</message>\n");
 
     switch(res.state()) {
     case RESULT_NEW:
