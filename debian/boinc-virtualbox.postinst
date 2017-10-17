@@ -1,0 +1,28 @@
+#!/bin/sh
+# postinst script for boinc-virtualbox
+
+set -e
+
+# Source the debconf shell library.
+. /usr/share/debconf/confmodule
+
+case "$1" in
+    configure)
+	# Assign boinc user to group vboxusers if not already the case
+	if ! getent group vboxusers | grep -q boinc; then
+	    usermod -a -G vboxusers boinc || echo "Could not assign boinc user to group 'vboxusers'."
+	fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

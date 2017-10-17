@@ -44,11 +44,6 @@ case "$1" in
 	    usermod -a -G video boinc || echo "Could not assign boinc user to group 'video'."
 	fi
 
-	# Assign boinc user to group vboxusers if not already the case
-	if ! getent group vboxusers | grep -q boinc; then
-	    usermod -a -G vboxusers boinc || echo "Could not assign boinc user to group 'vboxusers'."
-	fi
-
 	# Make sure the /var/lib/boinc-client directory exists and
 	# is owned by the boinc user.
 	mkdir -p $BOINC_DIR
