@@ -44,6 +44,11 @@ case "$1" in
 	    usermod -a -G video boinc || echo "Could not assign boinc user to group 'video'."
 	fi
 
+	# Assign boinc user to group input if not already the case (for idle detection)
+	if ! getent group input | grep -q boinc; then
+	    usermod -a -G input boinc || echo "Could not assign boinc user to group 'input'."
+	fi
+
 	# Make sure the /var/lib/boinc-client directory exists and
 	# is owned by the boinc user.
 	mkdir -p $BOINC_DIR
