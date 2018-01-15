@@ -90,7 +90,7 @@ diff --git a/configure.ac b/configure.ac
 index 8e2115385c..d1a0654e61 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1302,6 +1302,7 @@ AC_CONFIG_FILES([
+@@ -1318,6 +1318,7 @@ AC_CONFIG_FILES([
                   client/win/boinc_path_config.py:py/boinc_path_config.py.in
                   client/scripts/Makefile
                   client/scripts/boinc-client
