@@ -1,4 +1,4 @@
-From 5ac7347f79176f59643d313fdee71ea0bb7a60ed Mon Sep 17 00:00:00 2001
+From 8d6cdbd55a4464abb4d1494cda2f266ca1bfcf67 Mon Sep 17 00:00:00 2001
 From: Bryan Quigley <bryan.quigley@canonical.com>
 Date: Mon, 27 Nov 2017 00:08:14 -0500
 Subject: [PATCH] Add generated systemd unit
@@ -6,16 +6,18 @@ Subject: [PATCH] Add generated systemd unit
 Both Fedora and Debian have their own systemd units for boinc;
 this is based on elements of both so we stop duplicating effort.
 
+This also adds minimal confinement to protect the home directories.
+
 Also added clean to init.d script and made it only install if a
 init.d directory already exists.
 
 Closes: #2255
 ---
  .gitignore                             |  1 +
- client/scripts/Makefile.am             | 14 ++++++++++++--
- client/scripts/boinc-client.service.in | 21 +++++++++++++++++++++
+ client/scripts/Makefile.am             | 22 +++++++++++++++++-----
+ client/scripts/boinc-client.service.in | 22 ++++++++++++++++++++++
  configure.ac                           |  1 +
- 4 files changed, 35 insertions(+), 2 deletions(-)
+ 4 files changed, 41 insertions(+), 5 deletions(-)
  create mode 100644 client/scripts/boinc-client.service.in
 
 diff --git a/.gitignore b/.gitignore
@@ -31,10 +33,10 @@ index a7745b5cf7..f32845e326 100644
  config.log
  config.status
 diff --git a/client/scripts/Makefile.am b/client/scripts/Makefile.am
-index 67d3820156..92153e6835 100644
+index 67d3820156..ae90a810d7 100644
 --- a/client/scripts/Makefile.am
 +++ b/client/scripts/Makefile.am
-@@ -2,8 +2,15 @@
+@@ -2,16 +2,28 @@
  
  install-exec-hook:
  	chmod +x boinc-client
@@ -45,15 +47,24 @@ index 67d3820156..92153e6835 100644
 +		$(INSTALL) -b boinc-client $(DESTDIR)$(sysconfdir)/init.d/boinc-client ; \
 +	fi
 +	if [ -d /usr/lib/systemd/system ] ; then \
-+		$(INSTALL) -b boinc-client.service $(DESTDIR)/usr/lib/systemd/system/boinc-client.service ; \
++		$(INSTALL) -d $(DESTDIR)/usr/lib/systemd/system/ ; \
++		$(INSTALL_DATA) boinc-client.service $(DESTDIR)/usr/lib/systemd/system/boinc-client.service ; \
 +	elif [ -d /lib/systemd/system ] ; then \
-+		$(INSTALL) -b boinc-client.service $(DESTDIR)/lib/systemd/system/boinc-client.service ; \
++		$(INSTALL) -d $(DESTDIR)/lib/systemd/system/ ; \
++		$(INSTALL_DATA) boinc-client.service $(DESTDIR)/lib/systemd/system/boinc-client.service ; \
 +	fi
  	if [ -d /etc/sysconfig ] ; then \
  	  $(INSTALL) -d $(DESTDIR)$(sysconfdir)/sysconfig ; \
- 	  $(INSTALL) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/sysconfig/boinc-client ; \
-@@ -15,3 +22,6 @@ install-exec-hook:
- 	  $(INSTALL) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/boinc-client.conf ; \
+-	  $(INSTALL) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/sysconfig/boinc-client ; \
++	  $(INSTALL_DATA) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/sysconfig/boinc-client ; \
+ 	elif [ -d /etc/default ] ; then \
+ 	  $(INSTALL) -d $(DESTDIR)$(sysconfdir)/default ; \
+-	  $(INSTALL) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/default/boinc-client ; \
++	  $(INSTALL_DATA) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/default/boinc-client ; \
+ 	else \
+ 	  $(INSTALL) -d $(DESTDIR)$(sysconfdir) ; \
+-	  $(INSTALL) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/boinc-client.conf ; \
++	  $(INSTALL_DATA) $(srcdir)/boinc-client.conf $(DESTDIR)$(sysconfdir)/boinc-client.conf ; \
  	fi
  
 +clean:
@@ -61,18 +72,19 @@ index 67d3820156..92153e6835 100644
 +	rm boinc-client
 diff --git a/client/scripts/boinc-client.service.in b/client/scripts/boinc-client.service.in
 new file mode 100644
-index 0000000000..2c424ffb5d
+index 0000000000..a346d4ae5b
 --- /dev/null
 +++ b/client/scripts/boinc-client.service.in
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,22 @@
 +[Unit]
 +Description=Berkeley Open Infrastructure Network Computing Client
 +Documentation=man:boinc(1)
 +After=network-online.target
 +
 +[Service]
++ProtectHome=true
 +Type=simple
-+Nice=19
++Nice=10
 +User=boinc
 +WorkingDirectory=/var/lib/boinc-client
 +EnvironmentFile=-/etc/sysconfig/boinc-client
@@ -90,7 +102,7 @@ diff --git a/configure.ac b/configure.ac
 index 8e2115385c..d1a0654e61 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1318,6 +1318,7 @@ AC_CONFIG_FILES([
+@@ -1302,6 +1302,7 @@ AC_CONFIG_FILES([
                   client/win/boinc_path_config.py:py/boinc_path_config.py.in
                   client/scripts/Makefile
                   client/scripts/boinc-client
