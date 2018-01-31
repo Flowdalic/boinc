@@ -1,3 +1,9 @@
+boinc (7.8.6+dfsg-2exp1) experimental; urgency=medium
+
+  * Upload to experimental again, with the boinc-server-* packages.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 31 Jan 2018 10:34:11 +0100
+
 boinc (7.8.6+dfsg-2) unstable; urgency=medium
 
   * Update the 2260.patch to hopefully remove
