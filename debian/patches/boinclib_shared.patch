@@ -5,7 +5,7 @@ Index: boinc/lib/Makefile.am
 ===================================================================
 --- boinc.orig/lib/Makefile.am
 +++ boinc/lib/Makefile.am
-@@ -176,7 +176,7 @@
+@@ -178,7 +178,7 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -14,7 +14,7 @@ Index: boinc/lib/Makefile.am
  libboinc_la_LIBADD =
  
  if ENABLE_BOINCCRYPT
-@@ -184,7 +184,7 @@
+@@ -186,7 +186,7 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -82,8 +82,10 @@ Index: boinc/clientscr/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
---- boinc-7.6.7+dfsg.orig/sched/Makefile.am
-+++ boinc-7.6.7+dfsg/sched/Makefile.am
+Index: boinc/sched/Makefile.am
+===================================================================
+--- boinc.orig/sched/Makefile.am
++++ boinc/sched/Makefile.am
 @@ -4,7 +4,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -92,9 +94,11 @@ Index: boinc/clientscr/Makefile.am
  
  if ENABLE_LIBRARIES
  
---- boinc-7.6.7+dfsg.orig/tools/Makefile.am
-+++ boinc-7.6.7+dfsg/tools/Makefile.am
-@@ -44,7 +44,6 @@ dist_tools_DATA = \
+Index: boinc/tools/Makefile.am
+===================================================================
+--- boinc.orig/tools/Makefile.am
++++ boinc/tools/Makefile.am
+@@ -44,7 +44,6 @@
      gui_urls.xml
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
@@ -102,9 +106,11 @@ Index: boinc/clientscr/Makefile.am
  
  cancel_jobs_SOURCES = cancel_jobs.cpp
  cancel_jobs_LDADD = $(SERVERLIBS)
---- boinc-7.6.7+dfsg.orig/vda/Makefile.am
-+++ boinc-7.6.7+dfsg/vda/Makefile.am
-@@ -4,7 +4,6 @@ vdadir=$(prefix)/lib/boinc-server-maker/
+Index: boinc/vda/Makefile.am
+===================================================================
+--- boinc.orig/vda/Makefile.am
++++ boinc/vda/Makefile.am
+@@ -4,7 +4,6 @@
  vda_PROGRAMS = vda vdad ssim
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)

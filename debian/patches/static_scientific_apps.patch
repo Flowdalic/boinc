@@ -2,7 +2,7 @@ Index: boinc/lib/Makefile.am
 ===================================================================
 --- boinc.orig/lib/Makefile.am
 +++ boinc/lib/Makefile.am
-@@ -176,6 +176,10 @@ lib_LTLIBRARIES = libboinc.la
+@@ -178,6 +178,10 @@ lib_LTLIBRARIES = libboinc.la
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -13,7 +13,7 @@ Index: boinc/lib/Makefile.am
  libboinc_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_la_LIBADD =
  
-@@ -184,6 +188,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
+@@ -186,6 +190,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -24,7 +24,7 @@ Index: boinc/lib/Makefile.am
  libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
  libboinc_crypt_la_LIBADD = $(LIBBOINC)
  endif
-@@ -193,6 +201,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
+@@ -195,6 +203,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
  libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
  libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -34,34 +34,35 @@ Index: boinc/lib/Makefile.am
 +libboinc_fcgi_a_RANLIB = gcc-ranlib
  libboinc_fcgi_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_fcgi_la_LIBADD =
- endif 
-@@ -256,7 +268,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
+ endif
+@@ -258,7 +270,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  msg_test_LDADD = $(LIBBOINC)
- crypt_prog_SOURCES = crypt_prog.cpp 
+ crypt_prog_SOURCES = crypt_prog.cpp
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
--crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS) 
+-crypt_prog_LDADD = $(LIBBOINC_CRYPT_STATIC) $(LIBBOINC) $(SSL_LIBS)
 +crypt_prog_LDADD = $(LIBBOINC_CRYPT) $(LIBBOINC) $(SSL_LIBS)
- parse_test_SOURCES = parse_test.cpp 
+ parse_test_SOURCES = parse_test.cpp
  parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  parse_test_LDADD = $(LIBBOINC)
 Index: boinc/samples/condor/Makefile
 ===================================================================
 --- boinc.orig/samples/condor/Makefile
 +++ boinc/samples/condor/Makefile
-@@ -1,14 +1,17 @@
+@@ -1,18 +1,18 @@
  all: boinc_gahp
  
  clean:
--	rm boinc_gahp
-+	rm boinc_gahp libcurl.a
+-	rm -f boinc_gahp
++	rm -f boinc_gahp libcurl.a
  
--boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp
--	g++ -g -O0 -I../../lib \
-+libcurl.a:
-+	ln -s `$(CXX) -print-file-name=libcurl.a`
-+
-+boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp $(BOINC_LIB_DIR)/libboinc.a
-+	$(CXX) $(CPPFLAGS) -static -pthread -g -O0 -I../../lib \
+ distclean: clean
+ 
+ distclean-recursive: clean
+ 
+-boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h
+-	g++ -g -O0 -I../../lib -I../.. \
++boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h $(CXX) $(CPPFLAGS) -static -pthread -g -O0 -I../../lib -I../.. \
++	$(CXX) $(CPPFLAGS) -static -pthread -g -O0 -I../../lib -I../.. \
  	-o boinc_gahp boinc_gahp.cpp ../../lib/remote_submit.cpp \
 -	-L../../lib -lboinc -lpthread -lcurl
 +	$(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a libcurl.a

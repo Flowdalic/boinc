@@ -1,8 +1,10 @@
 Description: this patch makes boinc correctly close the open files.
  This patch allows also MFILE to correctly deallocate its pointers by calling close().
---- a/lib/crypt_prog.cpp
-+++ b/lib/crypt_prog.cpp
-@@ -168,6 +168,8 @@ int main(int argc, char** argv) {
+Index: boinc/lib/crypt_prog.cpp
+===================================================================
+--- boinc.orig/lib/crypt_prog.cpp
++++ boinc/lib/crypt_prog.cpp
+@@ -168,6 +168,8 @@
          if (!fpub) die("fopen");
          print_key_hex(fpriv, (KEY*)&private_key, sizeof(private_key));
          print_key_hex(fpub, (KEY*)&public_key, sizeof(public_key));
@@ -11,7 +13,7 @@ Description: this patch makes boinc correctly close the open files.
  
      } else if (!strcmp(argv[1], "-sign")) {
          if (argc < 4) {
-@@ -182,6 +184,7 @@ int main(int argc, char** argv) {
+@@ -182,6 +184,7 @@
          signature.len = 256;
          retval = sign_file(argv[2], private_key, signature);
          print_hex_data(stdout, signature);
@@ -19,7 +21,7 @@ Description: this patch makes boinc correctly close the open files.
      } else if (!strcmp(argv[1], "-sign_string")) {
          if (argc < 4) {
              usage();
-@@ -193,6 +196,7 @@ int main(int argc, char** argv) {
+@@ -193,6 +196,7 @@
          if (retval) die("scan_key_hex\n");
          generate_signature(argv[2], cbuf, private_key);
          puts(cbuf);
@@ -27,7 +29,7 @@ Description: this patch makes boinc correctly close the open files.
      } else if (!strcmp(argv[1], "-verify")) {
          if (argc < 5) {
              usage();
-@@ -207,6 +211,8 @@ int main(int argc, char** argv) {
+@@ -207,6 +211,8 @@
          signature.data = signature_buf;
          signature.len = 256;
          retval = scan_hex_data(f, signature);
@@ -36,7 +38,7 @@ Description: this patch makes boinc correctly close the open files.
          if (retval) die("scan_hex_data");
  
          char md5_buf[64];
-@@ -236,6 +242,8 @@ int main(int argc, char** argv) {
+@@ -236,6 +242,8 @@
          if (!fpub) die("fopen");
          retval = scan_key_hex(fpub, (KEY*)&public_key, sizeof(public_key));
          if (retval) die("read_public_key");
@@ -45,7 +47,7 @@ Description: this patch makes boinc correctly close the open files.
          strcpy((char*)buf2, "encryption test successful");
          in.data = buf2;
          in.len = strlen((char*)in.data);
-@@ -254,6 +262,7 @@ int main(int argc, char** argv) {
+@@ -254,6 +262,7 @@
          signature.data = signature_buf;
          signature.len = 256;
          retval = scan_hex_data(f, signature);
@@ -53,7 +55,7 @@ Description: this patch makes boinc correctly close the open files.
          if (retval) die("cannot scan_hex_data");
          certpath = check_validity(argv[4], argv[2], signature.data, argv[5]);
          if (certpath == NULL) {
-@@ -426,6 +435,7 @@ int main(int argc, char** argv) {
+@@ -426,6 +435,7 @@
                      die("fopen");
                  }
                  print_key_hex(fpub, (KEY*)&public_key, sizeof(public_key));
@@ -61,9 +63,11 @@ Description: this patch makes boinc correctly close the open files.
              }
          }
      } else {
---- a/lib/mfile.cpp
-+++ b/lib/mfile.cpp
-@@ -43,7 +43,7 @@
+Index: boinc/lib/mfile.cpp
+===================================================================
+--- boinc.orig/lib/mfile.cpp
++++ boinc/lib/mfile.cpp
+@@ -42,7 +42,7 @@
  }
  
  MFILE::~MFILE() {
@@ -72,9 +76,11 @@ Description: this patch makes boinc correctly close the open files.
  }
  
  int MFILE::open(const char* path, const char* mode) {
---- a/lib/parse_test.cpp
-+++ b/lib/parse_test.cpp
-@@ -57,6 +57,7 @@ int main() {
+Index: boinc/lib/parse_test.cpp
+===================================================================
+--- boinc.orig/lib/parse_test.cpp
++++ boinc/lib/parse_test.cpp
+@@ -57,6 +57,7 @@
          exit(1);
      }
      parse(f);

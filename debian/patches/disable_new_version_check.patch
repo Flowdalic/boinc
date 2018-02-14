@@ -10,9 +10,11 @@ Forwarded: not-needed
 Reviewed-By: costamagnagianfranco@yahoo.it
 Last-Update: <2013-03-07>
 
---- a/client/client_state.cpp
-+++ b/client/client_state.cpp
-@@ -598,7 +598,7 @@
+Index: boinc/client/client_state.cpp
+===================================================================
+--- boinc.orig/client/client_state.cpp
++++ boinc/client/client_state.cpp
+@@ -621,7 +621,7 @@
  
      // inform the user if there's a newer version of client
      //
@@ -21,8 +23,10 @@ Last-Update: <2013-03-07>
  
      // parse account files again,
      // now that we know the host's venue on each project
---- a/client/scheduler_op.cpp
-+++ b/client/scheduler_op.cpp
+Index: boinc/client/scheduler_op.cpp
+===================================================================
+--- boinc.orig/client/scheduler_op.cpp
++++ boinc/client/scheduler_op.cpp
 @@ -138,7 +138,7 @@
          // and project list
          //
