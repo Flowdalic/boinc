@@ -1,10 +1,10 @@
 # BOINC client localization template
-# Copyright (C) 2017 University of California
+# Copyright (C) 2018 University of California
 # 
 # This file is distributed under the same license as BOINC.
 # 
 # Translators:
-# Axelle Andy, 2015
+# Axel Andy, 2015
 # Frederic94500 <frederictran@hotmail.fr>, 2017
 # Jerome Cadet <jerome.cadet@pobox.com>, 2017
 # Philippe Janocha, 2016
@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BOINC\n"
 "Report-Msgid-Bugs-To: BOINC translation team <boinc_loc@ssl.berkeley.edu>\n"
-"POT-Creation-Date: 2017-08-15 02:04 UTC\n"
-"PO-Revision-Date: 2017-08-20 07:12+0000\n"
+"POT-Creation-Date: 2018-01-17 16:06 UTC\n"
+"PO-Revision-Date: 2017-09-21 23:56+0000\n"
 "Last-Translator: Romain Rocès <romain.roces@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/boinc/boinc/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: client/acct_mgr.cpp:485 client/acct_mgr.cpp:502
+#: client/acct_mgr.cpp:503 client/acct_mgr.cpp:510
 msgid "Message from account manager"
 msgstr "Message du gestionnaire de compte"
 
@@ -32,13 +32,13 @@ msgstr "Message du gestionnaire de compte"
 msgid "Message from server"
 msgstr "Message du serveur"
 
-#: client/client_state.cpp:312
+#: client/client_state.cpp:315
 msgid ""
 "Some tasks need more memory than allowed by your preferences.  Please check "
 "the preferences."
 msgstr "Certaines tâches nécessitent davantage de mémoire que celle permise dans vos préférences.  Merci de vérifier les préférences."
 
-#: client/client_state.cpp:649
+#: client/client_state.cpp:672
 msgid "Couldn't write state file; check directory permissions"
 msgstr "Impossible d'écrire dans le fichier d'état ; vérifiez les droits d'accès aux répertoires"
 
@@ -46,7 +46,7 @@ msgstr "Impossible d'écrire dans le fichier d'état ; vérifiez les droits d'ac
 msgid "The HTTP_PROXY environment variable must specify an HTTP proxy"
 msgstr "La variable d'environnement HTTP_PROXY doit définir un proxy HTTP"
 
-#: client/cs_scheduler.cpp:619
+#: client/cs_scheduler.cpp:617
 #, c-format
 msgid ""
 "This project is using an old URL.  When convenient, remove the project, then"
@@ -94,19 +94,19 @@ msgstr "Erreur dans les options cc_config.xml"
 msgid "Missing end tag in cc_config.xml"
 msgstr "Balise de fin manquante dans cc_config.xml"
 
-#: client/project.cpp:987
+#: client/project.cpp:991
 msgid "To fix this, you can "
 msgstr "Pour réparer ceci, vous pouvez"
 
-#: client/project.cpp:990
+#: client/project.cpp:994
 msgid "change Project Preferences on the project's web site"
 msgstr "modifier les préférences de projet sur le site web du projet"
 
-#: client/project.cpp:996
+#: client/project.cpp:1000
 msgid "remove GPU exclusions in your cc_config.xml file"
 msgstr "supprimer les exclusions de GPU dans votre fichier cc_config.xml"
 
-#: client/project.cpp:1003
+#: client/project.cpp:1007
 msgid "change your settings at your account manager web site"
 msgstr "modifier vos paramètres sur le site web de votre gestionnaire de compte "
 
@@ -137,40 +137,40 @@ msgstr "Votre logiciel client BOINC est trop ancien. Merci d'installer la derni�
 msgid "This project doesn't support computers of type"
 msgstr "Ce projet ne supporte pas les ordinateurs de ce type"
 
-#: sched/sched_send.cpp:1107
+#: sched/sched_send.cpp:1115
 msgid ""
 "Upgrade to the latest driver to process tasks using your computer's GPU"
 msgstr "Veuillez mettre à jour votre système avec les derniers drivers pour pouvoir calculer avec le GPU"
 
-#: sched/sched_send.cpp:1114
+#: sched/sched_send.cpp:1122
 msgid ""
 "Upgrade to the latest driver to use all of this project's GPU applications"
 msgstr "Veuillez mettre à jour votre système avec les derniers drivers pour pouvoir calculer toutes les applications GPU de ce projet"
 
-#: sched/sched_send.cpp:1133
+#: sched/sched_send.cpp:1141
 msgid ""
 "A newer version of BOINC is needed to use your NVIDIA GPU; please upgrade to"
 " the current version"
 msgstr "Une version plus récente de BOINC est requise pour utiliser votre GPU NVIDIA ; merci de mettre à jour avec la dernière version"
 
-#: sched/sched_send.cpp:1167
+#: sched/sched_send.cpp:1175
 #, c-format
 msgid "An %s GPU is required to run tasks for this project"
 msgstr "Un processeur graphique %s est nécessaire pour effectuer les tâches de ce projet"
 
-#: sched/sched_send.cpp:1283
+#: sched/sched_send.cpp:1291
 msgid "No tasks are available for the applications you have selected."
 msgstr "Aucune tâche disponible pour les applications que vous avez sélectionnées."
 
-#: sched/sched_send.cpp:1309
+#: sched/sched_send.cpp:1317
 msgid "Your computer type is not supported by this project"
 msgstr "Votre ordinateur n'est pas supporté par ce projet"
 
-#: sched/sched_send.cpp:1315
+#: sched/sched_send.cpp:1323
 msgid "Newer BOINC version required; please install current version"
 msgstr "La nouvelle version de BOINC est nécessaire ; merci d'installer la dernière version"
 
-#: sched/sched_send.cpp:1326
+#: sched/sched_send.cpp:1334
 #, c-format
 msgid ""
 "Tasks for %s are available, but your preferences are set to not accept them"

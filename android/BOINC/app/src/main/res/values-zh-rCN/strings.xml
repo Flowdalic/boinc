@@ -46,8 +46,8 @@
   <!--project login-->
   <string name="attachproject_login_loading">与项目服务器通信中...</string>
   <string name="attachproject_login_image_description">项目标识</string>
-  <string name="attachproject_login_header_general_area">大致地区：</string>
-  <string name="attachproject_login_header_specific_area">具体地区：</string>
+  <string name="attachproject_login_header_general_area">大致研究内容：</string>
+  <string name="attachproject_login_header_specific_area">具体研究内容：</string>
   <string name="attachproject_login_header_description">描述：</string>
   <string name="attachproject_login_header_home">主页：</string>
   <string name="attachproject_login_header_url">网站：</string>

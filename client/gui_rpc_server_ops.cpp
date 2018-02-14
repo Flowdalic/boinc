@@ -927,9 +927,15 @@ static void handle_project_attach_poll(GUI_RPC_CONN& grc) {
 
 // This RPC, regrettably, serves 3 purposes
 // - to join an account manager
+//   pass URL of account manager and account name/passwd
 // - to trigger an RPC to the current account manager
-//   (perhaps with "use_config_file")
-// - to quit an account manager (with null args)
+//   either
+//   pass URL/name/passwd hash of current AM
+//      TODO: get rid of this option;
+//      the manager shouldn't have to keep track of this info
+//   or pass <use_config_file/> flag: do RPC to current AM
+// - to quit an account manager
+//   url/name/passwd args are null
 //
 static void handle_acct_mgr_rpc(GUI_RPC_CONN& grc) {
     string url, name, password;
@@ -953,7 +959,20 @@ static void handle_acct_mgr_rpc(GUI_RPC_CONN& grc) {
         }
         if (grc.xp.parse_bool("use_config_file", use_config_file)) continue;
     }
-    if (!use_config_file) {
+    if (use_config_file) {
+        // really means: use current AM
+        //
+        if (!gstate.acct_mgr_info.using_am()) {
+            bad_arg = true;
+            msg_printf(NULL, MSG_INTERNAL_ERROR,
+                "Not using account manager"
+            );
+        } else {
+            url = gstate.acct_mgr_info.master_url;
+            name = gstate.acct_mgr_info.login_name;
+            password_hash = gstate.acct_mgr_info.password_hash;
+        }
+    } else {
         bad_arg = !url_found || !name_found || !password_found;
         if (!bad_arg) {
             name_lc = name;
@@ -965,18 +984,8 @@ static void handle_acct_mgr_rpc(GUI_RPC_CONN& grc) {
                 password_hash = password.substr(5);
             }
         }
-    } else {
-        if (!strlen(gstate.acct_mgr_info.master_url)) {
-            bad_arg = true;
-            msg_printf(NULL, MSG_INTERNAL_ERROR,
-                "Account manager info missing from config file"
-            );
-        } else {
-            url = gstate.acct_mgr_info.master_url;
-            name = gstate.acct_mgr_info.login_name;
-            password_hash = gstate.acct_mgr_info.password_hash;
-        }
     }
+
     if (bad_arg) {
         grc.mfout.printf("<error>bad arg</error>\n");
     } else if (gstate.acct_mgr_info.using_am()
@@ -1113,7 +1122,9 @@ static void handle_get_app_config(GUI_RPC_CONN& grc) {
     sprintf(path, "%s/%s", p->project_dir(), APP_CONFIG_FILE_NAME);
     printf("path: %s\n", path);
     int retval = read_file_string(path, s);
-    if (!retval) {
+    if (retval) {
+        grc.mfout.printf("<error>app_config.xml not found</error>\n");
+    } else {
         strip_whitespace(s);
         grc.mfout.printf("%s\n", s.c_str());
     }
@@ -1171,7 +1182,7 @@ static void handle_set_app_config(GUI_RPC_CONN& grc) {
     }
     char path[MAXPATHLEN];
     sprintf(path, "%s/app_config.xml", p->project_dir());
-    FILE* f = fopen(path, "w");
+    FILE* f = boinc_fopen(path, "w");
     if (!f) {
         msg_printf(p, MSG_INTERNAL_ERROR,
             "Can't open app config file %s", path
@@ -1183,6 +1194,7 @@ static void handle_set_app_config(GUI_RPC_CONN& grc) {
     MIOFILE mf;
     mf.init_file(f);
     ac.write(mf);
+    fclose(f);
     grc.mfout.printf("<success/>\n");
 }
 

@@ -153,7 +153,7 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         "    <client_cap_plan_class>1</client_cap_plan_class>\n"
     );
 
-    write_platforms(p, mf);
+    write_platforms(p, mf.f);
 
     if (strlen(p->code_sign_key)) {
         fprintf(f, "    <code_sign_key>\n%s\n</code_sign_key>\n", p->code_sign_key);
@@ -383,10 +383,8 @@ int CLIENT_STATE::make_scheduler_request(PROJECT* p) {
         fprintf(f, "    <client_brand>%s</client_brand>\n", client_brand);
     }
 
-    if (acct_mgr_info.using_am() && !acct_mgr_info.sched_req_opaque.empty()) {
-        fprintf(f, "<am_opaque>\n<![CDATA[\n");
-        fprintf(f, "%s", acct_mgr_info.sched_req_opaque.c_str());
-        fprintf(f, "\n]]>\n</am_opaque>\n");
+    if (acct_mgr_info.using_am()) {
+        acct_mgr_info.user_keywords.write(f);
     }
 
     fprintf(f, "</scheduler_request>\n");
@@ -895,7 +893,6 @@ int CLIENT_STATE::handle_scheduler_reply(
             // update app version attributes in case they changed on server
             //
             avp->avg_ncpus = avpp.avg_ncpus;
-            avp->max_ncpus = avpp.max_ncpus;
             avp->flops = avpp.flops;
             safe_strcpy(avp->cmdline, avpp.cmdline);
             avp->gpu_usage = avpp.gpu_usage;
