@@ -138,6 +138,45 @@ static bool compare_pci_slots(int NVIDIA_GPU_Index1, int NVIDIA_GPU_Index2) {
                 nvidia_gpus[NVIDIA_GPU_Index2].pci_info.bus_id
     );
 }
+
+
+// Test OS version number on all versions of OS X without using deprecated Gestalt
+// compareOSVersionTo(x, y) returns:
+// -1 if the OS version we are running on is less than x.y
+//  0 if the OS version we are running on is equal to x.y
+// +1 if the OS version we are running on is lgreater than x.y
+static int compareOSVersionTo(int toMajor, int toMinor) {
+    static SInt32 major = -1;
+    static SInt32 minor = -1;
+
+    if (major < 0) {
+        char vers[100], *p1 = NULL;
+        FILE *f;
+        vers[0] = '\0';
+        f = popen("sw_vers -productVersion", "r");
+        if (f) {
+            fscanf(f, "%s", vers);
+            pclose(f);
+        }
+        if (vers[0] == '\0') {
+            fprintf(stderr, "popen(\"sw_vers -productVersion\" failed\n");
+            fflush(stderr);
+            return 0;
+        }
+        // Extract the major system version number
+        major = atoi(vers);
+        // Extract the minor system version number
+        p1 = strchr(vers, '.');
+        minor = atoi(p1+1);
+    }
+    
+    if (major < toMajor) return -1;
+    if (major > toMajor) return 1;
+    // if (major == toMajor) compare minor version numbers
+    if (minor < toMinor) return -1;
+    if (minor > toMinor) return 1;
+    return 0;
+}
 #endif
 
 
@@ -597,7 +636,10 @@ void COPROCS::get_opencl(
     // This has already been fixed on latest Catalyst
     // drivers, but Mac does not use Catalyst drivers.
     if (ati_opencls.size() > 0) {
-        opencl_get_ati_mem_size_from_opengl(warnings);
+        // This problem seems to be fixed in OS 10.7
+        if (compareOSVersionTo(10, 7) < 0) {
+            opencl_get_ati_mem_size_from_opengl(warnings);
+        }
     }
 #endif
 

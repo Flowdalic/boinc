@@ -89,7 +89,8 @@ CLIENT_STATE::CLIENT_STATE()
     : lookup_website_op(&gui_http),
     get_current_version_op(&gui_http),
     get_project_list_op(&gui_http),
-    acct_mgr_op(&gui_http)
+    acct_mgr_op(&gui_http),
+    lookup_login_token_op(&gui_http)
 {
     http_ops = new HTTP_OP_SET();
     file_xfers = new FILE_XFER_SET(http_ops);
@@ -174,6 +175,8 @@ CLIENT_STATE::CLIENT_STATE()
     must_check_work_fetch = true;
     retry_shmem_time = 0;
     no_gui_rpc = false;
+    autologin_in_progress = false;
+    autologin_fetching_project_list = false;
     gui_rpc_unix_domain = false;
     new_version_check_time = 0;
     all_projects_list_check_time = 0;
@@ -484,6 +487,26 @@ int CLIENT_STATE::init() {
         fclose(f);
     }
 
+    // parse keyword file if present
+    //
+    f = fopen(KEYWORD_FILENAME, "r");
+    if (f) {
+        MIOFILE mf;
+        mf.init_file(f);
+        XML_PARSER xp(&mf);
+        retval = keywords.parse(xp);
+        if (!retval) keywords.present = true;
+        fclose(f);
+#if 0
+        std::map<int, KEYWORD>::iterator it;
+        for (it = keywords.keywords.begin(); it != keywords.keywords.end(); it++) {
+            int id = it->first;
+            KEYWORD& kw = it->second;
+            printf("keyword %d: %s\n", id, kw.name.c_str());
+        }
+#endif
+    }
+
     parse_account_files();
     parse_statistics_files();
 
@@ -645,7 +668,7 @@ int CLIENT_STATE::init() {
     retval = write_state_file();
     if (retval) {
         msg_printf_notice(NULL, false,
-            "http://boinc.berkeley.edu/manager_links.php?target=notice&controlid=statefile",
+            "https://boinc.berkeley.edu/manager_links.php?target=notice&controlid=statefile",
             _("Couldn't write state file; check directory permissions")
         );
         cant_write_state_file = true;
@@ -692,10 +715,12 @@ int CLIENT_STATE::init() {
 
     // set up the project and slot directories
     //
+    msg_printf(NULL, MSG_INFO, "Setting up project and slot directories");
     delete_old_slot_dirs();
     retval = make_project_dirs();
     if (retval) return retval;
 
+    msg_printf(NULL, MSG_INFO, "Checking active tasks");
     active_tasks.init();
     active_tasks.report_overdue();
     active_tasks.handle_upload_files();
@@ -707,12 +732,14 @@ int CLIENT_STATE::init() {
 
     // check for initialization files
     //
+    process_autologin(true);
     acct_mgr_info.init();
     project_init.init();
 
     // set up for handling GUI RPCs
     //
     if (!no_gui_rpc) {
+        msg_printf(NULL, MSG_INFO, "Setting up GUI RPC socket");
         if (gui_rpc_unix_domain) {
             retval = gui_rpcs.init_unix_domain();
         } else {
@@ -733,9 +760,14 @@ int CLIENT_STATE::init() {
     if (g_use_sandbox) get_project_gid();
 #ifdef _WIN32
     get_sandbox_account_service_token();
-    if (sandbox_account_service_token != NULL) g_use_sandbox = true;
+    if (sandbox_account_service_token != NULL) {
+        g_use_sandbox = true;
+    }
 #endif
 
+    msg_printf(NULL, MSG_INFO,
+        "Checking presence of %d project files", (int)file_infos.size()
+    );
     check_file_existence();
     if (!boinc_file_exists(ALL_PROJECTS_LIST_FILENAME)) {
         all_projects_list_check_time = 0;
@@ -756,13 +788,12 @@ int CLIENT_STATE::init() {
     //
     proxy_info_startup();
 
-    if (gstate.projects.size() == 0) {
-        msg_printf(NULL, MSG_INFO,
-            "This computer is not attached to any projects"
-        );
-        msg_printf(NULL, MSG_INFO,
-            "Visit http://boinc.berkeley.edu for instructions"
-        );
+    if (!autologin_in_progress) {
+        if (gstate.projects.size() == 0) {
+            msg_printf(NULL, MSG_INFO,
+                "This computer is not attached to any projects"
+            );
+        }
     }
 
     // get list of BOINC projects occasionally,
@@ -812,7 +843,9 @@ void CLIENT_STATE::do_io_or_sleep(double max_time) {
         gui_rpc_fds.zero();
         http_ops->get_fdset(curl_fds);
         all_fds = curl_fds;
-        gui_rpcs.get_fdset(gui_rpc_fds, all_fds);
+        if (!autologin_in_progress) {
+            gui_rpcs.get_fdset(gui_rpc_fds, all_fds);
+        }
 
         bool have_async = have_async_file_op();
 
@@ -824,11 +857,16 @@ void CLIENT_STATE::do_io_or_sleep(double max_time) {
 #ifdef NEW_CPU_THROTTLE
         client_mutex.unlock();
 #endif
-        n = select(
-            all_fds.max_fd+1,
-            &all_fds.read_fds, &all_fds.write_fds, &all_fds.exc_fds,
-            &tv
-        );
+        if (all_fds.max_fd == -1) {
+            boinc_sleep(time_remaining);
+            n = 0;
+        } else {
+            n = select(
+                all_fds.max_fd+1,
+                &all_fds.read_fds, &all_fds.write_fds, &all_fds.exc_fds,
+                &tv
+            );
+        }
         //printf("select in %d out %d\n", all_fds.max_fd, n);
 #ifdef NEW_CPU_THROTTLE
         client_mutex.lock();

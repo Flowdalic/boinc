@@ -1,19 +1,21 @@
 # BOINC project generic website localization template
-# Copyright (C) 2017 University of California
+# Copyright (C) 2018 University of California
 # 
 # This file is distributed under the same license as BOINC.
 # 
 # Translators:
+# Christian Beer <christian.beer@posteo.de>, 2018
 # D c <onlinegamesdavey@gmail.com>, 2015
-# Jord <elst93@gmail.com>, 2015,2017
+# Jord <elst93@gmail.com>, 2015,2017-2018
 # Rene Oskam, 2015
+# Willem Beekhuis <WillemBeekhuis@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: BOINC\n"
 "Report-Msgid-Bugs-To: BOINC translation team <boinc_loc@ssl.berkeley.edu>\n"
-"POT-Creation-Date: 2017-08-15 02:04 UTC\n"
-"PO-Revision-Date: 2017-08-16 13:09+0000\n"
-"Last-Translator: Jord <elst93@gmail.com>\n"
+"POT-Creation-Date: 2018-01-17 16:06 UTC\n"
+"PO-Revision-Date: 2018-02-07 16:46+0000\n"
+"Last-Translator: Christian Beer <christian.beer@posteo.de>\n"
 "Language-Team: Dutch (http://www.transifex.com/boinc/boinc/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,50 +30,52 @@ msgstr "Nederlands"
 msgid "LANG_NAME_INTERNATIONAL"
 msgstr "Dutch"
 
-#: html/inc/account.inc:39
-msgid "Invitation Code"
-msgstr "Uitnodigingscode"
+#: html/inc/account.inc:64
+msgid "An invitation code is required to create an account."
+msgstr "Er is een uitnodigingscode vereist om een account aan te maken."
 
-#: html/inc/account.inc:39
-msgid "A valid invitation code is required to create an account."
-msgstr "Er is een geldige uitnodigingscode vereist om een account aan te maken."
+#: html/inc/account.inc:65
+msgid "Invitation code"
+msgstr "Utnodigingscode"
 
-#: html/inc/account.inc:45 html/inc/host.inc:677 html/inc/result.inc:692
-#: html/inc/team.inc:225 html/inc/team.inc:369 html/inc/user.inc:223
-#: html/user/account_finish.php:41 html/user/per_app_list.php:61
-#: html/user/team_admins.php:65 html/user/team_change_founder_form.php:82
-#: html/user/team_email_list.php:74 html/user/top_users.php:48
-#: html/user/user_search.php:128
-msgid "Name"
-msgstr "Naam"
-
-#: html/inc/account.inc:45 html/user/account_finish.php:41
+#: html/inc/account.inc:73 html/user/account_finish.php:41
 msgid "Identifies you on our web site. Use your real name or a nickname."
 msgstr "Identificatie op deze pagina. Gebruik je echte naam of een nickname."
 
-#: html/inc/account.inc:49
-msgid "Email Address"
-msgstr "Email Adres"
+#: html/inc/account.inc:74
+msgid "Screen name"
+msgstr "Schermnaam"
 
-#: html/inc/account.inc:49
+#: html/inc/account.inc:80
 msgid "Must be a valid address of the form 'name@domain'."
 msgstr "Moet een geldig email adres zijn in de vorm 'naam@domein'."
 
-#: html/inc/account.inc:58 html/user/edit_email_form.php:47
-msgid "Password"
-msgstr "Wachtwoord"
+#: html/inc/account.inc:81 html/inc/user.inc:244 html/user/get_passwd.php:30
+msgid "Email address"
+msgstr "Email adres"
 
-#: html/inc/account.inc:59
+#: html/inc/account.inc:92
 msgid "Must be at least %1 characters"
 msgstr "Moet minstens %1 karakters lang zijn"
 
-#: html/inc/account.inc:63
+#. we need the password here not for verification,
+#. but because we store it salted with email address,
+#. which is about to change.
+#: html/inc/account.inc:93 html/user/edit_email_form.php:45
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: html/inc/account.inc:97
 msgid "Confirm password"
 msgstr "Bevestig wachtwoord"
 
-#: html/inc/account.inc:67 html/inc/team.inc:44 html/inc/team.inc:135
-#: html/inc/team.inc:244 html/inc/team.inc:378 html/inc/team.inc:467
-#: html/inc/user.inc:237 html/inc/user.inc:431 html/user/account_finish.php:45
+#: html/inc/account.inc:100 html/user/account_finish.php:45
+msgid "Select the country you want to represent, if any."
+msgstr "Welk land wil je vertegenwoordigen, indien van toepassing."
+
+#: html/inc/account.inc:101 html/inc/team.inc:44 html/inc/team.inc:136
+#: html/inc/team.inc:251 html/inc/team.inc:390 html/inc/team.inc:486
+#: html/inc/user.inc:250 html/inc/user.inc:442 html/user/account_finish.php:45
 #: html/user/edit_user_info_form.php:45 html/user/profile_search_action.php:44
 #: html/user/team_email_list.php:78 html/user/team_search.php:88
 #: html/user/top_users.php:56 html/user/user_search.php:56
@@ -79,46 +83,29 @@ msgstr "Bevestig wachtwoord"
 msgid "Country"
 msgstr "Land"
 
-#: html/inc/account.inc:67 html/user/account_finish.php:45
-msgid "Select the country you want to represent, if any."
-msgstr "Welk land wil je vertegenwoordigen, indien van toepassing."
-
-#: html/inc/account.inc:74 html/user/account_finish.php:52
+#: html/inc/account.inc:108 html/user/account_finish.php:52
 msgid "Postal or ZIP Code"
 msgstr "Postcode"
 
-#: html/inc/account.inc:74
+#: html/inc/account.inc:108
 msgid "Optional"
 msgstr "Optioneel"
 
-#: html/inc/account.inc:89 html/user/create_account_form.php:42
-msgid "Create account"
-msgstr "Account maken"
-
-#: html/inc/account.inc:104
+#: html/inc/account.inc:120
 msgid "Email address:"
 msgstr "E-mail adres:"
 
-#: html/inc/account.inc:107
-msgid "forgot email address?"
-msgstr "e-mail adres vergeten?"
-
-#: html/inc/account.inc:110
+#: html/inc/account.inc:124
 msgid "Password:"
 msgstr "Wachtwoord:"
 
-#: html/inc/account.inc:110
+#: html/inc/account.inc:124
 msgid "forgot password?"
 msgstr "wachtwoord vergeten?"
 
-#: html/inc/account.inc:113
+#: html/inc/account.inc:129
 msgid "Stay logged in"
 msgstr "Aangemeld blijven"
-
-#. kludge
-#: html/inc/account.inc:118 html/inc/util.inc:282 html/user/login_form.php:43
-msgid "Log in"
-msgstr "Inloggen"
 
 #: html/inc/bbcode_html.inc:10
 msgid "Bold text: [b]text[/b]  (alt+b)"
@@ -251,7 +238,7 @@ msgstr "Sluit alle geopende bbCode tags"
 msgid "Close Tags"
 msgstr "Sluit Tags"
 
-#: html/inc/bootstrap.inc:156 html/inc/user.inc:174
+#: html/inc/bootstrap.inc:156 html/inc/user.inc:187
 msgid "Account"
 msgstr "Account"
 
@@ -260,7 +247,7 @@ msgid "Join"
 msgstr "Word lid"
 
 #: html/inc/bootstrap.inc:158 html/inc/bootstrap.inc:174
-#: html/inc/bootstrap.inc:202 html/inc/user.inc:264
+#: html/inc/bootstrap.inc:202 html/inc/user.inc:279
 msgid "Preferences"
 msgstr "Voorkeuren"
 
@@ -285,7 +272,6 @@ msgid "Do work"
 msgstr "Werk doen"
 
 #: html/inc/bootstrap.inc:175 html/user/server_status.php:109
-#: html/user/server_status_old.php:310 html/user/temp.php:62
 msgid "Server status"
 msgstr "Server status"
 
@@ -301,8 +287,8 @@ msgstr "Applicaties"
 msgid "Participants"
 msgstr "Deelnemers"
 
-#: html/inc/bootstrap.inc:188 html/inc/user.inc:444 html/inc/user.inc:446
-#: html/user/server_status.php:152 html/user/server_status_old.php:459
+#: html/inc/bootstrap.inc:188 html/inc/user.inc:455 html/inc/user.inc:457
+#: html/user/server_status.php:152
 msgid "Computers"
 msgstr "Computers"
 
@@ -320,16 +306,16 @@ msgid "CPU models"
 msgstr "CPU modellen"
 
 #: html/inc/bootstrap.inc:194 html/inc/prefs.inc:241 html/inc/prefs.inc:482
-#: html/user/explain_state.php:94
+#: html/inc/user.inc:163 html/user/explain_state.php:94
 msgid "Computing"
 msgstr "Verwerken"
 
-#: html/inc/bootstrap.inc:197 html/inc/user.inc:343
+#: html/inc/bootstrap.inc:197 html/inc/user.inc:565
 msgid "Community"
 msgstr "Gemeenschap"
 
-#: html/inc/bootstrap.inc:198 html/inc/forum.inc:158 html/inc/forum.inc:190
-#: html/inc/user.inc:357 html/inc/user.inc:497 html/user/forum_forum.php:76
+#: html/inc/bootstrap.inc:198 html/inc/forum.inc:170 html/inc/forum.inc:202
+#: html/inc/user.inc:369 html/inc/user.inc:508 html/user/forum_forum.php:76
 #: html/user/forum_index.php:72
 msgid "Message boards"
 msgstr "Forum"
@@ -350,7 +336,7 @@ msgstr "Zoek gebruiker"
 msgid "User of the day"
 msgstr "Gebruiker van de dag"
 
-#: html/inc/bootstrap.inc:205 html/inc/user.inc:179
+#: html/inc/bootstrap.inc:205 html/inc/user.inc:192
 msgid "Certificate"
 msgstr "Certificaat"
 
@@ -391,357 +377,385 @@ msgstr "Meest bekeken eerst"
 msgid "Most posts first"
 msgstr "Meeste berichten eerst"
 
-#: html/inc/forum.inc:106
+#: html/inc/forum.inc:88
+msgid "This answered my question"
+msgstr "Dit beantwoordde mijn vraag"
+
+#: html/inc/forum.inc:89
+msgid "I also have this question"
+msgstr "Ik heb deze vraag ook"
+
+#: html/inc/forum.inc:90
+msgid "Off-topic"
+msgstr "Off-topic"
+
+#: html/inc/forum.inc:107
 msgid "Volunteer moderator"
 msgstr "Vrijwillige moderator"
 
-#: html/inc/forum.inc:107
+#: html/inc/forum.inc:108
 msgid "Project administrator"
 msgstr "Project administrator"
 
-#: html/inc/forum.inc:108
+#: html/inc/forum.inc:109
 msgid "Project developer"
 msgstr "Project ontwikkelaar"
 
-#: html/inc/forum.inc:109
+#: html/inc/forum.inc:110
 msgid "Project tester"
 msgstr "Project tester"
 
-#: html/inc/forum.inc:110
+#: html/inc/forum.inc:111
 msgid "Volunteer developer"
 msgstr "Vrijwillige ontwikkelaar"
 
-#: html/inc/forum.inc:111
+#: html/inc/forum.inc:112
 msgid "Volunteer tester"
 msgstr "Vrijwillige tester"
 
-#: html/inc/forum.inc:112
+#: html/inc/forum.inc:113
 msgid "Project scientist"
 msgstr "Project wetenschapper"
 
-#: html/inc/forum.inc:113
+#: html/inc/forum.inc:114
 msgid "Help desk expert"
 msgstr "Helpdesk expert"
 
 #. Search
-#: html/inc/forum.inc:132
+#: html/inc/forum.inc:144
 msgid "Search for words in forum messages"
 msgstr "Zoek naar woorden in forum berichten"
 
-#: html/inc/forum.inc:132
+#: html/inc/forum.inc:144
 msgid "Search forums"
 msgstr "Zoek in het forum"
 
-#: html/inc/forum.inc:133
+#: html/inc/forum.inc:145
 msgid "Advanced search"
 msgstr "Uitgebreid zoeken"
 
-#: html/inc/forum.inc:139 html/inc/user.inc:361 html/user/forum_pm.php:50
-#: html/user/forum_pm.php:105 html/user/pm.php:57 html/user/pm.php:127
+#: html/inc/forum.inc:151 html/inc/user.inc:373 html/user/pm.php:57
+#: html/user/pm.php:127
 msgid "Private messages"
 msgstr "Privé berichten"
 
-#: html/inc/forum.inc:158 html/user/forum_forum.php:74
+#: html/inc/forum.inc:170 html/user/forum_forum.php:74
 msgid "Questions and Answers"
 msgstr "Vraag en Antwoord"
 
-#: html/inc/forum.inc:194 html/inc/forum.inc:202
+#: html/inc/forum.inc:206 html/inc/forum.inc:214
 msgid "%1 message board"
 msgstr "%1 forum"
 
-#: html/inc/forum.inc:243 html/inc/result.inc:784
+#: html/inc/forum.inc:255 html/inc/result.inc:784
 msgid "Previous"
 msgstr "Vorige"
 
-#: html/inc/forum.inc:281 html/inc/result.inc:793
+#: html/inc/forum.inc:293 html/inc/result.inc:793
 msgid "Next"
 msgstr "Volgende"
 
-#: html/inc/forum.inc:410 html/inc/forum.inc:1263
+#: html/inc/forum.inc:422 html/inc/forum.inc:1293
 #: html/user/forum_forum.php:145 html/user/forum_reply.php:127
 #: html/user/forum_report_post.php:86
 msgid "Author"
 msgstr "Auteur"
 
-#: html/inc/forum.inc:410 html/inc/pm.inc:65 html/inc/pm.inc:146
-#: html/user/ffmail_form.php:58 html/user/forum_edit.php:130
-#: html/user/forum_edit.php:135 html/user/forum_pm.php:65
-#: html/user/forum_pm.php:114 html/user/forum_post.php:122
+#: html/inc/forum.inc:422 html/inc/pm.inc:86 html/inc/pm.inc:167
+#: html/user/ffmail_form.php:58 html/user/forum_edit.php:136
+#: html/user/forum_edit.php:141 html/user/forum_post.php:126
 #: html/user/forum_reply.php:127 html/user/forum_report_post.php:87
 #: html/user/pm.php:79 html/user/pm.php:138
 msgid "Message"
 msgstr "Bericht"
 
-#: html/inc/forum.inc:590 html/inc/pm.inc:74 html/inc/pm.inc:156
+#: html/inc/forum.inc:602 html/inc/pm.inc:95 html/inc/pm.inc:177
 msgid "Send message"
 msgstr "Verstuur bericht"
 
-#: html/inc/forum.inc:590
+#: html/inc/forum.inc:602
 msgid "Send %1 a private message"
 msgstr "Verstuur %1 een privé bericht"
 
-#: html/inc/forum.inc:591
+#: html/inc/forum.inc:603
 msgid "Joined: %1"
 msgstr "Lid geworden: %1"
 
-#: html/inc/forum.inc:600
+#: html/inc/forum.inc:612
 msgid "Posts: %1"
 msgstr "Reacties: %1"
 
-#: html/inc/forum.inc:606
+#: html/inc/forum.inc:618
 msgid "Credit: %1"
 msgstr "Punten: %1"
 
-#: html/inc/forum.inc:607
+#: html/inc/forum.inc:619
 msgid "RAC: %1"
 msgstr "Punten gemiddelde: %1"
 
-#: html/inc/forum.inc:637
+#: html/inc/forum.inc:649
 msgid "You haven't read this message yet"
 msgstr "U heeft dit bericht nog niet gelezen"
 
-#: html/inc/forum.inc:637
+#: html/inc/forum.inc:649
 msgid "Unread"
 msgstr "Ongelezen"
 
-#: html/inc/forum.inc:640 html/inc/forum.inc:645 html/inc/forum.inc:758
+#: html/inc/forum.inc:652 html/inc/forum.inc:657 html/inc/forum.inc:770
 msgid "Message %1"
 msgstr "Bericht %1"
 
-#: html/inc/forum.inc:641 html/inc/user.inc:446 html/user/forum_forum.php:182
+#: html/inc/forum.inc:653 html/inc/user.inc:457 html/user/forum_forum.php:182
 msgid "hidden"
 msgstr "verborgen"
 
-#: html/inc/forum.inc:642
+#: html/inc/forum.inc:654
 msgid "Posted: %1"
 msgstr "Berichten geplaatst: %1"
 
-#: html/inc/forum.inc:645
+#: html/inc/forum.inc:657
 msgid " - in response to "
 msgstr " - in antwoord op "
 
-#: html/inc/forum.inc:648 html/inc/prefs_util.inc:609
+#: html/inc/forum.inc:660 html/inc/prefs_util.inc:609
 #: html/inc/prefs_util.inc:611
 msgid "Edit"
 msgstr "Aanpassen"
 
-#: html/inc/forum.inc:648
+#: html/inc/forum.inc:660
 msgid "Edit this message"
 msgstr "Dit bericht aanpassen"
 
-#: html/inc/forum.inc:654
+#: html/inc/forum.inc:666
 msgid "Last modified: %1"
 msgstr "Aangepast op: %1"
 
-#: html/inc/forum.inc:658
+#: html/inc/forum.inc:670
 msgid ""
-"This post is hidden because the sender is on your 'ignore' list.  Click "
-"%1here%2 to view hidden posts"
-msgstr "Dit bericht wordt niet getoond, omdat de gebruiker op jouw 'negeer' lijst staat.  Klik %1hier%2 om het bericht toch weer te geven"
+"This post is hidden because the sender is on your 'ignore' list.  Click %1 "
+"here %2 to view hidden posts"
+msgstr "Dit bericht wordt niet getoond, omdat de gebruiker op jouw 'negeer' lijst staat.  Klik %1 hier %2 om het bericht toch weer te geven"
 
-#: html/inc/forum.inc:696 html/inc/forum.inc:707
+#: html/inc/forum.inc:708 html/inc/forum.inc:719
 msgid "Report this post as offensive"
 msgstr "Rapporteer dit bericht als aanstootgevend"
 
-#: html/inc/forum.inc:696 html/inc/forum.inc:707
+#: html/inc/forum.inc:708 html/inc/forum.inc:719
 msgid "Report as offensive"
 msgstr "Rapporteren als aanstootgevend"
 
-#: html/inc/forum.inc:700
+#: html/inc/forum.inc:712
 msgid "Rating: %1"
 msgstr "Waardering: %1"
 
-#: html/inc/forum.inc:700
+#: html/inc/forum.inc:712
 msgid "rate: "
 msgstr "waarderen: "
 
-#: html/inc/forum.inc:703
+#: html/inc/forum.inc:715
 msgid "Click if you like this message"
 msgstr "Klik als je dit bericht leuk vindt"
 
-#: html/inc/forum.inc:703
+#: html/inc/forum.inc:715
 msgid "Rate +"
 msgstr "Waarde +"
 
-#: html/inc/forum.inc:705
+#: html/inc/forum.inc:717
 msgid "Click if you don't like this message"
 msgstr "Klik als je dit bericht niet leuk vindt"
 
-#: html/inc/forum.inc:705
+#: html/inc/forum.inc:717
 msgid "Rate -"
 msgstr "Waarde -"
 
 #. "Reply" is used as a verb
-#: html/inc/forum.inc:714 html/user/forum_pm.php:79 html/user/forum_pm.php:117
-#: html/user/pm.php:99 html/user/pm.php:140
+#: html/inc/forum.inc:726 html/user/pm.php:99 html/user/pm.php:140
 msgid "Reply"
 msgstr "Beantwoord"
 
-#: html/inc/forum.inc:714
+#: html/inc/forum.inc:726
 msgid "Post a reply to this message"
 msgstr "Een antwoord geven op dit bericht"
 
 #. "Quote" is used as a verb
-#: html/inc/forum.inc:717
+#: html/inc/forum.inc:729
 msgid "Quote"
 msgstr "Citaat"
 
-#: html/inc/forum.inc:717
+#: html/inc/forum.inc:729
 msgid "Post a reply by quoting this message"
 msgstr "Antwoord geven met een citaat uit dit bericht"
 
-#: html/inc/forum.inc:739
+#: html/inc/forum.inc:751
 msgid "Hidden by a moderator"
 msgstr "Verborgen door moderator"
 
-#: html/inc/forum.inc:760
+#: html/inc/forum.inc:772
 msgid "Posted %1 by %2"
 msgstr "Geplaatst op %1 door %2"
 
-#: html/inc/forum.inc:780
+#: html/inc/forum.inc:792
 msgid "You may not post or rate messages until %1"
 msgstr "Je mag geen berichten plaatsen of waarderen tot %1"
 
-#: html/inc/forum.inc:791
+#: html/inc/forum.inc:817
 msgid ""
-"\n"
-"        <ul>\n"
-"        <li> Posts must be 'kid friendly': they may not contain\n"
-"            content that is obscene, hate-related,\n"
-"            sexually explicit or suggestive.\n"
-"        <li> No commercial advertisements.\n"
-"        <li> No links to web sites involving sexual content,\n"
-"            gambling, or intolerance of others.\n"
-"        <li> No messages intended to annoy or antagonize other people,\n"
-"            or to hijack a thread.\n"
-"        <li> No messages that are deliberately hostile, threatening, or insulting.\n"
-"        <li> No abusive comments involving race, religion,\n"
-"            nationality, gender, class or sexuality.\n"
-"        <li> The posting privileges of violators may be suspended or revoked.\n"
-"        <li> If your account is suspended, don't create a new one.\n"
-"        "
-msgstr "\n        <ul>\n        <li> Hou berichten 'kind vriendelijk': vermijd woorden die\n            obsceen zijn, haat-gerelateerd,\n            seksueel getint of suggestief.\n        <li> Plaats geen commerciële advertenties.\n        <li> Plaats geen links naar websites met seksuele inhoud,\n            gokken of intolerantie naar anderen.\n        <li> Plaats geen berichten met de intentie om andere mensen te kwetsen,\n            te beledigen of om het onderwerp over te nemen.\n        <li> Plaats geen berichten die kunnen worden ervaren als een persoonlijke aanval,\n            bedreiging of belediging.\n        <li> Gebruik geen tekst gericht tegen ras, religie,\n            nationaliteit, geslacht, klasse of seksuele geaardheid.\n        <li> De post privileges van overtreders kunnen worden vergrendeld of ingetrokken. \n        <li> Als je account vergrendeld is, creëer dan geen nieuw account."
+"Posts must be 'kid friendly': they may not contain content that is obscene, "
+"hate-related, sexually explicit or suggestive."
+msgstr "Berichten moeten 'kind-vriendelijk' zijn, ze mogen geen obscene, haat-gerelateerde, of suggestieve of expliciete seksuele inhoud hebben. "
+
+#: html/inc/forum.inc:818
+msgid "No commercial advertisements."
+msgstr "Geen commerciële advertenties. "
+
+#: html/inc/forum.inc:819
+msgid ""
+"No links to web sites involving sexual content, gambling, or intolerance of "
+"others."
+msgstr "Geen links naar websites met seksuele inhoud, gokken of intolerantie van anderen."
+
+#: html/inc/forum.inc:820
+msgid ""
+"No messages intended to annoy or antagonize other people, or to hijack a "
+"thread."
+msgstr "Geen berichten met de intentie om andere mensen te ergeren of tegen te spreken, of om een thread te kapen."
+
+#: html/inc/forum.inc:821
+msgid "No messages that are deliberately hostile, threatening, or insulting."
+msgstr "Geen berichten die expres vijandig, bedreigend of beledigend zijn. "
+
+#: html/inc/forum.inc:822
+msgid ""
+"No abusive messages involving race, religion, nationality, gender, class or "
+"sexuality."
+msgstr "Geen beledigende berichten over ras, religie, nationaliteit, geslacht, klasse of seksualiteit."
+
+#: html/inc/forum.inc:823
+msgid "Posts that violate these rules may be deleted."
+msgstr "Berichten die deze regels overtreden kunnen worden verwijderd."
+
+#: html/inc/forum.inc:824
+msgid "The posting privileges of violators may be suspended or revoked."
+msgstr "De postingprivileges van overtreders kunnen worden opgeschort of ingetrokken."
 
 #: html/inc/forum.inc:825
+msgid "If your account is suspended, don't create a new one."
+msgstr "Als je account is geschorst, maak dan geen nieuwe aan."
+
+#: html/inc/forum.inc:844
 msgid "Rules:"
 msgstr "Regels:"
 
-#: html/inc/forum.inc:826
-msgid "More info"
-msgstr "Meer info"
-
-#: html/inc/forum.inc:1124 html/user/forum_thread.php:193
+#: html/inc/forum.inc:1154 html/user/forum_thread.php:195
 msgid "Unhide"
 msgstr "Zichtbaar maken"
 
-#: html/inc/forum.inc:1124
+#: html/inc/forum.inc:1154
 msgid "Unhide this post"
 msgstr "Bericht zichtbaar maken"
 
-#: html/inc/forum.inc:1126 html/user/forum_thread.php:199
+#: html/inc/forum.inc:1156 html/user/forum_thread.php:201
 msgid "Hide"
 msgstr "Verbergen"
 
-#: html/inc/forum.inc:1126
+#: html/inc/forum.inc:1156
 msgid "Hide this post"
 msgstr "Bericht verbergen"
 
-#: html/inc/forum.inc:1131 html/user/forum_thread.php:232
+#: html/inc/forum.inc:1161 html/user/forum_thread.php:234
 msgid "Move"
 msgstr "Verplaatsen"
 
-#: html/inc/forum.inc:1131
+#: html/inc/forum.inc:1161
 msgid "Move post to a different thread"
 msgstr "Verplaats dit bericht naar een ander onderwerp"
 
-#: html/inc/forum.inc:1136
+#: html/inc/forum.inc:1166
 msgid "Banish author"
 msgstr "Auteur uitsluiten"
 
-#: html/inc/forum.inc:1143
+#: html/inc/forum.inc:1173
 msgid "Vote to banish author"
 msgstr "Stem om auteur te royeren"
 
-#: html/inc/forum.inc:1147
+#: html/inc/forum.inc:1177
 msgid "Vote not to banish author"
 msgstr "Stem om auteur niet te royeren"
 
-#: html/inc/forum.inc:1152
+#: html/inc/forum.inc:1182
 msgid "Start vote to banish author"
 msgstr "Begin stemming om auteur te royeren"
 
-#: html/inc/forum.inc:1157 html/inc/user.inc:348 html/user/forum_pm.php:78
-#: html/user/forum_pm.php:89 html/user/forum_pm.php:116
-#: html/user/forum_pm.php:282 html/user/forum_thread.php:246
-#: html/user/pm.php:100 html/user/pm.php:141
+#: html/inc/forum.inc:1187 html/inc/user.inc:360
+#: html/user/forum_thread.php:248 html/user/pm.php:100 html/user/pm.php:141
 msgid "Delete"
 msgstr "Verwijder"
 
-#: html/inc/forum.inc:1157
+#: html/inc/forum.inc:1187
 msgid "Delete this post"
 msgstr "Dit bericht verwijderen"
 
-#: html/inc/forum.inc:1197
+#: html/inc/forum.inc:1227
 msgid "Only team members can post to the team message board"
 msgstr "Alleen team leden mogen berichten plaatsen op dit forum"
 
-#: html/inc/forum.inc:1207
+#: html/inc/forum.inc:1237
 msgid ""
 "To create a new thread in %1 you must have a certain level of average "
 "credit. This is to protect against abuse of the system."
 msgstr "Om een nieuw onderwerp te plaatsen in %1 heb je een minimaal aantal gemiddelde punten nodig. Dit is nodig om misbruik te voorkomen."
 
-#: html/inc/forum.inc:1214
+#: html/inc/forum.inc:1244
 msgid ""
 "You cannot create threads right now. Please wait before trying again. This "
 "is to protect against abuse of the system."
 msgstr "Op dit moment kan je geen nieuwe onderwerpen plaatsen. Probeer dit later a.u.b overnieuw. Deze vertraging is ingebouwd om misbruik te voorkomen."
 
-#: html/inc/forum.inc:1221
+#: html/inc/forum.inc:1251
 msgid ""
 "This thread is locked. Only forum moderators and administrators are allowed "
 "to post there."
 msgstr "Dit onderwerp is gesloten. Alleen forum moderators en admins mogen hier berichten plaatsen."
 
-#: html/inc/forum.inc:1226
+#: html/inc/forum.inc:1256
 msgid "Can't post to a hidden thread."
 msgstr "Berichten plaatsen in verborgen onderwerp niet mogelijk."
 
-#: html/inc/forum.inc:1261
+#: html/inc/forum.inc:1291
 msgid "Thread"
 msgstr "Onderwerp"
 
-#: html/inc/forum.inc:1262 html/inc/team.inc:141 html/user/forum_forum.php:144
+#: html/inc/forum.inc:1292 html/inc/team.inc:142 html/user/forum_forum.php:144
 #: html/user/forum_index.php:97
 msgid "Posts"
 msgstr "Reacties"
 
-#: html/inc/forum.inc:1264 html/user/forum_forum.php:146
+#: html/inc/forum.inc:1294 html/user/forum_forum.php:146
 msgid "Views"
 msgstr "Bekeken"
 
-#: html/inc/forum.inc:1265 html/inc/team.inc:141 html/user/forum_forum.php:147
+#: html/inc/forum.inc:1295 html/inc/team.inc:142 html/user/forum_forum.php:147
 #: html/user/forum_help_desk.php:49 html/user/forum_index.php:98
 msgid "Last post"
 msgstr "Laatste reactie"
 
-#: html/inc/forum.inc:1322
+#: html/inc/forum.inc:1352
 msgid "New posts in the thread %1"
 msgstr "Nieuwe berichten in onderwerp %1"
 
-#: html/inc/forum.inc:1327
+#: html/inc/forum.inc:1357
 msgid "New posts in subscribed thread"
 msgstr "Nieuwe berichten in geabonneerd onderwerp"
 
-#: html/inc/forum.inc:1328
+#: html/inc/forum.inc:1358
 msgid "There are new posts in the thread '%1'"
 msgstr "Er zijn nieuwe berichten in onderwerp '%1'"
 
-#: html/inc/forum.inc:1338
+#: html/inc/forum.inc:1368
 msgid "Mark all threads as read"
 msgstr "Markeer alle onderwerpen als gelezen"
 
-#: html/inc/forum.inc:1339
+#: html/inc/forum.inc:1369
 msgid "Mark all threads in all message boards as read."
 msgstr "Markeer alle onderwerpen in alle forums als gelezen."
 
@@ -753,16 +767,16 @@ msgstr "Geen host computer"
 msgid "Unavailable"
 msgstr "Niet beschikbaar"
 
-#: html/inc/host.inc:56 html/inc/prefs.inc:674 html/inc/prefs_util.inc:539
+#: html/inc/host.inc:56 html/inc/prefs.inc:681 html/inc/prefs_util.inc:539
 msgid "Home"
 msgstr "Thuis pagina"
 
-#: html/inc/host.inc:57 html/inc/prefs.inc:675 html/inc/prefs_util.inc:541
-#: html/user/server_status.php:136 html/user/server_status_old.php:382
+#: html/inc/host.inc:57 html/inc/prefs.inc:682 html/inc/prefs_util.inc:541
+#: html/user/server_status.php:136
 msgid "Work"
 msgstr "Werk"
 
-#: html/inc/host.inc:58 html/inc/prefs.inc:676 html/inc/prefs_util.inc:540
+#: html/inc/host.inc:58 html/inc/prefs.inc:683 html/inc/prefs_util.inc:540
 msgid "School"
 msgstr "School"
 
@@ -806,11 +820,11 @@ msgstr "Lokale tijd"
 msgid "UTC %1 hours"
 msgstr "UTC %1 uur"
 
-#: html/inc/host.inc:106 html/inc/host.inc:108 html/inc/host.inc:223
+#: html/inc/host.inc:106 html/inc/host.inc:108 html/inc/host.inc:229
 msgid "Owner"
 msgstr "Eigenaar"
 
-#: html/inc/host.inc:108 html/inc/host.inc:359
+#: html/inc/host.inc:108 html/inc/host.inc:373
 msgid "Anonymous"
 msgstr "Anoniem"
 
@@ -818,10 +832,10 @@ msgstr "Anoniem"
 msgid "Created"
 msgstr "Aangemaakt"
 
-#: html/inc/host.inc:113 html/inc/host.inc:227 html/inc/host.inc:230
-#: html/inc/host.inc:694 html/inc/team.inc:111 html/inc/team.inc:228
-#: html/inc/team.inc:232 html/inc/team.inc:234 html/inc/team.inc:373
-#: html/inc/team.inc:376 html/inc/user.inc:130 html/inc/user.inc:147
+#: html/inc/host.inc:114 html/inc/host.inc:234 html/inc/host.inc:237
+#: html/inc/host.inc:717 html/inc/team.inc:111 html/inc/team.inc:233
+#: html/inc/team.inc:237 html/inc/team.inc:239 html/inc/team.inc:382
+#: html/inc/team.inc:385 html/inc/user.inc:130 html/inc/user.inc:147
 #: html/user/profile_search_action.php:45
 #: html/user/team_change_founder_form.php:83 html/user/team_email_list.php:76
 #: html/user/team_remove_inactive_form.php:44 html/user/top_users.php:51
@@ -829,282 +843,290 @@ msgstr "Aangemaakt"
 msgid "Total credit"
 msgstr "Punten totaal"
 
-#: html/inc/host.inc:114 html/inc/user.inc:131 html/user/team_search.php:84
+#: html/inc/host.inc:115 html/inc/user.inc:131 html/user/team_search.php:84
 #: html/user/user_search.php:130
 msgid "Average credit"
 msgstr "Punten gemiddelde"
 
-#: html/inc/host.inc:116
+#: html/inc/host.inc:117
 msgid "Cross project credit"
 msgstr "Project brede score"
 
-#: html/inc/host.inc:118
+#: html/inc/host.inc:120
 msgid "CPU type"
 msgstr "CPU type"
 
-#: html/inc/host.inc:119
+#: html/inc/host.inc:121
 msgid "Number of processors"
 msgstr "Aantal processoren"
 
-#: html/inc/host.inc:121
+#: html/inc/host.inc:123
 msgid "Coprocessors"
 msgstr "Coprocessoren"
 
-#: html/inc/host.inc:123 html/inc/host.inc:704
+#: html/inc/host.inc:125 html/inc/host.inc:728
 msgid "Operating System"
 msgstr "Besturingssysteem"
 
-#: html/inc/host.inc:126 html/inc/host.inc:232
+#: html/inc/host.inc:128 html/inc/host.inc:240
 msgid "BOINC version"
 msgstr "BOINC versie"
 
-#: html/inc/host.inc:130 html/inc/prefs.inc:243
+#: html/inc/host.inc:132 html/inc/prefs.inc:243
 msgid "Memory"
 msgstr "Geheugen"
 
-#: html/inc/host.inc:130 html/inc/host.inc:140 html/inc/host.inc:143
-#: html/inc/host.inc:146
+#: html/inc/host.inc:132 html/inc/host.inc:142 html/inc/host.inc:145
+#: html/inc/host.inc:148
 msgid "%1 GB"
 msgstr "%1 GB"
 
-#: html/inc/host.inc:134
+#: html/inc/host.inc:136
 msgid "Cache"
 msgstr "Cache"
 
-#: html/inc/host.inc:134
+#: html/inc/host.inc:136
 msgid "%1 KB"
 msgstr "%1 KB"
 
-#: html/inc/host.inc:140
+#: html/inc/host.inc:142
 msgid "Swap space"
 msgstr "Virtueel geheugen"
 
-#: html/inc/host.inc:143
+#: html/inc/host.inc:145
 msgid "Total disk space"
 msgstr "Totale schijfruimte"
 
-#: html/inc/host.inc:146
+#: html/inc/host.inc:148
 msgid "Free Disk Space"
 msgstr "Vrije schijfruimte"
 
-#: html/inc/host.inc:150
+#: html/inc/host.inc:152
 msgid "Measured floating point speed"
 msgstr "Gemeten 'floating point' snelheid"
 
-#: html/inc/host.inc:150 html/inc/host.inc:153
+#: html/inc/host.inc:152 html/inc/host.inc:155
 msgid "%1 billion ops/sec"
 msgstr "%1 miljard ops/sec"
 
-#: html/inc/host.inc:153
+#: html/inc/host.inc:155
 msgid "Measured integer speed"
 msgstr "Gemeten 'integer' snelheid"
 
-#: html/inc/host.inc:157 html/inc/host.inc:159
+#: html/inc/host.inc:159 html/inc/host.inc:161
 msgid "Average upload rate"
 msgstr "Gemiddelde upload waarde"
 
-#: html/inc/host.inc:157 html/inc/host.inc:164
+#: html/inc/host.inc:159 html/inc/host.inc:166
 msgid "%1 KB/sec"
 msgstr "%1 KB/sec"
 
-#: html/inc/host.inc:159 html/inc/host.inc:166 html/inc/result.inc:230
+#: html/inc/host.inc:161 html/inc/host.inc:168 html/inc/result.inc:230
 #: html/inc/result.inc:240 html/inc/result.inc:258 html/inc/result.inc:276
 #: html/inc/result.inc:292 html/user/explain_state.php:56
 #: html/user/host_app_versions.php:28
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: html/inc/host.inc:164 html/inc/host.inc:166
+#: html/inc/host.inc:166 html/inc/host.inc:168
 msgid "Average download rate"
 msgstr "Gemiddelde download waarde"
 
-#: html/inc/host.inc:169 html/user/host_app_versions.php:82
+#: html/inc/host.inc:172 html/user/host_app_versions.php:82
 msgid "Average turnaround time"
 msgstr "Gemiddelde inlever tijd"
 
-#: html/inc/host.inc:169 html/user/forum_search.php:48
+#: html/inc/host.inc:172 html/user/forum_search.php:48
 #: html/user/forum_search.php:49 html/user/forum_search.php:50
 #: html/user/forum_search.php:51
 msgid "%1 days"
 msgstr "%1 dagen"
 
-#: html/inc/host.inc:170
+#: html/inc/host.inc:173
 msgid "Application details"
 msgstr "Applicatie details"
 
-#: html/inc/host.inc:171
+#: html/inc/host.inc:174
 msgid "Show"
 msgstr "Weergeven"
 
-#: html/inc/host.inc:181 html/inc/host.inc:340 html/inc/user.inc:163
+#: html/inc/host.inc:184 html/inc/host.inc:351 html/inc/user.inc:173
 msgid "Tasks"
 msgstr "Taken"
 
-#: html/inc/host.inc:185 html/inc/host.inc:207
+#: html/inc/host.inc:189 html/inc/host.inc:213
 msgid "Number of times client has contacted server"
 msgstr "Aantal keren dat de cliënt contact heeft gehad met de server"
 
-#: html/inc/host.inc:186
+#: html/inc/host.inc:190
 msgid "Last time contacted server"
 msgstr "Laatste contact met de server"
 
-#: html/inc/host.inc:187
+#: html/inc/host.inc:191
 msgid "Fraction of time BOINC is running"
 msgstr "Fractie van de tijd dat BOINC actief is"
 
-#: html/inc/host.inc:189
+#: html/inc/host.inc:193
 msgid ""
 "While BOINC is running, fraction of time computer has an Internet connection"
 msgstr "Wanneer BOINC actief is, fractie van de tijd dat de computer een Internetverbinding heeft"
 
-#: html/inc/host.inc:191
+#: html/inc/host.inc:195
 msgid "While BOINC is running, fraction of time computing is allowed"
 msgstr "Terwijl BOINC actief is, fractie van de tijd dat berekeningen toegestaan zijn"
 
-#: html/inc/host.inc:192
+#: html/inc/host.inc:196
 msgid "While is BOINC running, fraction of time GPU computing is allowed"
 msgstr "Terwijl BOINC actief is, fractie van de tijd dat GPU berekeningen toegestaan zijn"
 
-#: html/inc/host.inc:194
+#: html/inc/host.inc:198
 msgid "Average CPU efficiency"
 msgstr "Gemiddelde CPU efficiëntie"
 
-#: html/inc/host.inc:197
+#: html/inc/host.inc:202
 msgid "Task duration correction factor"
 msgstr "Correctie factor van een taak"
 
-#: html/inc/host.inc:199 html/inc/host.inc:684
+#: html/inc/host.inc:205 html/inc/host.inc:706
 msgid "Location"
 msgstr "Locatie"
 
-#: html/inc/host.inc:201
+#: html/inc/host.inc:207
 msgid "Delete this computer"
 msgstr "Verwijder deze computer"
 
-#: html/inc/host.inc:205
+#: html/inc/host.inc:211
 msgid "Merge duplicate records of this computer"
 msgstr "Meerdere vermeldingen van deze computer"
 
-#: html/inc/host.inc:205
+#: html/inc/host.inc:211
 msgid "Merge"
 msgstr "Samenvoegen"
 
-#: html/inc/host.inc:208 html/inc/host.inc:707
+#: html/inc/host.inc:214 html/inc/host.inc:731
 msgid "Last contact"
 msgstr "Laatste contact"
 
-#: html/inc/host.inc:221
+#: html/inc/host.inc:227
 msgid "Computer info"
 msgstr "Computer informatie"
 
-#: html/inc/host.inc:222 html/inc/host.inc:687 html/inc/team.inc:368
+#: html/inc/host.inc:228 html/inc/host.inc:709 html/inc/team.inc:375
 #: html/user/per_app_list.php:61 html/user/top_users.php:47
 msgid "Rank"
 msgstr "Rang"
 
-#: html/inc/host.inc:226 html/inc/host.inc:691
+#: html/inc/host.inc:233 html/inc/host.inc:714
 msgid "Avg. credit"
 msgstr "Punten gemiddelde"
 
-#: html/inc/host.inc:229 html/inc/team.inc:112 html/inc/team.inc:229
-#: html/inc/team.inc:237 html/inc/team.inc:239 html/inc/team.inc:372
-#: html/inc/team.inc:375 html/inc/user.inc:148
+#: html/inc/host.inc:236 html/inc/team.inc:112 html/inc/team.inc:234
+#: html/inc/team.inc:242 html/inc/team.inc:244 html/inc/team.inc:381
+#: html/inc/team.inc:384 html/inc/user.inc:148
 #: html/user/team_change_founder_form.php:84 html/user/team_email_list.php:77
 #: html/user/team_remove_inactive_form.php:45 html/user/top_users.php:50
 #: html/user/top_users.php:53
 msgid "Recent average credit"
 msgstr "Huidige punten gemiddelde"
 
-#: html/inc/host.inc:233 html/inc/host.inc:699 html/inc/result.inc:74
+#: html/inc/host.inc:241 html/inc/host.inc:723 html/inc/result.inc:74
 #: html/user/host_app_versions.php:23
 msgid "CPU"
 msgstr "CPU"
 
-#: html/inc/host.inc:234 html/inc/host.inc:701
+#: html/inc/host.inc:242 html/inc/host.inc:725
 msgid "GPU"
 msgstr "GPU"
 
-#: html/inc/host.inc:235
+#: html/inc/host.inc:243
 msgid "Operating system"
 msgstr "Besturingssysteem"
 
-#: html/inc/host.inc:320
+#: html/inc/host.inc:328
 msgid "(%1 processors)"
 msgstr "(%1 processoren)"
 
-#: html/inc/host.inc:339
+#: html/inc/host.inc:347
 msgid "Details"
 msgstr "Details"
 
-#: html/inc/host.inc:344
+#: html/inc/host.inc:357
 msgid "Cross-project stats:"
 msgstr "Project brede statistieken:"
 
-#: html/inc/host.inc:519
+#: html/inc/host.inc:541
 msgid "Host %1 has overlapping lifetime:"
 msgstr "Computer %1 heeft een overlappende inzet-duur:"
 
-#: html/inc/host.inc:526
+#: html/inc/host.inc:548
 msgid "Host %1 has an incompatible OS:"
 msgstr "Computer %1 heeft een niet compatibel besturingssysteem:"
 
-#: html/inc/host.inc:532
+#: html/inc/host.inc:554
 msgid "Host %1 has an incompatible CPU:"
 msgstr "Computer %1 heeft een niet compatibele CPU:"
 
-#: html/inc/host.inc:599
+#: html/inc/host.inc:621
 msgid "same host"
 msgstr "zelfde computer"
 
-#: html/inc/host.inc:602
+#: html/inc/host.inc:624
 msgid "Can't merge host %1 into %2 - they're incompatible"
 msgstr "Kan computer %1 en %2 niet samenvoegen - ze zijn niet compatibel"
 
-#: html/inc/host.inc:605
+#: html/inc/host.inc:627
 msgid "Merging host %1 into host %2"
 msgstr "Computer %1 en %2 worden samengevoegd"
 
-#: html/inc/host.inc:622
+#: html/inc/host.inc:644
 msgid "Couldn't update credit of new computer"
 msgstr "Punten aantal van nieuwe computer kon niet worden bijgewerkt"
 
-#: html/inc/host.inc:626
+#: html/inc/host.inc:648
 msgid "Couldn't update results"
 msgstr "Resultaten konden niet worden bijgewerkt"
 
-#: html/inc/host.inc:631
+#: html/inc/host.inc:653
 msgid "Couldn't retire old computer"
 msgstr "Verwijderen oude computer niet gelukt"
 
-#: html/inc/host.inc:633
+#: html/inc/host.inc:655
 msgid "Retired old computer %1"
 msgstr "Verwijderde oude computer %1"
 
-#: html/inc/host.inc:656 html/inc/host.inc:659
+#: html/inc/host.inc:678 html/inc/host.inc:681
 msgid "Show:"
 msgstr "Weergeven:"
 
-#: html/inc/host.inc:656 html/inc/host.inc:659
+#: html/inc/host.inc:678 html/inc/host.inc:681
 msgid "All computers"
 msgstr "Alle computers"
 
-#: html/inc/host.inc:656 html/inc/host.inc:659
+#: html/inc/host.inc:678 html/inc/host.inc:681
 msgid "Only computers active in past 30 days"
 msgstr "Alleen actieve computers in de laatste 30 dagen"
 
-#: html/inc/host.inc:672 html/inc/result.inc:702
+#: html/inc/host.inc:694 html/inc/result.inc:702
 msgid "Computer ID"
 msgstr "Computer ID"
 
-#: html/inc/host.inc:681
+#: html/inc/host.inc:699 html/inc/result.inc:692 html/inc/team.inc:229
+#: html/inc/team.inc:376 html/inc/user.inc:236 html/user/account_finish.php:41
+#: html/user/per_app_list.php:61 html/user/team_admins.php:65
+#: html/user/team_change_founder_form.php:82 html/user/team_email_list.php:74
+#: html/user/top_users.php:48 html/user/user_search.php:128
+msgid "Name"
+msgstr "Naam"
+
+#: html/inc/host.inc:703
 msgid "Model"
 msgstr "Model"
 
-#: html/inc/host.inc:696
+#: html/inc/host.inc:720
 msgid "BOINC<br>version"
 msgstr "BOINC<br>versie"
 
-#: html/inc/host.inc:765 html/user/merge_by_name.php:65
+#: html/inc/host.inc:789 html/user/merge_by_name.php:65
 msgid "Merge computers by name"
 msgstr "Computers samenvoegen op naam"
 
@@ -1117,79 +1139,97 @@ msgstr "Discussieer"
 msgid "News is available as an %sRSS feed%s"
 msgstr "Nieuws is ook verkrijgbaar als %sRSS feed%s"
 
-#: html/inc/pm.inc:25 html/inc/pm.inc:250 html/user/forum_pm.php:50
-#: html/user/forum_pm.php:118 html/user/pm.php:57 html/user/pm.php:142
+#: html/inc/pm.inc:25 html/inc/pm.inc:271 html/user/pm.php:57
+#: html/user/pm.php:142
 msgid "Inbox"
 msgstr "Postvak In"
 
-#: html/inc/pm.inc:26 html/inc/pm.inc:254
+#: html/inc/pm.inc:26 html/inc/pm.inc:275
 msgid "Write"
 msgstr "Schrijven"
 
-#: html/inc/pm.inc:40 html/user/team_manage.php:33
+#: html/inc/pm.inc:32
+msgid ""
+"\n"
+"        <ul>\n"
+"        <li> Messages may not contain content that is obscene, hate-related,\n"
+"            sexually explicit or suggestive.\n"
+"        <li> No commercial advertisements.\n"
+"        <li> No links to web sites involving sexual content,\n"
+"            gambling, or intolerance of others.\n"
+"        <li> No messages intended to annoy or antagonize other people.\n"
+"        <li> No messages that are deliberately hostile, threatening, or insulting.\n"
+"        <li> No abusive comments involving race, religion,\n"
+"            nationality, gender, class or sexuality.\n"
+"        <li> The privileges of violators may be suspended or revoked.\n"
+"        <li> If your account is suspended, don't create a new one.\n"
+"        </ul>\n"
+"    "
+msgstr "\n        <ul>\n        <li> Berichten mogen geen woorden bevatten die\n            obsceen zijn, haat-gerelateerd,\n            seksueel getint of suggestief.\n        <li> Plaats geen commerciële advertenties.\n        <li> Plaats geen links naar websites met seksuele inhoud,\n            gokken of intolerantie naar anderen.\n        <li> Plaats geen berichten met de intentie om andere mensen te ergeren, of\n            tegen te werken.\n        <li> Plaats geen berichten die kunnen worden ervaren als een persoonlijke aanval,\n            bedreiging, belediging of schelden.\n        <li> Gebruik geen tekst gericht tegen ras, religie,\n            nationaliteit, geslacht, klasse of seksuele geaardheid.\n        <li> De post privileges van overtreders kunnen worden vergrendeld of ingetrokken. \n        <li> Als je account vergrendeld is, creëer dan geen nieuw account."
+
+#: html/inc/pm.inc:61 html/user/team_manage.php:33
 msgid "Send message to team"
 msgstr "Verstuur bericht aan team"
 
-#: html/inc/pm.inc:44 html/inc/pm.inc:45 html/inc/pm.inc:73 html/inc/pm.inc:86
-#: html/inc/pm.inc:88 html/inc/pm.inc:156 html/user/forum_edit.php:101
-#: html/user/forum_edit.php:102 html/user/forum_edit.php:147
-#: html/user/forum_pm.php:148 html/user/forum_post.php:65
-#: html/user/forum_post.php:93 html/user/forum_post.php:94
-#: html/user/forum_post.php:139 html/user/forum_reply.php:77
+#: html/inc/pm.inc:65 html/inc/pm.inc:66 html/inc/pm.inc:94
+#: html/inc/pm.inc:107 html/inc/pm.inc:109 html/inc/pm.inc:177
+#: html/user/forum_edit.php:107 html/user/forum_edit.php:108
+#: html/user/forum_edit.php:153 html/user/forum_post.php:65
+#: html/user/forum_post.php:97 html/user/forum_post.php:98
+#: html/user/forum_post.php:143 html/user/forum_reply.php:77
 #: html/user/forum_reply.php:110 html/user/forum_reply.php:115
 #: html/user/forum_reply.php:170 html/user/pm.php:172 html/user/pm.php:216
 msgid "Preview"
 msgstr "Voorbeeld"
 
-#: html/inc/pm.inc:61 html/inc/pm.inc:141 html/user/ffmail_form.php:57
-#: html/user/forum_pm.php:65 html/user/forum_pm.php:109 html/user/pm.php:79
-#: html/user/pm.php:133
+#: html/inc/pm.inc:82 html/inc/pm.inc:162 html/user/ffmail_form.php:57
+#: html/user/pm.php:79 html/user/pm.php:133
 msgid "Subject"
 msgstr "Onderwerp"
 
-#: html/inc/pm.inc:84 html/inc/user.inc:501
+#: html/inc/pm.inc:105 html/inc/user.inc:512
 msgid "Send private message"
 msgstr "Verstuur privé bericht"
 
-#: html/inc/pm.inc:100 html/user/pm.php:125
+#: html/inc/pm.inc:121 html/user/pm.php:125
 msgid "no such message"
 msgstr "geen bericht gevonden"
 
-#: html/inc/pm.inc:136
+#: html/inc/pm.inc:157
 msgid "To"
 msgstr "Aan"
 
-#: html/inc/pm.inc:136
+#: html/inc/pm.inc:157
 msgid "User IDs or unique usernames, separated with commas"
 msgstr "Gebruikers ID of unieke gebruikersnaam, gescheiden door komma's"
 
-#: html/inc/pm.inc:189
+#: html/inc/pm.inc:210
 msgid "sent you a private message; subject:"
 msgstr "heeft een persoonlijk bericht gestuurd. Onderwerp:"
 
-#: html/inc/pm.inc:196
+#: html/inc/pm.inc:217
 msgid "Private message%1 from %2, subject:"
 msgstr "Persoonlijk bericht%1 van %2. onderwerp:"
 
-#: html/inc/pm.inc:204
+#: html/inc/pm.inc:225
 msgid "Couldn't create message"
 msgstr "Kon geen bericht aanmaken"
 
-#: html/inc/pm.inc:242
+#: html/inc/pm.inc:263
 msgid ""
 "You are not allowed to send privates messages so often. Please wait some "
 "time before sending more messages."
 msgstr "Het is niet toegestaan om snel achter elkaar veel berichten te versturen. Wacht a.u.b. even met versturen andere berichten."
 
-#: html/inc/pm.inc:252 html/user/forum_forum.php:194
+#: html/inc/pm.inc:273 html/user/forum_forum.php:194
 msgid "unread"
 msgstr "ongelezen"
 
-#: html/inc/pm.inc:262
-msgid "For email notification, %1edit community prefs%2"
-msgstr "Voor een e-mail bevestiging, %1pas voorkeuren aan%2"
+#: html/inc/pm.inc:283
+msgid "For email notification, %1 edit community prefs %2"
+msgstr "Voor een e-mail bevestiging, %1 pas voorkeuren aan %2"
 
-#: html/inc/pm.inc:278
+#: html/inc/pm.inc:299
 msgid "Private message"
 msgstr "Privé berichten"
 
@@ -1251,7 +1291,7 @@ msgstr "Markeer dit om verwerking en bestandsoverdrachten te pauzeren wanneer je
 
 #: html/inc/prefs.inc:82
 msgid "Suspend GPU computing when computer is in use"
-msgstr "Pauzeer GPU gebruik op wanneer de computer in gebruik is"
+msgstr "Pauzeer GPU gebruik wanneer de computer in gebruik is"
 
 #: html/inc/prefs.inc:83
 msgid "Check this to suspend GPU computing when you're using the computer."
@@ -1293,10 +1333,10 @@ msgstr "Bereken alleen tussen"
 msgid "Compute only during a particular period each day."
 msgstr "Bereken alleen gedurende een bepaalde periode elke dag. "
 
-#: html/inc/prefs.inc:111 html/inc/prefs.inc:220
-#: html/user/forum_banishment_vote.php:70
+#: html/inc/prefs.inc:111 html/inc/prefs.inc:220 html/inc/team_types.inc:23
 #: html/user/forum_banishment_vote_action.php:65
-#: html/user/forum_moderate_post.php:65 html/user/forum_moderate_thread.php:61
+#: html/user/forum_banishment_vote.php:70 html/user/forum_moderate_post.php:65
+#: html/user/forum_moderate_thread.php:61
 msgid "Other"
 msgstr "Anders"
 
@@ -1453,7 +1493,7 @@ msgstr "Bijvoorbeeld: BOINC kan maximaal 2000 MB elke 30 dagen overschrijven."
 msgid "MB every"
 msgstr "MB elke"
 
-#: html/inc/prefs.inc:212 html/inc/util.inc:353
+#: html/inc/prefs.inc:212 html/inc/util.inc:369
 msgid "days"
 msgstr "dagen"
 
@@ -1503,15 +1543,15 @@ msgstr "Deze voorkeuren hebben betrekking op alle projecten waar je aan deelneem
 
 #: html/inc/prefs.inc:250
 msgid ""
-"%1Unable to update preferences.%2 The values marked in red below were out of"
-" range or not numeric."
-msgstr "%1Voorkeuren bijwerken niet gelukt.%2 De waarden gemarkeerd in rood zijn niet correct ingevuld."
+"%1 Unable to update preferences. %2 The values marked in red below were out "
+"of range or not numeric."
+msgstr "%1 Voorkeuren bijwerken niet gelukt. %2 De waarden gemarkeerd in rood zijn niet correct ingevuld."
 
 #: html/inc/prefs.inc:494
 msgid "Separate preferences for %1"
 msgstr "Aparte voorkeuren voor %1"
 
-#: html/inc/prefs.inc:502 html/inc/prefs.inc:537
+#: html/inc/prefs.inc:502 html/inc/prefs.inc:543
 #: html/inc/prefs_project.inc:293
 msgid "Edit preferences"
 msgstr "Voorkeuren bijwerken"
@@ -1521,55 +1561,55 @@ msgstr "Voorkeuren bijwerken"
 msgid "Remove"
 msgstr "Verwijderen"
 
-#: html/inc/prefs.inc:508
+#: html/inc/prefs.inc:510 html/inc/prefs.inc:511
 msgid "Add separate preferences for %1"
 msgstr "Aparte voorkeuren voor %1 toevoegen"
 
-#: html/inc/prefs.inc:515
+#: html/inc/prefs.inc:520
 msgid "These settings apply to all computers using this account except"
 msgstr "Deze instellingen zijn van toepassing op alle computers van deze account, behalve"
 
-#: html/inc/prefs.inc:517
+#: html/inc/prefs.inc:522
 msgid ""
 "computers where you have set preferences locally using the BOINC Manager"
 msgstr "computers waar je lokale voorkeuren via BOINC Manager hebt gebruikt."
 
-#: html/inc/prefs.inc:519
+#: html/inc/prefs.inc:524
 msgid "Android devices"
 msgstr "Android toestellen"
 
-#: html/inc/prefs.inc:522
+#: html/inc/prefs.inc:527
 msgid "(Switch view)"
 msgstr "(Verander Weergave)"
 
-#: html/inc/prefs.inc:524 html/inc/prefs_project.inc:275
+#: html/inc/prefs.inc:529 html/inc/prefs_project.inc:275
 msgid "Combined preferences"
 msgstr "Gecombineerde voorkeuren"
 
-#: html/inc/prefs.inc:531 html/inc/prefs_project.inc:286
+#: html/inc/prefs.inc:536 html/inc/prefs_project.inc:286
 msgid "Primary (default) preferences"
 msgstr "Primaire (standaard) voorkeuren"
 
-#: html/inc/prefs.inc:546
+#: html/inc/prefs.inc:553
 msgid "Preferences last modified:"
 msgstr "Voorkeuren aangepast per:"
 
-#: html/inc/prefs.inc:562
+#: html/inc/prefs.inc:569
 msgid "Add preferences"
 msgstr "Voorkeuren toevoegen"
 
-#: html/inc/prefs.inc:566
+#: html/inc/prefs.inc:573
 msgid "Update preferences"
 msgstr "Voorkeuren bijwerken"
 
-#: html/inc/prefs.inc:637 html/inc/prefs_util.inc:575
+#: html/inc/prefs.inc:644 html/inc/prefs_util.inc:575
 #: html/inc/prefs_util.inc:578
 #: html/project.sample/project_specific_prefs.inc:71
 #: html/project.sample/project_specific_prefs.inc:257
 msgid "yes"
 msgstr "ja"
 
-#: html/inc/prefs.inc:639 html/inc/prefs_util.inc:575
+#: html/inc/prefs.inc:646 html/inc/prefs_util.inc:575
 #: html/inc/prefs_util.inc:578
 #: html/project.sample/project_specific_prefs.inc:73
 #: html/project.sample/project_specific_prefs.inc:257
@@ -1577,11 +1617,11 @@ msgid "no"
 msgstr "nee"
 
 #. TODO: make this a subclass of PREF
-#: html/inc/prefs.inc:647
+#: html/inc/prefs.inc:654
 msgid "Default computer location"
 msgstr "Standaard computer locatie"
 
-#: html/inc/prefs.inc:648
+#: html/inc/prefs.inc:655
 msgid ""
 "New computers will use this location for computing and project preferences."
 msgstr "Nieuwe computers zullen deze locatie gebruiken voor berekenings- en project voorkeuren."
@@ -1682,7 +1722,7 @@ msgid ""
 "people. Please change it."
 msgstr "Je profiel is gemarkeerd als onaanvaardbaar en niet zichtbaar voor anderen. Pas het a.u.b. aan."
 
-#: html/inc/profile.inc:171 html/user/friend.php:107 html/user/friend.php:174
+#: html/inc/profile.inc:171 html/user/friend.php:107 html/user/friend.php:184
 msgid "Database error"
 msgstr "Database fout"
 
@@ -1713,16 +1753,16 @@ msgid "Recommend this profile for User of the Day:"
 msgstr "Dit profiel voordragen als 'Gebruiker van de Dag':"
 
 #: html/inc/profile.inc:270
-msgid "I %1like%2 this profile"
-msgstr "Ik keur dit profiel %1goed%2"
+msgid "I %1 like %2 this profile"
+msgstr "Ik vind dit profiel %1 leuk %2"
 
 #: html/inc/profile.inc:273
 msgid "Alert administrators to an offensive profile:"
 msgstr "Meld dit profiel als aanstootgevend aan de administrator:"
 
 #: html/inc/profile.inc:274
-msgid "I %1do not like%2 this profile"
-msgstr "Ik keur dit profiel %1af%2"
+msgid "I %1 do not like %2 this profile"
+msgstr "Ik vind dit profiel %1 niet leuk %2"
 
 #: html/inc/result.inc:58
 msgid "Anonymous platform"
@@ -1920,7 +1960,7 @@ msgstr "Niet nodig"
 
 #: html/inc/result.inc:288
 msgid "Workunit error - check skipped"
-msgstr "Fout in WU - controle overgeslagen"
+msgstr "Fout in werkeenheid - controle overgeslagen"
 
 #: html/inc/result.inc:289
 msgid "Checked, but no consensus yet"
@@ -1952,7 +1992,7 @@ msgstr "WU afgebroken"
 
 #: html/inc/result.inc:336
 msgid "Canonical result is missing"
-msgstr "Canonical resultaat ontbreekt"
+msgstr "Meest overeenkomstig resultaat ontbreekt"
 
 #: html/inc/result.inc:340
 msgid "Unrecognized Error: %1"
@@ -1993,14 +2033,13 @@ msgstr "Verzonden"
 
 #: html/inc/result.inc:395
 msgid "Time reported<br />or deadline"
-msgstr "Rapportage tijd<br />of deadline"
+msgstr "Rapportage tijd<br />of eindtijd"
 
 #: html/inc/result.inc:396
 msgid "explain"
 msgstr "verklaring"
 
 #: html/inc/result.inc:397 html/user/server_status.php:112
-#: html/user/server_status_old.php:312
 msgid "Status"
 msgstr "Status"
 
@@ -2097,7 +2136,7 @@ msgstr "Steekwoorden"
 msgid "Find teams with these words in their names or descriptions"
 msgstr "Zoek teams met deze woorden in hun naam of beschrijving"
 
-#: html/inc/team.inc:50 html/inc/team.inc:465
+#: html/inc/team.inc:50 html/inc/team.inc:484
 msgid "Type of team"
 msgstr "Soort team"
 
@@ -2105,14 +2144,14 @@ msgstr "Soort team"
 msgid "Show only active teams"
 msgstr "Laat alleen aktieve teams zien"
 
-#: html/inc/team.inc:53 html/inc/util.inc:1092 html/user/profile_menu.php:78
+#: html/inc/team.inc:53 html/inc/util.inc:1103 html/user/profile_menu.php:78
 #: html/user/site_search.php:29 html/user/user_search.php:73
 msgid "Search"
 msgstr "Zoek"
 
 #: html/inc/team.inc:62
 msgid "Requested by you, and founder response deadline has passed."
-msgstr "Op eigen verzoek, deadline voor de oprichter om te reageren is verlopen."
+msgstr "Op eigen verzoek, eindtijd voor de oprichter om te reageren is verlopen."
 
 #: html/inc/team.inc:64
 msgid "Complete foundership transfer"
@@ -2124,10 +2163,10 @@ msgstr "Op eigen verzoek"
 
 #: html/inc/team.inc:68
 msgid "founder response deadline is %1"
-msgstr "Deadline voor antwoord van oprichter verloopt op %1"
+msgstr "Eindtijd voor antwoord van oprichter verloopt op %1"
 
-#: html/inc/team.inc:73 html/inc/team.inc:575 html/inc/team_types.inc:24
-#: html/inc/user.inc:393 html/inc/user.inc:492
+#: html/inc/team.inc:73 html/inc/team.inc:594 html/inc/user.inc:405
+#: html/inc/user.inc:503
 msgid "None"
 msgstr "Geen"
 
@@ -2152,203 +2191,203 @@ msgstr "Beschrijving"
 msgid "Web site"
 msgstr "Website"
 
-#: html/inc/team.inc:133
+#: html/inc/team.inc:134
 msgid "Cross-project stats"
 msgstr "Cross-project statistieken"
 
-#: html/inc/team.inc:136 html/inc/team.inc:379 html/user/team_search.php:86
+#: html/inc/team.inc:137 html/inc/team.inc:391 html/user/team_search.php:86
 msgid "Type"
 msgstr "Soort"
 
-#: html/inc/team.inc:140 html/user/team_manage.php:67
+#: html/inc/team.inc:141 html/user/team_manage.php:67
 msgid "Message board"
 msgstr "Forum"
 
-#: html/inc/team.inc:141 html/user/forum_forum.php:143
+#: html/inc/team.inc:142 html/user/forum_forum.php:143
 #: html/user/forum_index.php:96
 msgid "Threads"
 msgstr "Onderwerpen"
 
-#: html/inc/team.inc:149
+#: html/inc/team.inc:150
 msgid "Join this team"
 msgstr "Sluit je aan bij dit team"
 
-#: html/inc/team.inc:150
+#: html/inc/team.inc:151
 msgid ""
 "Note: if 'OK to email' is set in your project preferences, joining a team "
 "gives its founder access to your email address."
 msgstr "NB: als je \"email toestaan\" hebt ingevuld bij je project voorkeuren, zal je email adres bekend worden bij de team oprichter, indien je jezelf bij een team opgeeft."
 
-#: html/inc/team.inc:153
+#: html/inc/team.inc:154
 msgid "Not accepting new members"
 msgstr "Er is op dit moment een ledenstop"
 
-#: html/inc/team.inc:160
+#: html/inc/team.inc:161
 msgid "Foundership change requested"
 msgstr "Oprichters wissel aangevraagd"
 
-#: html/inc/team.inc:161
+#: html/inc/team.inc:162
 msgid "Respond by %1"
 msgstr "Reageren voor %1"
 
-#: html/inc/team.inc:165
+#: html/inc/team.inc:166
 msgid "Team foundership change"
 msgstr "Team oprichter wisselen"
 
-#: html/inc/team.inc:169 html/inc/team.inc:370
+#: html/inc/team.inc:170 html/inc/team.inc:377
 msgid "Members"
 msgstr "Leden"
 
-#: html/inc/team.inc:170 html/inc/team.inc:265
+#: html/inc/team.inc:171 html/inc/team.inc:272
 msgid "Founder"
 msgstr "Oprichter"
 
-#: html/inc/team.inc:184
+#: html/inc/team.inc:185
 msgid "Admins"
 msgstr "Administrator"
 
-#: html/inc/team.inc:199
+#: html/inc/team.inc:200
 msgid "New members in last day"
 msgstr "Nieuwe leden"
 
-#: html/inc/team.inc:200
+#: html/inc/team.inc:201
 msgid "Total members"
 msgstr "Totaal aantal leden"
 
-#: html/inc/team.inc:200 html/inc/team.inc:201 html/inc/team.inc:202
+#: html/inc/team.inc:201 html/inc/team.inc:203 html/inc/team.inc:204
 msgid "view"
 msgstr "bekijk"
 
-#: html/inc/team.inc:201
+#: html/inc/team.inc:203
 msgid "Active members"
 msgstr "Actieve leden"
 
-#: html/inc/team.inc:202
+#: html/inc/team.inc:204
 msgid "Members with credit"
 msgstr "Leden met punten"
 
-#: html/inc/team.inc:267
+#: html/inc/team.inc:274
 msgid "Admin"
 msgstr "Administrator"
 
-#: html/inc/team.inc:288 html/user/forum_user_posts.php:124
+#: html/inc/team.inc:295 html/user/forum_user_posts.php:124
 #: html/user/per_app_list.php:248 html/user/top_hosts.php:86
 #: html/user/top_teams.php:115 html/user/top_users.php:122
 msgid "Previous %1"
 msgstr "Vorige %1"
 
-#: html/inc/team.inc:292 html/user/forum_user_posts.php:133
+#: html/inc/team.inc:299 html/user/forum_user_posts.php:133
 #: html/user/per_app_list.php:253 html/user/profile_search_action.php:63
 #: html/user/top_hosts.php:92 html/user/top_teams.php:120
 #: html/user/top_users.php:127
 msgid "Next %1"
 msgstr "Volgende %1"
 
-#: html/inc/team.inc:300
+#: html/inc/team.inc:307
 msgid "No such team."
 msgstr "Team niet gevonden."
 
-#: html/inc/team.inc:313
+#: html/inc/team.inc:320
 msgid "This operation requires foundership."
 msgstr "Deze actie vereist oprichters rechten."
 
-#: html/inc/team.inc:337
+#: html/inc/team.inc:344
 msgid "This operation requires team admin privileges"
 msgstr "Deze actie vereist administrator rechten"
 
-#: html/inc/team.inc:434
+#: html/inc/team.inc:453
 msgid ""
 "WARNING: this is a BOINC-wide team. If you make changes here, they will soon"
-" be overwritten. Edit the %1BOINC-wide team%2 instead."
-msgstr "WAARSCHUWING: dit is een BOINC-wide team. Indien je hier wijzigingen aanbrengt, worden ze snel overschreven. Pas daarom het %1BOINC-wide team%2 zelf aan."
+" be overwritten. Edit the %1 BOINC-wide team %2 instead."
+msgstr "WAARSCHUWING: dit is een BOINC-wide team. Indien je hier wijzigingen aanbrengt, worden ze snel overschreven. Pas daarom het %1 BOINC-wide team %2 zelf aan."
 
-#: html/inc/team.inc:440
+#: html/inc/team.inc:459
 msgid ""
-"%1Privacy note%2: if you create a team, your project preferences (resource "
-"share, graphics preferences) will be visible to the public."
-msgstr "%1Let op%2: Als je een team opricht worden je project voorkeuren (gedeelde bronnen, grafische voorkeuren) zichtbaar voor iedereen."
+"%1 Privacy note %2: if you create a team, your project preferences (resource"
+" share, graphics preferences) will be visible to the public."
+msgstr "%1 Let op %2: Als je een team opricht worden je project voorkeuren (gedeelde bronnen, grafische voorkeuren) zichtbaar voor iedereen."
 
-#: html/inc/team.inc:444
+#: html/inc/team.inc:463
 msgid "Team name, text version"
 msgstr "Naam van team, tekst versie"
 
-#: html/inc/team.inc:445
+#: html/inc/team.inc:464
 msgid "Don't use HTML tags."
 msgstr "Gebruik geen HTML codes."
 
-#: html/inc/team.inc:448
+#: html/inc/team.inc:467
 msgid "Team name, HTML version"
 msgstr "Naam van team, HTML versie"
 
-#: html/inc/team.inc:450 html/inc/team.inc:460
-msgid "You may use %1limited HTML tags%2."
-msgstr "%1HTML codes beperkt%2 toegestaan."
+#: html/inc/team.inc:469 html/inc/team.inc:479
+msgid "You may use %1 limited HTML tags %2."
+msgstr "%1 HTML codes beperkt %2 toegestaan."
 
-#: html/inc/team.inc:451
+#: html/inc/team.inc:470
 msgid "If you don't know HTML, leave this box blank."
 msgstr "Indien je geen HTML kennis hebt, a.u.b. leeg laten."
 
-#: html/inc/team.inc:454
+#: html/inc/team.inc:473
 msgid "URL of team web page, if any"
 msgstr "URL van team webpagina, indien aanwezig"
 
-#: html/inc/team.inc:454
+#: html/inc/team.inc:473
 msgid "without \"http://\""
 msgstr "zonder \"http://\""
 
-#: html/inc/team.inc:455
+#: html/inc/team.inc:474
 msgid "This URL will be linked to from the team's page on this site."
 msgstr "Deze URL zal geplaatst worden op de team pagina hier op de site."
 
-#: html/inc/team.inc:458
+#: html/inc/team.inc:477
 msgid "Description of team"
 msgstr "Beschrijving van team"
 
-#: html/inc/team.inc:474
+#: html/inc/team.inc:493
 msgid "Accept new members?"
 msgstr "Accepteer nieuwe leden?"
 
-#: html/inc/team_types.inc:25
+#: html/inc/team_types.inc:24
 msgid "Company"
 msgstr "Bedrijf"
 
-#: html/inc/team_types.inc:26
+#: html/inc/team_types.inc:25
 msgid "Primary school"
 msgstr "Basisschool"
 
-#: html/inc/team_types.inc:27
+#: html/inc/team_types.inc:26
 msgid "Secondary school"
 msgstr "Middelbare school"
 
-#: html/inc/team_types.inc:28
+#: html/inc/team_types.inc:27
 msgid "Junior college"
 msgstr "Junior college"
 
-#: html/inc/team_types.inc:29
+#: html/inc/team_types.inc:28
 msgid "University or department"
 msgstr "Universiteit of departement"
 
-#: html/inc/team_types.inc:30
+#: html/inc/team_types.inc:29
 msgid "Government agency"
 msgstr "Overheidsinstelling"
 
-#: html/inc/team_types.inc:31
+#: html/inc/team_types.inc:30
 msgid "Non-profit organization"
 msgstr "Organisatie zonder winstoogmerk"
 
-#: html/inc/team_types.inc:32
+#: html/inc/team_types.inc:31
 msgid "National"
 msgstr "Nationaal"
 
-#: html/inc/team_types.inc:33
+#: html/inc/team_types.inc:32
 msgid "Local/regional"
 msgstr "Lokaal/regionaal"
 
-#: html/inc/team_types.inc:34
+#: html/inc/team_types.inc:33
 msgid "Computer type"
 msgstr "Computer type"
 
-#: html/inc/team_types.inc:35
+#: html/inc/team_types.inc:34
 msgid "Social/political/religious"
 msgstr "Sociaal/politiek/religieus"
 
@@ -2372,282 +2411,317 @@ msgstr "Klik voor gebruikers pagina"
 msgid "Since"
 msgstr "Sinds"
 
-#: html/inc/user.inc:159
-msgid "Computing and credit"
-msgstr "Berekeningen en punten"
-
-#: html/inc/user.inc:162
+#: html/inc/user.inc:170
 msgid "Computers on this account"
 msgstr "Computers op dit account"
 
-#: html/inc/user.inc:162 html/inc/user.inc:163 html/inc/user.inc:260
-#: html/inc/user.inc:348 html/inc/user.inc:444 html/inc/user.inc:525
+#: html/inc/user.inc:170 html/inc/user.inc:173 html/inc/user.inc:273
+#: html/inc/user.inc:360 html/inc/user.inc:455 html/inc/user.inc:536
 #: html/user/view_profile.php:66
 msgid "View"
 msgstr "Bekijk"
 
-#: html/inc/user.inc:172
+#: html/inc/user.inc:185
 msgid "Cross-project ID"
 msgstr "Cross-project ID"
 
-#: html/inc/user.inc:173
+#: html/inc/user.inc:186
 msgid "Cross-project statistics"
 msgstr "Cross-project statistieken"
 
-#: html/inc/user.inc:176 html/inc/user.inc:393 html/inc/user.inc:490
-#: html/inc/user.inc:492 html/user/user_search.php:129
+#: html/inc/user.inc:189 html/inc/user.inc:405 html/inc/user.inc:501
+#: html/inc/user.inc:503 html/user/user_search.php:129
 msgid "Team"
 msgstr "Team"
 
-#: html/inc/user.inc:178
+#: html/inc/user.inc:191
 msgid "Cross-project"
 msgstr "Cross-project"
 
-#: html/inc/user.inc:180
+#: html/inc/user.inc:193
 msgid "Stats on your cell phone"
 msgstr "Statistieken op je mobiele telefoon"
 
-#: html/inc/user.inc:222
-msgid "Account information"
-msgstr "Account informatie"
-
-#: html/inc/user.inc:231 html/user/get_passwd.php:31
-msgid "Email address"
-msgstr "Email adres"
-
-#: html/inc/user.inc:235 html/inc/user.inc:437
+#: html/inc/user.inc:248 html/inc/user.inc:448
 msgid "URL"
 msgstr "URL"
 
-#: html/inc/user.inc:239
+#: html/inc/user.inc:252
 msgid "Postal code"
 msgstr "Postcode"
 
-#: html/inc/user.inc:241 html/inc/user.inc:430
+#: html/inc/user.inc:254 html/inc/user.inc:441
 msgid "%1 member since"
 msgstr "%1 lid sinds"
 
 #. LDAP accounts can't change email or password
-#: html/inc/user.inc:246 html/inc/user.inc:250
+#: html/inc/user.inc:259 html/inc/user.inc:263
 msgid "Change"
 msgstr "Verander"
 
-#: html/inc/user.inc:251
+#: html/inc/user.inc:264
 msgid "email address"
 msgstr "email adres"
 
-#: html/inc/user.inc:252
+#: html/inc/user.inc:265
 msgid "password"
 msgstr "wachtwoord"
 
-#: html/inc/user.inc:253
+#: html/inc/user.inc:266
 msgid "other account info"
 msgstr "ander account informatie"
 
-#: html/inc/user.inc:256 html/inc/user.inc:429
+#: html/inc/user.inc:269 html/inc/user.inc:440
 msgid "User ID"
 msgstr "Gebruikers ID"
 
-#: html/inc/user.inc:256
+#: html/inc/user.inc:269
 msgid "Used in community functions"
-msgstr "Gebruikt in gemeenschaps functies"
+msgstr "Gebruikt in gemeenschapsfuncties"
 
-#: html/inc/user.inc:259 html/user/weak_auth.php:23
+#: html/inc/user.inc:272 html/user/weak_auth.php:23
 msgid "Account keys"
 msgstr "Account keys"
 
-#: html/inc/user.inc:267
+#: html/inc/user.inc:282
 msgid "When and how BOINC uses your computer"
 msgstr "Hoe en wanneer BOINC je computer gebruikt"
 
-#: html/inc/user.inc:268
+#: html/inc/user.inc:283
 msgid "Computing preferences"
-msgstr "Computer voorkeuren"
+msgstr "Computervoorkeuren"
 
-#: html/inc/user.inc:271
+#: html/inc/user.inc:286
 msgid "Message boards and private messages"
 msgstr "Forum en privé berichten"
 
-#: html/inc/user.inc:272 html/user/edit_forum_preferences_form.php:31
+#: html/inc/user.inc:287 html/user/edit_forum_preferences_form.php:31
 msgid "Community preferences"
-msgstr "Gemeenschaps voorkeuren"
+msgstr "Gemeenschapsvoorkeuren"
 
-#: html/inc/user.inc:275
+#: html/inc/user.inc:290
 msgid "Preferences for this project"
 msgstr "Voorkeuren voor dit project"
 
-#: html/inc/user.inc:276 html/user/prefs.php:30
+#: html/inc/user.inc:291 html/user/prefs.php:30
 msgid "%1 preferences"
 msgstr "%1 voorkeuren"
 
-#: html/inc/user.inc:293
+#: html/inc/user.inc:308
 msgid "View the profile of %1"
 msgstr "Bekijk het profiel van %1"
 
-#: html/inc/user.inc:294 html/inc/user.inc:352 html/inc/user.inc:525
+#: html/inc/user.inc:309 html/inc/user.inc:364 html/inc/user.inc:536
 msgid "Profile"
 msgstr "Profiel"
 
-#: html/inc/user.inc:350
+#: html/inc/user.inc:362
 msgid "Create"
 msgstr "Aanmaken"
 
-#: html/inc/user.inc:357 html/inc/user.inc:497
+#: html/inc/user.inc:369 html/inc/user.inc:508
 msgid "%1 posts"
 msgstr "%1 berichten"
 
 #. ------------ Notification -----------
-#: html/inc/user.inc:375 html/user/edit_forum_preferences_form.php:40
+#: html/inc/user.inc:387 html/user/edit_forum_preferences_form.php:40
 msgid "Notifications"
 msgstr "Aankondiging"
 
-#: html/inc/user.inc:381
+#: html/inc/user.inc:393
 msgid "Quit team"
 msgstr "Verlaat team"
 
-#: html/inc/user.inc:383 html/inc/user.inc:400
+#: html/inc/user.inc:395 html/inc/user.inc:412
 msgid "Administer"
 msgstr "Administrator"
 
-#: html/inc/user.inc:389 html/inc/user.inc:402
+#: html/inc/user.inc:401 html/inc/user.inc:414
 msgid "(foundership change request pending)"
 msgstr "(oprichters wissel in aanvraag)"
 
-#: html/inc/user.inc:391
+#: html/inc/user.inc:403
 msgid "Member of team"
 msgstr "Lid van team"
 
-#: html/inc/user.inc:393
+#: html/inc/user.inc:405
 msgid "find a team"
 msgstr "vind een team"
 
-#: html/inc/user.inc:404
+#: html/inc/user.inc:416
 msgid "Founder but not member of"
 msgstr "Oprichter maar geen lid van"
 
-#: html/inc/user.inc:410
+#: html/inc/user.inc:422
 msgid "Find friends"
 msgstr "Vind vrienden"
 
-#: html/inc/user.inc:418 html/inc/user.inc:420 html/inc/user.inc:508
-#: html/inc/user.inc:510 html/inc/user.inc:519
+#: html/inc/user.inc:430 html/inc/user.inc:432 html/inc/user.inc:519
+#: html/inc/user.inc:521 html/inc/user.inc:530
 msgid "Friends"
 msgstr "Vrienden"
 
-#: html/inc/user.inc:452 html/inc/user.inc:458
+#: html/inc/user.inc:463 html/inc/user.inc:469
 msgid "Donor"
 msgstr "Donateur"
 
-#: html/inc/user.inc:501
+#: html/inc/user.inc:512
 msgid "Contact"
 msgstr "Contact"
 
-#: html/inc/user.inc:504
+#: html/inc/user.inc:515
 msgid "This person is a friend"
 msgstr "Dit persoon is een vriend"
 
-#: html/inc/user.inc:505 html/user/friend.php:240
+#: html/inc/user.inc:516 html/user/friend.php:250
 msgid "Cancel friendship"
 msgstr "Beëindig vriendschap"
 
-#: html/inc/user.inc:508 html/user/friend.php:39
+#: html/inc/user.inc:519 html/user/friend.php:39
 msgid "Request pending"
 msgstr "In aanvraag"
 
-#: html/inc/user.inc:510
+#: html/inc/user.inc:521
 msgid "Add as friend"
 msgstr "Voeg toe als vriend"
 
-#: html/inc/user.inc:569
+#: html/inc/user.inc:545
+msgid "Account information"
+msgstr "Account informatie"
+
+#: html/inc/user_util.inc:40
 msgid "user name cannot have leading or trailing white space"
 msgstr "gebruikersnaam mag niet starten of eindigen met een spatie"
 
-#: html/inc/user.inc:573
+#: html/inc/user_util.inc:44
 msgid "user name must be nonempty"
 msgstr "gebruikersnaam mag niet leeg zijn"
 
-#: html/inc/user.inc:577
+#: html/inc/user_util.inc:48
 msgid "user name may not contain HTML tags"
 msgstr "gebruikersnaam mag geen HTML tags bevatten"
 
-#: html/inc/util.inc:177
+#: html/inc/user_util.inc:108
+msgid "Can't create account"
+msgstr "Account aanmaken niet gelukt"
+
+#: html/inc/user_util.inc:111
+msgid "Click your browser's <b>Back</b> button to try again."
+msgstr "Klik op je webbrowser's <b>Terug</b> knop en probeer opnieuw."
+
+#: html/inc/user_util.inc:132 html/user/team_create_action.php:43
+msgid "Your reCAPTCHA response was not correct. Please try again."
+msgstr "Je ReCaptcha antwoord was niet correct. Probeer het a.u.b. opnieuw."
+
+#: html/inc/user_util.inc:156
+msgid "You must supply an invitation code to create an account."
+msgstr "Je hebt een uitnodigings code nodig om hier een account aan te maken."
+
+#: html/inc/user_util.inc:159
+msgid "The invitation code you gave is not valid."
+msgstr "De ingevulde uitnodigings code is ongeldig."
+
+#: html/inc/user_util.inc:170
+msgid ""
+"Invalid email address: you must enter a valid address of the form "
+"name@domain"
+msgstr "Ongeldig e-mail adres; gebruik een geldig email adres in de vorm 'naam@domein'"
+
+#: html/inc/user_util.inc:174
+msgid "There's already an account with that email address."
+msgstr "Er bestaat reeds een gebruikersaccount met dit e-mail adres."
+
+#: html/inc/user_util.inc:180 html/user/edit_passwd_action.php:32
+msgid "New passwords are different"
+msgstr "Nieuwe wachtwoorden zijn verschillend"
+
+#: html/inc/user_util.inc:187 html/user/edit_passwd_action.php:40
+msgid "Passwords may only include ASCII characters."
+msgstr "Wachtwoord kan enkel ASCII karakters bevatten."
+
+#: html/inc/user_util.inc:192 html/user/edit_passwd_action.php:44
+msgid "New password is too short: minimum password length is %1 characters."
+msgstr "Het nieuwe wachtwoord is te kort. Minimum wachtwoord lengte is %1 karakters."
+
+#: html/inc/user_util.inc:218
+msgid "Couldn't create account"
+msgstr "Account aanmaken niet gelukt"
+
+#: html/inc/util.inc:192
 msgid "log out"
 msgstr "Uitloggen"
 
-#: html/inc/util.inc:179
+#: html/inc/util.inc:194
 msgid "log in"
 msgstr "Inloggen"
 
-#: html/inc/util.inc:283
+#. kludge
+#: html/inc/util.inc:297 html/user/login_form.php:43
+msgid "Log in"
+msgstr "Inloggen"
+
+#: html/inc/util.inc:298
 msgid "Create an account"
 msgstr "Een account aanmaken"
 
-#: html/inc/util.inc:284
+#: html/inc/util.inc:299
 msgid "Server status page"
 msgstr "Server status"
 
-#: html/inc/util.inc:327
+#: html/inc/util.inc:343
 msgid ""
 "A database error occurred while handling your request; please try again "
 "later."
 msgstr "De database genereerde een foutmelding bij de behandeling van uw verzoek, probeer het later nog eens alstublieft."
 
-#: html/inc/util.inc:336
+#: html/inc/util.inc:352
 msgid "Unable to handle request"
 msgstr "Niet mogelijk om verzoek te behandelen"
 
-#: html/inc/util.inc:356
+#: html/inc/util.inc:372
 msgid "hours"
 msgstr "uren"
 
-#: html/inc/util.inc:359
+#: html/inc/util.inc:375
 msgid "min"
 msgstr "minuten"
 
-#: html/inc/util.inc:362
+#: html/inc/util.inc:378
 msgid "sec"
 msgstr "seconden"
 
-#: html/inc/util.inc:542
+#: html/inc/util.inc:561
 msgid ""
 "Link has timed out. Please click Back, refresh the page, and try again."
 msgstr "Wachttijd voor deze link is verlopen. Klik op 'terug' en vernieuw de pagina."
 
-#: html/inc/util.inc:617
+#: html/inc/util.inc:636
 msgid "Use BBCode tags to format your text"
 msgstr "Gebruik BBCode om de tekst op te maken"
 
-#: html/inc/util.inc:872
+#: html/inc/util.inc:884
 msgid "Project down for maintenance"
 msgstr "Project wegens onderhoud gesloten"
 
-#: html/inc/util.inc:875
+#: html/inc/util.inc:887
 msgid "%1 is temporarily shut down for maintenance.  Please try again later."
 msgstr "%1 is tijdelijk gesloten wegens onderhoud.  Probeer het later a.u.b. opnieuw."
 
-#: html/inc/util.inc:893
+#: html/inc/util.inc:905
 msgid "Unable to connect to database - please try again later"
 msgstr "Verbinden met database mislukt - probeer het later a.u.b. opnieuw"
 
-#: html/inc/util.inc:897
+#: html/inc/util.inc:909
 msgid "Unable to select database - please try again later"
 msgstr "Selecteren van database mislukt - probeer het later a.u.b. opnieuw"
 
-#: html/inc/util.inc:1071
+#: html/inc/util.inc:1082
 msgid "characters remaining"
 msgstr "aantal tekens resterend"
 
-#: html/inc/util_ops.inc:115 html/user/get_passwd.php:75
+#: html/inc/util_ops.inc:130
 msgid "Stay logged in on this computer"
 msgstr "Blijf ingelogd op deze computer"
-
-#: html/user/account_finish.php:34
-msgid "Finish account setup"
-msgstr "Account set-up voltooien"
-
-#: html/user/account_finish.php:52
-msgid "Optional; not shown to others"
-msgstr "Ter keuze; wordt niet vertoond aan anderen"
 
 #: html/user/account_finish_action.php:27
 msgid "You must supply a name for your account"
@@ -2656,6 +2730,14 @@ msgstr "U moet een naam voor uw account invoeren"
 #: html/user/account_finish_action.php:30
 msgid "HTML tags not allowed in name"
 msgstr "HTML tags zijn in uw naam niet toegestaan"
+
+#: html/user/account_finish.php:34
+msgid "Finish account setup"
+msgstr "Account set-up voltooien"
+
+#: html/user/account_finish.php:52
+msgid "Optional; not shown to others"
+msgstr "Ter keuze; wordt niet vertoond aan anderen"
 
 #: html/user/add_venue.php:40 html/user/add_venue.php:64
 #: html/user/prefs_edit.php:41 html/user/prefs_edit.php:65
@@ -2789,56 +2871,15 @@ msgid ""
 "the raw tag itself will display instead of the formatted text."
 msgstr "Indien je een tag niet correct afsluit of een parameter incorrect specificeert,\ndan zal de ruwe tag zichzelf tonen in plaats van de geformatteerde tekst."
 
-#: html/user/create_account_action.php:26
-msgid "Can't create account"
-msgstr "Account aanmaken niet gelukt"
-
-#: html/user/create_account_action.php:29
-msgid "Click your browser's <b>Back</b> button to try again."
-msgstr "Klik op je webbrowser's <b>Terug</b> knop en probeer opnieuw."
-
-#: html/user/create_account_action.php:44 html/user/team_create_action.php:43
-msgid "Your reCAPTCHA response was not correct. Please try again."
-msgstr "Je ReCaptcha antwoord was niet correct. Probeer het a.u.b. opnieuw."
-
-#: html/user/create_account_action.php:68
-msgid "You must supply an invitation code to create an account."
-msgstr "Je hebt een uitnodigings code nodig om hier een account aan te maken."
-
-#: html/user/create_account_action.php:71
-msgid "The invitation code you gave is not valid."
-msgstr "De ingevulde uitnodigings code is ongeldig."
-
-#: html/user/create_account_action.php:82
-msgid ""
-"Invalid email address: you must enter a valid address of the form "
-"name@domain"
-msgstr "Ongeldig e-mail adres; gebruik een geldig email adres in de vorm 'naam@domein'"
-
-#: html/user/create_account_action.php:86
-msgid "There's already an account with that email address."
-msgstr "Er bestaat reeds een gebruikersaccount met dit e-mail adres."
-
-#: html/user/create_account_action.php:92 html/user/edit_passwd_action.php:32
-msgid "New passwords are different"
-msgstr "Nieuwe wachtwoorden zijn verschillend"
-
-#: html/user/create_account_action.php:99 html/user/edit_passwd_action.php:40
-msgid "Passwords may only include ASCII characters."
-msgstr "Wachtwoord kan enkel ASCII karakters bevatten."
-
-#: html/user/create_account_action.php:104 html/user/edit_passwd_action.php:44
-msgid "New password is too short: minimum password length is %1 characters."
-msgstr "Het nieuwe wachtwoord is te kort. Minimum wachtwoord lengte is %1 karakters."
-
-#: html/user/create_account_action.php:129
-msgid "Couldn't create account"
-msgstr "Account aanmaken niet gelukt"
+#: html/user/create_account_form.php:42 html/user/create_account_form.php:74
+msgid "Create account"
+msgstr "Account maken"
 
 #: html/user/create_account_form.php:48
 msgid ""
-"NOTE: to run %1 on your computer, %2go here%3 instead of using this form."
-msgstr "AANTEKENING: om %1 op je computer te kunnen gebruiken, 1%2ga hier%3 in plaats van dit formulier te gebruiken."
+"If you already have an account and want to run %1 on this computer, %2 go "
+"here %3."
+msgstr "Als je al een account hebt en je wil %1 op je computer laten uitvoeren, %2 ga dan hier %3."
 
 #: html/user/create_account_form.php:65
 msgid ""
@@ -2892,9 +2933,9 @@ msgstr "De indeling van de geüploade afbeelding wordt niet ondersteund."
 
 #: html/user/create_profile.php:164
 msgid ""
-"Your %1profile%2 lets you share your opinions and background with the %3 "
+"Your %1 profile %2 lets you share your opinions and background with the %3 "
 "community."
-msgstr "Je %1profiel%2 geeft je de mogelijkheid om je mening en achtergrond te delen met de %3 gemeenschap."
+msgstr "Je %1 profiel %2 geeft je de mogelijkheid om je mening en achtergrond te delen met de %3 gemeenschap."
 
 #: html/user/create_profile.php:208
 msgid "Your ReCaptcha response was not correct.  Please try again."
@@ -2984,7 +3025,7 @@ msgstr "Weet je het zeker dat je je gebruikersaccount wenst te verwijderen?"
 
 #: html/user/delete_account.php:79 html/user/delete_profile.php:54
 #: html/user/donations.php:321 html/user/donations.php:325
-#: html/user/friend.php:240 html/user/prefs_remove.php:53
+#: html/user/friend.php:250 html/user/prefs_remove.php:53
 #: html/user/user_search.php:62 html/user/user_search.php:67
 msgid "Yes"
 msgstr "Ja"
@@ -2994,7 +3035,7 @@ msgid "Delete this account"
 msgstr "Deze gebruikersaccount verwijderen"
 
 #: html/user/delete_account.php:80 html/user/delete_profile.php:55
-#: html/user/friend.php:241 html/user/user_search.php:61
+#: html/user/friend.php:251 html/user/user_search.php:61
 #: html/user/user_search.php:66
 msgid "No"
 msgstr "Nee"
@@ -3146,12 +3187,12 @@ msgid ""
 msgstr "Wij geven geen installatie instructies voor deze programma's.\nHet is evengoed mogelijk dat de maker instructies heeft toegevoegd bij het programma zelf. \nAls dit niet het geval is raden we aan contact op te nemen met de maker."
 
 #: html/user/download_network.php:36
-msgid "Instructions for installing and running BOINC are %1here%2."
-msgstr "Instructies voor het installeren en uitvoeren van BOINC vind je %1hier%2."
+msgid "Instructions for installing and running BOINC are %1 here %2."
+msgstr "Instructies voor het installeren en uitvoeren van BOINC vind je %1 hier %2."
 
 #: html/user/download_network.php:38
-msgid "This list is managed centrally at %1the BOINC website%2."
-msgstr "Deze lijst wordt centraal onderhouden door %1de BOINC website%2."
+msgid "This list is managed centrally at %1 the BOINC website %2."
+msgstr "Deze lijst wordt centraal onderhouden op %1 de BOINC website %2."
 
 #: html/user/edit_email_action.php:31
 msgid "Change email address of account"
@@ -3178,8 +3219,8 @@ msgid "The email address of your account is now %1."
 msgstr "Het e-mail adres van je account is nu %1."
 
 #: html/user/edit_email_action.php:64
-msgid "Please %1validate this email address%2."
-msgstr "A.u.b. dit %1e-mail adres controleren%2."
+msgid "Please %1 validate this email address %2."
+msgstr "Laat a.u.b. dit %1 e-mail adres controleren %2."
 
 #: html/user/edit_email_action.php:67
 msgid ""
@@ -3187,25 +3228,17 @@ msgid ""
 "again later."
 msgstr "Updaten van database mislukt.  Probeer het later a.u.b. opnieuw."
 
-#: html/user/edit_email_form.php:27 html/user/edit_email_form.php:51
+#: html/user/edit_email_form.php:27 html/user/edit_email_form.php:46
 msgid "Change email address"
 msgstr "Verander e-mail adres"
 
 #: html/user/edit_email_form.php:36
-msgid "Change the email address of your account"
-msgstr "Verander het e-mail adres van je account"
-
-#: html/user/edit_email_form.php:37
 msgid "New email address"
 msgstr "Nieuw e-mail adres"
 
-#: html/user/edit_email_form.php:38
+#: html/user/edit_email_form.php:37
 msgid "Must be a valid address of the form 'name@domain'"
 msgstr "Moet een geldig email adres zijn in de vorm 'naam@domein'"
-
-#: html/user/edit_email_form.php:48
-msgid "No password?"
-msgstr "Geen wachtwoord?"
 
 #: html/user/edit_forum_preferences_action.php:33
 msgid "Confirm reset"
@@ -3295,10 +3328,10 @@ msgstr "Onderschrift bij forumberichten"
 
 #: html/user/edit_forum_preferences_form.php:89
 msgid ""
-"Check out %1various free services%2\n"
+"Check out %1 various free services %2\n"
 "<br> providing dynamic 'signature images'\n"
 "<br> showing your latest credit info, project news, etc."
-msgstr "Ga eens kijken bij de %1diverse aanbieders%2\n<br> van gratis dynamische 'onderschrift-afbeeldingen'\n<br> voor de weergave van jouw huidige puntentotaal, de nieuwste projectinfo, enz."
+msgstr "Ga eens kijken bij de %1 diverse aanbieders %2\n<br> van gratis dynamische 'onderschrift-afbeeldingen'\n<br> voor de weergave van jouw huidige puntentotaal, de nieuwste projectinfo, enz."
 
 #: html/user/edit_forum_preferences_form.php:93
 msgid "Attach signature by default"
@@ -3382,8 +3415,7 @@ msgstr "Negeer forum en privé -berichten van deze gebruiker(s)."
 msgid "User ID (For instance: 123456789)"
 msgstr "Gebruikers ID (Bijvoorbeeld: 123456789)"
 
-#: html/user/edit_forum_preferences_form.php:157 html/user/forum_pm.php:213
-#: html/user/pm.php:287
+#: html/user/edit_forum_preferences_form.php:157 html/user/pm.php:287
 msgid "Add user to filter"
 msgstr "Gebruiker toevoegen aan filter"
 
@@ -3412,7 +3444,7 @@ msgid ""
 msgstr "Vanwege een probleem in de database is het bijwerken mislukt. Probeer het later a.u.b. opnieuw."
 
 #: html/user/edit_passwd_action.php:53 html/user/edit_passwd_form.php:25
-#: html/user/edit_passwd_form.php:34
+#: html/user/edit_passwd_form.php:30
 msgid "Change password"
 msgstr "Verander wachtwoord"
 
@@ -3420,11 +3452,11 @@ msgstr "Verander wachtwoord"
 msgid "Your password has been changed."
 msgstr "Je wachtwoord is veranderd."
 
-#: html/user/edit_passwd_form.php:32
+#: html/user/edit_passwd_form.php:28
 msgid "New password"
 msgstr "Nieuw wachtwoord"
 
-#: html/user/edit_passwd_form.php:33
+#: html/user/edit_passwd_form.php:29
 msgid "New password, again"
 msgstr "Nieuw wachtwoord, opnieuw"
 
@@ -3445,12 +3477,12 @@ msgid "Edit account information"
 msgstr "Bewerk account informatie"
 
 #: html/user/edit_user_info_form.php:33
-msgid "Name %1 real name or nickname%2"
-msgstr "Naam %1 echte naam of nickname%2"
+msgid "Screen name %1 real name or nickname%2"
+msgstr "Zichtbare naam %1 echte naam of bijnaam%2"
 
 #: html/user/edit_user_info_form.php:39
-msgid "URL %1 of your web page; optional%2"
-msgstr "URL %1 van je webpagina; optioneel%2"
+msgid "URL %1 of your personal web page; optional%2"
+msgstr "URL %1 van je persoonlijke website, ter keuze%2"
 
 #: html/user/edit_user_info_form.php:52
 msgid "Postal (ZIP) code %1 Optional%2"
@@ -3575,13 +3607,13 @@ msgstr "De computer kon de uitvoerbestanden niet uploaden."
 
 #: html/user/explain_state.php:103
 msgid "Time reported and deadline"
-msgstr "Rapportage tijd en deadline"
+msgstr "Rapportage tijd en eindtijd"
 
 #: html/user/explain_state.php:106
 msgid ""
 "A task's <b>Time reported or deadline</b> field depends on whether the task "
 "has been reported yet:"
-msgstr "De verwerkingsstatus in het veld <b>rapportagetijd of tijdslimiet</b> is afhankelijk van de terugmelding van de taak:"
+msgstr "De verwerkingsstatus in het veld <b>rapportagetijd of eindtijd</b> is afhankelijk van de terugmelding van de taak:"
 
 #: html/user/explain_state.php:110
 msgid "Already reported"
@@ -3593,19 +3625,19 @@ msgstr "De datum/tijd van rapportage"
 
 #: html/user/explain_state.php:111
 msgid "Not reported yet, deadline in the future"
-msgstr "Uitslag nog niet bekend, tijdslimiet aanstaande"
+msgstr "Uitslag nog niet bekend, eindtijd aanstaande"
 
 #: html/user/explain_state.php:112
 msgid "Deadline, shown in green."
-msgstr "Tijdslimiet wordt weergegeven in groen."
+msgstr "Eindtijd wordt weergegeven in groen."
 
 #: html/user/explain_state.php:114
 msgid "Not reported yet, deadline in the past"
-msgstr "Uitslag nog niet bekend, tijdslimiet verstreken"
+msgstr "Uitslag nog niet bekend, eindtijd verstreken"
 
 #: html/user/explain_state.php:115
 msgid "Deadline, shown in red."
-msgstr "Tijdslimiet wordt weergegeven in rood."
+msgstr "Eindtijd wordt weergegeven in rood."
 
 #: html/user/explain_state.php:120
 msgid "Unknown field"
@@ -3633,9 +3665,9 @@ msgstr "Bedankt dat je je vrienden hebt verteld over %1"
 
 #: html/user/ffmail_action.php:57
 msgid ""
-"You forgot to enter email addresses; Please %1return to the form%2 and enter"
-" them."
-msgstr "Je hebt geen e-mailadressen ingevuld; Ga %1terug naar het formulier%2 en vul deze in. "
+"You forgot to enter email addresses; Please %1 return to the form %2 and "
+"enter them."
+msgstr "Je hebt geen e-mailadressen ingevuld; Ga %1 terug naar het formulier %2 en vul deze in. "
 
 #: html/user/ffmail_form.php:33
 msgid "Tell your friends about %1"
@@ -3656,10 +3688,32 @@ msgid "Send"
 msgstr "Verzenden"
 
 #. Can't moderate without being moderator
-#: html/user/forum_banishment_vote.php:37
 #: html/user/forum_banishment_vote_action.php:35
+#: html/user/forum_banishment_vote.php:37
 msgid "You are not authorized to banish users."
 msgstr "U bent niet gemachtigd om deelnemers uit te sluiten."
+
+#: html/user/forum_banishment_vote_action.php:41
+#: html/user/forum_moderate_post_action.php:66
+msgid "You must specify an action..."
+msgstr "U dient een actie te specificeren..."
+
+#: html/user/forum_banishment_vote_action.php:59
+#: html/user/forum_banishment_vote.php:67 html/user/forum_moderate_post.php:60
+#: html/user/forum_moderate_thread.php:58
+msgid "Obscene"
+msgstr "Obsceen"
+
+#: html/user/forum_banishment_vote_action.php:61
+#: html/user/forum_banishment_vote.php:68 html/user/forum_moderate_post.php:61
+#: html/user/forum_moderate_thread.php:59
+msgid "Flame/Hate mail"
+msgstr "Haat e-mail"
+
+#: html/user/forum_banishment_vote_action.php:63
+#: html/user/forum_banishment_vote.php:69 html/user/forum_moderate_post.php:64
+msgid "User Request"
+msgstr "Gebruikers Verzoek"
 
 #: html/user/forum_banishment_vote.php:43
 #: html/user/forum_banishment_vote.php:48
@@ -3676,10 +3730,10 @@ msgstr "Deelnemer is reeds uitgesloten"
 
 #: html/user/forum_banishment_vote.php:62 html/user/forum_moderate_post.php:86
 msgid ""
-"Are you sure you want to banish %1?<br/>This will prevent %1 from posting "
+"Are you sure you want to banish %1 ?<br/>This will prevent %1 from posting "
 "for chosen time period.<br/>It should be done only if %1 has consistently "
 "exhibited trollish behavior."
-msgstr "Wilt u %1 echt uitsluiten?<br/>Het is %1 dan niet toegestaan om gedurende de geselecteerde periode berichten te plaatsen.<br/>Dit is alleen acceptabel indien %1 zich herhaaldelijk onbehoorlijk heeft gedragen."
+msgstr "Wil je %1 echt uitsluiten?<br/>Het is %1 dan niet toegestaan om gedurende de geselecteerde periode berichten te plaatsen.<br/>Dit is alleen acceptabel indien %1 zich herhaaldelijk onbehoorlijk heeft gedragen."
 
 #: html/user/forum_banishment_vote.php:64
 msgid ""
@@ -3691,24 +3745,6 @@ msgstr "Kies een van de redenen, of geef zelf een uitgebreidere motivatie waarom
 #: html/user/forum_moderate_thread.php:56
 msgid "Category"
 msgstr "Categorie"
-
-#: html/user/forum_banishment_vote.php:67
-#: html/user/forum_banishment_vote_action.php:59
-#: html/user/forum_moderate_post.php:60 html/user/forum_moderate_thread.php:58
-msgid "Obscene"
-msgstr "Obsceen"
-
-#: html/user/forum_banishment_vote.php:68
-#: html/user/forum_banishment_vote_action.php:61
-#: html/user/forum_moderate_post.php:61 html/user/forum_moderate_thread.php:59
-msgid "Flame/Hate mail"
-msgstr "Haat e-mail"
-
-#: html/user/forum_banishment_vote.php:69
-#: html/user/forum_banishment_vote_action.php:63
-#: html/user/forum_moderate_post.php:64
-msgid "User Request"
-msgstr "Gebruikers Verzoek"
 
 #: html/user/forum_banishment_vote.php:72 html/user/forum_moderate_post.php:56
 #: html/user/forum_moderate_thread.php:100
@@ -3724,11 +3760,6 @@ msgstr "Verstuurd indien niet leeg"
 msgid "Proceed with vote"
 msgstr "Doorgaan met uitsluitingsvoorstel"
 
-#: html/user/forum_banishment_vote_action.php:41
-#: html/user/forum_moderate_post_action.php:66
-msgid "You must specify an action..."
-msgstr "U dient een actie te specificeren..."
-
 #: html/user/forum_edit.php:41
 msgid ""
 "You can no longer edit this post.<br/>Posts can only be edited at most %1 "
@@ -3739,21 +3770,21 @@ msgstr "Dit bericht kan niet meer worden bewerkt.<br/>Berichten kunnen nog worde
 msgid "You are not authorized to edit this post."
 msgstr "U bent niet gemachtigd om dit bericht te bewerken."
 
-#: html/user/forum_edit.php:86
+#: html/user/forum_edit.php:92
 msgid "Edit post"
 msgstr "Bericht aanpasen"
 
-#: html/user/forum_edit.php:112
+#: html/user/forum_edit.php:118
 msgid "Edit your message"
 msgstr "Bericht aanpassen"
 
-#: html/user/forum_edit.php:117 html/user/forum_edit.php:122
-#: html/user/forum_post.php:115 html/user/forum_post.php:117
+#: html/user/forum_edit.php:123 html/user/forum_edit.php:128
+#: html/user/forum_post.php:119 html/user/forum_post.php:121
 #: html/user/team_forum.php:72
 msgid "Title"
 msgstr "Titel"
 
-#: html/user/forum_edit.php:146 html/user/forum_post.php:138
+#: html/user/forum_edit.php:152 html/user/forum_post.php:142
 msgid "Add my signature to this post"
 msgstr "Onderschrift invoegen bij deze post"
 
@@ -3774,8 +3805,8 @@ msgid "Add a new thread to this forum"
 msgstr "Een onderwerp toevoegen aan dit forum"
 
 #: html/user/forum_forum.php:123
-msgid "This message board is available as an %1RSS feed%2"
-msgstr "Dit forum is ook verkrijgbaar als %1RSS feed%2"
+msgid "This message board is available as an %1 RSS feed %2"
+msgstr "Dit forum is ook verkrijgbaar als %1 RSS feed %2"
 
 #: html/user/forum_forum.php:182
 msgid "This thread is hidden"
@@ -3847,9 +3878,9 @@ msgstr "Vraag en antwoord"
 
 #: html/user/forum_help_desk.php:32
 msgid ""
-"Talk live via Skype with a volunteer, in any of several languages. Go to "
-"%1BOINC Online Help%2."
-msgstr "Gebruik Skype om in diverse talen een rechtreeks gesprek te voeren met een vrijwilliger. Klik op %1BOINC Online Help%2."
+"Talk live via Skype with a volunteer, in any of several languages. Go to %1 "
+"BOINC Online Help %2."
+msgstr "Gebruik Skype om in diverse talen een rechtreeks gesprek te voeren met een vrijwilliger. Klik op %1 BOINC Online Help %2."
 
 #: html/user/forum_help_desk.php:47 html/user/forum_index.php:95
 msgid "Topic"
@@ -3865,13 +3896,41 @@ msgstr "Discussie onder de leden van %1"
 
 #: html/user/forum_index.php:80
 msgid ""
-"If you have a question or problem, please use the %1Questions & Answers%2 "
+"If you have a question or problem, please use the %1 Questions & Answers %2 "
 "section of the message boards."
-msgstr "Als je een vraag of probleem hebt, gebruik dan a.u.b. de %1Vraag & Antwoord%2 sectie van het forum."
+msgstr "Als je een vraag of probleem hebt, gebruik dan a.u.b. de %1 Vraag & Antwoord %2 sectie van het forum."
 
 #: html/user/forum_index.php:125
 msgid "Subscribed threads"
 msgstr "Geabonneerde onderwerpen"
+
+#: html/user/forum_moderate_post_action.php:60
+msgid "You are not authorized to moderate this post."
+msgstr "U bent niet gemachtigd om hier als moderator op te treden."
+
+#: html/user/forum_moderate_post_action.php:105
+msgid "Can't move to different category type"
+msgstr "Kan niet verplaatst worden naar ander categorie type"
+
+#: html/user/forum_moderate_post_action.php:109
+msgid "Can't move to different category"
+msgstr "Kan niet verplaatst worden naar andere categorie"
+
+#: html/user/forum_moderate_post_action.php:130
+msgid "Not authorized to banish users"
+msgstr "Niet geautoriseerd om gebruikers uit te sluiten"
+
+#: html/user/forum_moderate_post_action.php:146
+msgid "Banishment"
+msgstr "Uitsluiting"
+
+#: html/user/forum_moderate_post_action.php:148
+msgid "User %1 has been banished."
+msgstr "Gebruiker %1 is uitgesloten."
+
+#: html/user/forum_moderate_post_action.php:151
+msgid "Action failed: possible database problem"
+msgstr "Actie mislukt: mogelijk database probleem"
 
 #: html/user/forum_moderate_post.php:45
 msgid "Moderate post"
@@ -3934,44 +3993,15 @@ msgid "Forever"
 msgstr "Altijd"
 
 #: html/user/forum_moderate_post.php:104 html/user/forum_moderate_post.php:117
-#: html/user/forum_moderate_thread.php:106 html/user/forum_post.php:139
+#: html/user/forum_moderate_thread.php:106 html/user/forum_post.php:143
 #: html/user/forum_report_post.php:99 html/user/forum_rss.php:51
-#: html/user/friend.php:83 html/user/get_passwd.php:32
-#: html/user/get_passwd.php:78
+#: html/user/friend.php:83
 msgid "OK"
 msgstr "OK"
 
 #: html/user/forum_moderate_post.php:112
 msgid "Optional explanation %1 This is included in email to user.%2"
 msgstr "Optionele eigen motivatie %1 Deze wordt bijgevoegd in het e-mailbericht aan de betreffende deelnemer.%2"
-
-#: html/user/forum_moderate_post_action.php:60
-msgid "You are not authorized to moderate this post."
-msgstr "U bent niet gemachtigd om hier als moderator op te treden."
-
-#: html/user/forum_moderate_post_action.php:105
-msgid "Can't move to different category type"
-msgstr "Kan niet verplaatst worden naar ander categorie type"
-
-#: html/user/forum_moderate_post_action.php:109
-msgid "Can't move to different category"
-msgstr "Kan niet verplaatst worden naar andere categorie"
-
-#: html/user/forum_moderate_post_action.php:130
-msgid "Not authorized to banish users"
-msgstr "Niet geautoriseerd om gebruikers uit te sluiten"
-
-#: html/user/forum_moderate_post_action.php:146
-msgid "Banishment"
-msgstr "Uitsluiting"
-
-#: html/user/forum_moderate_post_action.php:148
-msgid "User %1 has been banished."
-msgstr "Gebruiker %1 is uitgesloten."
-
-#: html/user/forum_moderate_post_action.php:151
-msgid "Action failed: possible database problem"
-msgstr "Actie mislukt: mogelijk database probleem"
 
 #: html/user/forum_moderate_thread.php:38
 msgid "not authorized"
@@ -3999,100 +4029,6 @@ msgstr "Doel forum"
 msgid "New title:"
 msgstr "Nieuwe titel:"
 
-#: html/user/forum_pm.php:54 html/user/pm.php:61
-msgid "Your message has been sent."
-msgstr "Je bericht is verzonden."
-
-#: html/user/forum_pm.php:60 html/user/pm.php:71
-msgid "You have no private messages."
-msgstr "Geen privé berichten aanwezig."
-
-#: html/user/forum_pm.php:65 html/user/pm.php:79
-msgid "Sender and date"
-msgstr "Afzender en datum"
-
-#: html/user/forum_pm.php:102
-msgid "No such message"
-msgstr "Geen bericht gevonden"
-
-#: html/user/forum_pm.php:110 html/user/pm.php:134
-msgid "Sender"
-msgstr "Afzender"
-
-#: html/user/forum_pm.php:113 html/user/pm.php:137
-msgid "Date"
-msgstr "Datum"
-
-#: html/user/forum_pm.php:152 html/user/pm.php:190 html/user/pm.php:220
-msgid "You need to fill all fields to send a private message"
-msgstr "Je moet overal iets invullen om het bericht te kunnen versturen"
-
-#: html/user/forum_pm.php:167 html/user/pm.php:241
-msgid "Could not find user with id %1"
-msgstr "Kan gebruiker niet vinden met id %1"
-
-#: html/user/forum_pm.php:172 html/user/pm.php:246
-msgid "Could not find user with username %1"
-msgstr "Kan gebruiker niet vinden met gebruikersnaam %1"
-
-#. Non-unique username
-#: html/user/forum_pm.php:174 html/user/pm.php:248
-msgid "%1 is not a unique username; you will have to use user ID"
-msgstr "%1 is geen unieke gebruikersnaam; gebruik je gebruikers-ID"
-
-#: html/user/forum_pm.php:182 html/user/pm.php:254
-msgid "User %1 (ID: %2) is not accepting private messages from you."
-msgstr "Gebruiker %1 (ID: %2) accepteert geen privé berichten van u."
-
-#: html/user/forum_pm.php:204 html/user/pm.php:278
-msgid "Really block %1?"
-msgstr "Echt %1 blokkeren?"
-
-#: html/user/forum_pm.php:205 html/user/pm.php:279
-msgid ""
-"Are you really sure you want to block user %1 from sending you private "
-"messages?"
-msgstr "Weet u zeker dat u gebruiker %1 wilt blokkeren om u privé berichten te sturen?"
-
-#: html/user/forum_pm.php:206 html/user/pm.php:280
-msgid "Please note that you can only block a limited amount of users."
-msgstr "Houdt u er rekening mee dat u slechts een beperkt aantal gebruikers kan blokkeren."
-
-#: html/user/forum_pm.php:207 html/user/pm.php:281
-msgid ""
-"Once the user has been blocked you can unblock it using forum preferences "
-"page."
-msgstr "Zodra de gebruiker is geblokkeerd kunt u hem deblokkering op bij forum voorkeuren."
-
-#: html/user/forum_pm.php:214 html/user/pm.php:288
-msgid "No, cancel"
-msgstr "Nee, annuleren"
-
-#: html/user/forum_pm.php:217 html/user/pm.php:276
-#: html/user/view_profile.php:28
-msgid "No such user"
-msgstr "Gebruiker niet gevonden"
-
-#: html/user/forum_pm.php:228 html/user/pm.php:300
-msgid "User %1 blocked"
-msgstr "Gebruiker %1 geblokkeerd"
-
-#: html/user/forum_pm.php:230 html/user/pm.php:302
-msgid "User %1 has been blocked from sending you private messages."
-msgstr "Gebruiker %1 is geblokkeerd voor het sturen van privé berichten."
-
-#: html/user/forum_pm.php:231 html/user/pm.php:303
-msgid "To unblock, visit %1message board preferences%2"
-msgstr "Om te deblokkeren, bezoek %1de forum voorkeuren%"
-
-#: html/user/forum_pm.php:284
-msgid "Mark as read"
-msgstr "Als gelezen markeren"
-
-#: html/user/forum_pm.php:286
-msgid "Mark as unread"
-msgstr "Als ongelezen markeren"
-
 #: html/user/forum_post.php:44
 msgid ""
 "Only project admins may create a thread here. However, you may reply to "
@@ -4105,66 +4041,58 @@ msgid ""
 "modify your text and try again."
 msgstr "Je reactie wordt gezien als spam door het Akismet anti-spam systeem. Pas a.u.b. je tekst aan en probeer opnieuw."
 
-#: html/user/forum_post.php:74
+#: html/user/forum_post.php:78
 msgid "Create new thread"
 msgstr "Start nieuw onderwerp"
 
-#: html/user/forum_post.php:106
+#: html/user/forum_post.php:110
 msgid "Create a new thread"
 msgstr "Start een nieuw onderwerp"
 
-#: html/user/forum_post.php:111
+#: html/user/forum_post.php:115
 msgid "Remember to add a title"
 msgstr "Vergeet niet een titel toe te voegen"
 
-#: html/user/forum_post.php:136
+#: html/user/forum_post.php:140
 msgid "Show this item as a Notice in the BOINC Manager"
 msgstr "Dit item weergeven op het berichten-tabblad van de BOINC Manager"
 
-#: html/user/forum_post.php:136
+#: html/user/forum_post.php:140
 msgid "Do so only for items likely to be of interest to all volunteers."
 msgstr "Dit geldt uitsluitend voor items die voor alle vrijwilligers van belang kunnen zijn."
 
-#: html/user/forum_rate.php:28
-msgid "Rating offline"
-msgstr "Beoordeling nu niet mogelijk"
-
-#: html/user/forum_rate.php:29
-msgid "This function is turned off by the project"
-msgstr "Deze optie is tijdelijk uit gezet door het project"
-
-#: html/user/forum_rate.php:60
+#: html/user/forum_rate.php:57
 msgid "You need more average or total credit to rate a post."
 msgstr "Je gemiddelde of huidige puntentotaal is onvoldoende om een bericht te beoordelen."
 
-#: html/user/forum_rate.php:64
+#: html/user/forum_rate.php:61
 msgid "You have already rated this post."
 msgstr "U hebt dit bericht reeds beoordeeld."
 
-#: html/user/forum_rate.php:64 html/user/forum_rate.php:80
-#: html/user/forum_rate.php:85 html/user/forum_report_post.php:74
+#: html/user/forum_rate.php:61 html/user/forum_rate.php:77
+#: html/user/forum_rate.php:82 html/user/forum_report_post.php:74
 #: html/user/forum_report_post.php:108 html/user/forum_subscribe.php:56
 #: html/user/forum_subscribe.php:71 html/user/forum_thread_status.php:56
 msgid "Return to thread"
 msgstr "Terug naar onderwerp"
 
-#: html/user/forum_rate.php:74
+#: html/user/forum_rate.php:71
 msgid "Input Recorded"
 msgstr "Bijdrage geregistreerd"
 
-#: html/user/forum_rate.php:75
+#: html/user/forum_rate.php:72
 msgid "Your input has been recorded. Thanks for your help."
 msgstr "Je bijdrage is geregistreerd. Hartelijk dank voor je hulp."
 
-#: html/user/forum_rate.php:77
+#: html/user/forum_rate.php:74
 msgid "Vote Registered"
 msgstr "Stem Vastgelegd"
 
-#: html/user/forum_rate.php:78
+#: html/user/forum_rate.php:75
 msgid "Your rating has been recorded. Thanks for your input."
 msgstr "Je beoordeling is geregistreerd. Hartelijk dank voor je bijdrage."
 
-#: html/user/forum_rate.php:82
+#: html/user/forum_rate.php:79
 msgid "Vote Submission Problem"
 msgstr "Probleem Bij Indienen Stem"
 
@@ -4174,8 +4102,8 @@ msgid ""
 "modify your text and try again."
 msgstr "Je reactie wordt gezien als spam door het Akismet anti-spam systeem. Pas a.u.b. je tekst aan en probeer opnieuw."
 
-#: html/user/forum_reply.php:91 html/user/forum_thread.php:162
-#: html/user/forum_thread.php:291
+#: html/user/forum_reply.php:91 html/user/forum_thread.php:164
+#: html/user/forum_thread.php:293
 msgid "Post to thread"
 msgstr "Plaats bericht"
 
@@ -4184,8 +4112,8 @@ msgid "Message:"
 msgstr "Bericht:"
 
 #: html/user/forum_reply.php:145
-msgid "reply to %1Message ID%2:"
-msgstr "antwoord op %1Bericht ID%2:"
+msgid "reply to %1 Message ID %2:"
+msgstr "antwoord op %1 Bericht ID %2:"
 
 #: html/user/forum_reply.php:171
 msgid "Post reply"
@@ -4230,10 +4158,10 @@ msgstr "Bericht rapporteren"
 
 #: html/user/forum_report_post.php:93
 msgid ""
-"Why do you find the post offensive: %1Please include enough information so "
+"Why do you find the post offensive: %1 Please include enough information so "
 "that a person that has not yet read the thread will quickly be able to "
-"identify the issue.%2"
-msgstr "Geef aan waarom je dit bericht kwetsend vindt: %1Je dient het probleem duidelijk te omschrijven zodat iemand die\nhet bericht nog niet heeft gelezen, snel weet waar het om gaat.%2"
+"identify the issue. %2"
+msgstr "Geef aan waarom je dit bericht kwetsend vindt: %1 Je dient het probleem duidelijk te omschrijven zodat iemand die\nhet bericht nog niet heeft gelezen, snel weet waar het om gaat. %2"
 
 #: html/user/forum_report_post.php:104
 msgid "Report not registered"
@@ -4272,6 +4200,32 @@ msgstr "Neem alleen berichten van de afgelopen %1 dagen (standaard: 30)."
 #: html/user/forum_rss.php:49
 msgid "Threads only: %1 (Include only the first post of every thread)"
 msgstr "Alleen discussies: %1 (Inclusief alleen het eerste bericht van elk onderwerp)"
+
+#: html/user/forum_search_action.php:143
+msgid "Forum search results"
+msgstr "Forum zoek resultaten"
+
+#: html/user/forum_search_action.php:177
+msgid "Thread titles matching your query:"
+msgstr "Treffers overeenkomstig jouw zoekopdracht in onderwerptitels:"
+
+#: html/user/forum_search_action.php:196
+msgid "Messages matching your query:"
+msgstr "Treffers overeenkomstig jouw zoekopdracht in berichten:"
+
+#: html/user/forum_search_action.php:219
+msgid ""
+"Sorry, couldn't find anything matching your search query. You can try to "
+"broaden your search by using less words (or less specific words)."
+msgstr "Helaas geen resultaten gevonden die aan jouw zoekopdracht voldoen. Je kunt het aantal treffers vergroten door minder (specifieke) woorden te gebruiken."
+
+#: html/user/forum_search_action.php:221
+msgid "You can also %1 try the same search on Google. %2"
+msgstr "Je kunt dezelfde %1 zoekopdracht ook laten uitvoeren door Google. %2"
+
+#: html/user/forum_search_action.php:226
+msgid "Perform another search"
+msgstr "Nieuwe zoekopdracht uitvoeren"
 
 #: html/user/forum_search.php:29
 msgid "Forum search"
@@ -4341,32 +4295,6 @@ msgstr "Sorteren op"
 msgid "Start the search"
 msgstr "Zoeken starten"
 
-#: html/user/forum_search_action.php:143
-msgid "Forum search results"
-msgstr "Forum zoek resultaten"
-
-#: html/user/forum_search_action.php:177
-msgid "Thread titles matching your query:"
-msgstr "Treffers overeenkomstig jouw zoekopdracht in onderwerptitels:"
-
-#: html/user/forum_search_action.php:196
-msgid "Messages matching your query:"
-msgstr "Treffers overeenkomstig jouw zoekopdracht in berichten:"
-
-#: html/user/forum_search_action.php:219
-msgid ""
-"Sorry, couldn't find anything matching your search query. You can try to "
-"broaden your search by using less words (or less specific words)."
-msgstr "Helaas geen resultaten gevonden die aan jouw zoekopdracht voldoen. Je kunt het aantal treffers vergroten door minder (specifieke) woorden te gebruiken."
-
-#: html/user/forum_search_action.php:221
-msgid "You can also %1try the same search on Google.%2"
-msgstr "U kunt dezelfde %1zoekopdracht ook laten uitvoeren door Google.%2"
-
-#: html/user/forum_search_action.php:226
-msgid "Perform another search"
-msgstr "Nieuwe zoekopdracht uitvoeren"
-
 #: html/user/forum_subscribe.php:48
 msgid "Subscription successful"
 msgstr "Aanmelding geslaagd"
@@ -4417,107 +4345,111 @@ msgstr "Dit forum is verborgen voor jou."
 msgid "This thread has been hidden by moderators."
 msgstr "Dit onderwerp is verborgen door de moderators."
 
-#: html/user/forum_thread.php:129
+#: html/user/forum_thread.php:118
+msgid "Message board moderation"
+msgstr "Forum beheer"
+
+#: html/user/forum_thread.php:131
 msgid "My question was answered"
 msgstr "Mijn vraag is beantwoord"
 
-#: html/user/forum_thread.php:130
+#: html/user/forum_thread.php:132
 msgid "Click here if your question has been adequately answered"
 msgstr "Als je vraag naar behoren is beantwoord, klik dan hier"
 
-#: html/user/forum_thread.php:138
+#: html/user/forum_thread.php:140
 msgid "I've also got this question"
 msgstr "Ik heb deze vraag ook"
 
-#: html/user/forum_thread.php:163 html/user/forum_thread.php:292
+#: html/user/forum_thread.php:165 html/user/forum_thread.php:294
 msgid "Add a new message to this thread"
 msgstr "Een bericht toevoegen aan dit onderwerp"
 
-#: html/user/forum_thread.php:175
+#: html/user/forum_thread.php:177
 msgid "Unsubscribe"
 msgstr "Abonnement opheffen"
 
-#: html/user/forum_thread.php:176
+#: html/user/forum_thread.php:178
 msgid "You are subscribed to this thread.  Click here to unsubscribe."
 msgstr "Je bent geabonneerd op dit onderwerp.  Klik hier om dit op te heffen."
 
-#: html/user/forum_thread.php:182
+#: html/user/forum_thread.php:184
 msgid "Subscribe"
 msgstr "Abonneren"
 
-#: html/user/forum_thread.php:183
+#: html/user/forum_thread.php:185
 msgid "Click to get email when there are new posts in this thread"
 msgstr "Klik hier om een email te ontvangen als er een nieuw bericht is geplaatst"
 
-#: html/user/forum_thread.php:194
+#: html/user/forum_thread.php:196
 msgid "Unhide this thread"
 msgstr "Dit onderwerp zichtbaar maken"
 
-#: html/user/forum_thread.php:200
+#: html/user/forum_thread.php:202
 msgid "Hide this thread"
 msgstr "Dit onderwerp verbergen"
 
-#: html/user/forum_thread.php:206
+#: html/user/forum_thread.php:208
 msgid "Make unsticky"
 msgstr "Los maken"
 
-#: html/user/forum_thread.php:207
+#: html/user/forum_thread.php:209
 msgid "Make this thread not sticky"
 msgstr "Dit onderwerp los maken"
 
-#: html/user/forum_thread.php:212
+#: html/user/forum_thread.php:214
 msgid "Make sticky"
 msgstr "Vast zetten"
 
-#: html/user/forum_thread.php:213
+#: html/user/forum_thread.php:215
 msgid "Make this thread always appear at top of forum"
 msgstr "Zet deze draad altijd bovenaan het forum"
 
-#: html/user/forum_thread.php:219
+#: html/user/forum_thread.php:221
 msgid "Unlock"
 msgstr "Vergrendeling opheffen"
 
-#: html/user/forum_thread.php:220
+#: html/user/forum_thread.php:222
 msgid "Allow new posts in this thread"
 msgstr "Sta nieuwe berichten in deze draad toe"
 
-#: html/user/forum_thread.php:225
+#: html/user/forum_thread.php:227
 msgid "Lock"
 msgstr "Vergrendelen"
 
-#: html/user/forum_thread.php:226
+#: html/user/forum_thread.php:228
 msgid "Don't allow new posts in this thread"
 msgstr "Sta nieuwe berichten in deze draad niet toe"
 
-#: html/user/forum_thread.php:233
+#: html/user/forum_thread.php:235
 msgid "Move this thread to a different forum"
 msgstr "Verplaats dit onderwerp naar een ander forum"
 
-#: html/user/forum_thread.php:238
+#: html/user/forum_thread.php:240
 msgid "Edit title"
 msgstr "Titel aanpassen"
 
-#: html/user/forum_thread.php:239
+#: html/user/forum_thread.php:241
 msgid "Edit thread title"
 msgstr "Titel van onderwerp aanpassen"
 
-#: html/user/forum_thread.php:247
+#: html/user/forum_thread.php:249
 msgid "Delete thread permanently"
 msgstr "Verwijder draad permanent"
 
-#: html/user/forum_thread.php:257
+#: html/user/forum_thread.php:259
 msgid "Export as Notice"
 msgstr "Exporteren als mededeling"
 
-#: html/user/forum_thread.php:263
+#: html/user/forum_thread.php:265
 msgid "Don't export"
 msgstr "Niet exporteren"
 
-#: html/user/forum_thread.php:264
+#: html/user/forum_thread.php:266
 msgid "Don't export this news item as a Notice"
 msgstr "Dit nieuws artikel niet exporteren als mededeling"
 
-#: html/user/forum_thread.php:277
+#: html/user/forum_thread.php:279
 msgid "Sort"
 msgstr "Sorteren"
 
@@ -4596,130 +4528,79 @@ msgstr "%1 verzoekt toegevoegd te worden als vriend."
 msgid "%1 says: %2"
 msgstr "%1 zegt: %2"
 
-#: html/user/friend.php:148
+#: html/user/friend.php:149
 msgid "Accept friendship"
 msgstr "Accepteer vriendschap"
 
-#: html/user/friend.php:148
+#: html/user/friend.php:150
 msgid "Click accept if %1 is in fact a friend"
 msgstr "Klik accepteer als %1 een vriend(in) is"
 
-#: html/user/friend.php:149
+#: html/user/friend.php:155
 msgid "Decline"
 msgstr "Afwijzen"
 
-#: html/user/friend.php:149
+#: html/user/friend.php:156
 msgid "Click decline if %1 is not a friend"
 msgstr "Klik afwijzen als %1 geen vriend(in) is"
 
-#: html/user/friend.php:188
+#: html/user/friend.php:198
 msgid "Friendship confirmed"
 msgstr "Vriendschap bevestigd"
 
-#: html/user/friend.php:189
+#: html/user/friend.php:199
 msgid "Your friendship with %1 has been confirmed."
 msgstr "De vriendschap met %1 is bevestigd."
 
-#: html/user/friend.php:207
+#: html/user/friend.php:217
 msgid "Friendship declined"
 msgstr "Vriendschap afgewezen"
 
-#: html/user/friend.php:208
+#: html/user/friend.php:218
 msgid "You have declined friendship with %1"
 msgstr "De vriendschap met %1 is afgewezen"
 
-#: html/user/friend.php:223
+#: html/user/friend.php:233
 msgid "Notification not found"
 msgstr "Bericht niet gevonden"
 
-#: html/user/friend.php:225
+#: html/user/friend.php:235
 msgid "Friend confirmed"
 msgstr "Vriend(in) heeft bevestigd"
 
-#: html/user/friend.php:226
+#: html/user/friend.php:236
 msgid "You are now friends with %1."
 msgstr "Je hebt nu een vriendschap met %1."
 
-#: html/user/friend.php:234
+#: html/user/friend.php:244
 msgid "Cancel friendship?"
 msgstr "Beëindig vriendschap?"
 
-#: html/user/friend.php:236
+#: html/user/friend.php:246
 msgid "Are you sure you want to cancel your friendship with %1?"
 msgstr "Weet je zeker dat je de vriendschap met %1 wilt beëindigen?"
 
-#: html/user/friend.php:241
+#: html/user/friend.php:251
 msgid "Stay friends"
 msgstr "Vrienden blijven"
 
-#: html/user/friend.php:251
+#: html/user/friend.php:261
 msgid "Friendship cancelled"
 msgstr "Vriendschap beëindigd"
 
-#: html/user/friend.php:252
+#: html/user/friend.php:262
 msgid "Your friendship with %1 has been cancelled."
 msgstr "De vriendschap met %1 is beëindigd."
 
-#: html/user/get_passwd.php:27
+#: html/user/get_passwd.php:26
 msgid ""
-"1) If you know your account's email address, and you can receive email "
-"there:"
-msgstr "1) Als je het e-mailadres van jouw account weet, en als je daar e-mail kunt ontvangen:"
+"Enter your account's email address below, and click OK. You will be sent "
+"email instructions for resetting your password."
+msgstr "Vul je account's email adres hier beneden in, en klik OK. Je zult een email toegestuurd krijgen met instructies om je wachtwoord te resetten. "
 
-#: html/user/get_passwd.php:28
-msgid ""
-"Enter the email address below, and click OK. You will be sent email "
-"instructions for resetting your password."
-msgstr "Vul dan hieronder het e-mailadres in en klik op OK. Vervolgens ontvang je per e-mail de instructies om je wachtwoord opnieuw in te stellen."
-
-#: html/user/get_passwd.php:46
-msgid ""
-"2) If you forgot your account's email address, or you can't receive email "
-"there:"
-msgstr "2) Als je het e-mailadres van jouw account bent vergeten, of als je daar geen e-mail kunt ontvangen:"
-
-#: html/user/get_passwd.php:47
-msgid ""
-"If you have run BOINC under this account, you can still access it. Here's "
-"how:"
-msgstr "Om met deze gegevens toch toegang te krijgen tot jouw BOINC-account, ga je als volgt te werk:"
-
-#: html/user/get_passwd.php:50
-msgid ""
-"Go to the BOINC data directory on your computer (its location is written to "
-"the Event Log at startup)."
-msgstr "Ga naar de data map van BOINC (de locatie staat beschreven in de opstart berichten)."
-
-#: html/user/get_passwd.php:51
-msgid "Find your account file for this project; it will be named <b>%1</b>."
-msgstr "Zoek het betreffende projectbestand met jouw accountgegevens, genaamd <b>%1</b>."
-
-#: html/user/get_passwd.php:52
-msgid "Open the file in a text editor like Notepad. You'll see something like"
-msgstr "Open het bestand met een tekstverwerker, bv. met Kladblok. U ziet nu ongeveer het volgende"
-
-#: html/user/get_passwd.php:62
-msgid ""
-"Select and Copy the string between %1 and %2 (%3 in the above example)."
-msgstr "Selecteer en kopieer de tekenreeks tussen %1 en %2 (%3 in bovenstaand voorbeeld)."
-
-#: html/user/get_passwd.php:64
-msgid "Paste the string into the field below, and click OK."
-msgstr "Plak deze tekenreeks in het onderstaande veld en klik op OK."
-
-#: html/user/get_passwd.php:65
-msgid ""
-"You will now be logged in to your account; update the email and password of "
-"your account."
-msgstr "Je wordt nu aangemeld bij jouw account; wijzig de betreffende e-mail- en wachtwoordgegevens."
-
-#: html/user/get_passwd.php:72
-msgid "Log in with authenticator"
-msgstr "Aanmelden met authentificatie"
-
-#: html/user/get_passwd.php:84
-msgid "Forgot your account info?"
-msgstr "Account gegevens vergeten?"
+#: html/user/get_passwd.php:34
+msgid "Reset password"
+msgstr "Wachtwoord herstellen"
 
 #: html/user/gpu_list.php:150 html/user/gpu_list.php:176
 msgid "No GPU tasks reported"
@@ -4745,8 +4626,8 @@ msgid "View and edit your account preferences using the links below."
 msgstr "Bekijk en verander je account voorkeuren met onderstaande links."
 
 #: html/user/home.php:46
-msgid "If you have not already done so, %1download BOINC client software%2."
-msgstr "Indien nodig kunt u hier de %1BOINC cliënt software downloaden%2."
+msgid "If you have not already done so, %1 download BOINC client software %2."
+msgstr "Indien nodig kunt u hier de %1 BOINC cliënt software downloaden %2."
 
 #: html/user/home.php:49
 msgid "Your account"
@@ -4834,11 +4715,11 @@ msgid ""
 "Check the computers that are the same as %1 (created %2, computer ID %3):"
 msgstr "Controleer de computers die identiek zijn aan %1 (aangemaakt %2, computer ID %3):"
 
-#: html/user/host_edit_form.php:70 html/user/workunit.php:39
+#: html/user/host_edit_form.php:70 html/user/workunit.php:50
 msgid "name"
 msgstr "naam"
 
-#: html/user/host_edit_form.php:70 html/user/workunit.php:41
+#: html/user/host_edit_form.php:70 html/user/workunit.php:52
 msgid "created"
 msgstr "aangemaakt"
 
@@ -4853,6 +4734,23 @@ msgstr "geen hostnaam"
 #: html/user/host_edit_form.php:109
 msgid "Merge hosts"
 msgstr "hosts samenvoegen"
+
+#: html/user/hosts_user.php:53
+msgid "Computers belonging to %1"
+msgstr "Computers van %1"
+
+#: html/user/hosts_user.php:55
+msgid "Computers hidden"
+msgstr "Computers verborgen"
+
+#: html/user/hosts_user.php:56
+msgid ""
+"This user has chosen not to show information about his or her computers."
+msgstr "Deze gebruiker heeft er voor gekozen zijn computers te verbergen."
+
+#: html/user/hosts_user.php:64
+msgid "Your computers"
+msgstr "Mijn computers"
 
 #: html/user/host_update_credit.php:27
 msgid "Updating computer credit"
@@ -4883,23 +4781,6 @@ msgstr "Deze wijziging wordt van kracht bij de volgende communicatiesessie van d
 #: html/user/host_venue_action.php:50
 msgid "Return to host page"
 msgstr "Terug naar host pagina"
-
-#: html/user/hosts_user.php:53
-msgid "Computers belonging to %1"
-msgstr "Computers van %1"
-
-#: html/user/hosts_user.php:55
-msgid "Computers hidden"
-msgstr "Computers verborgen"
-
-#: html/user/hosts_user.php:56
-msgid ""
-"This user has chosen not to show information about his or her computers."
-msgstr "Deze gebruiker heeft er voor gekozen zijn computers te verbergen."
-
-#: html/user/hosts_user.php:64
-msgid "Your computers"
-msgstr "Mijn computers"
 
 #: html/user/html.php:23
 msgid "Allowed HTML tags"
@@ -5008,17 +4889,17 @@ msgid ""
 "Private messages sent on the %1 web site are visible only to the sender and "
 "recipient.  %1 does not examine or police the content of private messages.  "
 "If you receive unwanted private messages from another %1 user, you may add "
-"them to your %2message filter%3.  This will prevent you from seeing any "
+"them to your %2 message filter %3.  This will prevent you from seeing any "
 "public or private messages from that user."
-msgstr "Privé berichten die verzonden zijn op de website van %1 zijn alleen zichtbaar voor de afzender en ontvanger.  %1 bekijkt en veranderd de inhoud niet.  Als je een ongewenst bericht ontvangt van een andere %1 gebruiker, is het mogelijk deze toe te voegen aan een %2berichten filter%3.  Dit blokkeert zowel privé als forum berichten van deze gebruiker."
+msgstr "Privé berichten die verzonden zijn op de website van %1 zijn alleen zichtbaar voor de afzender en ontvanger.  %1 bekijkt en veranderd de inhoud niet.  Als je een ongewenst bericht ontvangt van een andere %1 gebruiker, is het mogelijk deze toe te voegen aan een %2 berichten filter %3.  Dit blokkeert zowel privé als forum berichten van deze gebruiker."
 
 #: html/user/info.php:47
 msgid ""
-"If you use our web site forums you must follow the %2posting guidelines%3.  "
-"Messages posted to the %1 forums are visible to everyone, including non-"
+"If you use our web site forums you must follow the %2 posting guidelines %3."
+"  Messages posted to the %1 forums are visible to everyone, including non-"
 "members.  By posting to the forums, you are granting irrevocable license for"
 " anyone to view and copy your posts."
-msgstr "Indien je onze website gebruikt moet je je houden aan de %2richtlijnen voor berichten%3.  Geplaatste berichten op het forum van %1 zijn zichtbaar voor leden en niet-leden.  Door hier een bericht te plaatsen geef je iedereen de volledige rechten om ze te bekijken en te kopiëren."
+msgstr "Indien je onze website gebruikt moet je je houden aan de %2 richtlijnen voor berichten %3.  Geplaatste berichten op het forum van %1 zijn zichtbaar voor leden en niet-leden.  Door hier een bericht te plaatsen geef je iedereen de volledige rechten om ze te bekijken en te kopiëren."
 
 #: html/user/info.php:48
 msgid "Is it safe to run %1?"
@@ -5038,8 +4919,9 @@ msgstr "Elke keer als je een programma via het internet download neem je een ris
 #: html/user/info.php:50
 msgid ""
 "The applications run by %1 may cause some computers to overheat. If this "
-"happens, stop running %1 or use a %2utility program%3 that limits CPU usage."
-msgstr "De door %1 gebruikte applicaties kunnen een verhoging opleveren van de temperatuur van de processor. Als dit aan de orde is, sluit %1 af en gebruik een %2programma%3 om het gebruik van de processor te regelen."
+"happens, stop running %1 or use a %2 utility program %3 that limits CPU "
+"usage."
+msgstr "De door %1 gebruikte applicaties kunnen een verhoging opleveren van de temperatuur van de processor. Als dit aan de orde is, sluit %1 af en gebruik een %2 programma %3 om het gebruik van de processor te regelen."
 
 #: html/user/info.php:51
 msgid ""
@@ -5084,8 +4966,8 @@ msgid "I'm a BOINC user"
 msgstr "Ik ben een BOINC gebruiker"
 
 #: html/user/join.php:46
-msgid "Read our %1Rules and Policies%2."
-msgstr "Lees onze %1gebruiksovereenkomst%2."
+msgid "Read our %1 Rules and Policies %2."
+msgstr "Lees onze %1 gebruiksovereenkomst %2."
 
 #: html/user/join.php:48
 msgid "Download the BOINC desktop software."
@@ -5119,11 +5001,12 @@ msgstr "Selecteer Projectbeheer / Project toevoegen... Kies %1 van de lijst, of 
 
 #: html/user/join.php:76
 msgid ""
-"If you're running a command-line version of BOINC on this computer, %1create"
-" an account%2, then use %3boinccmd --project_attach%4 to add the project."
-msgstr "Als je een command-line versie van BOINC op deze computer gebruikt, 1%creëer een account%2, en gebruik dan %3boinccmd --project_attach%4 om het project toe te voegen."
+"If you're running a command-line version of BOINC on this computer, %1 "
+"create an account %2, then use %3 boinccmd --project_attach %4 to add the "
+"project."
+msgstr "Als je een command-line versie van BOINC op deze computer gebruikt, 1%1 creëer een account %2, en gebruik dan %3 boinccmd --project_attach %4 om het project toe te voegen."
 
-#: html/user/join.php:91 html/user/sample_index.php:96
+#: html/user/join.php:91 html/user/sample_index.php:95
 #: html/user/team_join_form.php:34
 msgid "Join %1"
 msgstr "Wordt lid van %1"
@@ -5159,12 +5042,12 @@ msgstr "Of je kunt een taal kiezen van het volgende menu:"
 #: html/user/language_select.php:85
 msgid ""
 "Translations are done by volunteers.  If your native language is missing or "
-"incomplete, %1you can help translate%2."
-msgstr "Vertalingen worden gedaan door vrijwilligers. Als je eigen taal er niet is, of incompleet is, %1kun je helpen vertalen%2."
+"incomplete, %1 you can help translate %2."
+msgstr "Vertalingen worden gedaan door vrijwilligers. Als je eigen taal er niet is, of incompleet is, %1 kun je helpen vertalen %2."
 
 #: html/user/login_form.php:59
-msgid "or %1create an account%2."
-msgstr "of %1maak een account%2."
+msgid "or %1 create an account %2."
+msgstr "of %1 maak een account %2."
 
 #: html/user/merge_by_name.php:31
 msgid "Processing %1"
@@ -5196,51 +5079,22 @@ msgstr "Ga verder en doe dit"
 msgid "Return to the list of computers"
 msgstr "Terug naar lijst met computers"
 
-#: html/user/moderation.php:26
+#: html/user/moderation.php:28
 msgid ""
-"\n"
-"To maximize discussion and flow of information,\n"
-"our message boards are moderated.\n"
-"Message board postings are subject to the following posting rules:\n"
-msgstr "\nOm de discussie en berichtenstroom te maximaliseren,\nwordt ons forum gemodereerd.\nBerichten zijn onderworpen aan de volgende regels en richtlijnen:\n"
+"Our message boards are moderated. Posts are subject to the following rules:"
+msgstr "Onze forums worden beheerd. Berichten zijn onderworpen aan de volgende regels: "
 
-#: html/user/moderation.php:30
+#: html/user/moderation.php:31
 msgid ""
-"\n"
-"<p>\n"
-"Moderators may delete posts that violate any of these rules.\n"
-"The authors of deleted posts will be notified via email.\n"
-"Gross offenders may have their ability to post messages temporarily revoked\n"
-"(though to prevent abuse only project administrators have the ability to do so).\n"
-"Additional kinds of bad behavior (\"bugging\" posts to trap the\n"
-"IP addresses of other participants, excessive thread creation to spam\n"
-"the forums, etc.), while not listed in the formal rules, may still\n"
-"lead to similar penalties.\n"
-"<p>\n"
-"If you think a post violates any of the posting rules,\n"
-"click the red X on the post and fill out the form;\n"
-"moderators will be notified of your complaint.\n"
-"Please use this button only for clear violations - not\n"
-"personal disputes.\n"
-"<p>\n"
-"We try to be as fair as we can when moderating,\n"
-"but in a large community of users, with many different viewpoints,\n"
-"there will always be some people that will not be happy\n"
-"with our moderation decisions.\n"
-"While we regret that this happens,\n"
-"please realize that we cannot suit all of the people all of the time\n"
-"and have to make decisions based on our resources and\n"
-"what is best for the forum overall.\n"
-"Please don't discuss our moderation policy on the forums. We aren't\n"
-"a social engineering project nor are we in the business of creating\n"
-"a perfectly fair system. So such discussions tend to be counterproductive\n"
-"and potentially incendiary. If you have a legitimate claim,\n"
-"send email to the address below.\n"
-"<p>\n"
-"This moderation policy is set by the %1 project.\n"
-"If you have comments about the policy, email %2.\n"
-"\n"
-msgstr "\n<p>\nModerators mogen berichten verwijderen die deze regels overtreden.\nDe auteurs van verwijderde berichten worden per e-mail ingelicht.\nRegelmatige overtreders kunnen tijdelijk het recht om berichten te plaatsen\nverliezen (deze straf wordt alleen opgelegd door project administrators).\nAanvullende vormen van ongepast gedrag (berichten \"coderen\" om\nIP adressen af te vangen, overmatige aanmaak van onderwerpen om\nde forums te vervuilen, etc.), kan ook, ondanks niet vermeld in de regels,\nleiden tot vergelijkbare maatregelen.\n<p>\nIndien je van mening bent dat een bericht een bepaalde regel overtreedt,\nkan je op de rode X bij het bericht klikken en de reden hiervoor invullen;\nde moderators worden dan van je klacht op de hoogte gesteld.\nGebruik deze knop ALLEEN voor overtredingen - NIET voor\npersoonlijke meningsverschillen.\n<p>\nWe doen, zoals altijd, ons best om fair te modereren, maar in\nin een grote gemeenschap van gebruikers, met veel standpunten,\nis het natuurlijk altijd mogelijk dat gebruikers het niet eens zijn\nmet onze beslissingen.\nOndanks dat we het betreuren als dit gebeurd,\nmoet men zich ook realiseren dat het niet mogelijk is om het\niedereen naar de zin te maken. We nemen onze beslissingen\nalleen in het belang van het forum.\nPlaats a.u.b. geen discussies om deze regels te bespreken. Dit is\nalles behalve een project voor bestudering van sociale vaardigheden,\nnoch zijn we in staat het perfect eerlijke systeem te maken.\nMocht je, dit in acht nemende, denken een terechte klacht te\nhebben, stuur dan een e-mail naar onderstaand adres.\n<p>\nBovenstaande moderatie regels zijn opgesteld door %1.\nIn het geval van opmerkingen hierover, e-mail naar %2.\n\n"
+"If you think a post violates any of the rules, you can notify moderators by "
+"clicking the red X below the post and filling out the form."
+msgstr "Als je denkt dat een post de regels overtreedt, dan kun je de beheerders bereiken door op de rode X onder de post te klikken en het formulier in te vullen. "
+
+#: html/user/moderation.php:33
+msgid ""
+"This moderation policy is set by the %1 project.  If you have comments about"
+" the policy or its enforcement, email %2."
+msgstr "Dit beheersbeleid wordt ingesteld door het %1 project. Als u opmerkingen over het beleid of de uitvoering ervan heeft, stuurt u een e-mail naar %2."
 
 #: html/user/pending.php:66
 msgid "Pending credit"
@@ -5295,6 +5149,18 @@ msgstr "Blokkeer berichten van deze gebruiker"
 msgid "Block user"
 msgstr "Blokkeer gebruiker"
 
+#: html/user/pm.php:61
+msgid "Your message has been sent."
+msgstr "Je bericht is verzonden."
+
+#: html/user/pm.php:71
+msgid "You have no private messages."
+msgstr "Geen privé berichten aanwezig."
+
+#: html/user/pm.php:79
+msgid "Sender and date"
+msgstr "Afzender en datum"
+
 #: html/user/pm.php:99
 msgid "Reply to this message"
 msgstr "Geef antwoord op dit bericht"
@@ -5315,6 +5181,18 @@ msgstr "Selecties weghalen"
 msgid "Delete selected messages"
 msgstr "Verwijder geselecteerde berichten"
 
+#: html/user/pm.php:134
+msgid "Sender"
+msgstr "Afzender"
+
+#: html/user/pm.php:137
+msgid "Date"
+msgstr "Datum"
+
+#: html/user/pm.php:190 html/user/pm.php:220
+msgid "You need to fill all fields to send a private message"
+msgstr "Je moet overal iets invullen om het bericht te kunnen versturen"
+
 #: html/user/pm.php:202
 msgid "Message sent"
 msgstr "Bericht verzonden"
@@ -5330,27 +5208,70 @@ msgid ""
 "            Please modify your text and try again."
 msgstr "Je reactie wordt gezien als spam\n                door het Akismet anti-spam systeem.\n                Pas tekst aan en probeer opnieuw."
 
+#: html/user/pm.php:241
+msgid "Could not find user with id %1"
+msgstr "Kan gebruiker niet vinden met id %1"
+
+#: html/user/pm.php:246
+msgid "Could not find user with username %1"
+msgstr "Kan gebruiker niet vinden met gebruikersnaam %1"
+
+#. Non-unique username
+#: html/user/pm.php:248
+msgid "%1 is not a unique username; you will have to use user ID"
+msgstr "%1 is geen unieke gebruikersnaam; gebruik je gebruikers-ID"
+
+#: html/user/pm.php:254
+msgid "User %1 (ID: %2) is not accepting private messages from you."
+msgstr "Gebruiker %1 (ID: %2) accepteert geen privé berichten van u."
+
+#: html/user/pm.php:276 html/user/view_profile.php:28
+msgid "No such user"
+msgstr "Gebruiker niet gevonden"
+
+#: html/user/pm.php:278
+msgid "Really block %1?"
+msgstr "Echt %1 blokkeren?"
+
+#: html/user/pm.php:279
+msgid ""
+"Are you really sure you want to block user %1 from sending you private "
+"messages?"
+msgstr "Weet u zeker dat u gebruiker %1 wilt blokkeren om u privé berichten te sturen?"
+
+#: html/user/pm.php:280
+msgid "Please note that you can only block a limited amount of users."
+msgstr "Houdt u er rekening mee dat u slechts een beperkt aantal gebruikers kan blokkeren."
+
+#: html/user/pm.php:281
+msgid ""
+"Once the user has been blocked you can unblock it using forum preferences "
+"page."
+msgstr "Zodra de gebruiker is geblokkeerd kunt u hem deblokkering op bij forum voorkeuren."
+
+#: html/user/pm.php:288
+msgid "No, cancel"
+msgstr "Nee, annuleren"
+
 #: html/user/pm.php:297 html/user/team_admins.php:101
 msgid "no such user"
 msgstr "gebruiker niet gevonden"
 
+#: html/user/pm.php:300
+msgid "User %1 blocked"
+msgstr "Gebruiker %1 geblokkeerd"
+
+#: html/user/pm.php:302
+msgid "User %1 has been blocked from sending you private messages."
+msgstr "Gebruiker %1 is geblokkeerd voor het sturen van privé berichten."
+
+#: html/user/pm.php:303
+msgid "To unblock, visit %1 message board preferences %2"
+msgstr "Om te deblokkeren, bezoek %1 de forum voorkeuren %2"
+
 #: html/user/pm.php:365
 msgid "Unknown action"
 msgstr "Onbekende handeling"
-
-#: html/user/prefs.php:33
-msgid ""
-"Your preferences have been updated, and\n"
-"          will take effect when your computer communicates with %1\n"
-"          or you issue the %2Update%3 command from the BOINC Manager."
-msgstr "Je voorkeursinstellingen zijn bijgewerkt, en\n          worden van kracht zodra jouw computer communiceert met %1\n          of als je de %2Update%3 functie van de BOINC Manager gebruikt."
-
-#: html/user/prefs.php:42
-msgid ""
-"Your preferences have been reset to the defaults, and\n"
-"          will take effect when your computer communicates with %1\n"
-"          or you issue the %2Update%3 command from the BOINC Manager."
-msgstr "Je voorkeursinstellingen zijn bijgewerkt naar de standaard instellingen en\n          worden van kracht zodra jouw computer communiceert met %1\n          of als je de %2Update%3 functie van de BOINC Manager gebruikt."
 
 #: html/user/prefs_edit.php:66 html/user/prefs_edit.php:94
 msgid "%1 for %2"
@@ -5359,6 +5280,20 @@ msgstr "%1 voor %2"
 #: html/user/prefs_edit.php:112
 msgid "Back to preferences"
 msgstr "Terug naar voorkeuren"
+
+#: html/user/prefs.php:33
+msgid ""
+"Your preferences have been updated, and\n"
+"          will take effect when your computer communicates with %1\n"
+"          or you issue the %2 Update %3 command from the BOINC Manager."
+msgstr "Je voorkeursinstellingen zijn bijgewerkt, en\n          worden van kracht zodra jouw computer communiceert met %1\n          of als je de %2 Update %3 functie van de BOINC Manager gebruikt."
+
+#: html/user/prefs.php:42
+msgid ""
+"Your preferences have been reset to the defaults, and\n"
+"          will take effect when your computer communicates with %1\n"
+"          or you issue the %2 Update %3 command from the BOINC Manager."
+msgstr "Je voorkeursinstellingen zijn bijgewerkt naar de standaard instellingen en\n          worden van kracht zodra jouw computer communiceert met %1\n          of als je de %2 Update %3 functie van de BOINC Manager gebruikt."
 
 #: html/user/prefs_remove.php:46
 msgid "Confirm delete preferences"
@@ -5378,9 +5313,9 @@ msgstr "Annuleer"
 
 #: html/user/profile_menu.php:37
 msgid ""
-"%1Profiles%2 let individuals share backgrounds and opinions with the %3 "
+"%1 Profiles %2 let individuals share backgrounds and opinions with the %3 "
 "community."
-msgstr "%1Profielen%2 geven de mogelijkheid achtergronden en meningen te delen met de %3 gemeenschap."
+msgstr "%1 Profielen %2 geven de mogelijkheid achtergronden en meningen te delen met de %3 gemeenschap."
 
 #: html/user/profile_menu.php:38
 msgid ""
@@ -5390,9 +5325,9 @@ msgstr "Doorzoek de diversiteit van je mede vrijwilligers en laat ze meegenieten
 
 #: html/user/profile_menu.php:39
 msgid ""
-"If you haven't already, you can %1create your own user profile%2 for others "
-"to see!"
-msgstr "Als je dit nog niet hebt gedaan, kan je %1je eigen profiel aanmaken%2, zodat anderen dit kunnen zien!"
+"If you haven't already, you can %1 create your own user profile %2 for "
+"others to see!"
+msgstr "Als je dit nog niet hebt gedaan, kan je %1 je eigen profiel aanmaken %2, zodat anderen dit kunnen zien!"
 
 #: html/user/profile_menu.php:44
 msgid "User of the Day"
@@ -5403,18 +5338,18 @@ msgid "User Profile Explorer"
 msgstr "Gebruikers profielen"
 
 #: html/user/profile_menu.php:62
-msgid "View the %1User Picture Gallery%2."
-msgstr "Bekijk de %1Gebruikers Foto Galerij%2."
+msgid "View the %1 User Picture Gallery %2."
+msgstr "Bekijk de %1 Gebruikers Foto Galerij %2."
 
 #: html/user/profile_menu.php:63
-msgid "Browse profiles %1by country%2."
-msgstr "Doerzoek profielen %1op land%2."
+msgid "Browse profiles %1 by country %2."
+msgstr "Doerzoek profielen %1 op land %2."
 
 #: html/user/profile_menu.php:64
 msgid ""
-"Browse profiles %1at random%2, %3at random with pictures%2, or %4at random "
-"without pictures%2."
-msgstr "Doorzoek profielen; %1willekeurig%2, %3willekeurig met foto%2 of %4willekeurig zonder foto%2."
+"Browse profiles %1 at random %2, %3 at random with pictures %2, or %4 at "
+"random without pictures %2."
+msgstr "Doorzoek profielen; %1 willekeurig %2, %3 willekeurig met foto %2 of %4 willekeurig zonder foto %2."
 
 #: html/user/profile_menu.php:68
 msgid "Alphabetical profile listings:"
@@ -5500,57 +5435,51 @@ msgstr "Gebruikers of computer ID niet aanwezig"
 msgid "No tasks to display"
 msgstr "Geen taken om weer te geven"
 
-#: html/user/sample_index.php:54
+#: html/user/sample_index.php:53
 msgid "%1 is temporarily shut down for maintenance."
 msgstr "%1 is tijdelijk gesloten wegens onderhoud."
 
-#: html/user/sample_index.php:64
+#: html/user/sample_index.php:63
 msgid "What is %1?"
 msgstr "Wat is %1?"
 
-#: html/user/sample_index.php:117
+#: html/user/sample_index.php:116
 msgid "News"
 msgstr "Nieuws"
 
-#: html/user/server_status.php:57 html/user/server_status_old.php:160
-#: html/user/temp.php:24
+#: html/user/server_status.php:57
 msgid "Not Running"
 msgstr "Niet actief"
 
-#: html/user/server_status.php:61 html/user/server_status_old.php:156
-#: html/user/temp.php:27
+#: html/user/server_status.php:61
 msgid "Running"
 msgstr "Actief"
 
-#: html/user/server_status.php:65 html/user/server_status_old.php:164
-#: html/user/temp.php:30
+#: html/user/server_status.php:65
 msgid "Disabled"
 msgstr "Uitgezet"
 
-#: html/user/server_status.php:103 html/user/server_status_old.php:302
-#: html/user/temp.php:56
+#: html/user/server_status.php:103
 msgid "Project status"
 msgstr "Project status"
 
-#: html/user/server_status.php:112 html/user/server_status_old.php:312
-#: html/user/temp.php:65
+#: html/user/server_status.php:112
 msgid "Program"
 msgstr "Programma"
 
-#: html/user/server_status.php:112 html/user/server_status_old.php:312
-#: html/user/temp.php:65
+#: html/user/server_status.php:112
 msgid "Host"
 msgstr "Host computer"
 
-#: html/user/server_status.php:135 html/user/server_status_old.php:372
+#: html/user/server_status.php:135
 msgid "Computing status"
 msgstr "Berekenings status"
 
-#: html/user/server_status.php:146 html/user/server_status_old.php:441
+#: html/user/server_status.php:146
 msgid "Users"
 msgstr "Gebruikers"
 
-#: html/user/server_status.php:161 html/user/server_status_old.php:487
+#: html/user/server_status.php:161
 msgid "Tasks by application"
 msgstr "Taken per applicatie"
 
@@ -5565,114 +5494,6 @@ msgstr "Gebruikers in de laatste 24 uur"
 #: html/user/server_status.php:187
 msgid "Database schema version: "
 msgstr "Database schema versie:"
-
-#: html/user/server_status_old.php:304 html/user/temp.php:58
-msgid "Server software version: %1"
-msgstr "Server software versie: %1"
-
-#: html/user/server_status_old.php:322
-msgid "data-driven web pages"
-msgstr "data-afhankelijke web pagina's"
-
-#: html/user/server_status_old.php:327
-msgid "upload/download server"
-msgstr "upload/download server"
-
-#: html/user/server_status_old.php:330
-msgid "scheduler"
-msgstr "taakverdeler"
-
-#: html/user/server_status_old.php:363
-msgid "Running:"
-msgstr "Actief:"
-
-#: html/user/server_status_old.php:364
-msgid "Program is operating normally"
-msgstr "Programma functioneert normaal"
-
-#: html/user/server_status_old.php:365
-msgid "Not Running:"
-msgstr "Niet actief:"
-
-#: html/user/server_status_old.php:366
-msgid "Program failed or the project is down"
-msgstr "Programma of project functioneert niet goed"
-
-#: html/user/server_status_old.php:367
-msgid "Disabled:"
-msgstr "Uitgezet:"
-
-#: html/user/server_status_old.php:368
-msgid "Program is disabled"
-msgstr "Programma is stopgezet"
-
-#: html/user/server_status_old.php:377
-msgid "The database server is not accessible"
-msgstr "De database server is tijdelijk onbereikbaar"
-
-#: html/user/server_status_old.php:394
-msgid "Tasks ready to send"
-msgstr "Taken gereed om te verzenden"
-
-#: html/user/server_status_old.php:399 html/user/workunit.php:55
-msgid "Tasks in progress"
-msgstr "Taken in uitvoering"
-
-#: html/user/server_status_old.php:404
-msgid "Workunits waiting for validation"
-msgstr "Werkeenheden in afwachting van validatie"
-
-#: html/user/server_status_old.php:409
-msgid "Workunits waiting for assimilation"
-msgstr "Werkeenheden in aanmaak"
-
-#: html/user/server_status_old.php:414
-msgid "Workunits waiting for file deletion"
-msgstr "Werkeenheden in afwachting van verwijdering"
-
-#: html/user/server_status_old.php:419
-msgid "Tasks waiting for file deletion"
-msgstr "Taken in afwachting van verwijdering"
-
-#: html/user/server_status_old.php:434
-msgid "Transitioner backlog (hours)"
-msgstr "Achterstand bestandsoverdracht (uren)"
-
-#: html/user/server_status_old.php:444 html/user/server_status_old.php:462
-msgid "with recent credit"
-msgstr "met recentelijke punten"
-
-#: html/user/server_status_old.php:449 html/user/server_status_old.php:467
-msgid "with credit"
-msgstr "met punten"
-
-#: html/user/server_status_old.php:454 html/user/server_status_old.php:472
-msgid "registered in past 24 hours"
-msgstr "geregistreerd in de afgelopen 24 uur"
-
-#: html/user/server_status_old.php:478
-msgid "current GigaFLOPs"
-msgstr "huidig aantal GigaFLOPs"
-
-#: html/user/server_status_old.php:490 html/user/workunit.php:40
-msgid "application"
-msgstr "applicatie"
-
-#: html/user/server_status_old.php:491
-msgid "unsent"
-msgstr "niet verzonden"
-
-#: html/user/server_status_old.php:492
-msgid "in progress"
-msgstr "in uitvoering"
-
-#: html/user/server_status_old.php:493
-msgid "avg runtime of last 100 results in h (min-max)"
-msgstr "gem. looptijd van de laatste 100 resultaten in u (min-max)"
-
-#: html/user/server_status_old.php:494
-msgid "users in last 24h"
-msgstr "gebruikers in laatste 24u"
 
 #: html/user/show_host_detail.php:40
 msgid "Computer %1"
@@ -5714,62 +5535,8 @@ msgstr "Het is ook mogelijk je huidige statistieken te ontvangen in de vorm van 
 #: html/user/stats.php:59
 msgid ""
 "Additionally you can get your individual statistics summed across all BOINC "
-"projects from several sites; see your %1home page%2."
-msgstr "Als toevoeging kan je ook je individuele statistieken krijgen van alle BOINC projecten vanaf diverse sites; zoals op je %1persoonlijke pagina%2."
-
-#: html/user/team.php:29
-msgid "%1 participants may form %2teams%3."
-msgstr "%1 deelnemers mogen %2teams%3 vormen."
-
-#: html/user/team.php:31
-msgid ""
-"You may belong to only one team. You can join or quit a team at any time."
-msgstr "Je mag maar aan één team tegelijk deelnemen. Je kan op elk moment jezelf toevoegen of het team verlaten."
-
-#: html/user/team.php:33
-msgid "Each team has a %1founder%2 who may:"
-msgstr "Elk team heeft een %1oprichter%2 die:"
-
-#: html/user/team.php:35
-msgid "edit the team's name and description"
-msgstr "de naam en beschrijving van het team kan veranderen"
-
-#: html/user/team.php:36
-msgid "add or remove team admins"
-msgstr "administrators mag toevoegen of verwijderen"
-
-#: html/user/team.php:37
-msgid "remove members from the team"
-msgstr "leden kan verwijderen uit het team"
-
-#: html/user/team.php:38
-msgid "disband a team if it has no members"
-msgstr "het team kan ontbinden als het geen leden heeft"
-
-#: html/user/team.php:41
-msgid "To join a team, visit its team page and click %1Join this team%2."
-msgstr "Om je bij een team te voegen, ga je naar de team pagina en klik je op %1Lid worden van dit team%2."
-
-#: html/user/team.php:42 html/user/team_search.php:203
-msgid "Find a team"
-msgstr "Een team zoeken"
-
-#: html/user/team.php:49
-msgid "All teams"
-msgstr "Alle teams"
-
-#: html/user/team.php:53
-msgid "%1 teams"
-msgstr "%1 teams"
-
-#: html/user/team.php:59
-msgid "Create a new team"
-msgstr "Start nieuw team"
-
-#: html/user/team.php:60
-msgid ""
-"If you cannot find a team that is right for you, you can %1create a team%2."
-msgstr "Als je geen team vinden kan die voldoet aan jou eisen, kan je ook je eigen %1team maken%2."
+"projects from several sites; see your %1 home page %2."
+msgstr "Als toevoeging kan je ook je individuele statistieken krijgen van alle BOINC projecten vanaf diverse sites; zoals op je %1 persoonlijke pagina %2."
 
 #: html/user/team_admins.php:36
 msgid "Remove Team Admin status from this member"
@@ -5859,7 +5626,7 @@ msgstr "%1 is al een administrator van %2"
 msgid "Couldn't add admin"
 msgstr "Administrator toevoegen mislukt"
 
-#: html/user/team_admins.php:114 html/user/team_manage.php:87
+#: html/user/team_admins.php:114 html/user/team_manage.php:85
 #: html/user/team_quit_form.php:30
 #: html/user/team_remove_inactive_action.php:30
 msgid "No such team"
@@ -5917,8 +5684,8 @@ msgstr "Geen overplaatsings verzoeken in behandeling."
 #: html/user/team_change_founder_form.php:71
 msgid ""
 "To assign foundership of this team to another member, check the box next to "
-"member name and click %1Change founder%2 below."
-msgstr "Om oprichterschap van dit team over te dragen naar een ander lid, vink je het vakje naast de naam van het lid aan en klik je hieronder op %1Oprichter wijzigen%2."
+"member name and click %1 Change founder %2 below."
+msgstr "Om oprichterschap van dit team over te dragen naar een ander lid, vink je het vakje naast de naam van het lid aan en klik je hieronder op %1 Oprichter wijzigen %2."
 
 #: html/user/team_change_founder_form.php:81
 msgid "New founder?"
@@ -5950,8 +5717,8 @@ msgstr "Een team aanmaken"
 
 #: html/user/team_create_form.php:41
 msgid ""
-"You belong to %1. You must %2quit this team%3 before creating a new one."
-msgstr "Je bent al lid van %1. Je moet eerst %2dit team verlaten%3 voordat je een nieuw team kan beginnen."
+"You belong to %1. You must %2 quit this team %3 before creating a new one."
+msgstr "Je bent al lid van %1. Je moet eerst %2 dit team verlaten %3 voordat je een nieuw team kan beginnen."
 
 #: html/user/team_delta.php:66
 msgid "Not founder or admin"
@@ -6086,9 +5853,9 @@ msgstr "Forum verwijderd"
 
 #: html/user/team_forum.php:132
 msgid ""
-"Your team's message board has been removed. You may now %1create a new "
-"one%2."
-msgstr "Je team forum is verwijderd. Je kunt nu %1een nieuwe aanmaken%2."
+"Your team's message board has been removed. You may now %1 create a new one "
+"%2."
+msgstr "Je team forum is verwijderd. Je kunt nu %1 een nieuwe aanmaken %2."
 
 #: html/user/team_forum.php:151
 msgid "Team Message Board Updated"
@@ -6121,7 +5888,7 @@ msgid ""
 msgstr "De huidige oprichter is per e-mail en privé bericht op de hoogte gesteld van je verzoek.<br /><br />\n                       Als deze oprichter niet binnen 60 dagen reageert word jij automatisch de nieuwe oprichter."
 
 #: html/user/team_founder_transfer_action.php:112
-#: html/user/team_founder_transfer_action.php:123
+#: html/user/team_founder_transfer_action.php:127
 msgid "Foundership request not allowed now"
 msgstr "Oprichterschap verzoek is nu niet toegestaan"
 
@@ -6131,27 +5898,27 @@ msgstr "Heeft het oprichterschap verkregen van %1"
 
 #: html/user/team_founder_transfer_action.php:121
 msgid ""
-"Congratulations, you are now the founder of team %1. Go to %2Your Account "
-"page%3 to find the Team Admin options."
-msgstr "Gefeliciteerd, jij bent nu de nieuwe oprichter van team %1. Ga naar %2Jouw Account pagina%3 om de Team Admin opties te vinden."
+"Congratulations, you are now the founder of team %1. Go to %2 Your Account "
+"page %3 to find the Team Admin options."
+msgstr "Gefeliciteerd, jij bent nu de nieuwe oprichter van team %1. Ga naar %2 Jouw Account pagina %3 om de Team Admin opties te vinden."
 
-#: html/user/team_founder_transfer_action.php:130
+#: html/user/team_founder_transfer_action.php:134
 msgid "Decline founder change request"
 msgstr "Oprichterschap verzoek afwijzen"
 
-#: html/user/team_founder_transfer_action.php:137
+#: html/user/team_founder_transfer_action.php:141
 msgid "The foundership request from %1 has been declined."
 msgstr "Het oprichterschap verzoek van %1 werd afgewezen."
 
-#: html/user/team_founder_transfer_action.php:140
+#: html/user/team_founder_transfer_action.php:144
 msgid "There were no foundership requests."
 msgstr "Er zijn geen aanvragen voor nieuwe oprichters."
 
-#: html/user/team_founder_transfer_action.php:144
+#: html/user/team_founder_transfer_action.php:148
 msgid "undefined action %1"
 msgstr "ongedefineerde actie %1"
 
-#: html/user/team_founder_transfer_action.php:147
+#: html/user/team_founder_transfer_action.php:151
 #: html/user/team_founder_transfer_form.php:85
 msgid "Return to team page"
 msgstr "Terug naar team pagina"
@@ -6208,22 +5975,18 @@ msgid ""
 "are not allowed. Please try again later."
 msgstr "Omdat er in de afgelopen 90 dagen al een verzoek tot overname van de oprichterstatus is ingediend, worden recentere verzoeken niet in behandeling genomen. Probeer het later nog eens alstublieft."
 
-#: html/user/team_join.php:34 html/user/team_join_action.php:34
-#: html/user/team_join_form.php:31
+#: html/user/team_join_action.php:34 html/user/team_join_form.php:31
+#: html/user/team_join.php:34
 msgid "The team %1 is not joinable."
 msgstr "%1 accepteert geen nieuwe teamleden."
 
-#: html/user/team_join.php:37 html/user/team_join_action.php:37
+#: html/user/team_join_action.php:37 html/user/team_join.php:37
 msgid "Already a member"
 msgstr "Reeds lid"
 
-#: html/user/team_join.php:38 html/user/team_join_action.php:38
+#: html/user/team_join_action.php:38 html/user/team_join.php:38
 msgid "You are already a member of %1."
 msgstr "Je bent al lid van %1."
-
-#: html/user/team_join.php:44 html/user/team_join_action.php:45
-msgid "Couldn't join team - please try again later."
-msgstr "Aansluiten als teamlid mislukt. Probeer het later nog eens alstublieft."
 
 #: html/user/team_join_action.php:42
 msgid "Joined %1"
@@ -6232,6 +5995,10 @@ msgstr "Lid geworden van %1"
 #: html/user/team_join_action.php:43
 msgid "You have joined %1."
 msgstr "U bent lid geworden van %1."
+
+#: html/user/team_join_action.php:45 html/user/team_join.php:44
+msgid "Couldn't join team - please try again later."
+msgstr "Aansluiten als teamlid mislukt. Probeer het later nog eens alstublieft."
 
 #: html/user/team_join_form.php:35
 msgid "Please note:"
@@ -6268,8 +6035,8 @@ msgstr "Meer dan 100 teams voldoen aan jouw zoekopdracht. De eerste 100 worden g
 #: html/user/team_lookup.php:108
 msgid ""
 "End of results. %1 If you cannot find the team you are looking for, you may "
-"%2create a team%3 yourself."
-msgstr "Einde van zoekresultaten. %1 Als u het team dat u zoekt niet hebt gevonden, kunt u %2zelf een team oprichten%3."
+"%2 create a team %3 yourself."
+msgstr "Einde van zoekresultaten. %1 Als je het team dat je zoekt niet hebt gevonden, kan je %2 zelf een team oprichten %3."
 
 #: html/user/team_manage.php:28
 msgid "Team administration for %1"
@@ -6347,29 +6114,84 @@ msgstr "Alleen toegestaan als er geen teamleden zijn"
 msgid "Create or manage a team message board"
 msgstr "Een team forum aanmaken of beheren"
 
-#: html/user/team_manage.php:75
+#: html/user/team_manage.php:73
 msgid ""
 "To have this team created on all BOINC projects (current and future) you can"
-" make it into a %1BOINC-wide team%2."
-msgstr "Om dit team aan te maken bij alle BOINC projecten (huidige en toekomstige), maak je het team aan als een %1BOINC-wide team%2."
+" make it into a %1 BOINC-wide team %2."
+msgstr "Om dit team aan te maken bij alle BOINC projecten (huidige en toekomstige), maak je het team aan als een %1 BOINC-wide team %2."
 
-#: html/user/team_manage.php:77
+#: html/user/team_manage.php:75
 msgid ""
-"Team admins are encouraged to join and participate in the Google %1boinc-"
-"team-founders%2 group."
-msgstr "Het wordt Team administrators aangeraden zich aan te sluiten bij, c.q. een bijdrage te leveren aan de Google %1boinc-team-founders%2 groep."
+"Team admins are encouraged to join and participate in the Google %1 boinc-"
+"team-founders %2 group."
+msgstr "Het wordt Team administrators aangeraden zich aan te sluiten bij, c.q. een bijdrage te leveren aan de Google %1 boinc-team-founders %2 groep."
 
-#: html/user/team_manage.php:93
+#: html/user/team_manage.php:91
 msgid "Can't delete non-empty team"
 msgstr "Een team moet leeg zijn om te verwijderen"
 
-#: html/user/team_manage.php:97
+#: html/user/team_manage.php:95
 msgid "Team %1 deleted"
 msgstr "Team %1 verwijderd"
 
 #: html/user/team_members.php:38
 msgid "Limit exceeded:  Can only display the first 1000 members."
 msgstr "Limiet overschreden:  Alleen de eerst 1000 leden kunnen worden getoond."
+
+#: html/user/team.php:29
+msgid "%1 participants may form %2 teams %3."
+msgstr "%1 deelnemers mogen %2 teams %3 vormen."
+
+#: html/user/team.php:31
+msgid ""
+"You may belong to only one team. You can join or quit a team at any time."
+msgstr "Je mag maar aan één team tegelijk deelnemen. Je kan op elk moment jezelf toevoegen of het team verlaten."
+
+#: html/user/team.php:33
+msgid "Each team has a %1 founder %2 who may:"
+msgstr "Elk team heeft een %1 oprichter %2 die:"
+
+#: html/user/team.php:35
+msgid "edit the team's name and description"
+msgstr "de naam en beschrijving van het team kan veranderen"
+
+#: html/user/team.php:36
+msgid "add or remove team admins"
+msgstr "administrators mag toevoegen of verwijderen"
+
+#: html/user/team.php:37
+msgid "remove members from the team"
+msgstr "leden kan verwijderen uit het team"
+
+#: html/user/team.php:38
+msgid "disband a team if it has no members"
+msgstr "het team kan ontbinden als het geen leden heeft"
+
+#: html/user/team.php:41
+msgid "To join a team, visit its team page and click %1 Join this team %2."
+msgstr "Om je bij een team te voegen, ga je naar de team pagina en klik je op %1 Lid worden van dit team %2."
+
+#: html/user/team.php:42 html/user/team_search.php:203
+msgid "Find a team"
+msgstr "Een team zoeken"
+
+#: html/user/team.php:49
+msgid "All teams"
+msgstr "Alle teams"
+
+#: html/user/team.php:53
+msgid "%1 teams"
+msgstr "%1 teams"
+
+#: html/user/team.php:59
+msgid "Create a new team"
+msgstr "Start nieuw team"
+
+#: html/user/team.php:60
+msgid ""
+"If you cannot find a team that is right for you, you can %1 create a team "
+"%2."
+msgstr "Als je geen team vinden kan dat voldoet aan jouw eisen, kan je ook je eigen %1 team maken %2."
 
 #: html/user/team_quit_action.php:34
 msgid "Unable to quit team"
@@ -6445,15 +6267,15 @@ msgid "No teams were found matching your criteria. Try another search."
 msgstr "Er zijn geen teams gevonden die voldoen aan jouw criteria. Probeer een andere zoekopdracht."
 
 #: html/user/team_search.php:119
-msgid "Or you can %1create a new team%2."
-msgstr "Je kan ook %1een nieuw team aanmaken%2."
+msgid "Or you can %1 create a new team %2."
+msgstr "Je kan ook %1 een nieuw team aanmaken %2."
 
 #: html/user/team_search.php:123
 msgid ""
 "The following teams match one or more of your search criteria.\n"
 "            To join a team, click its name to go to the team page,\n"
-"               then click %1Join this team%2."
-msgstr "The following teams match one or more of your search criteria.\n\n            To join a team, click its name to go to the team page,\n\n               then click %1Join this team%2."
+"               then click %1 Join this team %2."
+msgstr "De volgende teams passen bij één of meer van uw zoekcriteria.\nOm deel te nemen aan een team, click op de naam om naar de team pagina te gaan,\n             en klik vervolgens op %1 Deelnemen aan dit team %2. "
 
 #: html/user/team_search.php:130
 msgid "Change your search"
@@ -6470,8 +6292,8 @@ msgid "Use this form to find teams that might be right for you."
 msgstr "Middels dit formulier kunt u wellicht een keuze maken uit de voor u geschikte teams."
 
 #: html/user/team_search.php:211
-msgid "%1I'm not interested%2 in joining a team right now."
-msgstr "%1Ik heb nu nog geen belangstelling%2 voor een teamlidmaatschap."
+msgid "%1 I'm not interested %2 in joining a team right now."
+msgstr "%1 Ik heb nu nog geen belangstelling %2 voor een teamlidmaatschap."
 
 #. Now display what we've got (either gotten from cache or from DB)
 #: html/user/top_hosts.php:74
@@ -6673,49 +6495,61 @@ msgid ""
 "previous weak account key becomes invalid."
 msgstr "Zodra je je wachtwoord wijzigt veranderd ook je zwakke account key en wordt de vorige ongeldig."
 
-#: html/user/workunit.php:32
-msgid "can't find workunit"
-msgstr "taak niet gevonden"
-
-#: html/user/workunit.php:35
+#: html/user/workunit.php:46
 msgid "Workunit %1"
-msgstr "Taak %1"
+msgstr "Werkeenheid %1"
 
-#: html/user/workunit.php:43
+#: html/user/workunit.php:51
+msgid "application"
+msgstr "applicatie"
+
+#: html/user/workunit.php:54
+msgid "keywords"
+msgstr "kernwoorden"
+
+#: html/user/workunit.php:57
 msgid "canonical result"
 msgstr "meest overeenkomstig resultaat"
 
-#: html/user/workunit.php:46
+#: html/user/workunit.php:60
 msgid "granted credit"
 msgstr "toegekende punten"
 
-#: html/user/workunit.php:55
+#: html/user/workunit.php:69
+msgid "Tasks in progress"
+msgstr "Taken in uitvoering"
+
+#: html/user/workunit.php:69
 msgid "suppressed pending completion"
 msgstr "onderdrukt in afwachting van resultaat"
 
-#: html/user/workunit.php:58
+#: html/user/workunit.php:72
 msgid "minimum quorum"
 msgstr "minimum quorum"
 
-#: html/user/workunit.php:59
+#: html/user/workunit.php:73
 msgid "initial replication"
 msgstr "eerste betrouwbare kopie"
 
-#: html/user/workunit.php:60
+#: html/user/workunit.php:74
 msgid "max # of error/total/success tasks"
 msgstr "max # van foute/totale/succesvolle taken"
 
-#: html/user/workunit.php:64
+#: html/user/workunit.php:78
 msgid "errors"
 msgstr "fouten"
 
-#: html/user/workunit.php:67
+#: html/user/workunit.php:81
 msgid "validation"
 msgstr "validiteitscontrole"
 
-#: html/user/workunit.php:67
+#: html/user/workunit.php:81
 msgid "Pending"
 msgstr "In behandeling"
+
+#: html/user/workunit.php:102
+msgid "can't find workunit"
+msgstr "werkeenheid niet gevonden"
 
 #: html/project.sample/project.inc:132
 msgid "Generated"
@@ -6750,8 +6584,8 @@ msgstr "Kleuren schema voor grafische weergave"
 
 #: html/project.sample/project_specific_prefs.inc:42
 #, no-php-format
-msgid "Maximum CPU % for graphics%10 ... 100%2"
-msgstr "Maximum CPU gebruik voor grafische weergave %10 ... 100%2"
+msgid "Maximum CPU % for graphics %1 0...100 %2"
+msgstr "Maximum CPU gebruik voor grafische weergave %1 0 ... 100 %2"
 
 #: html/project.sample/project_specific_prefs.inc:43
 msgid "Run only the selected applications"

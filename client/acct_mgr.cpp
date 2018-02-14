@@ -54,8 +54,7 @@ static const char *run_mode_name[] = {"", "always", "auto", "never"};
 // if URL is null, detach from current account manager
 //
 int ACCT_MGR_OP::do_rpc(
-    string _url, string name, string password_hash,
-    bool _via_gui
+    string _url, string name, string password_hash, bool _via_gui
 ) {
     int retval;
     unsigned int i;
@@ -67,10 +66,7 @@ int ACCT_MGR_OP::do_rpc(
     error_num = ERR_IN_PROGRESS;
     error_str = "";
     via_gui = _via_gui;
-    if (global_prefs_xml) {
-        free(global_prefs_xml);
-        global_prefs_xml = 0;
-    }
+    global_prefs_xml = "";
 
     // if null URL, detach from current AMS
     //
@@ -118,6 +114,7 @@ int ACCT_MGR_OP::do_rpc(
         gstate.core_client_version.release,
         run_mode_name[gstate.cpu_run_mode.get_perm()]
     );
+    gstate.write_platforms(NULL, f);
     if (strlen(gstate.acct_mgr_info.previous_host_cpid)) {
         fprintf(f,
             "   <previous_host_cpid>%s</previous_host_cpid>\n",
@@ -250,6 +247,8 @@ void AM_ACCOUNT::handle_no_rsc(const char* name, bool value) {
     no_rsc[i] = value;
 }
 
+// parse a project account from AM reply
+//
 int AM_ACCOUNT::parse(XML_PARSER& xp) {
     char buf[256];
     bool btemp;
@@ -337,12 +336,6 @@ int AM_ACCOUNT::parse(XML_PARSER& xp) {
             abort_not_started.set(btemp);
             continue;
         }
-        if (xp.parse_string("sci_keywords", sci_keywords)) {
-            continue;
-        }
-        if (xp.parse_string("loc_keywords", loc_keywords)) {
-            continue;
-        }
         if (log_flags.unparsed_xml) {
             msg_printf(NULL, MSG_INFO,
                 "[unparsed_xml] AM_ACCOUNT: unrecognized %s", xp.parsed_tag
@@ -415,10 +408,10 @@ int ACCT_MGR_OP::parse(FILE* f) {
             continue;
         }
         if (xp.match_tag("global_preferences")) {
-            retval = dup_element_contents(
+            retval = copy_element_contents(
                 f,
                 "</global_preferences>",
-                &global_prefs_xml
+                global_prefs_xml
             );
             if (retval) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR,
@@ -438,6 +431,11 @@ int ACCT_MGR_OP::parse(FILE* f) {
             continue;
         }
         if (xp.parse_bool("no_project_notices", ami.no_project_notices)) {
+            continue;
+        }
+        if (xp.match_tag("user_keywords")) {
+            retval = ami.user_keywords.parse(xp);
+            if (retval) return retval;
             continue;
         }
         if (log_flags.unparsed_xml) {
@@ -681,8 +679,6 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
                     for (int j=0; j<MAX_RSC; j++) {
                         pp->no_rsc_ams[j] = acct.no_rsc[j];
                     }
-                    pp->sci_keywords = acct.sci_keywords;
-                    pp->loc_keywords = acct.loc_keywords;
                 }
             } else {
                 // here we don't already have the project.
@@ -743,9 +739,9 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
 
         // process prefs if any
         //
-        if (global_prefs_xml) {
+        if (!global_prefs_xml.empty()) {
             retval = gstate.save_global_prefs(
-                global_prefs_xml, ami.master_url, ami.master_url
+                global_prefs_xml.c_str(), ami.master_url, ami.master_url
             );
             if (retval) {
                 msg_printf(NULL, MSG_INTERNAL_ERROR, "Can't save global prefs");
@@ -775,15 +771,14 @@ void ACCT_MGR_OP::handle_reply(int http_op_retval) {
     } else {
         gstate.acct_mgr_info.next_rpc_time = gstate.now + 86400;
     }
+    gstate.acct_mgr_info.user_keywords = ami.user_keywords;
     gstate.acct_mgr_info.write_info();
     gstate.set_client_state_dirty("account manager RPC");
 #endif
 }
 
 // write AM info to files.
-// This is done after each AM RPC,
-// perhaps overkill since the info doesn't generally change.
-// But doesn't matter since infrequent.
+// This is done after each AM RPC.
 //
 int ACCT_MGR_INFO::write_info() {
     FILE* f;
@@ -843,12 +838,7 @@ int ACCT_MGR_INFO::write_info() {
             opaque,
             no_project_notices?1:0
         );
-        if (!sched_req_opaque.empty()) {
-            fprintf(f,
-                "<sched_req_opaque>\n<![CDATA[\n%s\n]]>\n</sched_req_opaque>\n",
-                sched_req_opaque.c_str()
-            );
-        }
+        user_keywords.write(f);
         fprintf(f,
             "</acct_mgr_login>\n"
         );
@@ -866,7 +856,6 @@ void ACCT_MGR_INFO::clear() {
     safe_strcpy(signing_key, "");
     safe_strcpy(previous_host_cpid, "");
     safe_strcpy(opaque, "");
-    sched_req_opaque.clear();
     safe_strcpy(cookie_failure_url, "");
     next_rpc_time = 0;
     nfailures = 0;
@@ -874,6 +863,7 @@ void ACCT_MGR_INFO::clear() {
     password_error = false;
     no_project_notices = false;
     cookie_required = false;
+    user_keywords.clear();
 }
 
 ACCT_MGR_INFO::ACCT_MGR_INFO() {
@@ -910,20 +900,16 @@ int ACCT_MGR_INFO::parse_login_file(FILE* p) {
             }
             continue;
         }
-        else if (xp.match_tag("sched_req_opaque")) {
-            char buf[65536];
-            retval = xp.element_contents(
-                "</sched_req_opaque>", buf, sizeof(buf)
-            );
+        else if (xp.parse_bool("no_project_notices", no_project_notices)) continue;
+        else if (xp.match_tag("user_keywords")) {
+            retval = user_keywords.parse(xp);
             if (retval) {
                 msg_printf(NULL, MSG_INFO,
-                    "error parsing <sched_req_opaque> in acct_mgr_login.xml"
+                    "error parsing user keywords in acct_mgr_login.xml"
                 );
             }
-            sched_req_opaque = string(buf);
             continue;
         }
-        else if (xp.parse_bool("no_project_notices", no_project_notices)) continue;
         if (log_flags.unparsed_xml) {
             msg_printf(NULL, MSG_INFO,
                 "[unparsed_xml] unrecognized %s in acct_mgr_login.xml",
@@ -1007,7 +993,9 @@ int ACCT_MGR_INFO::init() {
 
 bool ACCT_MGR_INFO::poll() {
     if (!using_am()) return false;
-    if (gstate.acct_mgr_op.gui_http->is_busy()) return false;
+    if (gstate.acct_mgr_op.gui_http->is_busy()) {
+        return false;
+    }
 
     if (gstate.now > next_rpc_time) {
 

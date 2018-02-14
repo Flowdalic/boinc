@@ -1,5 +1,5 @@
 # BOINC setup localization template
-# Copyright (C) 2017 University of California
+# Copyright (C) 2018 University of California
 # 
 # This file is distributed under the same license as BOINC.
 # 
@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BOINC\n"
 "Report-Msgid-Bugs-To: BOINC translation team <boinc_loc@ssl.berkeley.edu>\n"
-"POT-Creation-Date: 2017-08-15 02:04 UTC\n"
-"PO-Revision-Date: 2017-08-15 08:11+0000\n"
+"POT-Creation-Date: 2018-01-17 16:06 UTC\n"
+"PO-Revision-Date: 2017-09-21 23:56+0000\n"
 "Last-Translator: Philippe Janocha\n"
 "Language-Team: French (http://www.transifex.com/boinc/boinc/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -21,31 +21,31 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: mac_installer/Installer.cpp:92 mac_installer/PostInstall.cpp:230
+#: mac_installer/Installer.cpp:93 mac_installer/PostInstall.cpp:230
 msgid "Could not get user login name"
 msgstr "Impossible de trouver l'utilisateur"
 
-#: mac_installer/Installer.cpp:170
+#: mac_installer/Installer.cpp:199
 #, c-format
 msgid "Sorry, this version of %s requires system 10.6 or higher."
 msgstr "Désolé, cette version de %s nécessite un système 10.6 ou supérieur."
 
-#: mac_installer/PostInstall.cpp:138 mac_installer/PostInstall.cpp:1210
+#: mac_installer/PostInstall.cpp:139 mac_installer/PostInstall.cpp:1215
 #: mac_installer/uninstall.cpp:1512
 msgid "Yes"
 msgstr "Oui"
 
-#: mac_installer/PostInstall.cpp:139 mac_installer/PostInstall.cpp:1211
+#: mac_installer/PostInstall.cpp:140 mac_installer/PostInstall.cpp:1216
 #: mac_installer/uninstall.cpp:1513
 msgid "No"
 msgstr "Non"
 
 #. Future feature
-#: mac_installer/PostInstall.cpp:141
+#: mac_installer/PostInstall.cpp:142
 msgid "Should BOINC run even when no user is logged in?"
 msgstr "BOINC doit-il fonctionner même lorsqu'aucun utilisateur n'est connecté ?"
 
-#: mac_installer/PostInstall.cpp:1496
+#: mac_installer/PostInstall.cpp:1501
 #, c-format
 msgid ""
 "Users who are permitted to administer this computer will automatically be allowed to run and control %s.\n"
@@ -53,7 +53,7 @@ msgid ""
 "Do you also want non-administrative users to be able to run and control %s on this Mac?"
 msgstr "Les utilisateurs ayant les privilèges administrateurs sur cet ordinateur seront automatiquement autorisés à exécuter et contrôler %s.\n\nVoulez-vous aussi autoriser les utilisateurs non-administrateurs à exécuter et contrôler %s sur ce Mac ?"
 
-#: mac_installer/PostInstall.cpp:1524
+#: mac_installer/PostInstall.cpp:1529
 #, c-format
 msgid "Do you want to set %s as the screensaver for all %s users on this Mac?"
 msgstr "Voulez-vous établir %s comme économiseur d'écran pour tous les utilisateurs de %s sur ce Mac ?"
