@@ -1,3 +1,14 @@
+boinc (7.9.1+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7.9.1+dfsg
+  * Drop useless mkdir, automatic
+  * Update watch file
+  * explicit disable webview
+  * Upload to unstable
+  * Drop patches upstream, patch refresh
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 14 Feb 2018 14:54:59 +0100
+
 boinc (7.8.6+dfsg-3exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
