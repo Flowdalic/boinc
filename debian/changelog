@@ -1,3 +1,11 @@
+boinc (7.9.3+dfsg-1) unstable; urgency=medium
+
+  * Upload to unstable
+  * New upstream version 7.9.3+dfsg
+  * Bump copyright years to 2018
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 10 Mar 2018 23:08:17 +0100
+
 boinc (7.9.2+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
