@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Comment:
  This package was first debianized by Steffen Moeller <moeller@debian.org>
  on Sat, 13 Nov 2004 23:28:53 +0100. Since Wed, 26 Jan 2005 it is maintained
@@ -51,7 +51,7 @@ Files-Excluded:
  version.h
 
 Files: *
-Copyright: 2005-2014 University of California
+Copyright: 2005-2018 University of California
 License: LGPL-3+
 
 Files: doc/manpages/*.xml
@@ -351,7 +351,7 @@ License: Zlib
 
 Files: debian/*
 Copyright:
- 2004-2017 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
+ 2004-2018 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 License: GPL-2+
 
 License: Zlib
