@@ -1,3 +1,11 @@
+boinc (7.9.3+dfsg-2) unstable; urgency=medium
+
+  [ Olly Betts, Scott Talbert ]
+  * Re-enable webview!!! (Closes: #894263),
+    Fully switch to gtk3
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 28 Mar 2018 08:47:57 +0200
+
 boinc (7.9.3+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
