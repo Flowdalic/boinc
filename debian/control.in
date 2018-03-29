@@ -62,7 +62,6 @@ Package: boinc
 @Package: boinc-virtualbox
 @Architecture: amd64 i386
 @Section: contrib/misc
-@Priority: optional
 @Depends: ${misc:Depends}, boinc-client, virtualbox | virtualbox-5.0 | virtualbox-5.1 | virtualbox-5.2
 @Recommends: virtualbox-ext-pack
 @Description: metapackage for virtualbox-savvy projects
@@ -82,7 +81,6 @@ Package: boinc
 @Package: boinc-client-nvidia-cuda
 @Architecture: amd64 i386 armhf
 @Section: contrib/net
-@Priority: optional
 @Breaks: boinc-nvidia-cuda
 @Replaces: boinc-nvidia-cuda
 @Depends: ${misc:Depends}, boinc-client, libcuda1 | libcuda1-any | libcuda-7.5-1 | libcuda-7.0-1 | libcuda-6.5-1 | libcuda-6.0-1 | libcuda-5.5-1 | libcuda-5.0-1
@@ -103,7 +101,6 @@ Package: boinc
 @Package: boinc-client-opencl
 @Architecture: any
 @Section: contrib/net
-@Priority: optional
 @Breaks: boinc-amd-opencl
 @Replaces: boinc-amd-opencl
 @Depends: ${misc:Depends}, ocl-icd-libopencl1 | libopencl-1.1-1
@@ -206,7 +203,6 @@ Package: boinc
 @Package: boinc-dev
 @Section: oldlibs
 @Architecture: any
-@Priority: optional
 @Depends: libboinc-app-dev (= ${binary:Version}), ${misc:Depends}
 @Description: development files to build applications for BOINC projects (transitional)
 @ Dummy transitional package helping the transition of a split of
@@ -326,7 +322,6 @@ Package: boinc
 %
 %Package: boinc-cgi-stripchart
 %Section: libs
-%Priority: optional
 %Architecture: all
 %Depends: gnuplot-nox, ${misc:Depends}, ${perl:Depends}
 %Recommends: apache2 | httpd-cgi
