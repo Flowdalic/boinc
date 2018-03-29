@@ -1,0 +1,15 @@
+Description: Do not print that "Pre-release message"
+Author: Gianfranco Costamagna <locutusofborg@debian.org>
+Last-Update: 2018-03-29
+
+--- boinc-7.9.3+dfsg.orig/version.h.in
++++ boinc-7.9.3+dfsg/version.h.in
+@@ -22,7 +22,7 @@
+ #define BOINC_VERSION_STRING "@BOINC_VERSION_STRING@"
+ 
+ /* Package is a pre-release (Alpha/Beta) package */
+-#define BOINC_PRERELEASE 1
++// #define BOINC_PRERELEASE 1
+ 
+ #if (defined(_WIN32) || defined(__APPLE__))
+ /* Name of package */
