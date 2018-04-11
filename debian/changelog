@@ -1,3 +1,14 @@
+boinc (7.9.3+dfsg-4) unstable; urgency=medium
+
+  * Upload to unstable
+  * Revert "add boinc to input group, to help idle detection"
+    - thanks Juha Sointusalo for reminding me that a security bug in boinc
+      might end up in a keylogger on a user system, and we don't want this
+      possible attack vector in our systems.
+      Idle detection is broken (see #2463)
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 11 Apr 2018 19:01:33 +0200
+
 boinc (7.9.3+dfsg-3exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
