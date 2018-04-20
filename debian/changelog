@@ -1,3 +1,11 @@
+boinc (7.9.3+dfsg-5) unstable; urgency=medium
+
+  * Upload to unstable
+  * Drop update-boinc-applinks, useless now?
+    - lets re-evaluate the situation in case somebody complains (LP: #1765576)
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Fri, 20 Apr 2018 11:55:23 +0200
+
 boinc (7.9.3+dfsg-4exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
