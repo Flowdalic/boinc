@@ -57,18 +57,6 @@ all available application packages run:
 
     % apt-cache search boinc-app-*
 
-If you are using the default BOINC data directory
-'/var/lib/boinc-client' just installing 'boinc-app-<project>' packages
-is enough. If you are not using the default data directory you have to
-create some symbolic links manually. E.g if your BOINC data directory
-is '/home/john/boinc' just run
-
-    % update-boinc-applinks --create --data-dir=/home/john/boinc
-
-after the installation of the 'boinc-app-<project>' package and restart
-your BOINC core client.
-
-
 3. Moving a BOINC data directory to /var/lib/boinc-client
 ---------------------------------------------------------
 
