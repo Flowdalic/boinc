@@ -254,6 +254,9 @@ override_dh_auto_configure-arch:
 	@echo
 	dh_auto_configure -- $(CFGFLAGS_boinc-client)
 
+update-boinc-applinks.1: debian/manpages/update-boinc-applinks.xml
+	docbook2x-man debian/manpages/update-boinc-applinks.xml
+
 # noopt, not necessary
 # CFLAGS_noopt = $(subst -O2,-O0,$(CFLAGS))
 # CXXFLAGS_noopt = $(subst -O2,-O0,$(CXXFLAGS))
@@ -263,7 +266,7 @@ CXXFLAGS_plain = $(CFLAGS_plain)
 
 override_dh_auto_build-indep:
 
-override_dh_auto_build-arch:
+override_dh_auto_build-arch: update-boinc-applinks.1
 	@echo
 	@echo "****            *****"
 	@echo "**** Making     *****"
@@ -334,6 +337,7 @@ override_dh_auto_clean:
 	rm -f \
 	  boinc_lockfile lockfile \
 	  client/boinc.optimized \
+	  update-boinc-applinks.1 \
 	  aclocal.m4 \
 	  config.h \
 	  config.h.in \
@@ -377,7 +381,7 @@ SAMPLES=samples/sleeper/sleeper samples/worker/worker samples/example_app/uc2 sa
 
 override_dh_auto_install-indep:
 
-override_dh_auto_install-arch:
+override_dh_auto_install-arch: update-boinc-applinks.1
 	dh_auto_install
 ifeq (,$(ENABLE_SERVER_TEST))
 	echo "I: Installing example scientific applications"
