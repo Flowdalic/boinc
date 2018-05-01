@@ -8,7 +8,7 @@
 # This file is licensed under the terms of the GNU General Public License,
 # Version 2 or any later version published by the Free Software Foundation.
 
-import ConfigParser
+import configparser
 import optparse
 import os
 import sys
@@ -26,7 +26,7 @@ def main():
     # Show list of all available projects.
     if opts.list_projects == True:
         for project in projects:
-            print project
+            print(project)
 
     # Manage symbolic links and directories.
     if opts.create == None:
@@ -59,7 +59,7 @@ def parse_app_info_files():
 
     for file in os.listdir(APPS_INFO_DIR):
         if file.endswith('.cfg'):
-            cfg = ConfigParser.ConfigParser()
+            cfg = configparser.ConfigParser()
             cfg.readfp(open(APPS_INFO_DIR + file))
 
             project = cfg.get('DEFAULT', 'project')
