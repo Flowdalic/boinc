@@ -35,6 +35,7 @@ Build-Depends: debhelper (>= 9.20160114),
                pkg-config,
                po-debconf,
                python-all,
+               python3-all,
                python-setuptools,
                zlib1g-dev
 Homepage: https://boinc.berkeley.edu/
@@ -127,6 +128,7 @@ Package: boinc
 @         libboinc7 (= ${binary:Version}),
 @         ${misc:Depends},
 @         ${python:Depends},
+@         ${python3:Depends},
 @         ${shlibs:Depends}
 @Suggests: boinc-client-opencl, boinc-client-nvidia-cuda, boinc-manager, x11-xserver-utils
 @Description: core client for the BOINC distributed computing infrastructure
@@ -280,11 +282,13 @@ Package: boinc
 %         php-cli,
 %         php-mysql,
 %         python,
+%         python3,
 %         python-mysqldb,
 %         tcsh,
 %         ${misc:Depends},
 %         ${perl:Depends},
 %         ${python:Depends},
+%         ${python3:Depends},
 %         ${shlibs:Depends}
 %Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime
 %Suggests: boinc-app-examples, boinc-cgi-stripchart
