@@ -198,7 +198,7 @@ CFGFLAGS_boinc-client = \
   CFLAGS="$(CFLAGS_boinc-client)"
 
 %:
-	dh $@ --with python2,systemd,autoreconf # --parallel
+	dh $@ --with python2,python3,systemd,autoreconf # --parallel
 
 override_dh_autoreconf-indep:
 
