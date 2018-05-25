@@ -192,7 +192,6 @@ CFGFLAGS_boinc-client = \
   --enable-unicode \
   --enable-shared \
   --enable-dynamic-client-linkage \
-  --disable-webview \
   --with-ssl \
   --with-x \
   CFLAGS="$(CFLAGS_boinc-client)"
