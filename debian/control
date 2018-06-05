@@ -39,8 +39,8 @@ Build-Depends: debhelper (>= 9.20160114),
                python-setuptools,
                zlib1g-dev
 Homepage: https://boinc.berkeley.edu/
-Vcs-Git: https://anonscm.debian.org/git/pkg-boinc/boinc.git
-Vcs-Browser: https://anonscm.debian.org/cgit/pkg-boinc/boinc.git
+Vcs-Browser: https://salsa.debian.org/pkg-boinc-team/boinc
+Vcs-Git: https://salsa.debian.org/pkg-boinc-team/boinc.git
 
 Package: boinc
 Architecture: all
