@@ -1,3 +1,13 @@
+boinc (7.10.3+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7.10.3+dfsg
+  * Fix watch file
+  * Upload to unstable
+  * Add patch to remove idle detection code
+  * Bump std-version to 4.1.4.1, no changes required
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 20 Jun 2018 14:41:51 +0200
+
 boinc (7.10.2+dfsg-2exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
