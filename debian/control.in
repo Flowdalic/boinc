@@ -273,7 +273,6 @@ Package: boinc
 %Provides: boinc-server
 %Depends: adduser,
 %         apache2 | httpd-cgi,
-%         fonts-font-awesome,
 %         fonts-dejavu-extra,
 %         libfcgi0ldbl,
 %         default-mysql-server | virtual-mysql-server,
