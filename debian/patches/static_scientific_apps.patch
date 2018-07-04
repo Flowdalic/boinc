@@ -2,7 +2,7 @@ Index: boinc/lib/Makefile.am
 ===================================================================
 --- boinc.orig/lib/Makefile.am
 +++ boinc/lib/Makefile.am
-@@ -178,6 +178,10 @@ lib_LTLIBRARIES = libboinc.la
+@@ -182,6 +182,10 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -13,7 +13,7 @@ Index: boinc/lib/Makefile.am
  libboinc_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_la_LIBADD =
  
-@@ -186,6 +190,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
+@@ -190,6 +194,10 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -24,7 +24,7 @@ Index: boinc/lib/Makefile.am
  libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
  libboinc_crypt_la_LIBADD = $(LIBBOINC)
  endif
-@@ -195,6 +203,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
+@@ -199,6 +207,10 @@
  libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
  libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -35,7 +35,7 @@ Index: boinc/lib/Makefile.am
  libboinc_fcgi_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_fcgi_la_LIBADD =
  endif
-@@ -258,7 +270,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
+@@ -262,7 +274,7 @@
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -77,7 +77,7 @@ Index: boinc/samples/multi_thread/Makefile
 ===================================================================
 --- boinc.orig/samples/multi_thread/Makefile
 +++ boinc/samples/multi_thread/Makefile
-@@ -26,4 +26,4 @@ distclean:
+@@ -26,4 +26,4 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  multi_thread: multi_thread.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
@@ -87,7 +87,7 @@ Index: boinc/samples/sleeper/Makefile
 ===================================================================
 --- boinc.orig/samples/sleeper/Makefile
 +++ boinc/samples/sleeper/Makefile
-@@ -17,7 +17,7 @@ PROGS = sleeper
+@@ -17,7 +17,7 @@
  all: $(PROGS)
  
  libstdc++.a:
@@ -96,7 +96,7 @@ Index: boinc/samples/sleeper/Makefile
  
  clean: distclean
  
-@@ -25,4 +25,4 @@ distclean:
+@@ -25,4 +25,4 @@
  	rm -f $(PROGS) *.o libstdc++.a
  
  sleeper: sleeper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
@@ -106,7 +106,7 @@ Index: boinc/samples/vboxmonitor/Makefile
 ===================================================================
 --- boinc.orig/samples/vboxmonitor/Makefile
 +++ boinc/samples/vboxmonitor/Makefile
-@@ -27,4 +27,4 @@ distclean:
+@@ -27,4 +27,4 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  vboxmonitor: vboxmonitor.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
@@ -116,7 +116,7 @@ Index: boinc/samples/vboxwrapper/Makefile
 ===================================================================
 --- boinc.orig/samples/vboxwrapper/Makefile
 +++ boinc/samples/vboxwrapper/Makefile
-@@ -27,25 +27,26 @@ distclean:
+@@ -27,25 +27,26 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  floppyio.o: floppyio.cpp
@@ -155,7 +155,7 @@ Index: boinc/samples/worker/Makefile
 ===================================================================
 --- boinc.orig/samples/worker/Makefile
 +++ boinc/samples/worker/Makefile
-@@ -10,4 +10,4 @@ distclean:
+@@ -10,4 +10,4 @@
  	rm -f $(PROGS) *.o
  
  worker: worker.o
@@ -165,7 +165,7 @@ Index: boinc/samples/wrapper/Makefile
 ===================================================================
 --- boinc.orig/samples/wrapper/Makefile
 +++ boinc/samples/wrapper/Makefile
-@@ -37,5 +37,5 @@ REGEXP_OBJS = \
+@@ -37,5 +37,5 @@
  	regexp_memory.o \
  	regexp_report.o
  
@@ -177,7 +177,7 @@ Index: boinc/samples/wrappture/Makefile
 ===================================================================
 --- boinc.orig/samples/wrappture/Makefile
 +++ boinc/samples/wrappture/Makefile
-@@ -29,10 +29,10 @@ distclean:
+@@ -29,10 +29,10 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  wrappture.o: wrappture.cpp
@@ -195,7 +195,7 @@ Index: boinc/samples/example_app/Makefile
 ===================================================================
 --- boinc.orig/samples/example_app/Makefile
 +++ boinc/samples/example_app/Makefile
-@@ -61,17 +61,17 @@ install: uc2
+@@ -61,17 +61,17 @@
  # because otherwise you might get a version in /usr/lib etc.
  
  uc2: uc2.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
@@ -216,7 +216,7 @@ Index: boinc/samples/example_app/Makefile
  	$(BOINC_API_DIR)/libboinc_graphics2.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a \
-@@ -79,7 +79,7 @@ uc2_graphics: uc2_graphics.o ttfont.o li
+@@ -79,7 +79,7 @@
      -lftgl -lGL -lX11 -lXmu -lm
  
  slide_show: slide_show.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
@@ -229,7 +229,7 @@ Index: boinc/api/Makefile.am
 ===================================================================
 --- boinc.orig/api/Makefile.am
 +++ boinc/api/Makefile.am
-@@ -45,6 +45,10 @@ lib_LTLIBRARIES = libboinc_api.la
+@@ -45,6 +45,10 @@
  libboinc_api_la_SOURCES = $(api_files)
  libboinc_api_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -lpthread
  libboinc_api_la_LIBADD = -L../lib/.libs $(LIBBOINC)
@@ -240,7 +240,7 @@ Index: boinc/api/Makefile.am
  
  if BUILD_GRAPHICS_API
  lib_LTLIBRARIES += libboinc_graphics2.la
-@@ -52,12 +56,20 @@ libboinc_graphics2_la_SOURCES = $(graphi
+@@ -52,12 +56,20 @@
  libboinc_graphics2_la_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/samples/image_libs
  libboinc_graphics2_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -ljpeg
  libboinc_graphics2_la_LIBADD = -L../lib/.libs $(APPLIBS)
@@ -265,7 +265,7 @@ Index: boinc/zip/Makefile.am
 ===================================================================
 --- boinc.orig/zip/Makefile.am
 +++ boinc/zip/Makefile.am
-@@ -63,6 +63,10 @@ lib_LTLIBRARIES = libboinc_zip.la
+@@ -63,6 +63,10 @@
  libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
  libboinc_zip_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_zip_la_LIBADD = $(LIBBOINC)
@@ -280,7 +280,7 @@ Index: boinc/configure.ac
 ===================================================================
 --- boinc.orig/configure.ac
 +++ boinc/configure.ac
-@@ -69,6 +69,12 @@ SAH_LINKS
+@@ -69,6 +69,12 @@
  AC_LANG_PUSH(C)
  AM_PROG_CC_C_O
  

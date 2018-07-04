@@ -1,9 +1,11 @@
 Description: Installations outside /var/www are disabled by default
  This friendly report helped me out
  http://dabase.com/blog/AH01630:_client_denied_by_server_configuration/
---- a/tools/make_project
-+++ b/tools/make_project
-@@ -385,6 +385,7 @@
+Index: boinc/tools/make_project
+===================================================================
+--- boinc.orig/tools/make_project
++++ boinc/tools/make_project
+@@ -397,6 +397,7 @@
      <Directory "%(proot)s/html">
          Options Indexes MultiViews
          AllowOverride AuthConfig
@@ -11,7 +13,7 @@ Description: Installations outside /var/www are disabled by default
          Order allow,deny
          Allow from all
      </Directory>
-@@ -393,6 +394,7 @@
+@@ -405,6 +406,7 @@
      <Directory "%(proot)s/cgi-bin">
          Options ExecCGI
          AllowOverride AuthConfig

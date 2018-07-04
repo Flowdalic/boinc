@@ -30,5 +30,4 @@ disable_silent_rules.patch
 fix-underlinking.patch
 static_scientific_apps.patch
 hurd-fixes.patch
-disable-pre-release-warning.patch
-0e16d026ce50fdadee8d3629bbdd95b5a5298416.patch
+#disable-pre-release-warning.patch
