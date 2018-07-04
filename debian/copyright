@@ -318,6 +318,10 @@ Files: drupal/sites/default/boinc/modules/contrib/htmlpurifier/library/HTMLPurif
 Copyright: 2007 Jeroen van der Meer <http://jero.net/>
 License: Expat
 
+Files: drupal/sites/default/boinc/modules/contrib/filefield/*
+Copyright: nobody claimed copyright for this source
+License: GPL-2
+
 Files: html/inc/geoip.inc
 Copyright: 2004 MaxMind LLC
 License: LGPL-2.1+
@@ -331,6 +335,10 @@ Files: html/user/openid_login.php
 Copyright: 2008-2014 University of California
            2011 Daniel Lombraña González <teleyinex AT gmail DOT com>
 License: LGPL-3+
+
+Files: html/inc/random_compat/*
+Copyright: 2015-2017 Paragon Initiative Enterprises
+License: MIT
 
 Files: html/inc/recaptchalib.php
 Copyright: 2007 reCAPTCHA -- http://recaptcha.net
@@ -798,6 +806,24 @@ License: GFDL-NIV-1.2+
  .
  On Debian systems, the complete text of the GNU Free Documentation License can
  be found in `/usr/share/common-licenses/GFDL-1.2'.
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; version 2
+ of the License.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-2 file.
 
 License: GPL-2+
  This program is free software; you can redistribute it and/or
