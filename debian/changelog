@@ -1,3 +1,16 @@
+boinc (7.12.0+dfsg-1) unstable; urgency=medium
+
+  * Update again watch file
+  * New upstream version 7.12.0+dfsg
+  * Upload to unstable
+  * Update copyright file
+  * Refresh patches
+  * drop upstream patches:
+    - 0e16d026ce50fdadee8d3629bbdd95b5a5298416
+    - disable-pre-release-warning
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 04 Jul 2018 10:28:00 +0200
+
 boinc (7.10.3+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
