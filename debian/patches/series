@@ -19,7 +19,6 @@ addressing_additional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
 #db_interface_use.patch
 # patches to get Debian going
-make_project_overcomes_Apache24_security.patch
 #debian specific patches
 boinclib_shared.patch
 disable_new_version_check.patch

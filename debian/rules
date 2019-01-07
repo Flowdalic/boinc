@@ -391,6 +391,11 @@ ifeq (,$(ENABLE_SERVER_TEST))
 		rm -r "$$i" ; \
 		ln -sf "/usr/share/fonts/truetype/dejavu/$$i" . ; \
 	done;
+	cd $(CURDIR)/debian/tmp/usr/share/boinc-server-maker/html/drupal/sites/default/boinc/themes/boinc/fonts/ && \
+	for i in `ls *`; do \
+		rm -r "$$i" ; \
+		ln -sf "/usr/share/fonts-font-awesome/fonts/$$i" . ; \
+	done;
 endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
 	do \

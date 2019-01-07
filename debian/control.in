@@ -5,7 +5,7 @@ Maintainer: Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 Uploaders: Steffen Moeller <moeller@debian.org>,
            Guo Yixuan (郭溢譞) <culu.gyx@gmail.com>,
            Gianfranco Costamagna <locutusofborg@debian.org>
-Standards-Version: 4.1.4.1
+Standards-Version: 4.3.0
 Build-Depends: debhelper (>= 9.20160114),
                default-libmysqlclient-dev,
                dh-autoreconf,
@@ -273,6 +273,7 @@ Package: boinc
 %Provides: boinc-server
 %Depends: adduser,
 %         apache2 | httpd-cgi,
+%         fonts-font-awesome,
 %         fonts-dejavu-extra,
 %         libfcgi0ldbl,
 %         default-mysql-server | virtual-mysql-server,
