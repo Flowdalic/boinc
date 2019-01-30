@@ -1,3 +1,10 @@
+boinc (7.14.2+dfsg-2) unstable; urgency=medium
+
+  * Upload to unstable.
+  * Drop boinc-virtualbox on i386, following vbox removal
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 30 Jan 2019 19:34:18 +0100
+
 boinc (7.14.2+dfsg-1exp2) experimental; urgency=medium
 
   * Drop awesome fonts, fix build
