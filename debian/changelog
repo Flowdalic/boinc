@@ -1,3 +1,12 @@
+boinc (7.14.2+dfsg-3) unstable; urgency=medium
+
+  * Upload to unstable
+  * Do not strongly depend on virtualbox for the boinc-virtualbox package.
+    - Virtualbox might be available under different virtual name, built
+      locally, upstream deb file might be used or whatever else.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 01 Apr 2019 13:29:33 +0200
+
 boinc (7.14.2+dfsg-2exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
