@@ -196,8 +196,10 @@ CFGFLAGS_boinc-client = \
   --with-x \
   CFLAGS="$(CFLAGS_boinc-client)"
 
+export DEB_BUILD_OPTIONS=parallel=1
+
 %:
-	dh $@ --with python2,python3,systemd,autoreconf # --parallel
+	dh $@ --with python2,python3 # --parallel
 
 override_dh_autoreconf-indep:
 
