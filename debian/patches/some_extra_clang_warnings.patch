@@ -1,8 +1,10 @@
 Description: fixing some clang warning.
  Probably this patch can be safely dropped since upstream seems to have already
  addressed this.
---- a/clientgui/sg_ProjectPanel.cpp
-+++ b/clientgui/sg_ProjectPanel.cpp
+Index: boinc-v2/clientgui/sg_ProjectPanel.cpp
+===================================================================
+--- boinc-v2.orig/clientgui/sg_ProjectPanel.cpp
++++ boinc-v2/clientgui/sg_ProjectPanel.cpp
 @@ -426,8 +426,7 @@
      CMainDocument* pDoc = wxGetApp().GetDocument();
      ProjectSelectionData* selData;
@@ -27,16 +29,16 @@ Description: fixing some clang warning.
                  ctrl_url = ((ProjectSelectionData*)m_ProjectSelectionCtrl->GetClientData(j))->project_url;
                  if (!strcmp(project->master_url, ctrl_url)) {
                      found = true;
-@@ -450,7 +450,7 @@
-             if ( !found ) {
-                 wxString projname(project->project_name.c_str(), wxConvUTF8);
+@@ -455,7 +455,7 @@
+                 }
+                 wxString projname(p, wxConvUTF8);
  #if SORTPROJECTLIST
 -                int alphaOrder;
 +                int alphaOrder,j;
                  for(j = 0; j < ctrlCount; ++j) {
                      alphaOrder = (m_ProjectSelectionCtrl->GetString(j)).CmpNoCase(projname);
                      if (alphaOrder > 0) {
-@@ -482,8 +482,8 @@
+@@ -487,8 +487,8 @@
          if ( projCnt < ctrlCount ) {
              project = NULL;
              // Check items in descending order so deletion won't change indexes of items yet to be checked
@@ -47,7 +49,7 @@ Description: fixing some clang warning.
                  project = pDoc->state.lookup_project(ctrl_url);
                  if ( project == NULL ) {
                      selData = (ProjectSelectionData*)m_ProjectSelectionCtrl->GetClientData(j);
-@@ -511,9 +511,9 @@
+@@ -516,9 +516,9 @@
      
          // Check to see if we need to reload the project icon
          ctrlCount = m_ProjectSelectionCtrl->GetCount();

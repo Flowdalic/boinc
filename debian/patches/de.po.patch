@@ -1,9 +1,9 @@
 Description: fixing some "de" typos, this should be addressed on other languages aswell.
-Index: boinc/html/languages/translations/de.po
+Index: boinc-7.16.1+dfsg/html/languages/translations/de.po
 ===================================================================
---- boinc.orig/html/languages/translations/de.po
-+++ boinc/html/languages/translations/de.po
-@@ -1266,8 +1266,8 @@
+--- boinc-7.16.1+dfsg.orig/html/languages/translations/de.po
++++ boinc-7.16.1+dfsg/html/languages/translations/de.po
+@@ -1278,8 +1278,8 @@
  
  #: html/inc/prefs.inc:58
  #, no-php-format
@@ -14,7 +14,7 @@ Index: boinc/html/languages/translations/de.po
  
  #: html/inc/prefs.inc:63
  #, no-php-format
-@@ -1279,8 +1279,8 @@
+@@ -1291,8 +1291,8 @@
  
  #: html/inc/prefs.inc:66
  #, no-php-format
@@ -25,7 +25,7 @@ Index: boinc/html/languages/translations/de.po
  
  #: html/inc/prefs.inc:68 html/inc/prefs.inc:214
  msgid "When to suspend"
-@@ -1434,8 +1434,8 @@
+@@ -1446,8 +1446,8 @@
  
  #: html/inc/prefs.inc:158
  #, no-php-format

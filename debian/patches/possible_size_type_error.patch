@@ -1,9 +1,11 @@
 Author: Steffen Moeller <moeller@debian.org>
 Description: int may not be enough (theoretically) for large files.
 
---- a/sched/file_upload_handler.cpp
-+++ b/sched/file_upload_handler.cpp
-@@ -137,13 +137,13 @@
+Index: boinc-v2/sched/file_upload_handler.cpp
+===================================================================
+--- boinc-v2.orig/sched/file_upload_handler.cpp
++++ boinc-v2/sched/file_upload_handler.cpp
+@@ -149,13 +149,13 @@
      bytes_left = nbytes - offset;
  
      while (bytes_left > 0) {
@@ -19,7 +21,7 @@ Description: int may not be enough (theoretically) for large files.
  
          // delay opening the file until we've done the first socket read
          // to avoid filesystem lockups (WCG, possible paranoia)
-@@ -222,7 +222,7 @@
+@@ -246,7 +246,7 @@
  
          // try to write n bytes to file
          //

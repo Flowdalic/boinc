@@ -1,8 +1,8 @@
-Index: boinc/lib/Makefile.am
+Index: boinc-7.16.1+dfsg/lib/Makefile.am
 ===================================================================
---- boinc.orig/lib/Makefile.am
-+++ boinc/lib/Makefile.am
-@@ -182,6 +182,10 @@
+--- boinc-7.16.1+dfsg.orig/lib/Makefile.am
++++ boinc-7.16.1+dfsg/lib/Makefile.am
+@@ -184,6 +184,10 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -13,7 +13,7 @@ Index: boinc/lib/Makefile.am
  libboinc_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_la_LIBADD =
  
-@@ -190,6 +194,10 @@
+@@ -192,6 +196,10 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -24,7 +24,7 @@ Index: boinc/lib/Makefile.am
  libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
  libboinc_crypt_la_LIBADD = $(LIBBOINC)
  endif
-@@ -199,6 +207,10 @@
+@@ -201,6 +209,10 @@
  libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
  libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -35,7 +35,7 @@ Index: boinc/lib/Makefile.am
  libboinc_fcgi_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_fcgi_la_LIBADD =
  endif
-@@ -262,7 +274,7 @@
+@@ -264,7 +276,7 @@
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -44,10 +44,10 @@ Index: boinc/lib/Makefile.am
  parse_test_SOURCES = parse_test.cpp
  parse_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  parse_test_LDADD = $(LIBBOINC)
-Index: boinc/samples/condor/Makefile
+Index: boinc-7.16.1+dfsg/samples/condor/Makefile
 ===================================================================
---- boinc.orig/samples/condor/Makefile
-+++ boinc/samples/condor/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/condor/Makefile
++++ boinc-7.16.1+dfsg/samples/condor/Makefile
 @@ -1,18 +1,18 @@
  all: boinc_gahp
  
@@ -59,9 +59,9 @@ Index: boinc/samples/condor/Makefile
  
  distclean-recursive: clean
  
--boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h
--	g++ -g -O0 -I../../lib -I../.. \
-+boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h $(CXX) $(CPPFLAGS) -static -pthread -g -O0 -I../../lib -I../.. \
+-boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h ../../version.h
+-	g++ -g -O2 -I../../lib -I../.. \
++boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h ../../version.h $(CXX) $(CPPFLAGS) -static -pthread -g -O2 -I../../lib -I../.. \
 +	$(CXX) $(CPPFLAGS) -static -pthread -g -O0 -I../../lib -I../.. \
  	-o boinc_gahp boinc_gahp.cpp ../../lib/remote_submit.cpp \
 -	-L../../lib -lboinc -lpthread -lcurl
@@ -73,20 +73,20 @@ Index: boinc/samples/condor/Makefile
  	test.cpp ../../lib/remote_submit.cpp \
 -	-L../../lib -lboinc -lcurl
 +	$(BOINC_LIB_DIR)/libboinc.a libcurl.a
-Index: boinc/samples/multi_thread/Makefile
+Index: boinc-7.16.1+dfsg/samples/multi_thread/Makefile
 ===================================================================
---- boinc.orig/samples/multi_thread/Makefile
-+++ boinc/samples/multi_thread/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/multi_thread/Makefile
++++ boinc-7.16.1+dfsg/samples/multi_thread/Makefile
 @@ -26,4 +26,4 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  multi_thread: multi_thread.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
 -	$(CXX) $(CXXFLAGS) -o multi_thread multi_thread.o libstdc++.a -pthread -lboinc_api -lboinc
 +	$(CXX) $(CPPFLAGS) -static -pthread -o multi_thread multi_thread.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
-Index: boinc/samples/sleeper/Makefile
+Index: boinc-7.16.1+dfsg/samples/sleeper/Makefile
 ===================================================================
---- boinc.orig/samples/sleeper/Makefile
-+++ boinc/samples/sleeper/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/sleeper/Makefile
++++ boinc-7.16.1+dfsg/samples/sleeper/Makefile
 @@ -17,7 +17,7 @@
  all: $(PROGS)
  
@@ -102,20 +102,20 @@ Index: boinc/samples/sleeper/Makefile
  sleeper: sleeper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
 -	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o sleeper sleeper.o libstdc++.a -pthread -lboinc_api -lboinc
 +	$(CXX) $(CPPFLAGS) -static -pthread -o sleeper sleeper.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
-Index: boinc/samples/vboxmonitor/Makefile
+Index: boinc-7.16.1+dfsg/samples/vboxmonitor/Makefile
 ===================================================================
---- boinc.orig/samples/vboxmonitor/Makefile
-+++ boinc/samples/vboxmonitor/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/vboxmonitor/Makefile
++++ boinc-7.16.1+dfsg/samples/vboxmonitor/Makefile
 @@ -27,4 +27,4 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
  vboxmonitor: vboxmonitor.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
 -	g++ $(CXXFLAGS) -o vboxmonitor vboxmonitor.o libstdc++.a -pthread -lboinc_api -lboinc
 +	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -static -pthread -o vboxmonitor vboxmonitor.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
-Index: boinc/samples/vboxwrapper/Makefile
+Index: boinc-7.16.1+dfsg/samples/vboxwrapper/Makefile
 ===================================================================
---- boinc.orig/samples/vboxwrapper/Makefile
-+++ boinc/samples/vboxwrapper/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/vboxwrapper/Makefile
++++ boinc-7.16.1+dfsg/samples/vboxwrapper/Makefile
 @@ -27,25 +27,26 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
@@ -151,20 +151,20 @@ Index: boinc/samples/vboxwrapper/Makefile
 -	g++ $(CXXFLAGS) -o vboxwrapper vboxwrapper.o vbox_common.o vbox_vboxmanage.o vboxcheckpoint.o vboxjob.o vboxlogging.o floppyio.o libstdc++.a -pthread -lboinc_api -lboinc
 +	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -static -pthread -o vboxwrapper vboxwrapper.o vbox_common.o vbox_vboxmanage.o vboxcheckpoint.o vboxjob.o vboxlogging.o floppyio.o \
 +	libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
-Index: boinc/samples/worker/Makefile
+Index: boinc-7.16.1+dfsg/samples/worker/Makefile
 ===================================================================
---- boinc.orig/samples/worker/Makefile
-+++ boinc/samples/worker/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/worker/Makefile
++++ boinc-7.16.1+dfsg/samples/worker/Makefile
 @@ -10,4 +10,4 @@
  	rm -f $(PROGS) *.o
  
  worker: worker.o
 -	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o worker worker.o
 +	$(CXX) $(CPPFLAGS) -static -o worker worker.o
-Index: boinc/samples/wrapper/Makefile
+Index: boinc-7.16.1+dfsg/samples/wrapper/Makefile
 ===================================================================
---- boinc.orig/samples/wrapper/Makefile
-+++ boinc/samples/wrapper/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/wrapper/Makefile
++++ boinc-7.16.1+dfsg/samples/wrapper/Makefile
 @@ -37,5 +37,5 @@
  	regexp_memory.o \
  	regexp_report.o
@@ -173,10 +173,10 @@ Index: boinc/samples/wrapper/Makefile
 -	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(PTHREAD) -lboinc_api -lboinc -lboinc_zip $(LDFLAGS)
 +wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_ZIP_DIR)/libboinc_zip.a $(REGEXP_OBJS)
 +	$(CXX) $(CPPFLAGS) $(PTHREAD) -static -o wrapper wrapper.o $(REGEXP_OBJS) libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_ZIP_DIR)/libboinc_zip.a $(BOINC_LIB_DIR)/libboinc.a
-Index: boinc/samples/wrappture/Makefile
+Index: boinc-7.16.1+dfsg/samples/wrappture/Makefile
 ===================================================================
---- boinc.orig/samples/wrappture/Makefile
-+++ boinc/samples/wrappture/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/wrappture/Makefile
++++ boinc-7.16.1+dfsg/samples/wrappture/Makefile
 @@ -29,10 +29,10 @@
  	/bin/rm -f $(PROGS) *.o libstdc++.a
  
@@ -191,10 +191,10 @@ Index: boinc/samples/wrappture/Makefile
  fermi: fermi.cpp
 -	g++ $(CSSFLAGS) -o fermi fermi.cpp
 +	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -static -o fermi fermi.cpp
-Index: boinc/samples/example_app/Makefile
+Index: boinc-7.16.1+dfsg/samples/example_app/Makefile
 ===================================================================
---- boinc.orig/samples/example_app/Makefile
-+++ boinc/samples/example_app/Makefile
+--- boinc-7.16.1+dfsg.orig/samples/example_app/Makefile
++++ boinc-7.16.1+dfsg/samples/example_app/Makefile
 @@ -61,17 +61,17 @@
  # because otherwise you might get a version in /usr/lib etc.
  
@@ -225,10 +225,10 @@ Index: boinc/samples/example_app/Makefile
  	$(BOINC_API_DIR)/libboinc_graphics2.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a \
-Index: boinc/api/Makefile.am
+Index: boinc-7.16.1+dfsg/api/Makefile.am
 ===================================================================
---- boinc.orig/api/Makefile.am
-+++ boinc/api/Makefile.am
+--- boinc-7.16.1+dfsg.orig/api/Makefile.am
++++ boinc-7.16.1+dfsg/api/Makefile.am
 @@ -45,6 +45,10 @@
  libboinc_api_la_SOURCES = $(api_files)
  libboinc_api_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) -lpthread
@@ -261,10 +261,10 @@ Index: boinc/api/Makefile.am
  
  if INSTALL_HEADERS
  ## install only headers that are meant for exporting the API !!
-Index: boinc/zip/Makefile.am
+Index: boinc-7.16.1+dfsg/zip/Makefile.am
 ===================================================================
---- boinc.orig/zip/Makefile.am
-+++ boinc/zip/Makefile.am
+--- boinc-7.16.1+dfsg.orig/zip/Makefile.am
++++ boinc-7.16.1+dfsg/zip/Makefile.am
 @@ -63,6 +63,10 @@
  libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
  libboinc_zip_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
@@ -276,11 +276,11 @@ Index: boinc/zip/Makefile.am
  
  # Some OSs may not prefix libraries with lib.
  # For example OS2
-Index: boinc/configure.ac
+Index: boinc-7.16.1+dfsg/configure.ac
 ===================================================================
---- boinc.orig/configure.ac
-+++ boinc/configure.ac
-@@ -69,6 +69,12 @@
+--- boinc-7.16.1+dfsg.orig/configure.ac
++++ boinc-7.16.1+dfsg/configure.ac
+@@ -68,6 +68,12 @@
  AC_LANG_PUSH(C)
  AM_PROG_CC_C_O
  

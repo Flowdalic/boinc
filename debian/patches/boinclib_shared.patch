@@ -1,11 +1,11 @@
 Description: this patch makes the build system create a dynamic shared library.
  Upstream didn't accept this patch because of the unstable api, so this is a
  significative Debian delta.
-Index: boinc/lib/Makefile.am
+Index: boinc-v2/lib/Makefile.am
 ===================================================================
---- boinc.orig/lib/Makefile.am
-+++ boinc/lib/Makefile.am
-@@ -182,7 +182,7 @@
+--- boinc-v2.orig/lib/Makefile.am
++++ boinc-v2/lib/Makefile.am
+@@ -184,7 +184,7 @@
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -14,7 +14,7 @@ Index: boinc/lib/Makefile.am
  libboinc_la_LIBADD =
  
  if ENABLE_BOINCCRYPT
-@@ -190,7 +190,7 @@
+@@ -192,7 +192,7 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -23,10 +23,10 @@ Index: boinc/lib/Makefile.am
  libboinc_crypt_la_LIBADD =
  endif
  
-Index: boinc/apps/Makefile.am
+Index: boinc-v2/apps/Makefile.am
 ===================================================================
---- boinc.orig/apps/Makefile.am
-+++ boinc/apps/Makefile.am
+--- boinc-v2.orig/apps/Makefile.am
++++ boinc-v2/apps/Makefile.am
 @@ -8,15 +8,15 @@
  
  upper_case_SOURCES = upper_case.cpp
@@ -46,10 +46,10 @@ Index: boinc/apps/Makefile.am
 -1sec_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS)
 +1sec_LDFLAGS = $(PTHREAD_CFLAGS)
  1sec_LDADD = $(APPLIBS)
-Index: boinc/client/Makefile.am
+Index: boinc-v2/client/Makefile.am
 ===================================================================
---- boinc.orig/client/Makefile.am
-+++ boinc/client/Makefile.am
+--- boinc-v2.orig/client/Makefile.am
++++ boinc-v2/client/Makefile.am
 @@ -4,7 +4,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -58,10 +58,10 @@ Index: boinc/client/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
-Index: boinc/clientgui/Makefile.am
+Index: boinc-v2/clientgui/Makefile.am
 ===================================================================
---- boinc.orig/clientgui/Makefile.am
-+++ boinc/clientgui/Makefile.am
+--- boinc-v2.orig/clientgui/Makefile.am
++++ boinc-v2/clientgui/Makefile.am
 @@ -7,7 +7,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -70,10 +70,10 @@ Index: boinc/clientgui/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
-Index: boinc/clientscr/Makefile.am
+Index: boinc-v2/clientscr/Makefile.am
 ===================================================================
---- boinc.orig/clientscr/Makefile.am
-+++ boinc/clientscr/Makefile.am
+--- boinc-v2.orig/clientscr/Makefile.am
++++ boinc-v2/clientscr/Makefile.am
 @@ -5,7 +5,6 @@
  
  AM_LDFLAGS += -lpthread
@@ -82,10 +82,10 @@ Index: boinc/clientscr/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
-Index: boinc/sched/Makefile.am
+Index: boinc-v2/sched/Makefile.am
 ===================================================================
---- boinc.orig/sched/Makefile.am
-+++ boinc/sched/Makefile.am
+--- boinc-v2.orig/sched/Makefile.am
++++ boinc-v2/sched/Makefile.am
 @@ -4,7 +4,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -94,10 +94,10 @@ Index: boinc/sched/Makefile.am
  
  if ENABLE_LIBRARIES
  
-Index: boinc/tools/Makefile.am
+Index: boinc-v2/tools/Makefile.am
 ===================================================================
---- boinc.orig/tools/Makefile.am
-+++ boinc/tools/Makefile.am
+--- boinc-v2.orig/tools/Makefile.am
++++ boinc-v2/tools/Makefile.am
 @@ -44,7 +44,6 @@
      gui_urls.xml
  
@@ -106,10 +106,10 @@ Index: boinc/tools/Makefile.am
  
  cancel_jobs_SOURCES = cancel_jobs.cpp
  cancel_jobs_LDADD = $(SERVERLIBS)
-Index: boinc/vda/Makefile.am
+Index: boinc-v2/vda/Makefile.am
 ===================================================================
---- boinc.orig/vda/Makefile.am
-+++ boinc/vda/Makefile.am
+--- boinc-v2.orig/vda/Makefile.am
++++ boinc-v2/vda/Makefile.am
 @@ -4,7 +4,6 @@
  vda_PROGRAMS = vda vdad ssim
  

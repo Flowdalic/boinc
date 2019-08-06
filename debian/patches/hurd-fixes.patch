@@ -2,8 +2,10 @@ Description: defining PATH_MAX to fix hurd build
 Author: Gianfranco Costamagna <locutusofborg@debian.org>
 Last-Update: 2017-09-17
 
---- boinc-7.8.2+dfsg.orig/clientgui/BOINCGUIApp.cpp
-+++ boinc-7.8.2+dfsg/clientgui/BOINCGUIApp.cpp
+Index: boinc-v2/clientgui/BOINCGUIApp.cpp
+===================================================================
+--- boinc-v2.orig/clientgui/BOINCGUIApp.cpp
++++ boinc-v2/clientgui/BOINCGUIApp.cpp
 @@ -49,6 +49,9 @@
  #include "procinfo.h"
  #include "sg_BoincSimpleFrame.h"

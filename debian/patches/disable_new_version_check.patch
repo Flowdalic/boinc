@@ -10,11 +10,11 @@ Forwarded: not-needed
 Reviewed-By: costamagnagianfranco@yahoo.it
 Last-Update: <2013-03-07>
 
-Index: boinc-7.14.2+dfsg/client/client_state.cpp
+Index: boinc-7.16.1+dfsg/client/client_state.cpp
 ===================================================================
---- boinc-7.14.2+dfsg.orig/client/client_state.cpp
-+++ boinc-7.14.2+dfsg/client/client_state.cpp
-@@ -644,7 +644,7 @@
+--- boinc-7.16.1+dfsg.orig/client/client_state.cpp
++++ boinc-7.16.1+dfsg/client/client_state.cpp
+@@ -652,7 +652,7 @@
      // NOTE: this must be called AFTER
      // read_vc_config_file()
      //
@@ -23,10 +23,10 @@ Index: boinc-7.14.2+dfsg/client/client_state.cpp
  
      // parse account files again,
      // now that we know the host's venue on each project
-Index: boinc-7.14.2+dfsg/client/scheduler_op.cpp
+Index: boinc-7.16.1+dfsg/client/scheduler_op.cpp
 ===================================================================
---- boinc-7.14.2+dfsg.orig/client/scheduler_op.cpp
-+++ boinc-7.14.2+dfsg/client/scheduler_op.cpp
+--- boinc-7.16.1+dfsg.orig/client/scheduler_op.cpp
++++ boinc-7.16.1+dfsg/client/scheduler_op.cpp
 @@ -138,7 +138,7 @@
          // and project list
          //
@@ -36,20 +36,20 @@ Index: boinc-7.14.2+dfsg/client/scheduler_op.cpp
              gstate.all_projects_list_check();
          }
      }
-Index: boinc-7.14.2+dfsg/clientgui/AdvancedFrame.cpp
+Index: boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
 ===================================================================
---- boinc-7.14.2+dfsg.orig/clientgui/AdvancedFrame.cpp
-+++ boinc-7.14.2+dfsg/clientgui/AdvancedFrame.cpp
+--- boinc-7.16.1+dfsg.orig/clientgui/AdvancedFrame.cpp
++++ boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
 @@ -198,7 +198,7 @@
      EVT_MENU(ID_HELPBOINCMANAGER, CAdvancedFrame::OnHelpBOINC)
      EVT_MENU(ID_HELPBOINCWEBSITE, CAdvancedFrame::OnHelpBOINC)
      EVT_MENU(wxID_ABOUT, CAdvancedFrame::OnHelpAbout)
 -    EVT_MENU(ID_CHECK_VERSION, CAdvancedFrame::OnCheckVersion)
 +    //EVT_MENU(ID_CHECK_VERSION, CAdvancedFrame::OnCheckVersion)
+     EVT_MENU(ID_REPORT_BUG, CAdvancedFrame::OnReportBug)
      EVT_HELP(wxID_ANY, CAdvancedFrame::OnHelp)
      // Custom Events & Timers
-     EVT_FRAME_CONNECT(CAdvancedFrame::OnConnect)
-@@ -689,6 +689,7 @@
+@@ -686,6 +686,7 @@
      );
      menuHelp->AppendSeparator();
  
@@ -57,29 +57,28 @@ Index: boinc-7.14.2+dfsg/clientgui/AdvancedFrame.cpp
      strMenuName.Printf(
          _("Check for new %s version"),
          pSkinAdvanced->GetApplicationShortName().c_str()
-@@ -704,6 +705,8 @@
+@@ -708,6 +709,7 @@
      );
      menuHelp->AppendSeparator();
  
 +*/
-+
      strMenuName.Printf(
          _("&About %s..."), 
          pSkinAdvanced->GetApplicationName().c_str()
-Index: boinc-7.14.2+dfsg/clientgui/sg_BoincSimpleFrame.cpp
+Index: boinc-7.16.1+dfsg/clientgui/sg_BoincSimpleFrame.cpp
 ===================================================================
---- boinc-7.14.2+dfsg.orig/clientgui/sg_BoincSimpleFrame.cpp
-+++ boinc-7.14.2+dfsg/clientgui/sg_BoincSimpleFrame.cpp
-@@ -85,7 +85,7 @@
+--- boinc-7.16.1+dfsg.orig/clientgui/sg_BoincSimpleFrame.cpp
++++ boinc-7.16.1+dfsg/clientgui/sg_BoincSimpleFrame.cpp
+@@ -92,7 +92,7 @@
      EVT_MENU(ID_HELPBOINCMANAGER, CSimpleFrame::OnHelpBOINC)
      EVT_MENU(ID_HELPBOINCWEBSITE, CSimpleFrame::OnHelpBOINC)
      EVT_MENU(wxID_ABOUT, CSimpleFrame::OnHelpAbout)
 -    EVT_MENU(ID_CHECK_VERSION, CSimpleFrame::OnCheckVersion)
 +    //EVT_MENU(ID_CHECK_VERSION, CSimpleFrame::OnCheckVersion)
- 	EVT_MENU(ID_EVENTLOG, CSimpleFrame::OnEventLog)
+     EVT_MENU(ID_REPORT_BUG, CSimpleFrame::OnReportBug)
+     EVT_MENU(ID_EVENTLOG, CSimpleFrame::OnEventLog)
      EVT_MOVE(CSimpleFrame::OnMove)
- #ifdef __WXMAC__
-@@ -260,6 +260,7 @@
+@@ -319,6 +319,7 @@
      );
      menuHelp->AppendSeparator();
  
@@ -87,12 +86,11 @@ Index: boinc-7.14.2+dfsg/clientgui/sg_BoincSimpleFrame.cpp
      strMenuName.Printf(
          _("Check for new %s version"),
          pSkinAdvanced->GetApplicationShortName().c_str()
-@@ -275,6 +276,8 @@
+@@ -341,6 +342,7 @@
      );
      menuHelp->AppendSeparator();
  
 +*/
-+
      strMenuName.Printf(
          _("&About %s..."), 
          pSkinAdvanced->GetApplicationName().c_str()

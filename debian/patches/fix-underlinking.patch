@@ -2,10 +2,10 @@ Description: this should fix some underlinking on boinc, leading to some warning
 Author: Gianfranco Costamagna <locutusofborg@debian.org>
 Bug-Debian: https://bugs.debian.org/794107
 
-Index: boinc/api/Makefile.am
+Index: boinc-v2/api/Makefile.am
 ===================================================================
---- boinc.orig/api/Makefile.am
-+++ boinc/api/Makefile.am
+--- boinc-v2.orig/api/Makefile.am
++++ boinc-v2/api/Makefile.am
 @@ -43,18 +43,21 @@
  
  lib_LTLIBRARIES = libboinc_api.la
@@ -29,11 +29,11 @@ Index: boinc/api/Makefile.am
  
  if INSTALL_HEADERS
  ## install only headers that are meant for exporting the API !!
-Index: boinc/lib/Makefile.am
+Index: boinc-v2/lib/Makefile.am
 ===================================================================
---- boinc.orig/lib/Makefile.am
-+++ boinc/lib/Makefile.am
-@@ -190,8 +190,8 @@
+--- boinc-v2.orig/lib/Makefile.am
++++ boinc-v2/lib/Makefile.am
+@@ -192,8 +192,8 @@
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -44,10 +44,10 @@ Index: boinc/lib/Makefile.am
  endif
  
  if ENABLE_FCGI
-Index: boinc/sched/Makefile.am
+Index: boinc-v2/sched/Makefile.am
 ===================================================================
---- boinc.orig/sched/Makefile.am
-+++ boinc/sched/Makefile.am
+--- boinc-v2.orig/sched/Makefile.am
++++ boinc-v2/sched/Makefile.am
 @@ -24,8 +24,8 @@
  libsched_la_SOURCES = $(libsched_sources)
  libsched_la_CFLAGS = $(AM_CPPFLAGS)
@@ -68,10 +68,10 @@ Index: boinc/sched/Makefile.am
  
  endif
  # end of "if ENABLE_FCGI"
-Index: boinc/zip/Makefile.am
+Index: boinc-v2/zip/Makefile.am
 ===================================================================
---- boinc.orig/zip/Makefile.am
-+++ boinc/zip/Makefile.am
+--- boinc-v2.orig/zip/Makefile.am
++++ boinc-v2/zip/Makefile.am
 @@ -62,7 +62,7 @@
  lib_LTLIBRARIES = libboinc_zip.la
  libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
