@@ -54,7 +54,7 @@ endif
 
 # Change BOINC platform x86_64-linux-gnu to x86_64-pc-linux-gnu.
 # Keeping the previous name temporarily.
-# The 32bit variants shall allow the execution of 32 bit 
+# The 32bit variants shall allow the execution of 32 bit
 # executable in case the scientific application is no available
 # for the complete bit size.
 ifeq ($(DEB_HOST_GNU_TYPE), x86_64-linux-gnu)
@@ -196,10 +196,8 @@ CFGFLAGS_boinc-client = \
   --with-x \
   CFLAGS="$(CFLAGS_boinc-client)"
 
-export DEB_BUILD_OPTIONS=parallel=1
-
 %:
-	dh $@ --with python2,python3 # --parallel
+	dh $@ --with python2,python3 --no-parallel
 
 override_dh_autoreconf-indep:
 
@@ -318,7 +316,7 @@ BINARIES += samples/worker/worker samples/wrapper/wrapper samples/sleeper/sleepe
 	samples/nvcuda/cuda samples/example_app/example_app samples/vm_wrapper/vm_wrapper \
 	samples/atiopencl/atiopencl
 
-override_dh_auto_clean: 
+override_dh_auto_clean:
 	dh_auto_clean
 	[ -r samples/sleeper/Makefile     ] && $(MAKE) -C samples/sleeper     clean
 	[ -r samples/worker/Makefile      ] && $(MAKE) -C samples/worker      clean

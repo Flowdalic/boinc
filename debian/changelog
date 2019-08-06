@@ -499,7 +499,7 @@ boinc (7.6.33+dfsg-8) unstable; urgency=medium
 
 boinc (7.6.33+dfsg-7exp1) experimental; urgency=medium
 
-  * Upload to experimental again, with the boinc-server-* packages. 
+  * Upload to experimental again, with the boinc-server-* packages.
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 14 Mar 2017 12:24:19 +0100
 
@@ -656,14 +656,14 @@ boinc (7.6.32+dfsg-1) unstable; urgency=medium
   * Simplify flags handling
 
   [ Steffen Moeller ]
-  * Link time optimisation: corrected compiler flag management for 
+  * Link time optimisation: corrected compiler flag management for
     binaries and libraries which yielded a considerable drop in
     disk space (85%-95%)
   * Better consistency for compiler flags when building wrapper apps
     and sample scientific applications.
   * Example apps are now truly static.
   * Compliance with Debian Policy 3.9.8.
-  * Added clean for past debian/boinc(-server)-dbg folders to help 
+  * Added clean for past debian/boinc(-server)-dbg folders to help
     the overall experience while upgrading our build folders.
 
  -- Steffen Moeller <moeller@debian.org>  Wed, 04 May 2016 13:02:44 +0200
@@ -730,7 +730,7 @@ boinc (7.6.31+dfsg-3) unstable; urgency=medium
 
 boinc (7.6.31+dfsg-2exp1) experimental; urgency=medium
 
-  * Upload to experimental again, with the boinc-server-* packages. 
+  * Upload to experimental again, with the boinc-server-* packages.
 
  -- Gianfranco Costamagna <locutusofborg@debian.org>  Thu, 31 Mar 2016 11:06:22 +0200
 
@@ -1377,7 +1377,7 @@ boinc (7.4.8+dfsg-3exp2) experimental; urgency=medium
 
 boinc (7.4.8+dfsg-3exp1) experimental; urgency=medium
 
-  * Upload to experimental, with server packages. 
+  * Upload to experimental, with server packages.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Fri, 18 Jul 2014 12:16:30 +0200
 
@@ -1590,7 +1590,7 @@ boinc (7.2.33+dfsg-2) UNRELEASED; urgency=low
   [Gianfranco Costamagna]
   * debian/rules
     - server always built
-  * debian/control 
+  * debian/control
     - Moved from libcuda1-ia32 to libcuda1-i386 (Closes: #730841)
     - Removed ia32-libs references (Closes: #736814)
     - Removed libcuda-5.0-1, provided by libcuda1
@@ -2058,7 +2058,7 @@ boinc (7.0.38+dfsg-1) UNRELEASED; urgency=low
 
   * New upstream release
   * Revised some patches (some of them should will be removed in a future commit)
-  * Added add-missing-test-files.patch to fix a FTBFS 
+  * Added add-missing-test-files.patch to fix a FTBFS
   * Added add-missing-stripchart-samples.patch to fix another FTBFS.
 
  -- Gianfranco Costamagna <costamagnagianfranco@yahoo.it>  Mon, 05 Nov 2012 13:16:32 +0100
@@ -2105,7 +2105,7 @@ boinc (7.0.36+dfsg-1) unstable; urgency=low
 
   [ Guo Yixuan ]
   * Updated api_NULL_not_defined.patch.
-  
+
   [ Steffen Moeller ]
   * Updated slot_dir_source_trace.patch.
   * Updated opendir_error_messages.patch.
@@ -2115,7 +2115,7 @@ boinc (7.0.36+dfsg-1) unstable; urgency=low
 boinc (7.0.34+dfsg-6) UNRELEASED; urgency=low
 
   [ Steffen Moeller ]
-  * Fixing upstream bug 
+  * Fixing upstream bug
     https://boinc.berkeley.edu/trac/ticket/1168
     on dir_scan usage.
 
@@ -2251,7 +2251,7 @@ boinc (7.0.28+dfsg-3) UNRELEASED; urgency=low
   * Added shared library for libboinc.
   * Added configure flag in debian/rules to allow dynamic clients
   * Installing more from  debian/tmp to avoid lintian wrappers
- 
+
   [ Guo Yixuan ]
   * Add patch from Rom that fixes the project category crash.
     (Closes: #641593)
@@ -2325,7 +2325,7 @@ boinc (7.0.27+dfsg-1) unstable; urgency=low
   * New upstream release
     - NVidia issue settled, presumably.
     - Some patches adopted by upstream.
- 
+
  -- Steffen Moeller <moeller@debian.org>  Thu, 03 May 2012 15:01:42 +0200
 
 boinc (7.0.26+dfsg-1) unstable; urgency=low
@@ -2364,7 +2364,7 @@ boinc (7.0.24+dfsg-4) UNRELEASED; urgency=low
 
 boinc (7.0.24+dfsg-3) UNRELEASED; urgency=low
 
-  * Support of clang through DEB_BUILD_OPTIONS 
+  * Support of clang through DEB_BUILD_OPTIONS
 
  -- Steffen Moeller <moeller@debian.org>  Sat, 31 Mar 2012 23:24:24 +0200
 
@@ -2389,7 +2389,7 @@ boinc (7.0.23+dfsg-2) UNRELEASED; urgency=low
   * More increased buffers whenever paths were <1024 chars of length
   * Added invocations of init() functions to constructors
     of RESULT and CLIENT_STATE classes to work towards valgrind
-    cleanliness 
+    cleanliness
   * Removed Christoph from uploaders
 
  -- Steffen Moeller <moeller@debian.org>  Fri, 30 Mar 2012 18:49:07 +0200
@@ -2431,7 +2431,7 @@ boinc (7.0.15+dfsg-1) unstable; urgency=low
 
 boinc (7.0.14+dfsg-2) UNRELEASED; urgency=low
 
-  * Added patch to include unistd.h 
+  * Added patch to include unistd.h
 
  -- Steffen Moeller <moeller@debian.org>  Sun, 05 Feb 2012 00:25:02 +0100
 
@@ -2682,7 +2682,7 @@ boinc (6.12.27+dfsg-1) unstable; urgency=low
 
  -- Steffen Moeller <moeller@debian.org>  Wed, 25 May 2011 17:17:58 +0200
 
-  
+
 boinc (6.12.26+dfsg-1) unstable; urgency=low
 
   * New upstream version.
@@ -2861,7 +2861,7 @@ boinc (6.10.58+dfsg-1) unstable; urgency=low
 
   [ Rene Mayorga ]
   * Set the correct distribution (unstable).
-  * Trim some Ubuntu's specific changelog entries and merge all 
+  * Trim some Ubuntu's specific changelog entries and merge all
     last Daniel's changes on this changelog enty.
   * Install coproc.h and cal.h as port of boinc-dev pacakage
 
@@ -2896,7 +2896,7 @@ boinc (6.10.17+dfsg-1) unstable; urgency=low
   * New upstream release (Closes: #553998)
     + better support for dark themes (Closes: #512508)
     + The -s (system tray option) was removed on upstream (Closes: #464192)
-    + Better handling for WU over deadline - upstream 
+    + Better handling for WU over deadline - upstream
       changeset 17399 (Closes: #513884)
   * debian/patches
     + 003_use_sensible-browser.patch updated
@@ -2910,7 +2910,7 @@ boinc (6.10.17+dfsg-1) unstable; urgency=low
     + 001_dont_install_ca-bundle.crt.patch Removed not needed anymore
     + 200__don-t-assume_SCHED_BATCH_exist.patch - Added to Prevent FTBFS
       on kfreebsd
-  * debian/copyright 
+  * debian/copyright
     + zip/zip and zip/unzip references removed
   * debian/rules
     + Adjust fix-perm for catalog files
@@ -2943,7 +2943,7 @@ boinc (6.4.5+dfsg-2) unstable; urgency=low
      to avoid FTBFSs whith gcc 4.4 (Closes: #526666)
   * remove CUDA dir that contais binary-only non DFSG software
   * change section from boinc-dbg to debug
-  * set orig +dfsg since we remove non-dfsg software 
+  * set orig +dfsg since we remove non-dfsg software
     when we pull the tag from upstream
     + Add Comments about this on README.Source
   * Move schedtool to Recommends, (Closes: #532133)
@@ -2972,25 +2972,25 @@ boinc (6.4.5-1) experimental; urgency=low
     + 002_remove_hardcoded_optimization.patch refreshed
     + 003_use_sensible-browser.patch
     + 004_exclude_sea.patch removed
-    + 006_correct_catalog_path.patch added 
+    + 006_correct_catalog_path.patch added
   * debian/boinc-dev.install; upstream now calls `boinc' instead
     of `BOINC' the include/ dir
   * debian/boinc-dev.links; make BOINC point to boinc, this
     will save those who still point to the wrong PATH
-  * debian/copyright: 
+  * debian/copyright:
     + Update upstream license from LGPL-2.1 to LGPL-3
     + update the file name on : api/textfont.[ch], client/stream.cpp,
       clientgui/wizardex.cpp
     + update copyright years on html/inc/geoip.inc and correct license
-    + add copyright and license info for samples/glut/Roman.stroke, 
-      client/install-sh, samples/glut/win32_util.c, 
+    + add copyright and license info for samples/glut/Roman.stroke,
+      client/install-sh, samples/glut/win32_util.c,
       samples/glut/win32_x11.[ch], samples/glut/stroke.h,
       samples/glut/glut.h, samples/jpeglib/*
   * debian/rules:
     + don't install .mo files manually
     + correct .mo files perms
     + copy sea/*png file to clientgui/res and remove they on clean target
-    + download export-boinc from git instead svn, 
+    + download export-boinc from git instead svn,
       use an ugly wget since git is not able to it by itself
     + delete empty locale dirs
   * debian/boinc-manager.install: usr/share/locale/* files added
@@ -3027,14 +3027,14 @@ boinc (6.2.18-2) experimental; urgency=low
     + add myself to Uploaders, and wrap long lines
     + add ${misc:Depends} to boinc-client-dbg Depends
     + remove `Section' from boinc-client package
-  * debian/rules: 
+  * debian/rules:
     + remove boinc/locale/client/ar/BOINC Manager.mo on clean target
       this file is regenerated on build and FTBFS when the package
       is built two times in a row
     + remove config.guess and config.sub on clean, this will
       prevent that auto-generated changes goes to .diff.gz
     + remove client/scripts/Makefile, client/scripts/boinc-client
-      and sea/Makefile, to prevent that those files end on 
+      and sea/Makefile, to prevent that those files end on
       .diff.gz file
    * debian/po/ja.po added, thanks goes to Hideki Yamane, Closes: #510718
    * debian/patches: add description, Author and some other info to all
@@ -3068,12 +3068,12 @@ boinc (6.2.18-1) experimental; urgency=low
 
 boinc (6.2.14-3) unstable; urgency=low
 
-  * Add debian/patches/101_check_RSA_returned_values.patch 
+  * Add debian/patches/101_check_RSA_returned_values.patch
     Check the returned values for RSA_public_decrypt and
     RSA_private_encrypt functions. Change ported by upstream changeset 16883
     (http://boinc.berkeley.edu/trac/changeset/16883) Closes: #511521
   * debian/patches
-    001_dont_install_ca-bundle.crt.patch and 
+    001_dont_install_ca-bundle.crt.patch and
     002_remove_hardcoded_optimization.patch Refreshed
   * debian/control - add myself to uploaders
 
@@ -3093,7 +3093,7 @@ boinc (6.2.14-1) unstable; urgency=low
   [ Frank S. Thomas ]
   * New upstream release.
   * debian/copyright: Changed one line to not exceed 80 characters and thus
-    making Lintian happy again. 
+    making Lintian happy again.
 
  -- Frank S. Thomas <fst@debian.org>  Sun, 20 Jul 2008 09:00:33 +0200
 
@@ -3697,7 +3697,7 @@ boinc (5.4.10-1) unstable; urgency=low
   * New upstream release.
     - Display Account Manager names correctly in BOINC Manager. This fixes
       Ubuntu bug #48246.
-  * debian/control: 
+  * debian/control:
     - Really bumped the Standards-Version to 3.7.2.
   * Added the boinc_gl.h header to the boinc-dev package. This file is needed
     to compile SETI@home's graphics component.
@@ -3806,7 +3806,7 @@ boinc (5.2.15-1) experimental; urgency=low
       "sensible-browser", which is part of the debianutils package, as
       fallback if wxWidgets' method to determine the default browser fails.
       Thanks to Olek Wojnar for the report and his helpful investigations.
-  * debian/boinc-client.postrm: 
+  * debian/boinc-client.postrm:
     - Be more verbose when removing the "boinc" user/group.
   * debian/boinc-manager.desktop:
     - Added "Path: /var/lib/boinc-client" so that the BOINC Manager can find
@@ -3834,7 +3834,7 @@ boinc (5.2.13a-1) experimental; urgency=low
 
   [ Frank S. Thomas ]
   * debian/patches/:
-    - Updated 01_amd64-gcc4-fixes.dpatch for the new release. 
+    - Updated 01_amd64-gcc4-fixes.dpatch for the new release.
     - Updated 03_wx2.6-with-unicode.dpatch for the new release.
   * Added LSB headers to the BOINC core client init script.
   * Record versions of build dependencies at compile-time using dh_buildinfo.
@@ -3940,7 +3940,7 @@ boinc (4.72-1) experimental; urgency=low
   [ Steffen Moeller ]
   * debian/control.in:
     - Revised long description of the boinc-client package.
-    - Added "boinc-manager | kboincspy" to boinc-client's Suggests field. 
+    - Added "boinc-manager | kboincspy" to boinc-client's Suggests field.
 
  -- Frank S. Thomas <frank@thomas-alfeld.de>  Sat, 30 Jul 2005 00:56:42 +0200
 
@@ -3957,7 +3957,7 @@ boinc (4.71-1) experimental; urgency=low
   * Added .desktop file for the BOINC Manager program, thanks to Reed Hedges.
   * debian/control.in:
     - Added docbook-xml to Build-Depends. Without it this package FTBFS
-      (particularly docbook2x-man fails) on some systems. Thanks to 
+      (particularly docbook2x-man fails) on some systems. Thanks to
       Adrian Zaugg for the report.
     - Added libxmu-dev and freeglut3-dev (instead of the virtual package
       freeglut-dev) to Build-Depends. Both are needed for the graphical parts
@@ -4045,7 +4045,7 @@ boinc (4.25-1) experimental; urgency=low
     graphical monitoring utility for the core client.
   * Revised the boinc_client manpage and added the boinc_gui manpage. Manpages
     are now created with the docbook2x-man tool.
-  * debian/control: 
+  * debian/control:
     - Added build dependences on libmysqlclient-dev, freeglut-dev,
       libwxgtk2.4-dev and docbook2x.
     - Added build conflict with automake1.4.
@@ -4057,7 +4057,7 @@ boinc (4.25-1) experimental; urgency=low
 boinc (4.19-1) experimental; urgency=low
 
   * New upstream release.
-  * Cleaned up the debian directory and rewrote debian/rules for cdbs. 
+  * Cleaned up the debian directory and rewrote debian/rules for cdbs.
 
  -- Frank S. Thomas <frank@thomas-alfeld.de>  Thu, 27 Jan 2005 15:51:54 +0100
 
