@@ -359,7 +359,7 @@ License: Zlib
 
 Files: debian/*
 Copyright:
- 2004-2018 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
+ 2004-2019 Debian BOINC Maintainers <pkg-boinc-devel@lists.alioth.debian.org>
 License: GPL-2+
 
 License: Zlib
