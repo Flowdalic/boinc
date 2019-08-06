@@ -1,0 +1,15 @@
+diff -urNr boinc-client_release-7.14-7.14.2-orig/clientgui/BOINCClientManager.cpp boinc-client_release-7.14-7.14.2/clientgui/BOINCClientManager.cpp
+--- boinc-client_release-7.14-7.14.2-orig/clientgui/BOINCClientManager.cpp	2018-10-11 02:43:27.000000000 +0200
++++ boinc-client_release-7.14-7.14.2/clientgui/BOINCClientManager.cpp	2019-03-18 16:36:39.032554578 +0100
+@@ -199,6 +199,11 @@
+ 
+     if (IsBOINCCoreRunning()) return true;
+ 
++// Disables for Linux/UNIX the part of code of this function that starts with comment "Unix based systems"
++#ifdef __WXGTK__
++    else return false;
++#endif
++
+ #if defined(__WXMSW__)
+     const char*  pszExecute = NULL;
+     const char*  pszDataDirectory = NULL;
