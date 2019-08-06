@@ -45,9 +45,14 @@ case "$1" in
 	    usermod -a -G video boinc || echo "Could not assign boinc user to group 'video'."
 	fi
 
+	# Assign boinc user to group render if not already the case
+	if ! getent group render | grep -q boinc; then
+	    usermod -a -G render boinc || echo "Could not assign boinc user to group 'render'."
+	fi
+
 	# Make sure the /var/lib/boinc-client directory exists and
 	# is owned by the boinc user.
-	mkdir -p $BOINC_DIR
+	mkdir -p $BOINC_DIR/slots
 	[ -x /sbin/restorecon ] && /sbin/restorecon $BOINC_DIR
 
 	chown -hR boinc:boinc $BOINC_DIR 2>/dev/null || true
