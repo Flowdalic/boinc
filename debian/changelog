@@ -1,3 +1,18 @@
+boinc (7.16.1+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7.16.1+dfsg
+  * Upload to unstable
+  * Create slots directory during install (Closes: #929743)
+  * Bump std-version to 4.4.0, no changes required
+  * Also assign user to group "render" (Closes: #929409)
+  * Patch refresh
+  * Add fedora patches
+  * Update copyright years to 2019
+  * Bump compat level to 12
+  * Drop dh_dbgsym migration code
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 06 Aug 2019 11:51:29 +0200
+
 boinc (7.14.2+dfsg-3exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
