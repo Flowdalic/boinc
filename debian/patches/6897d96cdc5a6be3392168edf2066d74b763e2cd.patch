@@ -1,0 +1,22 @@
+From c8abc716f081ca8f462d56ca453478ab4fea38a1 Mon Sep 17 00:00:00 2001
+From: David Anderson <davea@ssl.berkeley.edu>
+Date: Tue, 13 Aug 2019 06:51:50 -0700
+Subject: [PATCH] Fix bug that caused bad values to be written to cc_config.xml
+
+---
+ lib/cc_config.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/cc_config.cpp b/lib/cc_config.cpp
+index 34767be0ab..03a4641cb0 100644
+--- a/lib/cc_config.cpp
++++ b/lib/cc_config.cpp
+@@ -503,7 +503,7 @@ int CC_CONFIG::write(MIOFILE& out, LOG_FLAGS& log_flags) {
+     out.printf(
+         "    <options>\n"
+         "        <abort_jobs_on_exit>%d</abort_jobs_on_exit>\n"
+-        "        <allow_gui_rpc_get>%d</allow_gui_rpc_get>\n",
++        "        <allow_gui_rpc_get>%d</allow_gui_rpc_get>\n"
+         "        <allow_multiple_clients>%d</allow_multiple_clients>\n"
+         "        <allow_remote_gui_rpc>%d</allow_remote_gui_rpc>\n",
+         abort_jobs_on_exit ? 1 : 0,

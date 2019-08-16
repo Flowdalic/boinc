@@ -1,3 +1,12 @@
+boinc (7.16.1+dfsg-2) unstable; urgency=high
+
+  * Upload to unstable
+  * debian/patches/6897d96cdc5a6be3392168edf2066d74b763e2cd.patch:
+    - upstream cherry-pick for bad cc_config.xml being written in some corner
+      case
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Fri, 16 Aug 2019 13:07:19 +0200
+
 boinc (7.16.1+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
