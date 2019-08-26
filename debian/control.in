@@ -33,9 +33,8 @@ Build-Depends: debhelper-compat (= 12),
                libxss-dev,
                pkg-config,
                po-debconf,
-               python-all,
                python3-all,
-               python-setuptools,
+               python3-setuptools,
                zlib1g-dev
 Homepage: https://boinc.berkeley.edu/
 Vcs-Browser: https://salsa.debian.org/pkg-boinc-team/boinc
@@ -274,21 +273,19 @@ Package: boinc
 %         apache2 | httpd-cgi,
 %         fonts-dejavu-extra,
 %         libfcgi0ldbl,
-%         default-mysql-server | virtual-mysql-server,
+%         mysql-server | default-mysql-server | virtual-mysql-server,
 %         openssl,
 %         php,
 %         php-cli,
 %         php-mysql,
-%         python,
 %         python3,
-%         python-mysqldb,
+%         python3-mysqldb,
 %         tcsh,
 %         ${misc:Depends},
 %         ${perl:Depends},
-%         ${python:Depends},
 %         ${python3:Depends},
 %         ${shlibs:Depends}
-%Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime,
+%Recommends: apache2-utils, libapache2-mod-php, php-gd, uuid-runtime,
 %         libphp-phpmailer,
 %         tinymce
 %Suggests: boinc-app-examples, boinc-cgi-stripchart

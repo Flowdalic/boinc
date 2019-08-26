@@ -1,0 +1,54 @@
+Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
+===================================================================
+--- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/add_util.py
++++ boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python3
+ from __future__ import print_function
+ 
+ # $Id$
+Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/boincxml.py
+===================================================================
+--- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/boincxml.py
++++ boinc-7.16.1+git20190825+dfsg/py/Boinc/boincxml.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python3
+ from __future__ import print_function
+ 
+ # $Id$
+Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/configxml.py
+===================================================================
+--- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/configxml.py
++++ boinc-7.16.1+git20190825+dfsg/py/Boinc/configxml.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python3
+ from __future__ import print_function
+ # $Id$
+ 
+Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/projectxml.py
+===================================================================
+--- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/projectxml.py
++++ boinc-7.16.1+git20190825+dfsg/py/Boinc/projectxml.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python3
+ # $Id$
+ # projectxml.py - module to read and parse project.xml
+ 
+Index: boinc-7.16.1+git20190825+dfsg/py/Makefile.am
+===================================================================
+--- boinc-7.16.1+git20190825+dfsg.orig/py/Makefile.am
++++ boinc-7.16.1+git20190825+dfsg/py/Makefile.am
+@@ -29,7 +29,7 @@ $(srcdir)/Boinc/boinc_db.py: $(top_srcdi
+ # all: $(srcdir)/Boinc/boinc_db.py
+ 
+ all-local:
+-	python setup.py build --build-base=$(top_builddir)/py
++	python3 setup.py build --build-base=$(top_builddir)/py
+ 
+ install-exec-local:
+-	python setup.py install --prefix=$(prefix) --root=$(DESTDIR)
++	python3 setup.py install --prefix=$(prefix) --root=$(DESTDIR)

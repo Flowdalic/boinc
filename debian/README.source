@@ -34,8 +34,9 @@ Repackaged upstream source:
  automatically the get-orig-source.sh script, to remove unwanted files from
  the source tree.
 
- The final tarball is put on the parent directory, and can be easily imported with
- git-import-orig ../boinc_VERSION+dfsg.orig.tar.gz
+ The final tarball is put on the parent directory. To import it, we suggest
+ to install the package "git-buildpackage" and easily imported it as
+ gbp import-orig --pristine-tar ../boinc_VERSION+dfsg.orig.tar.gz
 
 
 Launcher icon sources
@@ -84,3 +85,17 @@ source/include-binaries and boinc-manager.menu
 Removed non-dfsg upstream files
 ===============================
  The files removed from upstream tag are listed in get-orig-source.sh file
+
+
+Interim versions that are not also releases
+===========================================
+
+Want to synchronize with upstream? Use the Debian build instructions in 
+debian/rules to have it all compile nicely as if it was a regular package build?
+Just clone the repository as usual and symbolically link this debian directory in.
+Then run "quilt push -a && fakeroot debian/rules binary". This should generate
+regular Debian packages for you.
+
+If these packages are meant to be uploaded to the distribution, please
+ensure to remove all those files manually that are currently taken care
+of by uscan along the exclude-instructions in debian/copyright.

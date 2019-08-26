@@ -3,5 +3,5 @@ debian/get_latest_windows_wrappers.sh  usr/share/boinc-server-maker
 py/Boinc/*.py                          usr/share/boinc-server-maker/py/Boinc
 sched/boinc_path_config.py             usr/share/boinc-server-maker/py/Boinc
 usr/lib/boinc-server-maker
-usr/lib/python2.7
+usr/lib/python*
 usr/share/boinc-server-maker
