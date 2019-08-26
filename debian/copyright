@@ -49,6 +49,8 @@ Files-Excluded:
  clientscr/progress/simt
 # modified in build process
  version.h
+# tinymce is a Debian package, Drupal is only needed for the server, anyway
+ drupal/sites/all/libraries/tinymce
 
 Files: *
 Copyright: 2005-2019 University of California
