@@ -288,7 +288,9 @@ Package: boinc
 %         ${python:Depends},
 %         ${python3:Depends},
 %         ${shlibs:Depends}
-%Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime
+%Recommends: apache2-utils, libapache2-mod-php5, php5-gd, uuid-runtime,
+%         libphp-phpmailer,
+%         tinymce
 %Suggests: boinc-app-examples, boinc-cgi-stripchart
 %Description: BOINC server applications and data files
 % The Berkeley Open Infrastructure for Network Computing (BOINC) is a

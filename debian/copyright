@@ -51,6 +51,8 @@ Files-Excluded:
  version.h
 # tinymce is a Debian package, Drupal is only needed for the server, anyway
  drupal/sites/all/libraries/tinymce
+# libphp-phpmailer is a Debian package, like tinymce now recommended for boinc-server-maker
+ drupal/sites/all/libraries/phpmailer
 
 Files: *
 Copyright: 2005-2019 University of California
