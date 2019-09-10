@@ -1,48 +1,48 @@
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
+Index: boinc/py/Boinc/add_util.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/add_util.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
+--- boinc.orig/py/Boinc/add_util.py
++++ boinc/py/Boinc/add_util.py
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
 +#!/usr/bin/python3
  from __future__ import print_function
  
  # $Id$
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/boincxml.py
+Index: boinc/py/Boinc/boincxml.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/boincxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/boincxml.py
+--- boinc.orig/py/Boinc/boincxml.py
++++ boinc/py/Boinc/boincxml.py
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
 +#!/usr/bin/python3
  from __future__ import print_function
  
  # $Id$
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/configxml.py
+Index: boinc/py/Boinc/configxml.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/configxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/configxml.py
+--- boinc.orig/py/Boinc/configxml.py
++++ boinc/py/Boinc/configxml.py
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
 +#!/usr/bin/python3
  from __future__ import print_function
- # $Id$
  
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/projectxml.py
+ # $Id$
+Index: boinc/py/Boinc/projectxml.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/projectxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/projectxml.py
+--- boinc.orig/py/Boinc/projectxml.py
++++ boinc/py/Boinc/projectxml.py
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
 +#!/usr/bin/python3
  # $Id$
  # projectxml.py - module to read and parse project.xml
  
-Index: boinc-7.16.1+git20190825+dfsg/py/Makefile.am
+Index: boinc/py/Makefile.am
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Makefile.am
-+++ boinc-7.16.1+git20190825+dfsg/py/Makefile.am
-@@ -29,7 +29,7 @@ $(srcdir)/Boinc/boinc_db.py: $(top_srcdi
+--- boinc.orig/py/Makefile.am
++++ boinc/py/Makefile.am
+@@ -29,7 +29,7 @@
  # all: $(srcdir)/Boinc/boinc_db.py
  
  all-local:

@@ -1,4 +1,3 @@
-python3install.patch
 # undisputed patches above
 stripchart_debian.patch
 possible_size_type_error.patch
@@ -37,4 +36,5 @@ manager_close_no_service_stop.patch
 manager_exit_menu_entry_removal.patch
 manager_shut_down_connected_client.patch
 prevent_manager_from_starting_client.patch
+python3install.patch
 python3.patch

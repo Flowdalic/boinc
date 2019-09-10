@@ -1,8 +1,8 @@
-Index: boinc-7.16.1+git20190825+dfsg/sched/pymw_assimilator.py
+Index: boinc/sched/pymw_assimilator.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/sched/pymw_assimilator.py
-+++ boinc-7.16.1+git20190825+dfsg/sched/pymw_assimilator.py
-@@ -47,7 +47,7 @@ class PymwAssimilator(Assimilator):
+--- boinc.orig/sched/pymw_assimilator.py
++++ boinc/sched/pymw_assimilator.py
+@@ -47,7 +47,7 @@
              else:
                  shutil.copy2(resultFullPath, dest)
                  self.logNormal("Result copied [%s]\n", resultName)
@@ -11,17 +11,17 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/pymw_assimilator.py
              self.logCritical("Error copying output\n" + \
                               "  - Source: %s\n" + \
                               "  - Dest: %s\n" + 
-Index: boinc-7.16.1+git20190825+dfsg/sched/start
+Index: boinc/sched/start
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/sched/start
-+++ boinc-7.16.1+git20190825+dfsg/sched/start
+--- boinc.orig/sched/start
++++ boinc/sched/start
 @@ -1,4 +1,5 @@
  #!/usr/bin/env python
 +from __future__ import print_function
  # -*- mode: python; python-indent: 4; -*-
  
  ## $Id$
-@@ -209,14 +210,14 @@ def get_stop_sched_filename():
+@@ -209,14 +210,14 @@
      return boinc_project_path.project_path('stop_sched')
  
  def write_stop_daemons():
@@ -38,7 +38,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
  
  def remove_stop_sched():
      if os.path.exists(get_stop_sched_filename()):
-@@ -226,12 +227,12 @@ def safe_unlink(filename):
+@@ -226,12 +227,12 @@
      try:
          os.unlink(filename)
      except OSError, e:
@@ -53,7 +53,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
          safe_unlink(path)
  
  def redirect(stdout='/dev/null', stderr=None, stdin='/dev/null'):
-@@ -297,7 +298,7 @@ def double_fork():
+@@ -297,7 +298,7 @@
      return 0
  
  def write_pid_file(pidfile):
@@ -62,7 +62,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
  
  def is_pid_running(pid):
      try:
-@@ -362,9 +363,9 @@ def exec_command_string(command, use_she
+@@ -362,9 +363,9 @@
          else:
              os.execvp( args[0], args )
          # on success we don't reach here
@@ -74,7 +74,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      os._exit(1)
  
  def lookup_task_run_state(task):
-@@ -419,21 +420,21 @@ def run_task(task):
+@@ -419,21 +420,21 @@
      task_run_state = lookup_task_run_state(task)
      if not time_to_run_task(task, task_run_state):
          if verbose:
@@ -101,7 +101,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
          sys.exit(1)
      redirect(get_task_output_name(task))
      exec_command_string(task.cmd, get_task_use_shell(task))
-@@ -443,25 +444,25 @@ def run_daemon(task):
+@@ -443,25 +444,25 @@
      if double_fork() > 0: return
      if lock_file(get_task_lock_name(task)):
          if verbose:
@@ -133,7 +133,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      remove_stop_daemons()
      for task in config.daemons:
          if task.host != local_hostname:
-@@ -473,7 +474,7 @@ def run_daemons():
+@@ -473,7 +474,7 @@
      return found_any
  
  def run_tasks():
@@ -142,7 +142,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      prepare_run_state_pruning()
      for task in config.tasks:
          if task.host != local_hostname:
-@@ -511,17 +512,17 @@ def stop_daemon(pid):
+@@ -511,17 +512,17 @@
          os.kill(pid, signal.SIGHUP)
      except OSError, e:
          if e.errno != 3:
@@ -163,7 +163,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
              sys.stdout.flush()
          while is_pid_running(pid):
              if verbose:
-@@ -529,10 +530,10 @@ def wait_for_process_to_end(pid):
+@@ -529,10 +530,10 @@
                  sys.stdout.flush()
              time.sleep(.5)
          if verbose:
@@ -176,7 +176,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      write_stop_daemons()
      pid_files = glob.glob(os.path.join(pid_dir, '*.pid'))
      count = 0
-@@ -544,7 +545,7 @@ def stop_daemons():
+@@ -544,7 +545,7 @@
          wait_for_process_to_end(pid)
      if verbose:
          if not count:
@@ -185,7 +185,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
  
  
  ######################################################################
-@@ -552,20 +553,20 @@ def stop_daemons():
+@@ -552,20 +553,20 @@
  def command_enable_start():
      if verbose:
          if run_state.enabled:
@@ -210,7 +210,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      global verbose_daemon_run
      if run_state.enabled:
          verbose_daemon_run = 1
-@@ -576,15 +577,15 @@ def command_cron_start():
+@@ -576,15 +577,15 @@
          run_tasks()
  
  def command_tasks_start():
@@ -229,7 +229,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      run_state.enabled = 0
      write_stop_sched()  # do this before stop_daemons(),
                          # else scheduler will complained about no shared mem
-@@ -593,12 +594,12 @@ def command_disable_stop():
+@@ -593,12 +594,12 @@
  
  def command_status():
      if run_state.enabled:
@@ -246,7 +246,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
          n = 0
          for task in config.daemons:
              if task.host != local_hostname:
-@@ -621,9 +622,9 @@ def command_status():
+@@ -621,9 +622,9 @@
              else:
                  d = " no     "
  
@@ -259,7 +259,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
          n = 0
          for task in config.tasks:
              if task.host != local_hostname:
-@@ -643,8 +644,8 @@ def command_status():
+@@ -643,8 +644,8 @@
                  d = " yes    "
              else:
                  d = " no     "
@@ -270,7 +270,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
          pass
  
  def command_show_config():
-@@ -667,8 +668,8 @@ else:
+@@ -667,8 +668,8 @@
      command = None
  
  def help():
@@ -281,7 +281,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
  
  Commands:
     --enable  (-e)     Set BOINC to ENABLED mode and start daemons
-@@ -690,13 +691,13 @@ Options:
+@@ -690,13 +691,13 @@
     --fork-delay=      Seconds to sleep between daemon forks instead of 0.1
     --ignore-timestamps    Ignore timestamps; for cron mode, runs all tasks now
     --prune-run-state  Delete unused timestamps in run_state.xml
@@ -299,7 +299,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      sys.exit(1)
  
  config_filename = boinc_project_path.config_xml_filename
-@@ -712,9 +713,9 @@ try:
+@@ -712,9 +713,9 @@
                                  'config-file=', 'run-state-file=',
                                  'prune-run-state',
                                  'quiet', 'verbose', 'help'))
@@ -312,7 +312,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      sys.exit(1)
  for opt,v in opts:
      if opt == '-q' or opt == '--quiet':
-@@ -787,7 +788,7 @@ else:
+@@ -787,7 +788,7 @@
  
  start_lockfile = os.path.join(pid_dir, 'start.lock.'+local_hostname)
  if lock_file(start_lockfile):
@@ -321,7 +321,7 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
      sys.exit(1)
  
  assign_task_defaults()
-@@ -807,7 +808,7 @@ if is_main_host:
+@@ -807,7 +808,7 @@
          remote_cmd = [ ssh, host, 'cd', cwd, ' && ', cmd ] + sys.argv[1:]
          if verbose:
              remote_cmd += [ '-v' ]
@@ -330,17 +330,17 @@ Index: boinc-7.16.1+git20190825+dfsg/sched/start
          os.spawnvp(wait_mode, remote_cmd[0], remote_cmd)
  
  os.unlink(start_lockfile)
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
+Index: boinc/py/Boinc/add_util.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/add_util.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
+--- boinc.orig/py/Boinc/add_util.py
++++ boinc/py/Boinc/add_util.py
 @@ -1,4 +1,5 @@
  #!/usr/bin/env python
 +from __future__ import print_function
  
  # $Id$
  
-@@ -130,7 +131,7 @@ def translate_database_arg(database_tabl
+@@ -130,7 +131,7 @@
      if len(results) > 1:
          print('Too many %ss match "%s": '%(arg,value), sys.stderr)
          for result in results:
@@ -349,7 +349,7 @@ Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
          raise SystemExit
      return results[0]
  
-@@ -159,7 +160,7 @@ def do_add_object(add_object, untranslat
+@@ -159,7 +160,7 @@
      check_required_arguments(add_object, args_dict)
      dbobject = add_object.DatabaseObject(**args_dict)
      print("Processing"+dbobject+"...")
@@ -358,78 +358,47 @@ Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/add_util.py
      # pprint.pprint(dbobject.__dict__)
      try:
          dbobject.commit()
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/boincxml.py
+Index: boinc/py/Boinc/boincxml.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/boincxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/boincxml.py
+--- boinc.orig/py/Boinc/boincxml.py
++++ boinc/py/Boinc/boincxml.py
 @@ -1,4 +1,5 @@
  #!/usr/bin/env python
 +from __future__ import print_function
  
  # $Id$
  
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/configxml.py
+Index: boinc/py/Boinc/db_base.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/configxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/configxml.py
-@@ -1,5 +1,5 @@
- #!/usr/bin/env python
--
-+from __future__ import print_function
- # $Id$
- 
- # configxml.py - module to read and parse config.xml, run_state.xml
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/db_base.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/db_base.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/db_base.py
+--- boinc.orig/py/Boinc/db_base.py
++++ boinc/py/Boinc/db_base.py
 @@ -1,4 +1,5 @@
  ## $Id$
 +from __future__ import print_function
  
  # quarl 2003-10-16 initial version based on conglomeration of
  #                  coursesurvey/database.py and boinc/database.py
-Index: boinc-7.16.1+git20190825+dfsg/py/Boinc/setup_project.py
+Index: boinc/py/Boinc/setup_project.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/Boinc/setup_project.py
-+++ boinc-7.16.1+git20190825+dfsg/py/Boinc/setup_project.py
+--- boinc.orig/py/Boinc/setup_project.py
++++ boinc/py/Boinc/setup_project.py
 @@ -1,4 +1,5 @@
  ## $Id$
 +from __future__ import print_function
  
  # module for setting up a new project (either a real project or a test project
  # see tools/makeproject, test/testbase.py).
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/add_util.py
+Index: boinc/py/Boinc/configxml.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/add_util.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/add_util.py
+--- boinc.orig/py/Boinc/configxml.py
++++ boinc/py/Boinc/configxml.py
 @@ -1,4 +1,5 @@
- #!/usr/bin/python3
+ #!/usr/bin/env python
 +from __future__ import print_function
  
  # $Id$
  
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/boincxml.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/boincxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/boincxml.py
-@@ -1,4 +1,5 @@
- #!/usr/bin/python3
-+from __future__ import print_function
- 
- # $Id$
- 
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/configxml.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/configxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/configxml.py
-@@ -1,4 +1,5 @@
- #!/usr/bin/python3
-+from __future__ import print_function
- 
- # $Id$
- 
-@@ -10,8 +11,8 @@ SYNOPSIS:  parses and writes config.xml
+@@ -10,8 +11,8 @@
  USAGE:     from Boinc import configxml
             config = configxml.ConfigFile().read()
             run_state = configxml.RunStateFile().read()
@@ -440,17 +409,17 @@ Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/configxml.py
             run_state.enabled = True
             new_task = newConfigDict()
             new_task.cmd = "echo hi | mail quarl"
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/database.py
+Index: boinc/py/Boinc/database.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/database.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/database.py
+--- boinc.orig/py/Boinc/database.py
++++ boinc/py/Boinc/database.py
 @@ -1,4 +1,5 @@
  ## $Id$
 +from __future__ import print_function
  
  '''
  Defines database backend library and database table and object relationships.
-@@ -17,7 +18,7 @@ p_c64 = database.Platforms.find(user_fri
+@@ -17,7 +18,7 @@
  wu_dead = database.Workunits.find(name="dead.wu")[0]
  results_dead = database.Results.find(wu=wu_dead)
  for result in results_dead:
@@ -459,20 +428,10 @@ Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/database.py
      os.system("echo oeps | mail %s" % result.host.user.email_addr)
      result.remove()
  
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/db_base.py
+Index: boinc/py/Boinc/db_mid.py
 ===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/db_base.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/db_base.py
-@@ -1,4 +1,5 @@
- ## $Id$
-+from __future__ import print_function
- 
- # quarl 2003-10-16 initial version based on conglomeration of
- #                  coursesurvey/database.py and boinc/database.py
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/db_mid.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/db_mid.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/db_mid.py
+--- boinc.orig/py/Boinc/db_mid.py
++++ boinc/py/Boinc/db_mid.py
 @@ -1,9 +1,10 @@
  ## $Id$
 +from __future__ import print_function
@@ -485,72 +444,3 @@ Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/db_mid.py
  ##
  ## will look prettier if you import this module.
  
-Index: boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/setup_project.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/build/lib/Boinc/setup_project.py
-+++ boinc-7.16.1+git20190825+dfsg/py/build/lib/Boinc/setup_project.py
-@@ -1,4 +1,5 @@
- ## $Id$
-+from __future__ import print_function
- 
- # module for setting up a new project (either a real project or a test project
- # see tools/makeproject, test/testbase.py).
-Index: boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/boincxml.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/lib/Boinc/boincxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/boincxml.py
-@@ -1,4 +1,5 @@
- #!/usr/bin/python3
-+from __future__ import print_function
- 
- # $Id$
- 
-Index: boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/configxml.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/lib/Boinc/configxml.py
-+++ boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/configxml.py
-@@ -1,4 +1,5 @@
- #!/usr/bin/python3
-+from __future__ import print_function
- 
- # $Id$
- 
-Index: boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/database.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/lib/Boinc/database.py
-+++ boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/database.py
-@@ -1,4 +1,5 @@
- ## $Id$
-+from __future__ import print_function
- 
- '''
- Defines database backend library and database table and object relationships.
-@@ -17,7 +18,7 @@ p_c64 = database.Platforms.find(user_fri
- wu_dead = database.Workunits.find(name="dead.wu")[0]
- results_dead = database.Results.find(wu=wu_dead)
- for result in results_dead:
--    print "Removing from db:", result
-+    print("Removing from db:", result)
-     os.system("echo oeps | mail %s" % result.host.user.email_addr)
-     result.remove()
- 
-Index: boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/db_base.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/lib/Boinc/db_base.py
-+++ boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/db_base.py
-@@ -1,4 +1,5 @@
- ## $Id$
-+from __future__ import print_function
- 
- # quarl 2003-10-16 initial version based on conglomeration of
- #                  coursesurvey/database.py and boinc/database.py
-Index: boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/setup_project.py
-===================================================================
---- boinc-7.16.1+git20190825+dfsg.orig/py/lib/Boinc/setup_project.py
-+++ boinc-7.16.1+git20190825+dfsg/py/lib/Boinc/setup_project.py
-@@ -1,4 +1,5 @@
- ## $Id$
-+from __future__ import print_function
- 
- # module for setting up a new project (either a real project or a test project
- # see tools/makeproject, test/testbase.py).
