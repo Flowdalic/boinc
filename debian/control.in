@@ -8,7 +8,6 @@ Uploaders: Steffen Moeller <moeller@debian.org>,
 Standards-Version: 4.4.0
 Build-Depends: debhelper-compat (= 12),
                default-libmysqlclient-dev,
-               dh-autoreconf,
                dh-python,
                docbook-xml,
                docbook2x,
