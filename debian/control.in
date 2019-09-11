@@ -124,10 +124,12 @@ Package: boinc
 @         ca-certificates,
 @         lsb-base (>= 3.0-6),
 @         libboinc7 (= ${binary:Version}),
+@         init-system-helpers (>= 1.57),
 @         ${misc:Depends},
 @         ${python3:Depends},
 @         ${shlibs:Depends}
-@Suggests: boinc-client-opencl, boinc-client-nvidia-cuda, boinc-manager, x11-xserver-utils
+@Suggests: boinc-manager, x11-xserver-utils,
+@          boinc-client-opencl, boinc-client-nvidia-cuda
 @Description: core client for the BOINC distributed computing infrastructure
 @ The Berkeley Open Infrastructure for Network Computing (BOINC) is a
 @ software platform for distributed computing: several initiatives of
