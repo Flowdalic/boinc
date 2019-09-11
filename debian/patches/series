@@ -12,7 +12,6 @@ lib_cppcheck.patch
 fopen_closing.patch
 rrsim_iterator_cppcheck.patch
 filesys_error_message.patch
-de.po.patch
 more_clang_warnings.patch
 add-ldflags.patch
 addressing_additional_html_dirs.patch
