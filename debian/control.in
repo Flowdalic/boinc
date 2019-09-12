@@ -124,7 +124,6 @@ Package: boinc
 @         ca-certificates,
 @         lsb-base (>= 3.0-6),
 @         libboinc7 (= ${binary:Version}),
-@         init-system-helpers (>= 1.57),
 @         ${misc:Depends},
 @         ${python3:Depends},
 @         ${shlibs:Depends}
