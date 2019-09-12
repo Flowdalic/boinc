@@ -2,7 +2,7 @@ boinc (7.16.1+git20190825+dfsg-1exp1) UNRELEASED; urgency=medium
 
   [ Steffen Moeller ]
   * Addressing python3 install errors of boinc-server-maker package
-    (Closes: #936224)
+    (Closes: #936224, Closes: #903762)
 
  -- Steffen Moeller <moeller@debian.org>  Mon, 26 Aug 2019 16:53:16 +0200
 
