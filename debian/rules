@@ -222,6 +222,7 @@ override_dh_clean:
 	rm -f config.status libtool version.h stamp-h1
 	find . -name ".libs" | xargs -r rm -r
 	find zip -name "*.lo" -delete
+	rm -rf py/lib
 
 # Commands not to execute - empty overrides
 override_dh_auto_test:
