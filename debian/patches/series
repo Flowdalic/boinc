@@ -1,12 +1,10 @@
 # undisputed patches above
 stripchart_debian.patch
-possible_size_type_error.patch
 some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
 more_maxpathlen.patch
 sched_driver_char_buffers.patch
-csh2tcsh.patch
 client_app_maxpathlen.patch
 lib_cppcheck.patch
 fopen_closing.patch

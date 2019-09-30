@@ -1,3 +1,10 @@
+boinc (7.16.3+dfsg-1) unstable; urgency=medium
+
+  * New upstream version
+  * d/control: Introducing 'Rules-Requires-Root: no'
+
+ -- Steffen Moeller <moeller@debian.org>  Mon, 30 Sep 2019 20:43:14 +0200
+
 boinc (7.16.1+git20190825+dfsg-1exp1) UNRELEASED; urgency=medium
 
   [ Steffen Moeller ]

@@ -2,11 +2,11 @@ Description: this should fix some underlinking on boinc, leading to some warning
 Author: Gianfranco Costamagna <locutusofborg@debian.org>
 Bug-Debian: https://bugs.debian.org/794107
 
-Index: boinc-v2/api/Makefile.am
+Index: boinc-salsa/api/Makefile.am
 ===================================================================
---- boinc-v2.orig/api/Makefile.am
-+++ boinc-v2/api/Makefile.am
-@@ -43,18 +43,21 @@
+--- boinc-salsa.orig/api/Makefile.am
++++ boinc-salsa/api/Makefile.am
+@@ -43,18 +43,21 @@ endif
  
  lib_LTLIBRARIES = libboinc_api.la
  libboinc_api_la_SOURCES = $(api_files)
@@ -29,11 +29,11 @@ Index: boinc-v2/api/Makefile.am
  
  if INSTALL_HEADERS
  ## install only headers that are meant for exporting the API !!
-Index: boinc-v2/lib/Makefile.am
+Index: boinc-salsa/lib/Makefile.am
 ===================================================================
---- boinc-v2.orig/lib/Makefile.am
-+++ boinc-v2/lib/Makefile.am
-@@ -192,8 +192,8 @@
+--- boinc-salsa.orig/lib/Makefile.am
++++ boinc-salsa/lib/Makefile.am
+@@ -195,8 +195,8 @@ lib_LTLIBRARIES += libboinc_crypt.la
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -44,11 +44,11 @@ Index: boinc-v2/lib/Makefile.am
  endif
  
  if ENABLE_FCGI
-Index: boinc-v2/sched/Makefile.am
+Index: boinc-salsa/sched/Makefile.am
 ===================================================================
---- boinc-v2.orig/sched/Makefile.am
-+++ boinc-v2/sched/Makefile.am
-@@ -24,8 +24,8 @@
+--- boinc-salsa.orig/sched/Makefile.am
++++ boinc-salsa/sched/Makefile.am
+@@ -24,8 +24,8 @@ lib_LTLIBRARIES = libsched.la
  libsched_la_SOURCES = $(libsched_sources)
  libsched_la_CFLAGS = $(AM_CPPFLAGS)
  libsched_la_CXXFLAGS = $(AM_CPPFLAGS)
@@ -59,7 +59,7 @@ Index: boinc-v2/sched/Makefile.am
  
  ## install only headers that are meant for exporting the API !!
  if INSTALL_HEADERS
-@@ -47,7 +47,7 @@
+@@ -47,7 +47,7 @@ libsched_fcgi_la_SOURCES = $(libsched_so
  libsched_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
  libsched_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CPPFLAGS)
  libsched_fcgi_la_LDFLAGS= -version-number $(LIBBOINC_VERSION)
@@ -68,11 +68,11 @@ Index: boinc-v2/sched/Makefile.am
  
  endif
  # end of "if ENABLE_FCGI"
-Index: boinc-v2/zip/Makefile.am
+Index: boinc-salsa/zip/Makefile.am
 ===================================================================
---- boinc-v2.orig/zip/Makefile.am
-+++ boinc-v2/zip/Makefile.am
-@@ -62,7 +62,7 @@
+--- boinc-salsa.orig/zip/Makefile.am
++++ boinc-salsa/zip/Makefile.am
+@@ -62,7 +62,7 @@ endif
  lib_LTLIBRARIES = libboinc_zip.la
  libboinc_zip_la_SOURCES = $(libboinc_zip_sources)
  libboinc_zip_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)

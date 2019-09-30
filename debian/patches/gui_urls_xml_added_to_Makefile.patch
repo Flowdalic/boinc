@@ -1,8 +1,10 @@
 Description: Adding a missing file to the install script
---- a/tools/Makefile.am
-+++ b/tools/Makefile.am
-@@ -40,7 +40,8 @@
-     watch_tcp
+Index: boinc-salsa/tools/Makefile.am
+===================================================================
+--- boinc-salsa.orig/tools/Makefile.am
++++ boinc-salsa/tools/Makefile.am
+@@ -38,7 +38,8 @@ dist_tools_SCRIPTS = \
+     stage_file
  
  dist_tools_DATA = \
 -    project.xml

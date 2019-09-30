@@ -1,20 +1,20 @@
 Description: this patch makes the build system create a dynamic shared library.
  Upstream didn't accept this patch because of the unstable api, so this is a
  significative Debian delta.
-Index: boinc-v2/lib/Makefile.am
+Index: boinc-salsa/lib/Makefile.am
 ===================================================================
---- boinc-v2.orig/lib/Makefile.am
-+++ boinc-v2/lib/Makefile.am
-@@ -184,7 +184,7 @@
+--- boinc-salsa.orig/lib/Makefile.am
++++ boinc-salsa/lib/Makefile.am
+@@ -184,7 +184,7 @@ lib_LTLIBRARIES = libboinc.la
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
 -libboinc_la_LDFLAGS = -static -version-number $(LIBBOINC_VERSION)
 +libboinc_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
- libboinc_la_LIBADD =
- 
- if ENABLE_BOINCCRYPT
-@@ -192,7 +192,7 @@
+ if OS_FREEBSD
+ libboinc_la_LDFLAGS += -lexecinfo
+ endif
+@@ -195,7 +195,7 @@ lib_LTLIBRARIES += libboinc_crypt.la
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -23,11 +23,11 @@ Index: boinc-v2/lib/Makefile.am
  libboinc_crypt_la_LIBADD =
  endif
  
-Index: boinc-v2/apps/Makefile.am
+Index: boinc-salsa/apps/Makefile.am
 ===================================================================
---- boinc-v2.orig/apps/Makefile.am
-+++ boinc-v2/apps/Makefile.am
-@@ -8,15 +8,15 @@
+--- boinc-salsa.orig/apps/Makefile.am
++++ boinc-salsa/apps/Makefile.am
+@@ -8,15 +8,15 @@ example_PROGRAMS = upper_case concat 1se
  
  upper_case_SOURCES = upper_case.cpp
  upper_case_CXXFLAGS = $(PTHREAD_CFLAGS)
@@ -46,10 +46,10 @@ Index: boinc-v2/apps/Makefile.am
 -1sec_LDFLAGS = -static-libtool-libs $(PTHREAD_CFLAGS)
 +1sec_LDFLAGS = $(PTHREAD_CFLAGS)
  1sec_LDADD = $(APPLIBS)
-Index: boinc-v2/client/Makefile.am
+Index: boinc-salsa/client/Makefile.am
 ===================================================================
---- boinc-v2.orig/client/Makefile.am
-+++ boinc-v2/client/Makefile.am
+--- boinc-salsa.orig/client/Makefile.am
++++ boinc-salsa/client/Makefile.am
 @@ -4,7 +4,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -58,10 +58,10 @@ Index: boinc-v2/client/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
-Index: boinc-v2/clientgui/Makefile.am
+Index: boinc-salsa/clientgui/Makefile.am
 ===================================================================
---- boinc-v2.orig/clientgui/Makefile.am
-+++ boinc-v2/clientgui/Makefile.am
+--- boinc-salsa.orig/clientgui/Makefile.am
++++ boinc-salsa/clientgui/Makefile.am
 @@ -7,7 +7,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -70,11 +70,11 @@ Index: boinc-v2/clientgui/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
-Index: boinc-v2/clientscr/Makefile.am
+Index: boinc-salsa/clientscr/Makefile.am
 ===================================================================
---- boinc-v2.orig/clientscr/Makefile.am
-+++ boinc-v2/clientscr/Makefile.am
-@@ -5,7 +5,6 @@
+--- boinc-salsa.orig/clientscr/Makefile.am
++++ boinc-salsa/clientscr/Makefile.am
+@@ -5,7 +5,6 @@ include $(top_srcdir)/Makefile.incl
  
  AM_LDFLAGS += -lpthread
  if ENABLE_CLIENT_RELEASE
@@ -82,10 +82,10 @@ Index: boinc-v2/clientscr/Makefile.am
  ## for an entirely statically linked library, you may want to try
  ## -all-static instead.  There's a good chance it won't work properly,
  ## so we'll use the safer "-static-libtool-libs" by default.
-Index: boinc-v2/sched/Makefile.am
+Index: boinc-salsa/sched/Makefile.am
 ===================================================================
---- boinc-v2.orig/sched/Makefile.am
-+++ boinc-v2/sched/Makefile.am
+--- boinc-salsa.orig/sched/Makefile.am
++++ boinc-salsa/sched/Makefile.am
 @@ -4,7 +4,6 @@
  include $(top_srcdir)/Makefile.incl
  
@@ -94,11 +94,11 @@ Index: boinc-v2/sched/Makefile.am
  
  if ENABLE_LIBRARIES
  
-Index: boinc-v2/tools/Makefile.am
+Index: boinc-salsa/tools/Makefile.am
 ===================================================================
---- boinc-v2.orig/tools/Makefile.am
-+++ boinc-v2/tools/Makefile.am
-@@ -44,7 +44,6 @@
+--- boinc-salsa.orig/tools/Makefile.am
++++ boinc-salsa/tools/Makefile.am
+@@ -42,7 +42,6 @@ dist_tools_DATA = \
      gui_urls.xml
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
@@ -106,11 +106,11 @@ Index: boinc-v2/tools/Makefile.am
  
  cancel_jobs_SOURCES = cancel_jobs.cpp
  cancel_jobs_LDADD = $(SERVERLIBS)
-Index: boinc-v2/vda/Makefile.am
+Index: boinc-salsa/vda/Makefile.am
 ===================================================================
---- boinc-v2.orig/vda/Makefile.am
-+++ boinc-v2/vda/Makefile.am
-@@ -4,7 +4,6 @@
+--- boinc-salsa.orig/vda/Makefile.am
++++ boinc-salsa/vda/Makefile.am
+@@ -4,7 +4,6 @@ vdadir=$(prefix)/lib/boinc-server-maker/
  vda_PROGRAMS = vda vdad ssim
  
  AM_CXXFLAGS += $(MYSQL_CFLAGS)
