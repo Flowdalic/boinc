@@ -1,3 +1,16 @@
+boinc (7.16.4+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7.16.4+dfsg
+  * Bump copyright years
+  * drop upstream patches:
+    - some_extra_clang_warnings.patch
+    - more_clang_warnings.patch
+  * Refresh patches
+  * Bump std-version to 4.5.0, no changes required
+  * Upload to unstable
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 25 Jan 2020 15:28:00 +0100
+
 boinc (7.16.3+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
