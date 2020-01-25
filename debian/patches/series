@@ -1,6 +1,5 @@
 # undisputed patches above
 stripchart_debian.patch
-some_extra_clang_warnings.patch
 cppcheck_realloc.patch
 MainDocumentWarnings.patch
 more_maxpathlen.patch
@@ -10,7 +9,6 @@ lib_cppcheck.patch
 fopen_closing.patch
 rrsim_iterator_cppcheck.patch
 filesys_error_message.patch
-more_clang_warnings.patch
 add-ldflags.patch
 addressing_additional_html_dirs.patch
 gui_urls_xml_added_to_Makefile.patch
