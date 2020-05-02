@@ -191,6 +191,7 @@ CFGFLAGS_boinc-client = \
   --enable-libraries \
   --enable-unicode \
   --enable-shared \
+  --enable-static \
   --enable-dynamic-client-linkage \
   --with-ssl \
   --with-x \

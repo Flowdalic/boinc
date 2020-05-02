@@ -229,6 +229,9 @@ Package: boinc
 @ .
 @ This package contains header files that are needed to develop and
 @ compile applications which utilizes the BOINC infrastructure.
+@ The package also provides static libraries. These are needed for the
+@ development of scientific applications that work seamlessly across
+@ many Linux distributions and different releases of the same.
 @
 @Package: libboinc-app7
 @Provides: libboinc-app

@@ -1,5 +1,6 @@
 usr/include/boinc
 usr/lib/*/*.so
+usr/lib/*/*.a
 
 # The two below are redundant but seem requested by sample code
 lib/*.h	                        usr/include/boinc/lib
