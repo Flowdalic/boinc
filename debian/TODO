@@ -46,8 +46,11 @@ chrt_many()
 }
 
 
+JavaScript packaging
+====================
 
-Licenses and debian/copyright
-==============================
-
- ? 
+E: boinc source: source-is-missing drupal/sites/default/boinc/modules/contrib/context/context_ui/json2.js line length is 3334 characters (>512)
+E: boinc source: source-is-missing drupal/sites/default/boinc/modules/contrib/tableofcontents/jquery.localscroll-min.js
+E: boinc source: source-is-missing drupal/sites/default/boinc/modules/contrib/tableofcontents/jquery.scrollTo-min.js
+E: boinc source: source-is-missing html/user/sample_bootstrap.min.js
+E: boinc source: source-is-missing html/user/sample_jquery.min.js
