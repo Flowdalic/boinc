@@ -412,6 +412,9 @@ override_dh_install:
 	# delete .la files (Closes: #621197)
 	find $(CURDIR)/debian -name "*.la" | xargs -r rm -f
 	dh_install
+	find debian/boinc-server-maker/usr/share/ -name sleeper -type f -delete || true
+	find debian/boinc-server-maker/usr/share/ -name wrapper -type f -delete || true
+	find debian/boinc-server-maker/usr/share/ -name worker -type f -delete || true
 
 override_dh_fixperms:
 	dh_fixperms

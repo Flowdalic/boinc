@@ -2,3 +2,6 @@
 /usr/lib/boinc-server-maker/sched /usr/share/boinc-server-maker/sched
 /usr/lib/boinc-server-maker/vda /usr/share/boinc-server-maker/vda
 /usr/lib/boinc-server-maker/tools /usr/share/boinc-server-maker/tools
+/usr/lib/boinc-server-maker/apps/wrapper /usr/share/doc/boinc-server-maker/examples/wrapper/wrapper
+/usr/lib/boinc-server-maker/apps/worker /usr/share/doc/boinc-server-maker/examples/worker/worker
+/usr/lib/boinc-server-maker/apps/uc2 /usr/share/doc/boinc-server-maker/examples/sleeper/sleeper
