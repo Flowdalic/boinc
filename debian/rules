@@ -401,7 +401,8 @@ ifeq (,$(ENABLE_SERVER_TEST))
 endif
 	for i in $(CURDIR)/debian/*/usr/bin ; \
 	do \
-		egrep -l "^#!.*env..*python" $$i/* | xargs -r sed -i '1s%#!.*%#!/usr/bin/python%' ; \
+		egrep -l "^#!.*env..*python" $$i/* | xargs -r sed -i '1s%#!.*%#!/usr/bin/python3%' ; \
+		egrep -l "^#!/usr/bin/python2" $$i/* | xargs -r sed -i '1s%#!.*%#!/usr/bin/python3%' ; \
 	done
 
 override_dh_install:

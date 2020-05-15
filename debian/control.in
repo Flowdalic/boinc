@@ -277,7 +277,7 @@ Package: boinc
 %         apache2 | httpd-cgi,
 %         fonts-dejavu-extra,
 %         libfcgi0ldbl,
-%         mysql-server | default-mysql-server | virtual-mysql-server,
+%         default-mysql-server | virtual-mysql-server,
 %         openssl,
 %         php,
 %         php-cli,

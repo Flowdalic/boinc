@@ -2,7 +2,9 @@ boinc (7.16.6+dfsg-1exp2) experimental; urgency=medium
 
   * Also building static libraries - to help providing truly static scientific
     apps across platforms.
-  * d/rules: clean is undoing uncommitted changes done to d/control
+  * d/rules:
+    - clean is undoing uncommitted changes done to d/control
+    - changing #!python to python3
   * boinc-server-maker: provide arch-dep links instead of examples' executables
                         in /usr/share/doc
 
