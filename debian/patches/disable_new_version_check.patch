@@ -1,13 +1,13 @@
 Description: Disable new version check in notices tab
  Debian/Ubuntu specific patch.
-Author: Gianfranco Costamagna <costamagnagianfranco@yahoo.it>,
+Author: Gianfranco Costamagna <locutusofborg@debian.org>,
 	ChristianB
 Bug-Ubuntu: https://bugs.launchpad.net/bugs/1140597
 
 ---
 
 Forwarded: not-needed
-Reviewed-By: costamagnagianfranco@yahoo.it
+Reviewed-By: Gianfranco Costamagna <locutusofborg@debian.org>
 Last-Update: <2013-03-07>
 
 Index: boinc/client/client_state.cpp

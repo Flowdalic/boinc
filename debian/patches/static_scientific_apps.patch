@@ -59,9 +59,8 @@ Index: boinc-salsa/samples/condor/Makefile
  
  distclean-recursive: clean
  
--boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h ../../version.h
+ boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h ../../version.h
 -	g++ -g -O2 -I../../lib -I../.. \
-+boinc_gahp: boinc_gahp.cpp ../../lib/remote_submit.h ../../lib/remote_submit.cpp ../../svn_version.h ../../version.h $(CXX) $(CPPFLAGS) -static -pthread -g -O2 -I../../lib -I../.. \
 +	$(CXX) $(CPPFLAGS) -static -pthread -g -O0 -I../../lib -I../.. \
  	-o boinc_gahp boinc_gahp.cpp ../../lib/remote_submit.cpp \
 -	-L../../lib -lboinc -lpthread -lcurl
@@ -101,7 +100,7 @@ Index: boinc-salsa/samples/sleeper/Makefile
  
  sleeper: sleeper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
 -	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o sleeper sleeper.o libstdc++.a -pthread -lboinc_api -lboinc
-+	$(CXX) $(CPPFLAGS) -static -pthread -o sleeper sleeper.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -pthread -o sleeper sleeper.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
 Index: boinc-salsa/samples/vboxmonitor/Makefile
 ===================================================================
 --- boinc-salsa.orig/samples/vboxmonitor/Makefile
@@ -160,7 +159,7 @@ Index: boinc-salsa/samples/worker/Makefile
  
  worker: worker.o
 -	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o worker worker.o
-+	$(CXX) $(CPPFLAGS) -static -o worker worker.o
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -o worker worker.o
 Index: boinc-salsa/samples/wrapper/Makefile
 ===================================================================
 --- boinc-salsa.orig/samples/wrapper/Makefile
@@ -200,19 +199,19 @@ Index: boinc-salsa/samples/example_app/Makefile
  
  uc2: uc2.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
 -	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o uc2 uc2.o libstdc++.a -pthread \
-+	$(CXX) $(CPPFLAGS) -static -pthread -o uc2 uc2.o libstdc++.a \
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -pthread -o uc2 uc2.o libstdc++.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a
  
  ucn: ucn.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
 -	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o ucn ucn.o libstdc++.a -pthread \
-+	$(CXX) $(CPPFLAGS) -static -pthread -o ucn ucn.o libstdc++.a \
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -pthread -o ucn ucn.o libstdc++.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a
  
  uc2_graphics: uc2_graphics.o ttfont.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
 -	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o uc2_graphics uc2_graphics.o ttfont.o libstdc++.a -pthread \
-+	$(CXX) $(CPPFLAGS) -static -pthread -o uc2_graphics uc2_graphics.o ttfont.o libstdc++.a \
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -pthread -o uc2_graphics uc2_graphics.o ttfont.o libstdc++.a \
  	$(BOINC_API_DIR)/libboinc_graphics2.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a \
@@ -221,7 +220,7 @@ Index: boinc-salsa/samples/example_app/Makefile
  
  slide_show: slide_show.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_graphics2.a
 -	$(CXX) $(CXXFLAGS) -o slide_show slide_show.o libstdc++.a -pthread \
-+	$(CXX) -static -pthread -o slide_show slide_show.o libstdc++.a \
++	$(CXX) $(CXXFLAGS) -static -pthread -o slide_show slide_show.o libstdc++.a \
  	$(BOINC_API_DIR)/libboinc_graphics2.a \
  	$(BOINC_API_DIR)/libboinc_api.a \
  	$(BOINC_LIB_DIR)/libboinc.a \
