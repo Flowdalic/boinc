@@ -35,6 +35,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
@@ -94,11 +95,14 @@ public class ProjectInfoFragment extends DialogFragment {
 
         // setup return button
         Button continueB = v.findViewById(R.id.continue_button);
-        continueB.setOnClickListener(view -> {
-            if(Logging.DEBUG) {
-                Log.d(Logging.TAG, "ProjectInfoFragment continue clicked");
+        continueB.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                if(Logging.DEBUG) {
+                    Log.d(Logging.TAG, "ProjectInfoFragment continue clicked");
+                }
+                dismiss();
             }
-            dismiss();
         });
 
         if(Logging.DEBUG) {

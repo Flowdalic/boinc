@@ -40,6 +40,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 
 /**
@@ -150,10 +152,15 @@ public class SplashActivity extends Activity {
 
         // set long click listener to go to eventlog
         ImageView imageView = findViewById(R.id.logo);
-        imageView.setOnLongClickListener(view -> {
-            startActivity(new Intent(activity, EventLogActivity.class));
-            return true;
+        imageView.setOnLongClickListener(new OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                startActivity(new Intent(activity, EventLogActivity.class));
+                return true;
+            }
         });
+
     }
 
     @Override

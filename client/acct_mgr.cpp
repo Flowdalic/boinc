@@ -252,7 +252,6 @@ int ACCT_MGR_OP::do_rpc(ACCT_MGR_INFO& _ami, bool _via_gui) {
     gstate.time_stats.write(mf, true);
     gstate.net_stats.write(mf);
 
-#ifndef SIM
     // send task descriptions if requested by AM
     //
     if (ami.send_tasks_all || ami.send_tasks_active) {
@@ -260,7 +259,6 @@ int ACCT_MGR_OP::do_rpc(ACCT_MGR_INFO& _ami, bool _via_gui) {
         gstate.write_tasks_gui(mf, !ami.send_tasks_all);
         mf.printf("</results>\n");
     }
-#endif
 
     fprintf(f, "</acct_mgr_request>\n");
     fclose(f);

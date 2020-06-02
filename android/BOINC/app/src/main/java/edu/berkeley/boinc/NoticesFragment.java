@@ -22,6 +22,7 @@ import edu.berkeley.boinc.utils.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import edu.berkeley.boinc.adapter.NoticesListAdapter;
 import edu.berkeley.boinc.rpc.Notice;
@@ -109,7 +110,12 @@ public class NoticesFragment extends Fragment {
             data = (ArrayList<Notice>) BOINCActivity.monitor.getRssNotices();
             // sorting policy:
             // latest arrival first.
-            Collections.sort(data, (lhs, rhs) -> ((Double) (rhs.create_time - lhs.create_time)).intValue());
+            Collections.sort(data, new Comparator<Notice>() {
+                @Override
+                public int compare(Notice lhs, Notice rhs) {
+                    return ((Double) (rhs.create_time - lhs.create_time)).intValue();
+                }
+            });
         }
         catch(Exception e) {
             if(Logging.ERROR) {

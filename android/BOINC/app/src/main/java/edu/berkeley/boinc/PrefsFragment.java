@@ -411,18 +411,21 @@ public class PrefsFragment extends Fragment {
 
             // Setup confirm button action
             Button confirm = dialog.findViewById(R.id.confirm);
-            confirm.setOnClickListener(view -> {
-                ArrayList<String> selectedOptions = new ArrayList<>();
-                for(SelectionDialogOption option : options) {
-                    if(option.selected) {
-                        selectedOptions.add(option.name);
+            confirm.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArrayList<String> selectedOptions = new ArrayList<>();
+                    for(SelectionDialogOption option : options) {
+                        if(option.selected) {
+                            selectedOptions.add(option.name);
+                        }
                     }
+                    if(Logging.DEBUG) {
+                        Log.d(Logging.TAG, selectedOptions.size() + " log flags selected");
+                    }
+                    new SetCcConfigAsync().execute(formatOptionsToCcConfig(selectedOptions));
+                    dialog.dismiss();
                 }
-                if(Logging.DEBUG) {
-                    Log.d(Logging.TAG, selectedOptions.size() + " log flags selected");
-                }
-                new SetCcConfigAsync().execute(formatOptionsToCcConfig(selectedOptions));
-                dialog.dismiss();
             });
         }
         else if(item.ID == R.string.prefs_power_source_header) {
@@ -436,30 +439,33 @@ public class PrefsFragment extends Fragment {
 
             // Setup confirm button action
             Button confirm = dialog.findViewById(R.id.confirm);
-            confirm.setOnClickListener(view -> {
-                try {
-                    for(SelectionDialogOption option : options) {
-                        switch(option.ID) {
-                            case R.string.prefs_power_source_ac:
-                                BOINCActivity.monitor.setPowerSourceAc(option.selected);
-                                break;
-                            case R.string.prefs_power_source_usb:
-                                BOINCActivity.monitor.setPowerSourceUsb(option.selected);
-                                break;
-                            case R.string.prefs_power_source_wireless:
-                                BOINCActivity.monitor.setPowerSourceWireless(option.selected);
-                                break;
-                            case R.string.prefs_power_source_battery:
-                                clientPrefs.run_on_batteries = option.selected;
-                                new WriteClientPrefsAsync().execute(clientPrefs); //async task triggers layout update
-                                break;
+            confirm.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        for(SelectionDialogOption option : options) {
+                            switch(option.ID) {
+                                case R.string.prefs_power_source_ac:
+                                    BOINCActivity.monitor.setPowerSourceAc(option.selected);
+                                    break;
+                                case R.string.prefs_power_source_usb:
+                                    BOINCActivity.monitor.setPowerSourceUsb(option.selected);
+                                    break;
+                                case R.string.prefs_power_source_wireless:
+                                    BOINCActivity.monitor.setPowerSourceWireless(option.selected);
+                                    break;
+                                case R.string.prefs_power_source_battery:
+                                    clientPrefs.run_on_batteries = option.selected;
+                                    new WriteClientPrefsAsync().execute(clientPrefs); //async task triggers layout update
+                                    break;
+                            }
                         }
+                        dialog.dismiss();
                     }
-                    dialog.dismiss();
-                }
-                catch(RemoteException e) {
-                    if(Logging.ERROR) {
-                        Log.e(Logging.TAG, "PrefsFragment.setupSelectionListDialog.setOnClickListener: OnClick() error: ", e);
+                    catch(RemoteException e) {
+                        if(Logging.ERROR) {
+                            Log.e(Logging.TAG, "PrefsFragment.setupSelectionListDialog.setOnClickListener: OnClick() error: ", e);
+                        }
                     }
                 }
             });
@@ -467,81 +473,94 @@ public class PrefsFragment extends Fragment {
 
         // Generic cancel button
         Button cancel = dialog.findViewById(R.id.cancel);
-        cancel.setOnClickListener(view -> dialog.dismiss());
+        cancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     private void setupDialogButtons(final PrefsListItemWrapper item, final Dialog dialog) {
         // Confirm
         Button confirm = dialog.findViewById(R.id.confirm);
-        confirm.setOnClickListener(view -> {
-            // Sliders
-            if(item.dialogButtonType == PrefsListItemWrapper.DialogButtonType.SLIDER) {
-                SeekBar slider = dialog.findViewById(R.id.seekbar);
-                int sliderProgress = slider.getProgress();
-                double value;
+        confirm.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sliders
+                if(item.dialogButtonType == PrefsListItemWrapper.DialogButtonType.SLIDER) {
+                    SeekBar slider = dialog.findViewById(R.id.seekbar);
+                    int sliderProgress = slider.getProgress();
+                    double value;
 
-                // Calculate value based on Slider Progress
-                if(item.ID == R.string.prefs_cpu_number_cpus_header) {
-                    value = numberCpuCoresToPct(sliderProgress <= 0 ? 1 : sliderProgress + 1);
-                    writeClientNumberPreference(item.ID, value);
-                }
-                else if(item.ID == R.string.prefs_gui_log_level_header) {
-                    try {
-                        // Monitor and UI in two different processes. set static variable in both
-                        Logging.setLogLevel(sliderProgress);
-                        BOINCActivity.monitor.setLogLevel(sliderProgress);
+                    // Calculate value based on Slider Progress
+                    if(item.ID == R.string.prefs_cpu_number_cpus_header) {
+                        value = numberCpuCoresToPct(sliderProgress <= 0 ? 1 : sliderProgress + 1);
+                        writeClientNumberPreference(item.ID, value);
                     }
-                    catch(RemoteException e) {
-                        if(Logging.ERROR) {
-                            Log.e(Logging.TAG, "PrefsFragment.setupSelectionListDialog.setOnClickListener: OnClick() error: ", e);
+                    else if(item.ID == R.string.prefs_gui_log_level_header) {
+                        try {
+                            // Monitor and UI in two different processes. set static variable in both
+                            Logging.setLogLevel(sliderProgress);
+                            BOINCActivity.monitor.setLogLevel(sliderProgress);
                         }
+                        catch(RemoteException e) {
+                            if(Logging.ERROR) {
+                                Log.e(Logging.TAG, "PrefsFragment.setupSelectionListDialog.setOnClickListener: OnClick() error: ", e);
+                            }
+                        }
+                        updateNumberPreference(item.ID, (double) sliderProgress);
+                        updateLayout();
                     }
-                    updateNumberPreference(item.ID, (double) sliderProgress);
-                    updateLayout();
+                    else {
+                        value = sliderProgress * 10;
+                        writeClientNumberPreference(item.ID, value);
+                    }
                 }
-                else {
-                    value = sliderProgress * 10;
+                // Numbers
+                else if(item.dialogButtonType == PrefsListItemWrapper.DialogButtonType.NUMBER) {
+                    EditText edit = dialog.findViewById(R.id.Input);
+                    String input = edit.getText().toString();
+                    Double valueTmp = parseInputValueToDouble(input);
+                    if(valueTmp == null) {
+                        return;
+                    }
+                    double value = valueTmp;
                     writeClientNumberPreference(item.ID, value);
                 }
-            }
-            // Numbers
-            else if(item.dialogButtonType == PrefsListItemWrapper.DialogButtonType.NUMBER) {
-                EditText edit = dialog.findViewById(R.id.Input);
-                String input = edit.getText().toString();
-                Double valueTmp = parseInputValueToDouble(input);
-                if(valueTmp == null) {
-                    return;
-                }
-                double value = valueTmp;
-                writeClientNumberPreference(item.ID, value);
-            }
-            // Texts
-            else if(item.dialogButtonType == PrefsListItemWrapper.DialogButtonType.TEXT) {
-                EditText input = dialog.findViewById(R.id.Input);
+                // Texts
+                else if(item.dialogButtonType == PrefsListItemWrapper.DialogButtonType.TEXT) {
+                    EditText input = dialog.findViewById(R.id.Input);
 
-                if(item.ID == R.string.prefs_general_device_name_header) {
-                    try {
-                        if(!BOINCActivity.monitor.setDomainName(input.getText().toString())) {
-                            if(Logging.DEBUG) {
-                                Log.d(Logging.TAG, "PrefsFragment.setupDialogButtons.onClick.setDomainName(): false");
+                    if(item.ID == R.string.prefs_general_device_name_header) {
+                        try {
+                            if(!BOINCActivity.monitor.setDomainName(input.getText().toString())) {
+                                if(Logging.DEBUG) {
+                                    Log.d(Logging.TAG, "PrefsFragment.setupDialogButtons.onClick.setDomainName(): false");
+                                }
+                            }
+                        }
+                        catch(Exception e) {
+                            if(Logging.ERROR) {
+                                Log.e(Logging.TAG, "PrefsFragment.setupDialogButtons.onClick(): error: " + e);
                             }
                         }
                     }
-                    catch(Exception e) {
-                        if(Logging.ERROR) {
-                            Log.e(Logging.TAG, "PrefsFragment.setupDialogButtons.onClick(): error: " + e);
-                        }
-                    }
-                }
 
-                updateTextPreference(item.ID, input.getText().toString());
+                    updateTextPreference(item.ID, input.getText().toString());
+                }
+                dialog.dismiss();
             }
-            dialog.dismiss();
         });
 
         // Cancel
         Button cancel = dialog.findViewById(R.id.cancel);
-        cancel.setOnClickListener(view -> dialog.dismiss());
+        cancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     private void writeClientNumberPreference(int id, double value) {

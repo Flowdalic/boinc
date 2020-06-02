@@ -20,6 +20,7 @@ package edu.berkeley.boinc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 /**
@@ -33,6 +34,10 @@ public class BoincNotExclusiveDialog extends Activity {
         builder.setMessage(getString(R.string.nonexcl_dialog_text))
                .setCancelable(false)
                .setTitle(getString(R.string.nonexcl_dialog_header))
-               .setNeutralButton(getString(R.string.nonexcl_dialog_exit), (dialog, id) -> finish()).show();
+               .setNeutralButton(getString(R.string.nonexcl_dialog_exit), new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                       finish();
+                   }
+               }).show();
     }
 }

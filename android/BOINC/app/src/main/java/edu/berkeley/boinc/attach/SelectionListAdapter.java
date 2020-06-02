@@ -72,13 +72,16 @@ public class SelectionListAdapter extends ArrayAdapter<ProjectListEntry> {
             summary.setVisibility(View.GONE);
             ImageView button = v.findViewById(R.id.am_button_image);
             button.setVisibility(View.VISIBLE);
-            OnClickListener listener = view -> {
-                if(Logging.DEBUG) {
-                    Log.d(Logging.TAG, "SelectionListAdapter: account manager clicked.");
+            OnClickListener listener = new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Logging.DEBUG) {
+                        Log.d(Logging.TAG, "SelectionListAdapter: account manager clicked.");
+                    }
+                    AcctMgrFragment dialog = new AcctMgrFragment();
+                    dialog.setReturnToMainActivity(); // configure, so dialog returns to main activity when finished
+                    dialog.show(activity.getSupportFragmentManager(), activity.getString(R.string.attachproject_acctmgr_header));
                 }
-                AcctMgrFragment dialog = new AcctMgrFragment();
-                dialog.setReturnToMainActivity(); // configure, so dialog returns to main activity when finished
-                dialog.show(activity.getSupportFragmentManager(), activity.getString(R.string.attachproject_acctmgr_header));
             };
             v.setOnClickListener(listener);
             name.setOnClickListener(listener);
@@ -91,14 +94,22 @@ public class SelectionListAdapter extends ArrayAdapter<ProjectListEntry> {
             description.setText(listItem.info.generalArea);
             summary.setText(listItem.info.summary);
             cb.setChecked(listItem.checked);
-            cb.setOnClickListener(view -> listItem.checked = !listItem.checked);
-            textWrapper.setOnClickListener(view -> {
-                if(Logging.DEBUG) {
-                    Log.d(Logging.TAG, "SelectionListAdapter: onProjectClick open info for: " + listItem.info.name);
+            cb.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listItem.checked = !listItem.checked;
                 }
+            });
+            textWrapper.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Logging.DEBUG) {
+                        Log.d(Logging.TAG, "SelectionListAdapter: onProjectClick open info for: " + listItem.info.name);
+                    }
 
-                ProjectInfoFragment dialog = ProjectInfoFragment.newInstance(listItem.info);
-                dialog.show(activity.getSupportFragmentManager(), "ProjectInfoFragment");
+                    ProjectInfoFragment dialog = ProjectInfoFragment.newInstance(listItem.info);
+                    dialog.show(activity.getSupportFragmentManager(), "ProjectInfoFragment");
+                }
             });
 
         }

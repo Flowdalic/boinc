@@ -25,5 +25,5 @@ install-exec-hook:
 	fi
 
 clean:
-	rm -f boinc-client.service
-	rm -f boinc-client
+	rm boinc-client.service
+	rm boinc-client
