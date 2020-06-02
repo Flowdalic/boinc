@@ -102,8 +102,7 @@ mac_sources = \
     mac/QMachOImage.c \
     mac/QMachOImageList.c \
     mac/QSymbols.c \
-    mac/QTaskMemory.c \
-    mac/mac_branding.cpp
+    mac/QTaskMemory.c
 mac_headers = \
     mac/dyld_gdb.h \
     mac/mac_backtrace.h \
@@ -113,8 +112,7 @@ mac_headers = \
     mac/QMachOImage.h \
     mac/QMachOImageList.h \
     mac/QSymbols.h \
-    mac/QTaskMemory.h \
-    mac/mac_branding.h
+    mac/QTaskMemory.h
 win_sources=
 win_headers=
 else # !(OS_WIN32 || OS_MAC)

@@ -30,7 +30,12 @@ public class ConfirmationDialog extends android.support.v4.app.DialogFragment {
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(confirm, mConfirmClickListener)
-                .setNegativeButton("Cancel", (dialog, which) -> dismiss())
+                .setNegativeButton("Cancel", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dismiss();
+                    }
+                })
                 .create();
     }
 
