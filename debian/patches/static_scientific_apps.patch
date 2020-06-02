@@ -2,7 +2,7 @@ Index: boinc-salsa/lib/Makefile.am
 ===================================================================
 --- boinc-salsa.orig/lib/Makefile.am
 +++ boinc-salsa/lib/Makefile.am
-@@ -186,6 +186,10 @@ lib_LTLIBRARIES = libboinc.la
+@@ -184,6 +184,10 @@ lib_LTLIBRARIES = libboinc.la
  libboinc_la_SOURCES = $(generic_sources) $(mac_sources) $(win_sources)
  libboinc_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -13,7 +13,7 @@ Index: boinc-salsa/lib/Makefile.am
  libboinc_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  if OS_FREEBSD
  libboinc_la_LDFLAGS += -lexecinfo
-@@ -197,6 +201,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
+@@ -195,6 +199,10 @@ lib_LTLIBRARIES += libboinc_crypt.la
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
@@ -24,7 +24,7 @@ Index: boinc-salsa/lib/Makefile.am
  libboinc_crypt_la_LDFLAGS = -version-number $(LIBBOINC_VERSION) $(SSL_LIBS) $(RSA_LIBS)
  libboinc_crypt_la_LIBADD = $(LIBBOINC)
  endif
-@@ -206,6 +214,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
+@@ -204,6 +212,10 @@ lib_LTLIBRARIES += libboinc_fcgi.la
  libboinc_fcgi_la_SOURCES = $(libfcgi_sources) $(mac_sources) $(win_sources)
  libboinc_fcgi_la_CFLAGS = -D_USING_FCGI_ $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
  libboinc_fcgi_la_CXXFLAGS = -D_USING_FCGI_ $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS)
@@ -35,7 +35,7 @@ Index: boinc-salsa/lib/Makefile.am
  libboinc_fcgi_la_LDFLAGS = -version-number $(LIBBOINC_VERSION)
  libboinc_fcgi_la_LIBADD =
  endif
-@@ -269,7 +281,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
+@@ -267,7 +279,7 @@ msg_test_CXXFLAGS = $(PTHREAD_CFLAGS)
  msg_test_LDADD = $(LIBBOINC)
  crypt_prog_SOURCES = crypt_prog.cpp
  crypt_prog_CXXFLAGS = $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
