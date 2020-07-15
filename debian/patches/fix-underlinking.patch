@@ -33,7 +33,7 @@ Index: boinc-salsa/lib/Makefile.am
 ===================================================================
 --- boinc-salsa.orig/lib/Makefile.am
 +++ boinc-salsa/lib/Makefile.am
-@@ -195,8 +195,8 @@ lib_LTLIBRARIES += libboinc_crypt.la
+@@ -197,8 +197,8 @@ lib_LTLIBRARIES += libboinc_crypt.la
  libboinc_crypt_la_SOURCES = crypt.cpp
  libboinc_crypt_la_CFLAGS = $(AM_CFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CFLAGS)
  libboinc_crypt_la_CXXFLAGS = $(AM_CXXFLAGS) $(PICFLAGS) $(PTHREAD_CFLAGS) $(SSL_CXXFLAGS)
