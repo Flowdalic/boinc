@@ -1,3 +1,12 @@
+boinc (7.16.15+dfsg.is.7.16.7+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7.16.15+dfsg.is.7.16.7+dfsg
+    - this is mostly the same release as 7.16.6+dfsg, the 7.16.15 tag was
+      wrongly pushed upstream
+  * Revert "Refresh patches"
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 15 Jul 2020 16:30:12 +0200
+
 boinc (7.16.15+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
