@@ -1,3 +1,16 @@
+boinc (7.16.15+dfsg.is.7.16.7+dfsg-2) unstable; urgency=medium
+
+  * boinc misc fixes:
+    - don't depend on libcuda-versioned packages,
+      now we have a virtual libcuda1 everywhere
+    - change the dependency in a recommendation instead,
+      to avoid universe/multiverse archive mismatches in Ubuntu
+    - add virtualbox-6.1 as supported
+    - drop libopencl-1.1-1 dependency,
+      not used anymore since we have the virtual ocl-icd-libopencl1
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 20 Jul 2020 19:24:23 +0200
+
 boinc (7.16.15+dfsg.is.7.16.7+dfsg-1exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
