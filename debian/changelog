@@ -1,3 +1,9 @@
+boinc (7.16.15+dfsg.is.7.16.7+dfsg-2exp1) experimental; urgency=medium
+
+  * Upload to experimental again, with the boinc-server-* packages.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 20 Jul 2020 19:26:37 +0200
+
 boinc (7.16.15+dfsg.is.7.16.7+dfsg-2) unstable; urgency=medium
 
   * boinc misc fixes:
