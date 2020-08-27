@@ -1,0 +1,17 @@
+Description: Don't include mac_spawn if the system is not APPLE, like its done elsewhere
+Author: Gianfranco Costamagna <locutusofborg@debian.org>
+Forwarded: https://github.com/BOINC/boinc/pull/3986
+Last-Update: 2020-08-27
+
+--- boinc-7.16.15+dfsg.is.7.16.9+dfsg.orig/client/switcher.cpp
++++ boinc-7.16.15+dfsg.is.7.16.9+dfsg/client/switcher.cpp
+@@ -34,7 +34,9 @@
+ #include "app_ipc.h"
+ #include "filesys.h"
+ #include "str_replace.h"
++#ifdef __APPLE__
+ #include "mac_spawn.h"
++#endif
+ 
+ using std::strcpy;
+ 

@@ -33,3 +33,4 @@ manager_shut_down_connected_client.patch
 prevent_manager_from_starting_client.patch
 python3install.patch
 python3.patch
+fix-macos-build.patch
