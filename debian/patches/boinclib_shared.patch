@@ -50,7 +50,7 @@ Index: boinc-salsa/client/Makefile.am
 ===================================================================
 --- boinc-salsa.orig/client/Makefile.am
 +++ boinc-salsa/client/Makefile.am
-@@ -4,7 +4,6 @@
+@@ -6,7 +6,6 @@
  include $(top_srcdir)/Makefile.incl
  
  if ENABLE_CLIENT_RELEASE

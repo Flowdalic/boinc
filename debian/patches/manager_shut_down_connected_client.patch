@@ -2,7 +2,7 @@ Index: boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
 ===================================================================
 --- boinc-7.16.1+dfsg.orig/clientgui/AdvancedFrame.cpp
 +++ boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
-@@ -344,11 +344,13 @@
+@@ -341,11 +341,13 @@
          _("Select computer...\tCtrl+Shift+I"),
          _("Connect to a BOINC client on another computer")
      );

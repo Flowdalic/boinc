@@ -67,7 +67,7 @@ Index: boinc/lib/mfile.cpp
 ===================================================================
 --- boinc.orig/lib/mfile.cpp
 +++ boinc/lib/mfile.cpp
-@@ -42,7 +42,7 @@
+@@ -40,7 +40,7 @@
  }
  
  MFILE::~MFILE() {

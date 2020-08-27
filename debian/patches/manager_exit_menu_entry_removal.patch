@@ -1,8 +1,8 @@
-Index: boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
+Index: boinc/clientgui/AdvancedFrame.cpp
 ===================================================================
---- boinc-7.16.1+dfsg.orig/clientgui/AdvancedFrame.cpp
-+++ boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
-@@ -363,6 +363,18 @@
+--- boinc.orig/clientgui/AdvancedFrame.cpp
++++ boinc/clientgui/AdvancedFrame.cpp
+@@ -360,6 +360,18 @@
          strMenuDescription
      );
  
@@ -21,7 +21,7 @@ Index: boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
      strMenuDescription.Printf(
          _("Exit %s"), 
          pSkinAdvanced->GetApplicationName().c_str()
-@@ -383,6 +395,7 @@
+@@ -380,6 +392,7 @@
          strMenuName,
          strMenuDescription
      );
@@ -29,11 +29,11 @@ Index: boinc-7.16.1+dfsg/clientgui/AdvancedFrame.cpp
  
  #ifdef __WXMAC__
      // wxWidgets actually puts this in the BOINCManager menu
-Index: boinc-7.16.1+dfsg/clientgui/sg_BoincSimpleFrame.cpp
+Index: boinc/clientgui/sg_BoincSimpleFrame.cpp
 ===================================================================
---- boinc-7.16.1+dfsg.orig/clientgui/sg_BoincSimpleFrame.cpp
-+++ boinc-7.16.1+dfsg/clientgui/sg_BoincSimpleFrame.cpp
-@@ -154,6 +154,18 @@
+--- boinc.orig/clientgui/sg_BoincSimpleFrame.cpp
++++ boinc/clientgui/sg_BoincSimpleFrame.cpp
+@@ -153,6 +153,18 @@
          strMenuDescription
      );
  
@@ -52,7 +52,7 @@ Index: boinc-7.16.1+dfsg/clientgui/sg_BoincSimpleFrame.cpp
      strMenuDescription.Printf(
          _("Exit %s"),
          pSkinAdvanced->GetApplicationName().c_str()
-@@ -169,6 +181,7 @@
+@@ -168,6 +180,7 @@
          strMenuName,
          strMenuDescription
      );

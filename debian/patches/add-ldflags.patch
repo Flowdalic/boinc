@@ -1,7 +1,7 @@
 Description: Adding LDFLAGS to the wrapper build
 --- a/samples/wrapper/Makefile
 +++ b/samples/wrapper/Makefile
-@@ -38,4 +38,4 @@
+@@ -42,4 +42,4 @@
  	regexp_report.o
  
  wrapper: wrapper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a $(REGEXP_OBJS)

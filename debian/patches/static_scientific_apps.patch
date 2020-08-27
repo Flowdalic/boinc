@@ -86,8 +86,8 @@ Index: boinc-salsa/samples/sleeper/Makefile
 ===================================================================
 --- boinc-salsa.orig/samples/sleeper/Makefile
 +++ boinc-salsa/samples/sleeper/Makefile
-@@ -17,7 +17,7 @@ PROGS = sleeper
- all: $(PROGS)
+@@ -20,7 +20,7 @@ PROGS = sleeper
+ install: all
  
  libstdc++.a:
 -	ln -s `g++ -print-file-name=libstdc++.a`
@@ -95,12 +95,14 @@ Index: boinc-salsa/samples/sleeper/Makefile
  
  clean: distclean
  
-@@ -25,4 +25,4 @@ distclean:
+@@ -28,6 +28,6 @@ distclean:
  	rm -f $(PROGS) *.o libstdc++.a
  
  sleeper: sleeper.o libstdc++.a $(BOINC_LIB_DIR)/libboinc.a $(BOINC_API_DIR)/libboinc_api.a
--	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o sleeper sleeper.o libstdc++.a -pthread -lboinc_api -lboinc
+-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o sleeper sleeper.o libstdc++.a -pthread -lboinc_api -lboinc
 +	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -pthread -o sleeper sleeper.o libstdc++.a $(BOINC_API_DIR)/libboinc_api.a $(BOINC_LIB_DIR)/libboinc.a
+ 
+ .PHONY: all install clean distclean
 Index: boinc-salsa/samples/vboxmonitor/Makefile
 ===================================================================
 --- boinc-salsa.orig/samples/vboxmonitor/Makefile
@@ -154,17 +156,20 @@ Index: boinc-salsa/samples/worker/Makefile
 ===================================================================
 --- boinc-salsa.orig/samples/worker/Makefile
 +++ boinc-salsa/samples/worker/Makefile
-@@ -10,4 +10,4 @@ distclean:
+@@ -11,7 +11,7 @@ distclean:
  	rm -f $(PROGS) *.o
  
  worker: worker.o
--	g++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o worker worker.o
+-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o worker worker.o
 +	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -static -o worker worker.o
+ 
+ install: all
+ 
 Index: boinc-salsa/samples/wrapper/Makefile
 ===================================================================
 --- boinc-salsa.orig/samples/wrapper/Makefile
 +++ boinc-salsa/samples/wrapper/Makefile
-@@ -37,5 +37,5 @@ REGEXP_OBJS = \
+@@ -41,5 +41,5 @@ REGEXP_OBJS = \
  	regexp_memory.o \
  	regexp_report.o
  
@@ -279,7 +284,7 @@ Index: boinc-salsa/configure.ac
 ===================================================================
 --- boinc-salsa.orig/configure.ac
 +++ boinc-salsa/configure.ac
-@@ -68,6 +68,12 @@ SAH_LINKS
+@@ -64,6 +64,12 @@ SAH_LINKS
  AC_LANG_PUSH(C)
  AM_PROG_CC_C_O
  

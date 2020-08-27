@@ -1,7 +1,7 @@
 diff -urNr boinc-client_release-7.14-7.14.2-orig/clientgui/BOINCClientManager.cpp boinc-client_release-7.14-7.14.2/clientgui/BOINCClientManager.cpp
 --- boinc-client_release-7.14-7.14.2-orig/clientgui/BOINCClientManager.cpp	2018-10-11 02:43:27.000000000 +0200
 +++ boinc-client_release-7.14-7.14.2/clientgui/BOINCClientManager.cpp	2019-02-20 11:20:13.423684707 +0100
-@@ -435,6 +435,11 @@
+@@ -437,6 +437,11 @@
      if (!m_bBOINCStartedByManager) return;
  #endif
  
