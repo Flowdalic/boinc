@@ -1,3 +1,9 @@
+boinc (7.16.15+dfsg.is.7.16.10+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7.16.10+dfsg
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 29 Aug 2020 09:08:15 +0200
+
 boinc (7.16.15+dfsg.is.7.16.9+dfsg-2exp1) experimental; urgency=medium
 
   * Upload to experimental again, with the boinc-server-* packages.
