@@ -1,3 +1,7 @@
 version=4
-opts=dversionmangle=s/\+dfsg$//,repacksuffix=+dfsg \
+# retrieves the latest release from github
+opts=dversionmangle=auto,repacksuffix=+dfsg \
 https://github.com/BOINC/boinc/tags .*/client_release/\d.\d{2}/(\d.*)\.tar\.gz
+
+# may be helpful as a template
+#opts="mode=git,pretty=7.6.15+git%cd.%h" https://github.com/BOINC/boinc.git HEAD
