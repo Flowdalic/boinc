@@ -13,6 +13,7 @@ SCHEDULE="1"
 BOINC_USER="boinc"
 
 # This is the data directory of the BOINC core client.
+# This directory is now set in /etc/boinc-client/config.properties
 BOINC_DIR="/var/lib/boinc-client"
 
 # This is the location of the BOINC core client, that the init script uses.
