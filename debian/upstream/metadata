@@ -1,0 +1,7 @@
+Registry:
+ - Name: SciCrunch
+   Entry: SCR_015896
+ - Name: bio.tools
+   Entry: NA
+ - Name: conda:conda-forge
+   Entry: NA
