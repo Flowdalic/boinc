@@ -75,6 +75,7 @@ case "$1" in
         ch_stat 0664 root:boinc "$CONF_DIR/global_prefs_override.xml"
         ch_stat 0640 root:boinc "$CONF_DIR/gui_rpc_auth.cfg"
         ch_stat 0644 root:boinc "$CONF_DIR/remote_hosts.cfg"
+        ch_stat 0644 root:boinc "$CONF_DIR/config.properties"
 
         # Make a symlink to ca-certificates certs file. BOINC's original file
         # is in curl/ca-bundle.crt (which is not in our tarball, because the
