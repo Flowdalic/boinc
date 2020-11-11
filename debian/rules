@@ -225,7 +225,7 @@ override_dh_clean:
 	find zip -name "*.lo" -delete
 	rm -rf py/lib
 	if [ -d .git ]; then \
-	  if [ -x /usr/bin/git git ]; then \
+	  if [ -x /usr/bin/git ]; then \
 	    git diff debian/control | patch -p1 -R; \
 	  fi ; \
 	fi
