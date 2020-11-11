@@ -8,4 +8,4 @@ usr/bin/boinc
 usr/bin/boinccmd
 usr/bin/switcher                    usr/lib/boinc-client
 usr/share/locale/*/LC_MESSAGES/BOINC-Client.mo
-lib/systemd/system
+usr/lib/systemd/system
