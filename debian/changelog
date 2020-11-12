@@ -1,10 +1,22 @@
 boinc (7.16.15+dfsg.is.7.16.11+dfsg-2) unstable; urgency=medium
 
+  [ Steffen Möller ]
   * Very reluctantly following upstream's request to install
     /etc/boinc-client/config.properties
   * Introduced dversionmangle=auto in d/watch
   * Applied patch from upstream's pull request #4071 to also accept empty
     passwords and distribute it as allow_empty_passwords.patch.
+  * Added d/u/metadata
+  * ch_stat of the configuration file
+
+  [ Gianfranco Costamagna ]
+  * Drop double "git" mention that breaks build
+  * Update allow_empty_passwords with new upstream changes
+  * Add patch to explain end user how to add himself to boinc group if manager fails to connect
+  * Install boinc into usr/lib now that systemd is not creating /lib/systemd by default anymore
+  * Try to make it work with {/usr}/lib/systemd already provided in the system (mkdir from autotools is what should be probably done)
+  * Revert "Try to make it work with {/usr}/lib/systemd already provided in the system (mkdir from autotools is what should be probably done)"
+  * Add patch to force systemd installation into /usr/lib instead of /lib, we don't know how the build system is configured (and we don't care)
 
  -- Steffen Moeller <moeller@debian.org>  Mon, 09 Nov 2020 23:38:23 +0100
 
