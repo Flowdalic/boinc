@@ -10,6 +10,7 @@ boinc (7.16.15+dfsg.is.7.16.11+dfsg-2) unstable; urgency=medium
   * ch_stat of the configuration file
 
   [ Gianfranco Costamagna ]
+  * Upload to sid (Closes: #971966)
   * Drop double "git" mention that breaks build
   * Update allow_empty_passwords with new upstream changes
   * Add patch to explain end user how to add himself to boinc group if manager fails to connect
