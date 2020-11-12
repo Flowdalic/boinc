@@ -36,3 +36,4 @@ python3.patch
 fix-macos-build.patch
 allow_empty_passwords.patch
 boinc-client-password.patch
+systemd-directory.patch
