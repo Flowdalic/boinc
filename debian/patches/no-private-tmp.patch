@@ -1,0 +1,15 @@
+Description: Don't set PrivateTmp to fix idle detection not working
+Origin: https://github.com/BOINC/boinc/issues/3715#issuecomment-727609578
+Last-Update: 2020-11-16
+
+--- boinc-7.16.15+dfsg.is.7.16.11+dfsg.orig/client/scripts/boinc-client.service.in
++++ boinc-7.16.15+dfsg.is.7.16.11+dfsg/client/scripts/boinc-client.service.in
+@@ -6,7 +6,7 @@ After=network-online.target
+ [Service]
+ Type=simple
+ ProtectHome=true
+-PrivateTmp=true
++PrivateTmp=false
+ ProtectSystem=strict
+ ProtectControlGroups=true
+ ReadWritePaths=-/var/lib/boinc -/etc/boinc-client

@@ -37,3 +37,4 @@ fix-macos-build.patch
 allow_empty_passwords.patch
 boinc-client-password.patch
 systemd-directory.patch
+no-private-tmp.patch
