@@ -966,6 +966,7 @@ void CLIENT_STATE::do_io_or_sleep(double max_time) {
 bool CLIENT_STATE::poll_slow_events() {
     int actions = 0, retval;
     static int last_suspend_reason=0;
+    static double suspend_cooldown_timeout = 0;
     static bool tasks_restarted = false;
     static bool first=true;
     double old_now = now;
@@ -1048,6 +1049,17 @@ bool CLIENT_STATE::poll_slow_events() {
     active_tasks.get_memory_usage();
     suspend_reason = check_suspend_processing();
 
+    // Ensure that a cooldown period has passed before resuming
+    // operations.
+    if (suspend_reason) {
+        last_suspend_reason = suspend_reason;
+        suspend_cooldown_timeout = now + 30;
+    } else if (now < suspend_cooldown_timeout) {
+        // Cooldown timeout not yet reached, behave as the last
+        // suspend reason is still effective.
+        suspend_reason = last_suspend_reason;
+    }
+
     // suspend or resume activities (but only if already did startup)
     //
     if (tasks_restarted) {
@@ -1056,7 +1068,6 @@ bool CLIENT_STATE::poll_slow_events() {
                 show_suspend_tasks_message(suspend_reason);
                 active_tasks.suspend_all(suspend_reason);
             }
-            last_suspend_reason = suspend_reason;
         } else {
             if (tasks_suspended && !tasks_throttled) {
                 resume_tasks(last_suspend_reason);
