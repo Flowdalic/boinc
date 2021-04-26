@@ -1,3 +1,13 @@
+boinc (7.16.15+dfsg.is.7.16.11+dfsg-3.1) UNRELEASED; urgency=medium
+
+  * Non-maintainer upload.
+  * client: be conservative about non-BOINC CPU usage on underflow
+    https://github.com/BOINC/boinc/pull/4328
+  * client: add a cooldown period before resuming operations
+    https://github.com/BOINC/boinc/pull/4336
+
+ -- Florian Schmaus <flow@faui48f.informatik.uni-erlangen.de>  Mon, 26 Apr 2021 09:58:35 +0200
+
 boinc (7.16.15+dfsg.is.7.16.11+dfsg-3) unstable; urgency=medium
 
   * Don't set PrivateTmp on service file to fix idle detection.

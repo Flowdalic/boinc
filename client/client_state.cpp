@@ -1053,11 +1053,21 @@ bool CLIENT_STATE::poll_slow_events() {
     // operations.
     if (suspend_reason) {
         last_suspend_reason = suspend_reason;
-        suspend_cooldown_timeout = now + 30;
+        suspend_cooldown_timeout = now + 45;
+        // msg_printf(nullptr, MSG_INFO,
+        //            "check_suspend_processing() returned %d as suspend_reason, set cooldown timeout to %f (now: %f)",
+        //            suspend_reason,
+        //            suspend_cooldown_timeout,
+        //            now);
     } else if (now < suspend_cooldown_timeout) {
         // Cooldown timeout not yet reached, behave as the last
         // suspend reason is still effective.
         suspend_reason = last_suspend_reason;
+        // msg_printf(nullptr, MSG_INFO,
+        //            "now %f is smaller than cooldown_timeout %f, restored suspend_reason %d",
+        //            now,
+        //            suspend_cooldown_timeout,
+        //            suspend_reason);
     }
 
     // suspend or resume activities (but only if already did startup)
